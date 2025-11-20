@@ -1,9 +1,9 @@
-# AI-OS – CAPABILITIES MATRIX (Version 1.0)
+# AI-OS – CAPABILITIES MATRIX (Version 1.1)
 
 **מפת היכולות של מערכת ההפעלה האישית**
 
 **תאריך יצירה**: 20 נובמבר 2025  
-**גרסה**: 1.0 (AI-OS Bootstrap)  
+**גרסה**: 1.1 (Critical Decisions Locked)  
 **עדכון אחרון**: 20 נובמבר 2025
 
 ---
@@ -25,11 +25,11 @@
 | סטטוס | משמעות | דוגמה |
 |-------|--------|-------|
 | ✅ **Operational** | עובד ומוכן לשימוש | GitHub Read/Write דרך MCP |
-| 🚧 **Partial** | עובד חלקית או עם מגבלות | GPT GitHub Agent (DRY RUN בלבד) |
-| 📋 **Designed** | תוכנן ומתועד, אבל לא מומש | GitHub Executor API |
+| 🚧 **Operational (Limited)** | עובד עם מגבלות מכוונות | GPT GitHub Agent (DRY RUN בלבד) |
+| 📋 **Designed (Not Deployed)** | תוכנן ומתועד, אבל לא פרוס | GitHub Executor API |
 | 🔄 **Planned** | בתכנון ראשוני | אינטגרציה מלאה עם Google Workspace |
 | ❌ **Not Available** | לא קיים ולא בתכנית מיידית | Voice/Audio Control |
-| 🗄️ **Legacy** | קיים בריפו הישן, טרם הוחלט על גורלו | Autopilot Self-Healing |
+| 🗄️ **Legacy (Reference Only)** | קיים בריפו הישן, משמש כמקור ידע בלבד | MCP Orchestration |
 
 ---
 
@@ -38,28 +38,77 @@
 | CapabilityID | יכולת | תיאור קצר | Agents מעורבים | Tools / APIs | Status | Notes |
 |--------------|--------|------------|-----------------|-------------|--------|-------|
 | **GH-001** | GitHub Repository Analysis | קריאה וניתוח של ריפואים ב-GitHub | GPT GitHub Agent | GitHub MCP | ✅ Operational | עובד דרך Claude Desktop MCP |
-| **GH-002** | GitHub Planning (DRY RUN) | תכנון פעולות GitHub (ללא ביצוע) | GPT GitHub Agent | `gpt_agent/github_agent.py` | 🚧 Partial | מתכנן בלבד, לא מבצע |
-| **GH-003** | GitHub Direct Writes (Docs) | כתיבה ישירה לקבצי תיעוד ב-GitHub | GPT GitHub Agent | GitHub MCP | ✅ Operational | רק לקבצי Docs/State (OS_SAFE) |
+| **GH-002** | GitHub Planning (DRY RUN) | תכנון פעולות GitHub (ללא ביצוע) | GPT GitHub Agent | `gpt_agent/github_agent.py` | 🚧 Operational (Limited) | **DECISION 2025-11-20**: Planner בלבד, אין פעולות כתיבה אוטומטיות |
+| **GH-003** | GitHub Direct Writes (Docs) | כתיבה ישירה לקבצי תיעוד ב-GitHub | - | GitHub MCP | ✅ Operational | רק דרך Claude ידני, לא דרך GPT Agent |
 | **GH-004** | GitHub PR Creation | יצירת Pull Requests | - | GitHub MCP | ✅ Operational | ידני או דרך Claude |
-| **GH-005** | GitHub Executor API | API אוטומציה מלאה של GitHub | - | Cloud Run API (להיות) | 📋 Designed | קוד מוכן, deployment חסום |
+| **GH-005** | GitHub Executor API | API אוטומציה מלאה של GitHub | - | Legacy Blueprint | 📋 Designed (Not Deployed) | **DECISION 2025-11-20**: לא פרוס. משמש כ-Blueprint בלבד |
 | **FS-001** | Local File System Access | קריאה/כתיבה לקבצים מקומיים | - | Filesystem MCP | ✅ Operational | גישה בתוך allowed directories |
 | **FS-002** | File Search & Analysis | חיפוש וניתוח קבצים | - | Filesystem MCP | ✅ Operational | תמיכה ב-patterns ו-exclusions |
 | **WIN-001** | Windows PowerShell Execution | הרצת פקודות PowerShell | - | Windows MCP | ✅ Operational | 10+ פקודות מאושרות |
 | **WIN-002** | Windows Shell Control | שליטה ב-UI של Windows | - | Windows MCP | ✅ Operational | Click, Type, Scroll וכו' |
 | **WIN-003** | Windows Application Launch | הפעלת אפליקציות Windows | - | Windows MCP | ✅ Operational | דרך Start Menu |
-| **MCP-001** | MCP Orchestration (Legacy) | ניהול מרכזי של סוכנים וזרימות | MCP Master Control | `mcp/` directory | 🗄️ Legacy | קיים בריפו הישן, טרם יובא |
-| **MCP-002** | MCP GitHub Integration | אינטגרציה בין MCP ל-GitHub | - | `mcp/github/` | 🗄️ Legacy | טרם הוחלט על ייבוא |
-| **MCP-003** | MCP Google Integration | אינטגרציה בין MCP ל-Google | - | `mcp/google/` | 🗄️ Legacy | טרם הוחלט על ייבוא |
+| **MCP-001** | MCP Orchestration | ניהול מרכזי של סוכנים וזרימות | - | Legacy (`mcp/`) | 🗄️ Legacy (Reference Only) | **DECISION 2025-11-20**: לא פעיל. משמש כמקור עיצוב בלבד |
+| **MCP-002** | MCP GitHub Integration | אינטגרציה בין MCP ל-GitHub | - | Legacy (`mcp/github/`) | 🗄️ Legacy (Reference Only) | **DECISION 2025-11-20**: לא פעיל. משמש כמקור עיצוב בלבד |
+| **MCP-003** | MCP Google Integration | אינטגרציה בין MCP ל-Google | - | Legacy (`mcp/google/`) | 🗄️ Legacy (Reference Only) | **DECISION 2025-11-20**: לא פעיל. משמש כמקור עיצוב בלבד |
 | **GGL-001** | Google Calendar Read | קריאת אירועים מיומן | - | Google MCP | ✅ Operational | READ-ONLY |
 | **GGL-002** | Google Gmail Read | קריאת מיילים | - | Google MCP | ✅ Operational | READ-ONLY |
 | **GGL-003** | Google Drive Read | קריאת קבצים מ-Drive | - | Google MCP | ✅ Operational | READ-ONLY |
 | **GGL-004** | Google Workspace Write | כתיבה ל-Google Workspace | - | Google MCP (להרחיב) | 🔄 Planned | דורש OAuth scopes נוספים |
 | **KB-001** | Knowledge Base Reading | קריאת מסמכי ידע והחלטות | - | Filesystem MCP | ✅ Operational | `docs/`, `decisions/`, `plans/` |
-| **KB-002** | Decision Records (ADRs) | ניהול החלטות אדריכליות | OPS Decision Manager | `ops/decisions/` | 🗄️ Legacy | טרם יובא |
-| **DIAG-001** | System Diagnostics | אבחון מצב המערכת | OPS Diagnostics | `ops/diag/` | 🗄️ Legacy | טרם יובא |
+| **KB-002** | Decision Records (ADRs) | ניהול החלטות אדריכליות | - | Legacy (`ops/decisions/`) | 🗄️ Legacy (Reference Only) | טרם יובא ל-AI-OS |
+| **DIAG-001** | System Diagnostics | אבחון מצב המערכת | - | Legacy (`ops/diag/`) | 🗄️ Legacy (Reference Only) | טרם יובא ל-AI-OS |
 | **DIAG-002** | Health Checks | בדיקות בריאות של רכיבים | - | Various | 🔄 Planned | צריך להגדיר |
-| **AUTO-001** | Self-Healing (Autopilot) | החלמה עצמית מכשלים | Autopilot Agent | `autopilot.py` | 🗄️ Legacy | POC בלבד, טרם הוחלט |
-| **EXEC-001** | Local Execution | ביצוע פעולות מקומיות | Local Execution Agent | `agents/local_execution_agent.py` | 🗄️ Legacy | Placeholder בלבד |
+| **AUTO-001** | Self-Healing (Autopilot) | החלמה עצמית מכשלים | - | Legacy (`autopilot.py`) | 🗄️ Legacy (Reference Only) | POC בלבד, טרם הוחלט |
+| **EXEC-001** | Local Execution | ביצוע פעולות מקומיות | - | Legacy (placeholder) | 🗄️ Legacy (Reference Only) | Placeholder ריק |
+
+---
+
+## החלטות קריטיות (2025-11-20)
+
+### 🔒 **החלטה #1: MCP Orchestration**
+**סטטוס**: 🗄️ Legacy (Reference Only)
+
+- MCP לא נלקח כקוד רץ ל-AI-OS.
+- משמש **אך ורק** כמקור עיצוב וידע.
+- לא פרוס ולא פעיל במערכת.
+
+**רציונל**: 
+- MCP היה מערכת מורכבת שהתפתחה אורגנית.
+- AI-OS נבנה מאפס עם עקרונות נקיים.
+- נשתמש בתובנות מה-MCP אבל נבנה תשתית חדשה ופשוטה יותר.
+
+---
+
+### 🔒 **החלטה #2: GitHub Executor API**
+**סטטוס**: 📋 Designed (Not Deployed)
+
+- הקוד הקיים **לא פרוס ולא מופעל**.
+- משמש כ-**Blueprint** לתכנון Executor עתידי אפשרי.
+- כל אוטומציית כתיבה על GitHub תיבנה מחדש בצורה הדרגתית ובטוחה.
+
+**רציונל**:
+- הקוד הקיים תוכנן למערכת אחרת.
+- יש בעיות deployment לא פתורות.
+- עדיף לבנות מחדש בצורה מבוקרת עם שכבות בטיחות ברורות.
+
+---
+
+### 🔒 **החלטה #3: GPT GitHub Agent – Execution Mode**
+**סטטוס**: 🚧 Operational (Limited) - **DRY RUN ONLY**
+
+- הסוכן פועל במצב **Planner בלבד**.
+- **אין פעולות כתיבה אוטומטיות** על GitHub דרך הסוכן.
+- הסוכן מנתח, מתכנן, ומציע - אבל לא מבצע.
+
+**Roadmap**:
+- בעתיד ניתן לשקול מצב Executor מוגבל (OS_SAFE בלבד).
+- דורש הגדרת שכבות אבטחה ופיקוח מתאימות.
+- Human-in-the-loop נשאר חובה לכל פעולה.
+
+**רציונל**:
+- בטיחות מעל הכל.
+- צריך לבנות אמון הדרגתי במערכת.
+- DRY RUN מאפשר לבדוק את היכולות בלי סיכון.
 
 ---
 
@@ -70,18 +119,22 @@
 **יכולות**: GH-001 עד GH-005
 
 **מה זה אומר בפועל?**
-- אני יכול לבקש מהמערכת לנתח ריפו, לקרוא קבצים, ולעדכן תיעוד ישירות.
-- כשצריך לשנות קוד או workflows - המערכת מתכננת לי תוכנית מפורטת (GPT GitHub Agent).
-- בעתיד: אוטומציה מלאה דרך GitHub Executor API.
+- אני יכול לבקש מהמערכת לנתח ריפו, לקרוא קבצים.
+- **GPT GitHub Agent מתכנן** פעולות אבל **לא מבצע אוטומטית**.
+- עדכוני תיעוד - אני עושה ידנית דרך Claude Desktop.
 
 **סטטוס נוכחי**:
 - ✅ **קריאה וניתוח**: עובד מעולה דרך Claude Desktop + MCP
-- ✅ **עדכון תיעוד**: עובד (OS_SAFE - קבצי Docs בלבד)
-- 🚧 **תכנון משימות**: עובד במצב DRY RUN (GPT GitHub Agent)
-- 📋 **ביצוע אוטומטי**: מתוכנן (GitHub Executor API)
+- ✅ **עדכון תיעוד**: ידני דרך Claude (לא אוטומטי)
+- 🚧 **תכנון משימות**: GPT GitHub Agent (DRY RUN) - **לא מבצע!**
+- 📋 **ביצוע אוטומטי**: לא פרוס (GitHub Executor API = Blueprint בלבד)
+
+**החלטה חשובה**: 
+> כרגע **אין אוטומציה של כתיבה ל-GitHub**. הכל ידני או דרך Claude Desktop בפיקוח אנושי.
 
 **דוגמה לשימוש**:
-> "קרא את הקובץ `README.md` בריפו `ai-os`, ועדכן את הסעיף 'המטרות' עם הטקסט הבא..."
+> "תכנן לי איך לעדכן את `README.md` בריפו `ai-os`" ← GPT Agent מחזיר תוכנית  
+> "עדכן את `README.md`" ← אני מבצע ידנית או דרך Claude
 
 ---
 
@@ -109,18 +162,23 @@
 
 **יכולות**: MCP-001, MCP-002, MCP-003
 
+**החלטה רשמית (2025-11-20)**:
+> MCP נשאר **Legacy / Reference Only**.  
+> לא נלקח כקוד רץ ל-AI-OS.
+
 **מה זה אומר בפועל?**
 - MCP (Master Control Program) היה "המוח" של המערכת הישנה.
-- הוא ניהל תזמון, אינטגרציות, וסנכרון בין סוכנים שונים.
+- **אנחנו לא משתמשים בו באופן פעיל**.
+- נשתמש בתובנות ובעיצוב שלו כהשראה, אבל נבנה מחדש.
 
 **סטטוס נוכחי**:
-- 🗄️ **Legacy**: כל רכיבי ה-MCP עדיין בריפו הישן
-- ⏳ **החלטה נדרשת**: האם לייבא? איך לפרק לרכיבים?
+- 🗄️ **MCP Orchestration**: Reference Only
+- 🗄️ **MCP GitHub Integration**: Reference Only
+- 🗄️ **MCP Google Integration**: Reference Only
 
-**שאלות פתוחות**:
-1. האם MCP נחוץ ב-AI-OS או שאפשר לבנות מנגנון פשוט יותר?
-2. אם כן - איזה חלקים לייבא ראשונים?
-3. האם לשמור את הארכיטקטורה המקורית או לעצב מחדש?
+**מה במקום?**
+- נבנה מנגנון orchestration פשוט יותר בעתיד.
+- כרגע אין צורך במנגנון מרכזי - הסוכנים פועלים בנפרד.
 
 ---
 
@@ -153,11 +211,11 @@
 
 **סטטוס נוכחי**:
 - ✅ **קריאה**: `docs/`, `decisions/`, `plans/` - הכל זמין
-- 🗄️ **ADRs מהריפו הישן**: טרם יובאו
+- 🗄️ **ADRs מהריפו הישן**: Reference Only (טרם יובאו)
 
 **דוגמה לשימוש**:
 > "קרא את החוקה של AI-OS והסבר לי את העיקרון השלישי"
-> "מה ההחלטות האחרונות שתועדו במערכת?"
+> "מה ההחלטות האחרונות שתועדו במערכת?" ← קרא `docs/DECISIONS_AI_OS.md`
 
 ---
 
@@ -167,11 +225,11 @@
 
 **מה זה אומר בפועל?**
 - המערכת יכולה לבדוק את עצמה: האם הכל עובד? איפה יש בעיות?
-- כרגע רוב כלי האבחון עדיין בריפו הישן.
+- כרגע רוב כלי האבחון עדיין בריפו הישן (Reference Only).
 
 **סטטוס נוכחי**:
-- 🗄️ **OPS Diagnostics**: טרם יובאו
-- 🔄 **Health Checks**: צריך להגדיר מה לבדוק
+- 🗄️ **OPS Diagnostics**: Reference Only (טרם יובאו)
+- 🔄 **Health Checks**: בתכנון (צריך להגדיר מה לבדוק)
 
 **שאלות פתוחות**:
 1. אילו health checks חיוניים ל-AI-OS?
@@ -184,12 +242,12 @@
 **יכולות**: AUTO-001, EXEC-001
 
 **מה זה אומר בפועל?**
-- **Autopilot**: סוכן שמנסה לתקן בעיות אוטומטית (למשל, לשחזר גישה ל-Google Sheets).
+- **Autopilot**: סוכן שמנסה לתקן בעיות אוטומטית.
 - **Local Execution**: סוכן שאמור להריץ פעולות מקומיות.
 
 **סטטוס נוכחי**:
-- 🗄️ **Autopilot**: POC בלבד בריפו הישן, טרם הוחלט אם רלוונטי
-- 🗄️ **Local Execution Agent**: קובץ Placeholder ריק
+- 🗄️ **Autopilot**: Reference Only (POC בלבד בריפו הישן)
+- 🗄️ **Local Execution Agent**: Reference Only (placeholder ריק)
 
 **שאלות פתוחות**:
 1. האם Self-Healing נחוץ? אם כן - באילו תרחישים?
@@ -205,62 +263,11 @@
 |-------|-------|-------|
 | **Voice/Audio Control** | ❌ Not Available | לא קיים ולא בתכנית מיידית |
 | **OS GUI Automation (Advanced)** | 🔄 Planned | מעבר לשליטה בסיסית |
-| **Telegram Integration** | 🗄️ Legacy | מוזכר באודיט, טרם הוחלט |
-| **Make.com Workflows** | 🗄️ Legacy | מוזכר באודיט, טרם הוחלט |
+| **Telegram Integration** | 🗄️ Legacy (Reference) | מוזכר באודיט, טרם הוחלט |
+| **Make.com Workflows** | 🗄️ Legacy (Reference) | מוזכר באודיט, טרם הוחלט |
 | **GPT API Direct Calls** | 🔄 Planned | לסוכנים שצריכים GPT ישירות |
 | **Multi-Agent Coordination** | 🔄 Planned | ריבוי סוכנים שעובדים ביחד |
-
----
-
-## נקודות לא ברורות / שאלות פתוחות
-
-### 🔴 **גבוה (Critical) - דורש החלטה מיידית**
-
-1. **MCP Orchestration**:
-   - ❓ האם לייבא את כל מערכת ה-MCP מהריפו הישן?
-   - ❓ אם כן - איך לפרק לרכיבים (`mcp/server/`, `mcp/clients/`, `mcp/github/`, `mcp/google/`)?
-   - ❓ אם לא - איך מתפקדים בלי מנגנון ניהול מרכזי?
-
-2. **GitHub Executor API**:
-   - ❓ לפתח אותו ב-AI-OS או להשתמש בגרסה הקיימת?
-   - ❓ איפה ל-deploy (Cloud Run? Local server?)?
-   - ❓ איך מתחברים אליו (API key? OAuth?)?
-
-3. **GPT GitHub Agent - Executor Mode**:
-   - ❓ להשאיר DRY RUN או לשדרג ל-Executor?
-   - ❓ אם Executor - רק OS_SAFE או גם CLOUD_OPS_HIGH (עם אישור)?
-
----
-
-### 🟡 **בינוני (Medium) - חשוב אבל לא דחוף**
-
-4. **Autopilot Self-Healing**:
-   - ❓ האם רלוונטי ל-AI-OS?
-   - ❓ אם כן - אילו תרחישים צריך לטפל בהם?
-
-5. **Local Execution Agent**:
-   - ❓ לפתח או לזרוק?
-   - ❓ אם לפתח - מה התפקיד המדויק?
-
-6. **OPS Components** (Decisions, Diagnostics, Triggers):
-   - ❓ אילו חלקים לייבא ראשונים?
-   - ❓ איך משתלבים עם המערכת החדשה?
-
----
-
-### 🟢 **נמוך (Low) - נחמד לדעת**
-
-7. **Google Workspace Write**:
-   - ❓ באיזה עדיפות לפתח?
-   - ❓ אילו פעולות חיוניות (שליחת מייל? יצירת אירוע?)?
-
-8. **Telegram / Make.com Integration**:
-   - ❓ האם אלה כלים שעדיין בשימוש?
-   - ❓ אם כן - איך מתועדים ומשתלבים?
-
-9. **Health Checks & Monitoring**:
-   - ❓ מה צריך לבדוק?
-   - ❓ איך מדווחים (logs? dashboard? alerts?)?
+| **GitHub Automation (Safe)** | 🔄 Planned | Executor מוגבל ל-OS_SAFE בלבד |
 
 ---
 
@@ -277,17 +284,23 @@
    - חייב לעדכן את עמודת Status
    - מומלץ להוסיף הערה ב-Notes למה השתנה
 
-3. ✅ **הסרת יכולת**:
+3. ✅ **החלטה קריטית**:
+   - מתעדים בסעיף "החלטות קריטיות" בראש המסמך
+   - מוסיפים **DECISION YYYY-MM-DD** ב-Notes
+   - מעדכנים את `docs/DECISIONS_AI_OS.md`
+
+4. ✅ **הסרת יכולת**:
    - לא מוחקים! משנים ל-❌ Not Available
    - מוסיפים הערה למה הוסרה
 
-4. ✅ **גרסאות**:
+5. ✅ **גרסאות**:
    - כל שינוי משמעותי = עדכון מספר גרסה
-   - Minor: 1.0 → 1.1 (הוספת יכולת אחת)
+   - Minor: 1.0 → 1.1 (שינוי סטטוס או הוספת יכולת)
    - Major: 1.x → 2.0 (שינוי ארכיטקטורה)
 
 ---
 
-**סטטוס מסמך זה**: ✅ Bootstrap Version  
-**עדכון הבא מתוכנן**: אחרי ייבוא הסוכן הראשון (GPT GitHub Agent)  
-**צעד הבא**: החלטות על 9 השאלות הפתוחות + התחלת ייבוא יכולות מהריפו הישן
+**סטטוס מסמך זה**: ✅ Version 1.1 (Critical Decisions Locked)  
+**עדכון אחרון**: 20 נובמבר 2025  
+**החלטות נעולות**: 3 החלטות קריטיות (MCP, GitHub Executor, GPT Agent Mode)  
+**צעד הבא**: ייבוא הסוכן הראשון (GPT GitHub Agent) עם הגבלות DRY RUN
