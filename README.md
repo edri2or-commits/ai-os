@@ -274,6 +274,59 @@ ai-os/
 
 ---
 
+## 🔒 אבטחה וסיקרטים (Security & Secrets)
+
+### **עקרונות אבטחה**
+
+הריפו `ai-os` נבנה להיות **בטוח מיסודו**:
+
+✅ **אף סיקרט לא נשמר בקוד**:
+- אין סיסמאות, טוקנים או מפתחות API בקבצי Markdown
+- אין credentials בקבצי config או קוד
+- אין קבצי `.env` בגיט
+
+✅ **סיקרטים רק במקומות מאובטחים**:
+- GitHub Secrets (repository/organization)
+- Environment Variables (לא בגיט!)
+- Secret Manager חיצוני (Google Secret Manager, 1Password, וכו')
+- OS Keychain / איחסון מקומי מוצפן
+
+✅ **הגנה אוטומטית**:
+- קובץ `.gitignore` מגן על קבצי סיקרטים
+- אזהרות מובנות לפני commits
+- בדיקות אבטחה ב-workflows
+
+### **מה מוגן**
+
+ה-`.gitignore` מונע אוטומטית מ-commit:
+- קבצי סביבה: `*.env`, `.env.*`
+- קבצי סיקרטים: `secrets.*`, `*.key`, `*.pem`
+- קונפיגים מקומיים: `config/local*`, `config/dev*`
+- לוגים ודאמפים: `*.log`, `*.dump`, `logs/`
+
+### **מדיניות מלאה**
+
+למידע מקיף על מדיניות האבטחה, ראה:
+📜 [`policies/SECURITY_SECRETS_POLICY.md`](policies/SECURITY_SECRETS_POLICY.md)
+
+המדיניות כוללת:
+- 4 עקרונות יסוד (No Plain Text, Never Display, Human Auth, Minimal Privilege)
+- כללים לכל סוכן/כלי
+- תהליכי מיגרציה ו-incident response
+- אזורים רגישים (High Risk Zones)
+
+### **אם מצאת סיקרט בקוד 🚨**
+
+1. **לא לעשות commit!**
+2. הסר את הסיקרט מהקובץ
+3. החלף ב-placeholder: `${SECRET_NAME}`
+4. שמור את הסיקרט ב-GitHub Secrets / Environment
+5. רוטט את הסיקרט (יצירת אחד חדש)
+
+**זכור**: אם סיקרט כבר נכנס ל-commit, הוא **נשאר בהיסטוריה לצמיתות** וחייב רוטציה.
+
+---
+
 ## 💡 FAQ
 
 ### **ש: למה כל זה נראה מורכב?**

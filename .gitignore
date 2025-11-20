@@ -1,0 +1,140 @@
+# AI-OS .gitignore
+# Generated: 2025-11-20
+# Policy: SEC-001 (SECURITY_SECRETS_POLICY.md)
+
+# ============================================================================
+# SECRETS & CREDENTIALS (CRITICAL)
+# ============================================================================
+
+# Environment files
+*.env
+.env
+.env.*
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Secret files (any format)
+secrets.*
+secret.*
+*secrets*
+*secret*
+*.secret
+*.secrets
+
+# Keys & Certificates
+*.key
+*.pem
+*.p12
+*.pfx
+*.cer
+*.crt
+*.der
+
+# Credentials
+credentials.*
+*credentials*
+*.credentials
+auth.*
+*auth*
+token.*
+*token*
+
+# ============================================================================
+# LOCAL CONFIGURATION
+# ============================================================================
+
+# Local config files
+config/local*
+config/dev*
+config/test*
+config/*.local.*
+
+# ============================================================================
+# LOGS & TEMPORARY FILES
+# ============================================================================
+
+# Log files
+logs/
+*.log
+log.*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Dumps & Backups
+*.dump
+*.sql
+*.sqlite
+*.db
+*.bak
+backup/
+backups/
+
+# ============================================================================
+# DEVELOPMENT & BUILD
+# ============================================================================
+
+# Node modules (if we ever use JS/TS)
+node_modules/
+.npm
+.yarn
+
+# Python cache (if we ever use Python)
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+
+# IDE & Editor
+.vscode/
+.idea/
+*.sublime-*
+.project
+.classpath
+.settings/
+
+# OS Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Desktop.ini
+
+# ============================================================================
+# AI-OS SPECIFIC
+# ============================================================================
+
+# Never commit these if created locally
+/SECRETS/
+/secrets/
+/temp/
+/tmp/
+/test-data/
+
+# ============================================================================
+# NOTES
+# ============================================================================
+# This .gitignore protects ai-os from accidentally committing sensitive data.
+# For full security policy, see: policies/SECURITY_SECRETS_POLICY.md
+#
+# If you need to add a file that matches these patterns:
+# 1. Verify it contains NO secrets
+# 2. Use `git add -f <file>` to force add (with caution!)
+# 3. Document why in commit message
