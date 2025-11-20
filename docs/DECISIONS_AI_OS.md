@@ -148,6 +148,150 @@
 
 ---
 
+## 2025-11-20 – החלטה #4: סיום Phase 1 (Foundation) של AI-OS
+
+### הקשר
+במהלך התקופה האחרונה בנינו ריפו חדש בשם `ai-os` שנועד להיות ה-SSOT של מערכת ההפעלה האישית ל-AI (AI-OS).
+
+**נוצרו**:
+- **README** חדש ומפורט (420 שורות)
+- **מסמכי ליבה** (5 מסמכים):
+  - `CONSTITUTION.md` - 9 חוקי יסוד
+  - `SYSTEM_SNAPSHOT.md` v2 - צילום מצב מקיף
+  - `CAPABILITIES_MATRIX.md` v1.1 - 22 יכולות מתועדות
+  - `DECISIONS_AI_OS.md` - לוג החלטות (המסמך הזה)
+  - `REPO_AUDIT_make-ops-clean.md` - אודיט מלא של הריפו הישן
+- **מיפוי סוכנים** (2 מסמכים):
+  - `AGENTS_INVENTORY.md` - 8 סוכנים ממופים
+  - `GPT_GITHUB_AGENT.md` - תיעוד מלא של סוכן ליבה #1
+- **מיפוי כלים**:
+  - `TOOLS_INVENTORY.md` - 24 כלים ואינטגרציות
+- **מדיניות אבטחה**:
+  - `SECURITY_SECRETS_POLICY.md` - מדיניות מקיפה (720 שורות)
+- **שני Workflows רשמיים**:
+  - `WF-001` – GITHUB_PLANNING_DRY_RUN (570 שורות)
+  - `WF-002` – DECISION_LOGGING_AND_SSOT_UPDATE (737 שורות)
+
+**שאלה**: האם Phase 1 (Foundation) הושלם? האם המערכת מוכנה לשימוש?
+
+### ההחלטה
+**Phase 1 – Foundation של AI-OS נחשב הושלם.**
+
+- **סטטוס**: ✅ Phase 1 Complete - System Ready for Controlled Use
+- **מכאן והלאה**:
+  - `ai-os` הוא **מקור האמת היחיד** (SSOT) לתיעוד, יכולות, סוכנים, כלים ומדיניות
+  - המערכת מוכנה לשימוש **מבוקר** בחיים האמיתיים
+  - כל שינוי מהותי חדש יעבור דרך אחד מה-Workflows הרשמיים (לפחות WF-001 או WF-002)
+- **אין**: שימוש production אוטומטי, סוכנים אוטונומיים עם כתיבה, פעולות לא מפוקחות
+
+### רציונל
+
+**למה Phase 1 הושלם?**
+
+1. **כיסוי תיעודי חזק**:
+   - יש חוקה (9 עקרונות)
+   - יש צילום מצב מלא
+   - יש מפת יכולות (22 יכולות)
+   - יש לוג החלטות (4 החלטות כולל זו)
+
+2. **תיעוד ברור של רכיבים**:
+   - סוכן ליבה מתועד (GPT GitHub Agent)
+   - 24 כלים ממופים
+   - 8 סוכנים מסווגים
+   - יכולות ברורות לכל רכיב
+
+3. **מדיניות אבטחה**:
+   - מדיניות מקיפה לסיקרטים (720 שורות)
+   - זיהוי אזורים רגישים (SECRETS/, config/)
+   - כללים ברורים לכל סוכן/כלי
+   - תהליכי מיגרציה ו-incident response
+
+4. **Workflows מגינים**:
+   - WF-001: הגנה על שינויי GitHub (DRY RUN)
+   - WF-002: הגנה על החלטות + סנכרון SSOT
+   - Human-in-the-loop על כל פעולה קריטית
+
+5. **מיפוי סיכונים**:
+   - כל כלי מסווג לפי Risk Level
+   - זיהוי Unknown Tools (Make, Telegram, GitHub Actions)
+   - תוכנית ברורה לטיפול באבטחה
+
+**מה הושג?**
+- ✅ תשתית יציבה
+- ✅ תיעוד מקיף
+- ✅ מדיניות ברורה
+- ✅ בקרות בטיחות
+- ✅ Workflows פעילים
+
+**מה עדיין חסר?**
+- ⏳ סריקת אבטחה מלאה (config/, secrets)
+- ⏳ ברור Unknown Tools
+- ⏳ אוטומציה מתקדמת (Semi-Automated)
+- ⏳ Monitoring & Health Checks
+
+**למה "מבוקר" ולא "Production"?**
+- אין סוכנים אוטונומיים עם כתיבה
+- כל פעולה דורשת אישור אנושי
+- טרם בוצעה סריקת אבטחה מלאה
+- Human-in-the-loop נשאר חובה
+
+### השפעה על SSOT
+
+**מסמכים שעודכנו** ✅:
+
+1. **`docs/SYSTEM_SNAPSHOT.md`**:
+   - ✅ סעיף "איפה אנחנו עכשיו":
+     - הוסף: "✔ Phase 1 (Foundation) הושלם"
+     - עדכן: "⏳ בשלב הבא: Phase 2 - Security & Automation"
+   - ✅ סעיף "משימות פתוחות":
+     - הזז משימות Phase 1 ל-"הושלם"
+
+2. **`README.md`**:
+   - ✅ סעיף Roadmap:
+     - Phase 1: ~~In Progress~~ → **✅ COMPLETE**
+     - Phase 2: Upcoming → **🔄 NEXT**
+
+3. **`docs/CAPABILITIES_MATRIX.md`**:
+   - ✅ הוסף הערה בראש המסמך:
+     - "**System Status**: Foundation Complete (DECISION 2025-11-20 #4) - Ready for Controlled Use"
+
+4. **`docs/DECISIONS_AI_OS.md`** (מסמך זה):
+   - ✅ הוסף החלטה #4
+   - ✅ עדכן סיכום החלטות (4 החלטות)
+   - ✅ עדכן "עדכון אחרון"
+
+### Follow-ups
+
+**Phase 2 Options** - לבחור Thin Slice ראשון:
+
+**אפשרות A: Security Phase 1** (מומלץ):
+- [ ] הוספת `.gitignore` rules
+- [ ] סימון `SECRETS/` כמוגן
+- [ ] Warning ב-README על אזורים רגישים
+- [ ] סריקת `config/` לחיפוש secrets inline
+- [ ] יצירת רשימת מיגרציה
+
+**אפשרות B: Workflows נוספים**:
+- [ ] WF-003: Health Checks
+- [ ] WF-003: SSOT Auto-Update (חלקי)
+- [ ] WF-003: Secret Migration Process
+
+**אפשרות C: ברור Unknown Tools**:
+- [ ] בדיקת Make.com - בשימוש?
+- [ ] בדיקת Telegram Bot - איזה bot?
+- [ ] סריקת GitHub Actions - אילו workflows?
+- [ ] סקירת Config Files - secrets inline?
+
+**אפשרות D: תיעוד כלים פעילים**:
+- [ ] `tools/GITHUB_MCP.md`
+- [ ] `tools/WINDOWS_MCP.md`
+- [ ] `tools/FILESYSTEM_MCP.md`
+- [ ] `tools/GOOGLE_MCP.md`
+
+**חובה**: כל החלטה דומה בעתיד תעבור דרך **WF-002** ותעודכן ב-DECISIONS_AI_OS + SSOT.
+
+---
+
 ## סיכום ההחלטות
 
 | # | נושא | החלטה | סטטוס |
@@ -155,6 +299,7 @@
 | **1** | MCP Orchestration | לא נלקח כקוד רץ | 🗄️ Legacy (Reference Only) |
 | **2** | GitHub Executor API | לא פרוס | 📋 Designed (Not Deployed) |
 | **3** | GPT GitHub Agent Mode | DRY RUN בלבד | 🚧 Operational (Limited) |
+| **4** | Phase 1 Foundation | הושלם | ✅ Complete - Ready for Use |
 
 ---
 
@@ -171,5 +316,5 @@
 
 **סטטוס מסמך זה**: ✅ Active  
 **עדכון אחרון**: 20 נובמבר 2025  
-**החלטות נעולות**: 3 החלטות קריטיות  
+**החלטות נעולות**: 4 החלטות קריטיות  
 **הערה**: החלטות אלה ניתנות לשינוי בעתיד, אבל רק אחרי דיון מפורש ותיעוד של הרציונל לשינוי.
