@@ -1,6 +1,6 @@
-# System Snapshot – מצב נוכחי (Version 2 – 2025-11-20)
+# System Snapshot – מצב נוכחי (Version 3 – 2025-11-21)
 
-זהו צילום מצב מעודכן של מערכת ה-AI-OS שלי, אחרי סידור ראשוני של תיעוד, סוכנים, כלים ומדיניות אבטחה.
+זהו צילום מצב מעודכן של מערכת ה-AI-OS, אחרי הוספת GPT Planner ועידכון הארכיטקטורה הרשמית.
 
 ---
 
@@ -18,6 +18,7 @@ ai-os/
 │   ├── SYSTEM_SNAPSHOT.md       ✅ צילום מצב (הקובץ הזה)
 │   ├── CAPABILITIES_MATRIX.md   ✅ v1.1 (22 יכולות + 3 החלטות)
 │   ├── DECISIONS_AI_OS.md       ✅ 3 החלטות קריטיות נעולות
+│   ├── AGENT_ONBOARDING.md      ✅ מדריך לסוכנים
 │   └── REPO_AUDIT_make-ops-clean.md ✅ אודיט מלא של הריפו הישן
 ├── agents/                      ✅ 2 מסמכי סוכנים
 │   ├── AGENTS_INVENTORY.md      ✅ מיפוי 8 סוכנים
@@ -28,6 +29,8 @@ ai-os/
 │   └── TOOLS_INVENTORY.md       ✅ 24 כלים ממופים (327 שורות)
 ├── policies/                    ✅ 1 מדיניות
 │   └── SECURITY_SECRETS_POLICY.md ✅ מדיניות אבטחה (720 שורות)
+├── ai_core/                     🆕 **חדש!**
+│   └── gpt_orchestrator.py      ✅ GPT Planner - המוח הרשמי
 └── archive/                     📁 ריק (לעתיד)
 ```
 
@@ -54,7 +57,75 @@ ai-os/
 
 ---
 
-## 2. מסמכי ליבה (SSOT)
+## 2. ארכיטקטורת המערכת (🆕 עודכן!)
+
+### **הזרימה הרשמית**:
+
+```
+אור (ניסוח כוונות + החלטות + אישורים)
+     ↓
+GPT Planner (מוח התכנון - קורא SSOT + מחזיר תוכנית)
+  📍 ai_core/gpt_orchestrator.py
+  📖 קורא: CONSTITUTION, SYSTEM_SNAPSHOT, CAPABILITIES_MATRIX,
+           DECISIONS, AGENT_ONBOARDING, POLICIES
+     ↓
+Claude Desktop (הידיים המבצעות - Infrastructure CTO)
+  🤖 מציג תוכנית → מקבל ✅ → מבצע
+     ↓
+MCPs (כלי ביצוע)
+  📁 Filesystem MCP → יצירה/עריכת קבצים
+  🐙 GitHub MCP → git operations
+  🪟 Windows MCP → PowerShell, UI control
+  🌐 Google MCP → Gmail, Calendar, Drive (Read-Only)
+  🌍 Browser MCP → Web automation
+     ↓
+GitHub / Windows / Google / Web (המערכות האמיתיות)
+```
+
+### **חוק ברזל**: **אור לא מבצע עבודה טכנית.**
+
+**מה זה אומר בפועל**:
+- ❌ אור **לא** מריץ git commands
+- ❌ אור **לא** יוצר/עורך קבצים
+- ❌ אור **לא** מריץ פקודות PowerShell
+- ❌ אור **לא** פותח דפדפן לפעולות טכניות
+- ✅ אור **רק**: מנסח כוונות, מקבל החלטות, מאשר פעולות
+
+### **דוגמה לזרימה מלאה**:
+
+```
+1. אור: "צור workflow חדש לניהול secrets"
+   ↓
+2. Claude Desktop קורא ל-GPT Planner עם ה-intent
+   ↓
+3. GPT Planner:
+   - קורא CONSTITUTION, SECURITY_SECRETS_POLICY, CAPABILITIES_MATRIX
+   - מחזיר תוכנית: "צעדים: 1. צור קובץ WF-004.md, 2. עדכן SYSTEM_SNAPSHOT..."
+   ↓
+4. Claude Desktop מציג את התוכנית לאור
+   ↓
+5. אור: ✅
+   ↓
+6. Claude Desktop מבצע:
+   - Filesystem MCP → יוצר WF-004.md
+   - Filesystem MCP → מעדכן SYSTEM_SNAPSHOT.md
+   - autonomous-control → git add + commit + push
+   ↓
+7. Claude Desktop מדווח: "✅ בוצע! [קישור ל-commit]"
+```
+
+### **למה זה עובד?**
+
+| שכבה | תפקיד | יתרון |
+|------|-------|-------|
+| **אור** | ניסוח Intent | ברור מה המטרה |
+| **GPT Planner** | תכנון מול SSOT | תוכנית עקבית עם מדיניות |
+| **Claude Desktop** | ביצוע | אוטומציה מלאה אחרי אישור |
+| **MCPs** | גישה למערכות | אין תלות באור לטכני |
+
+---
+
+## 3. מסמכי ליבה (SSOT)
 
 ### `docs/CONSTITUTION.md`
 **9 חוקי היסוד** של המערכת:
@@ -511,18 +582,18 @@ ai-os/
 ---
 
 **סטטוס Snapshot זה**: ✅ Active & Current  
-**גרסה**: 2.0  
-**עדכון אחרון**: 20 נובמבר 2025  
-**עדכון הבא**: לאחר השלמת Phase 1 או הוספת Workflow נוסף
+**גרסה**: 3.0  
+**עדכון אחרון**: 21 נובמבר 2025  
+**עדכון הבא**: לאחר הוספת Workflow נוסף או שינוי ארכיטקטוני
 
 ---
 
 **המערכת מוכנה לשימוש!** 🚀
 
-הבסיס יציב, התיעוד מקיף, והמדיניות ברורה. עכשיו אפשר:
-- להפעיל workflows קיימים
-- להוסיף workflows חדשים
-- לטפל באבטחה (Phase 1-2)
-- לברר כלים לא ברורים
+עכשיו עם **GPT Planner** כמוח רשמי:
+- כל שינוי מתוכנן קודם דרך GPT Planner
+- אור מנסח כוונות ומאשר - לא מבצע טכני
+- Claude Desktop מבצע אוטומטית דרך MCPs
+- המערכת עקבית ומכבדת מדיניות
 
 **הצעד הבא תלוי בך!** 🎯
