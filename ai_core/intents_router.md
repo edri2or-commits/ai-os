@@ -495,14 +495,41 @@ def get_status(job_id: str):
 
 ## 🎯 סטטוס נוכחי
 
-| רכיב | מצב | הערות |
-|------|-----|-------|
-| **Intent Router** | 📋 תיעוד בלבד | המסמך הזה |
-| **GPT Planner** | ✅ פעיל | רץ במחשב של אור |
-| **Claude Desktop** | ✅ פעיל | מבצע דרך MCPs |
-| **Workflows** | ✅ פעיל | WF-001/002/003 |
-| **API Server** | ❌ לא קיים | צריך לפתח |
-| **Chat Integrations** | ❌ לא קיים | צריך לפתח |
+**Status**: ✅ **IMPLEMENTED v0.1** - `route_intent` wraps GPT Planner
+
+**מה עובד עכשיו**:
+- ✅ קובץ: `ai_core/intent_router.py`
+- ✅ פונקציה ראשית: `route_intent(intent_text: str) -> Dict[str, Any]`
+- ✅ מקבל intent טקסטואלי
+- ✅ קורא ל-GPT Planner (`gpt_orchestrator.plan_change`)
+- ✅ מחזיר dict מובנה
+
+**פורמט תשובה נוכחי (v0.1)**:
+```python
+{
+    "raw_plan": str,  # תכנית מלאה מ-GPT Planner
+    "intent": str,    # הכוונה המקורית
+    "version": "0.1"  # גרסת Router
+}
+```
+
+**דוגמת שימוש**:
+```python
+from ai_core.intent_router import route_intent
+
+result = route_intent("צור workflow חדש לגיבוי")
+print(result["raw_plan"])  # מדפיס תכנית מלאה
+```
+
+**מה חסר (v1.0)**:
+- ⚠️ Parsing של `raw_plan` לפי `GPT_PLANNER_CONTRACT`
+- ⚠️ חילוץ 5 הסעיפים (מה הבנתי, הקשר, תכנית, פעולות, החלטות)
+- ⚠️ Error handling מתקדם
+
+**תלויות**:
+- ✅ Python 3.8+
+- ✅ `openai` package
+- ✅ `OPENAI_API_KEY` ב-environment
 
 ---
 
