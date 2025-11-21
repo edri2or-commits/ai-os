@@ -19,41 +19,87 @@
 
 ## 📤 פלט מ-GPT Planner (Output Contract)
 
-### **פורמט תשובה סטנדרטי**:
+### **פורמט תשובה סטנדרטי (v2.0)**:
 
-GPT Planner **חייב** להחזיר תשובה במבנה הבא:
+GPT Planner **חייב** להחזיר JSON מובנה במבנה הבא:
 
-```markdown
-1. מה הבנתי מהכוונה:
-[סיכום קצר של ה-intent של אור - 1-3 משפטים]
-
-2. הקשר רלוונטי מתוך ה-SSOT (בקצרה):
-[אילו מסמכים/מדיניות רלוונטיים - 2-4 משפטים]
-
-3. תכנית פעולה צעד-צעד:
-   - [צעד 1: תיאור ברור]
-   - [צעד 2: תיאור ברור]
-   - [צעד N: תיאור ברור]
-
-4. מה צריך Claude לעשות בפועל (פעולות טכניות):
-   - [פעולה טכנית 1: קובץ/git/command]
-   - [פעולה טכנית 2: קובץ/git/command]
-   - [פעולה טכנית N: קובץ/git/command]
-
-5. מה אור צריך רק לאשר / להחליט:
-   - [החלטה 1]
-   - [החלטה 2]
+```json
+{
+  "summary": "סיכום קצר של ה-intent (1-3 משפטים)",
+  "context": "הקשר מ-SSOT - מסמכים/מדיניות רלוונטיים (2-4 משפטים)",
+  "steps": [
+    "צעד 1: תיאור ברור",
+    "צעד 2: תיאור ברור",
+    "צעד N: תיאור ברור"
+  ],
+  "actions_for_claude": [
+    {
+      "type": "file.create",
+      "params": {
+        "path": "workflows/WF-004.md",
+        "content": "# WF-004\n\n..."
+      },
+      "approval": "auto",
+      "description": "יצירת קובץ workflow"
+    },
+    {
+      "type": "git.commit",
+      "params": {
+        "files": ["workflows/WF-004.md"],
+        "message": "feat: add WF-004"
+      },
+      "approval": "auto",
+      "description": "commit של שינויים"
+    }
+  ],
+  "decisions_for_or": [
+    "החלטה 1: מה אור צריך לאשר",
+    "החלטה 2: מה אור צריך לאשר"
+  ]
+}
 ```
 
 ### **שדות חובה**:
 
-| סעיף | חובה? | מטרה |
-|------|-------|------|
-| **1. מה הבנתי** | ✅ כן | אימות הבנה משותפת |
-| **2. הקשר מ-SSOT** | ✅ כן | עקיבות עם מדיניות |
-| **3. תכנית צעד-צעד** | ✅ כן | מפת דרכים ברורה |
-| **4. פעולות Claude** | ✅ כן | הוראות ביצוע מפורשות |
-| **5. מה אור מאשר** | ✅ כן | הבהרת נקודות החלטה |
+| שדה | סוג | חובה? | תיאור |
+|------|-----|-------|-------|
+| `summary` | string | ✅ כן | מה הבנתי מהכוונה |
+| `context` | string | ✅ כן | הקשר רלוונטי מ-SSOT |
+| `steps` | List[string] | ✅ כן | תכנית צעד-צעד |
+| `actions_for_claude` | List[Action] | ✅ כן | פעולות טכניות מובנות (JSON) |
+| `decisions_for_or` | List[string] | ✅ כן | מה אור מאשר/מחליט |
+
+### **שינוי קריטי מ-v1.0**:
+
+⚠️ **`actions_for_claude` כעת חייב להיות JSON מובנה, לא טקסט חופשי!**
+
+**לפני (v1.0)**: 
+```json
+"actions_for_claude": [
+  "צור קובץ workflows/WF-004.md",
+  "עשה commit עם הודעה 'feat: add WF-004'"
+]
+```
+
+**עכשיו (v2.0)**:
+```json
+"actions_for_claude": [
+  {
+    "type": "file.create",
+    "params": {"path": "workflows/WF-004.md", "content": "..."},
+    "approval": "auto",
+    "description": "יצירת workflow"
+  },
+  {
+    "type": "git.commit",
+    "params": {"files": ["workflows/WF-004.md"], "message": "feat: add WF-004"},
+    "approval": "auto",
+    "description": "commit"
+  }
+]
+```
+
+**סכמת Actions מלאה**: ראה `docs/ACTION_EXECUTION_SCHEMA.md`
 
 ---
 

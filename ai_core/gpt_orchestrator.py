@@ -12,6 +12,7 @@ SSOT_FILES = [
     REPO_ROOT / "docs" / "CAPABILITIES_MATRIX.md",
     REPO_ROOT / "docs" / "DECISIONS_AI_OS.md",
     REPO_ROOT / "docs" / "AGENT_ONBOARDING.md",
+    REPO_ROOT / "docs" / "ACTION_EXECUTION_SCHEMA.md",
     REPO_ROOT / "policies" / "HUMAN_TECH_INTERACTION_POLICY.md",
     REPO_ROOT / "policies" / "SECURITY_SECRETS_POLICY.md",
 ]
@@ -47,7 +48,7 @@ def plan_change(intent: str) -> dict:
         - summary: str (מה הבנתי מהכוונה)
         - context: str (הקשר מ-SSOT)
         - steps: List[str] (תכנית צעד-צעד)
-        - actions_for_claude: List[str] (פעולות טכניות)
+        - actions_for_claude: List[Action] (פעולות טכניות מובנות)
         - decisions_for_or: List[str] (מה אור מאשר)
     """
     client = get_client()
@@ -70,13 +71,17 @@ def plan_change(intent: str) -> dict:
       "context": "הקשר רלוונטי מתוך ה-SSOT (2-4 משפטים)",
       "steps": [
         "צעד 1: תיאור",
-        "צעד 2: תיאור",
-        "צעד N: תיאור"
+        "צעד 2: תיאור"
       ],
       "actions_for_claude": [
-        "פעולה טכנית 1",
-        "פעולה טכנית 2",
-        "פעולה טכנית N"
+        {
+          "type": "file.create | file.update | file.delete | git.commit | git.push | workflow.run | validation.check",
+          "params": {
+            // Parameters specific to action type (see ACTION_EXECUTION_SCHEMA.md)
+          },
+          "approval": "auto | manual",
+          "description": "תיאור קצר למה הפעולה"
+        }
       ],
       "decisions_for_or": [
         "החלטה 1",
@@ -84,8 +89,24 @@ def plan_change(intent: str) -> dict:
       ]
     }
     
+    IMPORTANT: actions_for_claude MUST be structured JSON objects, NOT free text!
+    
+    Action Types (from ACTION_EXECUTION_SCHEMA.md):
+    1. file.create: {"path": "...", "content": "..."}
+    2. file.update: {"path": "...", "edits": [{"old_text": "...", "new_text": "..."}]}
+    3. file.delete: {"path": "..."} - ALWAYS approval: "manual"
+    4. git.commit: {"files": ["..."], "message": "..."}
+    5. git.push: {} - no params
+    6. workflow.run: {"workflow_id": "WF-00X", "inputs": {...}}
+    7. validation.check: {"check_type": "...", "target": "..."}
+    
+    Approval Rules:
+    - "auto": Safe, repeatable operations (create, update, commit, push)
+    - "manual": Destructive or critical operations (delete, workflow.run, secrets)
+    
     DO NOT include anything except valid JSON in your response.
     DO NOT wrap JSON in markdown code blocks.
+    DO NOT use free text for actions_for_claude - ONLY structured JSON objects.
     """
 
     user_prompt = f"""
@@ -97,6 +118,9 @@ def plan_change(intent: str) -> dict:
 
     אל תמציא דברים שלא קיימים ב-SSOT.
     הקפד שכל פעולה טכנית משויכת ל-Claude / סוכנים אחרים, לא לאור.
+    
+    CRITICAL: actions_for_claude MUST be structured JSON (type, params, approval, description).
+    See ACTION_EXECUTION_SCHEMA.md for exact format.
     
     RESPOND WITH VALID JSON ONLY.
     """
@@ -140,6 +164,7 @@ if __name__ == "__main__":
         sys.stdout = codecs.getwriter('utf-8')(sys.stdout.buffer, 'strict')
     
     # דוגמת הרצה בסיסית
-    example_intent = "לעדכן את SYSTEM_SNAPSHOT כך שישקף את המדיניות HUMAN_TECH_INTERACTION_POLICY החדשה."
+    example_intent = "צור קובץ README.md פשוט עם הסבר על הפרויקט"
     plan = plan_change(example_intent)
-    print(plan)
+    import json
+    print(json.dumps(plan, ensure_ascii=False, indent=2))
