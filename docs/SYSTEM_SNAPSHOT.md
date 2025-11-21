@@ -13,12 +13,13 @@
 ```
 ai-os/
 ├── README.md                    ✅ מדריך ראשי מקיף (420 שורות)
-├── docs/                        ✅ 5 מסמכי SSOT
+├── docs/                        ✅ 6 מסמכי SSOT
 │   ├── CONSTITUTION.md          ✅ 9 חוקי יסוד
 │   ├── SYSTEM_SNAPSHOT.md       ✅ צילום מצב (הקובץ הזה)
 │   ├── CAPABILITIES_MATRIX.md   ✅ v1.1 (22 יכולות + 3 החלטות)
 │   ├── DECISIONS_AI_OS.md       ✅ 3 החלטות קריטיות נעולות
 │   ├── AGENT_ONBOARDING.md      ✅ מדריך לסוכנים
+│   ├── GPT_PLANNER_CONTRACT.md  🆕 חוזה תכנון רשמי
 │   └── REPO_AUDIT_make-ops-clean.md ✅ אודיט מלא של הריפו הישן
 ├── agents/                      ✅ 2 מסמכי סוכנים
 │   ├── AGENTS_INVENTORY.md      ✅ מיפוי 8 סוכנים
@@ -122,6 +123,17 @@ GitHub / Windows / Google / Web (המערכות האמיתיות)
 | **GPT Planner** | תכנון מול SSOT | תוכנית עקבית עם מדיניות |
 | **Claude Desktop** | ביצוע | אוטומציה מלאה אחרי אישור |
 | **MCPs** | גישה למערכות | אין תלות באור לטכני |
+
+### **החוזה הרשמי** 📋
+
+הממשק בין GPT Planner ל-Claude מוגדר ב-**[GPT_PLANNER_CONTRACT.md](./GPT_PLANNER_CONTRACT.md)**:
+
+- **פורמט קבוע**: GPT מחזיר 5 סעיפים (מה הבנתי, הקשר, תכנית, פעולות Claude, מה אור מאשר)
+- **פרשנות אחידה**: Claude יודע בדיוק איך לבצע כל פעולה
+- **דיווח סטנדרטי**: תמיד יש קישור ל-commit + סיכום
+- **טיפול בשגיאות**: אם משהו נכשל → עצירה + דיווח מיידי
+
+**קראו את החוזה לפני שעובדים עם GPT Planner!**
 
 ---
 

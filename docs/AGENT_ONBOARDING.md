@@ -108,6 +108,7 @@ GitHub / Windows / Google / Web (המערכות האמיתיות)
      - מקבל intent מאור
      - קורא את כל ה-SSOT
      - מחזיר תוכנית פעולה מפורטת
+   - **החוזה**: [`docs/GPT_PLANNER_CONTRACT.md`](./GPT_PLANNER_CONTRACT.md) - הממשק הרשמי
    - **זמן**: 5 דקות
    - **תוצאה**: מבין איך התכנון עובד במערכת
 
@@ -635,6 +636,7 @@ WF-002 (Decision Logging) - זו החלטה שמשנה איך המערכת פו�
 | **SYSTEM_SNAPSHOT** | מצב נוכחי | [`docs/SYSTEM_SNAPSHOT.md`](./SYSTEM_SNAPSHOT.md) |
 | **CAPABILITIES_MATRIX** | יכולות | [`docs/CAPABILITIES_MATRIX.md`](./CAPABILITIES_MATRIX.md) |
 | **DECISIONS** | החלטות | [`docs/DECISIONS_AI_OS.md`](./DECISIONS_AI_OS.md) |
+| **GPT_PLANNER_CONTRACT** | חוזה תכנון | [`docs/GPT_PLANNER_CONTRACT.md`](./GPT_PLANNER_CONTRACT.md) |
 
 ### **Workflows** (לעבודה מעשית):
 
