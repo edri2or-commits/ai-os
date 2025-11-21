@@ -10,8 +10,13 @@ Status: IMPLEMENTED v2.0
 - Error flagging for invalid actions
 """
 
+import os
 from typing import Dict, Any, List
+from dotenv import load_dotenv
 from ai_core.gpt_orchestrator import plan_change
+
+# Load environment variables
+load_dotenv()
 
 
 # Valid action types from ACTION_EXECUTION_SCHEMA.md
