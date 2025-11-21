@@ -1,159 +1,155 @@
-# Tool Limitations – מגבלות כלים ידועות
+# Tool Limitations - מגבלות כלים טכניים
 
 **Created**: 2025-11-21  
-**Purpose**: תיעוד מגבלות כלים וכישלונות טכניים שנתגלו  
-**Status**: ✅ Active
+**Purpose**: תיעוד מגבלות הכלים הטכניים של Claude וכיצד לעקוף אותן  
+**Status**: Active
 
 ---
 
 ## 🎯 מטרת המסמך
 
-מסמך זה מתעד:
-- מגבלות ידועות של MCPs וכלים
-- כישלונות טכניים שנתקלנו בהם
-- פתרונות עוקפים או ארכיטקטורה חלופית
-- מה חסר לנו וצריך להוסיף
-
-**חשוב**: כאשר Claude נתקל במגבלת כלי במהלך ביצוע משימה, הוא מתעד כאן במקום להעביר עבודה טכנית לאור.
+מסמך זה מתעד מגבלות ידועות בכלים שClaude משתמש בהם, כדי:
+- לא לבזבז זמן על ניסיונות שידועים כנכשלים
+- להציע פתרונות עיצוביים במקום workarounds טכניים
+- לשמור על העיקרון: **אור לא עושה שום פעולה טכנית**
 
 ---
 
-## 📋 מגבלות ידועות
+## 🚫 מגבלות ידועות
 
-### ❌ אין גישה ל-OpenAI API מ-Claude's Computer
+### **1. Tunnel Services (Cloudflare/ngrok) - Authentication Required**
 
-**תאריך**: 2025-11-21  
-**כלי מושפע**: GPT Planner (`ai_core/gpt_orchestrator.py`)  
-**תיאור**:
-- GPT Planner דורש `openai` Python package
-- Claude's computer (במרחב ה-bash) אין לו את החבילה
-- Claude's computer לא יכול להריץ את GPT Planner ישירות
+**תיאור המגבלה**:
+- Cloudflare Tunnel דורש login דרך דפדפן (OAuth)
+- ngrok דורש API token (נרכש אחרי הרשמה)
+- LocalTunnel לא יציב מספיק לשימוש production
 
-**פתרון עוקף נוכחי**:
-✅ GPT Planner רץ **במחשב של אור** (Windows)
-- אור מריץ: `python ai_core/gpt_orchestrator.py`
-- הסקריפט קורא SSOT, קורא ל-GPT, ומחזיר תכנית
-- Claude Desktop מקבל את התכנית ומבצע
+**מה לא אפשרי**:
+- ❌ Claude לא יכול לפתוח דפדפן ולהתחבר
+- ❌ Claude לא יכול להירשם לשירותים חדשים
+- ❌ Claude לא יכול לקבל tokens אוטומטית
 
-**מה זה אומר**:
-- Claude Desktop **לא** מריץ את GPT Planner בעצמו
-- Claude Desktop מקבל תוכנית **מוכנה** מ-GPT Planner
-- התהליך עדיין אוטומטי אחרי אישור של אור
+**פתרון עיצובי**: 
+→ **אור צריך לבצע הרשמה חד-פעמית, ואז Claude ישתמש ב-token**
 
-**האם זו בעיה?**
-❌ **לא** - זה בדיוק התכנון:
-- אור: מנסח כוונה
-- GPT Planner: מתכנן (במחשב של אור)
-- Claude Desktop: מבצע (עם MCPs)
-
-**האם צריך לפתור?**
-- ⚠️ **אפשרי אבל לא הכרחי** - אפשר להוסיף MCP ל-OpenAI API בעתיד
-- ✅ **הפתרון הנוכחי עובד טוב** - המערכת פועלת כמתוכנן
+**תיעוד הפתרון**: `docs/PUBLIC_HTTPS_SETUP.md`
 
 ---
 
-### ℹ️ bash_tool עובד רק ב-Claude's Computer
+### **2. Environment Variables - No Persistent Session**
 
-**תאריך**: 2025-11-21  
-**כלי מושפע**: `bash_tool`  
-**תיאור**:
-- `bash_tool` מריץ פקודות ב-Claude's computer (Linux container)
-- לא יכול לגשת ישירות לקבצים של אור ב-Windows
+**תיאור המגבלה**:
+- Claude יכול להגדיר `set VARIABLE=value` ב-cmd
+- אבל זה תקף רק לחלון הפקודה הנוכחי
+- אין דרך לעדכן system environment באופן קבוע
 
-**פתרון נוכחי**:
-✅ שימוש ב-`Filesystem` MCP ו-`autonomous-control` לגישה למחשב של אור
-- `Filesystem:read_text_file` - קריאת קבצים מ-Windows
-- `Filesystem:write_file` - כתיבת קבצים ל-Windows  
-- `autonomous-control:execute_command` - הרצת git/PowerShell ב-Windows
+**מה לא אפשרי**:
+- ❌ הגדרת OPENAI_API_KEY קבועה
+- ❌ הגדרת tokens קבועות
+- ❌ שמירת קונפיגורציה בין הרצות
 
-**האם זו בעיה?**
-❌ **לא** - יש לנו את הכלים הנכונים
+**פתרון עיצובי**:
+→ **שימוש ב-.env files + python-dotenv**
 
 ---
 
-## ✅ כלים שעובדים מצוין
+### **3. Browser/GUI Operations - No Visual Access**
 
-### Filesystem MCP
-- ✅ קריאת קבצים מ-Windows של אור
-- ✅ כתיבת קבצים ל-Windows של אור
-- ✅ עריכת קבצים (str_replace)
-- ✅ יצירת תיקיות
+**תיאור המגבלה**:
+- Claude לא יכול לפתוח דפדפן
+- Claude לא יכול ללחוץ על כפתורים ב-GUI
+- Claude לא יכול להזין credentials באתרים
 
-### autonomous-control MCP
-- ✅ git commands (add, commit, push)
-- ✅ PowerShell commands
-- ✅ הרצת Python scripts
+**מה לא אפשרי**:
+- ❌ Login לשירותים דרך דפדפן
+- ❌ OAuth flows
+- ❌ CAPTCHA solving
 
-### GitHub MCP
-- לא נבדק עדיין - יש פונקציונליות גיבוי
+**פתרון עיצובי**:
+→ **אור מבצע setup חד-פעמי, Claude משתמש ב-CLI/API**
 
 ---
 
-## 🔧 פתרונות ארכיטקטורה
+## ✅ פתרונות מומלצים
 
-### דפוס עבודה נוכחי (עובד! ✅)
+### **Tunnel Setup - המלצה**
 
+**תהליך מומלץ**:
+
+1. **אור מבצע (פעם אחת)**:
+   ```bash
+   # Install Cloudflare Tunnel
+   winget install Cloudflare.cloudflared
+   
+   # Login (opens browser)
+   cloudflared tunnel login
+   
+   # Create tunnel
+   cloudflared tunnel create ai-os-gateway
+   
+   # Get tunnel ID
+   cloudflared tunnel list
+   ```
+
+2. **Claude ממשיך**:
+   - קורא את ה-tunnel ID מהפלט
+   - יוצר config.yml
+   - מפעיל את ה-tunnel
+   - מחזיר PUBLIC_URL
+
+**תיעוד מלא**: `docs/PUBLIC_HTTPS_SETUP.md`
+
+---
+
+### **Environment Variables - המלצה**
+
+**במקום `set` זמני, שימוש ב-.env**:
+
+```python
+# .env file
+OPENAI_API_KEY=sk-...
+TUNNEL_TOKEN=...
+
+# Python code
+from dotenv import load_dotenv
+load_dotenv()
+
+api_key = os.getenv("OPENAI_API_KEY")
 ```
-1. אור: "צור workflow חדש"
-   ↓
-2. Claude Desktop קורא ל:
-   python ai_core/gpt_orchestrator.py --intent "צור workflow חדש"
-   (רץ במחשב של אור, עם OpenAI SDK)
-   ↓
-3. GPT Planner מחזיר תכנית מובנית
-   ↓
-4. Claude Desktop מציג ומבקש אישור
-   ↓
-5. אור: ✅
-   ↓
-6. Claude Desktop מבצע עם Filesystem + autonomous-control MCPs
-```
 
-**למה זה עובד טוב**:
-- ✅ OpenAI API רץ במקום הנכון (Windows)
-- ✅ SSOT נגיש (Filesystem MCP)
-- ✅ ביצוע אוטומטי (autonomous-control)
-- ✅ אור לא עושה טכני
+**יתרונות**:
+- ✅ קובץ `.env` נשמר בין הרצות
+- ✅ לא נכנס ל-git (בזכות `.gitignore`)
+- ✅ Claude יכול לקרוא/לכתוב אותו
 
 ---
 
-## 📊 סטטוס סיכום
+## 📝 תהליך מומלץ לפיצ'רים חדשים
 
-| רכיב | מצב | הערות |
-|------|-----|-------|
-| **GPT Planner** | ✅ פעיל | רץ במחשב של אור |
-| **Claude Desktop** | ✅ פעיל | מבצע דרך MCPs |
-| **Filesystem MCP** | ✅ עובד | גישה מלאה לקבצים |
-| **autonomous-control** | ✅ עובד | git + PowerShell |
-| **GPT Planner ב-Claude's computer** | ⚠️ לא זמין | לא הכרחי |
+כשצריך פיצ'ר שדורש external service:
 
----
-
-## 🚀 שיפורים אפשריים (עתיד)
-
-### אופציה 1: MCP לקריאת GPT API
-- ליצור MCP שקורא ל-OpenAI API
-- Claude Desktop יכול לקרוא ישירות
-- **יתרון**: צעד אחד פחות
-- **חיסרון**: צריך לפתח MCP חדש
-
-### אופציה 2: להשאיר כמו שזה
-- הדפוס הנוכחי עובד טוב
-- אור מריץ GPT Planner כשצריך
-- Claude מבצע את התכנית
-- **יתרון**: פשוט ועובד
-- **חיסרון**: צעד נוסף (לא אוטומטי לגמרי)
+1. **Claude מזהה מגבלה** → מעבר ל-DESIGN mode
+2. **Claude יוצר**:
+   - מסמך setup (`docs/FEATURE_SETUP.md`)
+   - הוראות ברורות לאור (צעדים מינימליים)
+   - סקריפט שClaude ירוץ אחרי שאור סיים
+3. **אור מבצע setup** (פעם אחת, מינימלי)
+4. **Claude ממשיך** עם ה-automation
 
 ---
 
-## 📝 לוג שינויים
+## 🎯 עקרונות תיעוד מגבלות
 
-### 2025-11-21
-- ✅ תיעוד מגבלת OpenAI API ב-Claude's computer
-- ✅ תיעוד הדפוס העובד הנוכחי
-- ✅ תיעוד כלים שעובדים מצוין
+כשמזהים מגבלה חדשה:
+
+1. **תעד כאן** (TOOL_LIMITATIONS.md)
+2. **הסבר למה** זה לא אפשרי
+3. **הצע פתרון עיצובי** (לא workaround)
+4. **צור מסמך setup** נפרד אם צריך
+5. **שמור על העיקרון**: אור עושה מינימום, Claude מקסימום
 
 ---
 
-**נזכיר**: כל כישלון טכני שנתקלים בו = תיעוד כאן + הצעת פתרון + המשך עבודה.  
-**לא** = העברת עבודה טכנית לאור. ✨
+**Document Status**: ✅ Active  
+**Last Updated**: 2025-11-21  
+**Next Review**: When new limitations discovered
