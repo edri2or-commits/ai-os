@@ -1,4 +1,15 @@
-# AI-OS – מערכת ההפעלה האישית שלי ל-AI
+# AI-OS
+
+## 🏗️ Architecture
+
+AI-OS operates through a structured pipeline:
+
+1. **Intent Router** - Entry point for user intents (natural language)
+2. **GPT Planner** - Converts intents into structured action plans
+3. **Action Executor** - Executes validated actions automatically
+4. **Git Integration** - Commits and pushes changes to GitHub
+
+Every change flows through this pipeline, ensuring consistency and traceability. – מערכת ההפעלה האישית שלי ל-AI
 
 `ai-os` הוא ריפו ה־**Single Source of Truth (SSOT)** שלי למערכת הפעלה אישית מרובת־סוכנים (Multi-Agent OS).  
 זו שכבת הבקרה שמחברת בין סוכני AI, כלים, אינטגרציות ו־workflows – בצורה **בטוחה, שקופה ומבוקרת**.
