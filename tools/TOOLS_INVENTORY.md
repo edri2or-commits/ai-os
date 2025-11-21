@@ -3,8 +3,17 @@
 **מטרת המסמך**: מיפוי מקיף של כל הכלים, אינטגרציות וממשקים במערכת AI-OS.
 
 **תאריך יצירה**: 20 נובמבר 2025  
-**גרסה**: 1.0  
+**עדכון אחרון**: 21 נובמבר 2025  
+**גרסה**: 1.1  
 **מבוסס על**: CAPABILITIES_MATRIX.md, REPO_AUDIT, SYSTEM_SNAPSHOT, AGENTS_INVENTORY
+
+---
+
+## 🔗 קישורים למסמכים קשורים
+
+- **[CLAUDE_DESKTOP_CAPABILITIES.md](../docs/CLAUDE_DESKTOP_CAPABILITIES.md)** - Session Inventory של היכולות המדויקות של Claude Desktop **ממש עכשיו**
+- **[HUMAN_TECH_INTERACTION_POLICY.md](../policies/HUMAN_TECH_INTERACTION_POLICY.md)** - מדיניות "אור לא עושה עבודה טכנית"
+- **[HUMAN_TECH_POLICY_SOURCES.md](../docs/HUMAN_TECH_POLICY_SOURCES.md)** - מקורות המדיניות מהריפו הישן
 
 ---
 
@@ -21,11 +30,11 @@
 
 | # | ToolName | Type | Scope | DefinedIn | SecretsLocation | Status | RiskLevel | Notes |
 |---|----------|------|-------|-----------|-----------------|--------|-----------|-------|
-| **1** | Claude Desktop | MCP Client | GitHub, Filesystem, Windows, Google | Claude.ai App + Local Config | Local (Claude App) | ✅ Active | High | Gateway לכל ה-MCP servers. גישה מלאה למחשב ולגיטהאב |
-| **2** | GitHub MCP Server | MCP | GitHub Repos | Claude Desktop MCP Servers | GitHub OAuth Token (Claude) | ✅ Active | High | קריאה/כתיבה לריפואים. משמש ל-`ai-os` ו-`make-ops-clean` |
-| **3** | Filesystem MCP Server | MCP | Local Files | Claude Desktop MCP Servers | None (Local Access) | ✅ Active | High | גישה לקבצים מקומיים בתוך allowed directories |
-| **4** | Windows MCP Server | MCP | Windows OS | Claude Desktop MCP Servers | None (Local Access) | ✅ Active | Critical | PowerShell, UI Control, App Launch. גישה מלאה למערכת |
-| **5** | Google MCP Server | MCP | Gmail, Calendar, Drive | Claude Desktop MCP Servers | Google OAuth Token (Claude) | ✅ Active (READ) | Medium | READ-ONLY כרגע. Write דורש OAuth נוסף |
+| **1** | [Claude Desktop](#claude-desktop-full-details) | MCP Client | GitHub, Filesystem, Windows, Google | Claude.ai App + Local Config | Local (Claude App) | ✅ Active | High | Gateway לכל ה-MCP servers. גישה מלאה למחשב ולגיטהאב. [Full Capabilities →](../docs/CLAUDE_DESKTOP_CAPABILITIES.md) |
+| **2** | [GitHub MCP](#github-mcp-full-details) | MCP | GitHub Repos | Claude Desktop MCP Servers | GitHub OAuth Token (Claude) | ✅ Active | High | קריאה/כתיבה לריפואים. [Details →](../docs/CLAUDE_DESKTOP_CAPABILITIES.md#2-github-integration) |
+| **3** | [Filesystem MCP](#filesystem-mcp-full-details) | MCP | Local Files | Claude Desktop MCP Servers | None (Local Access) | ✅ Active | High | גישה לקבצים מקומיים. [Details →](../docs/CLAUDE_DESKTOP_CAPABILITIES.md#1-filesystem-operations) |
+| **4** | [Windows MCP](#windows-mcp-full-details) | MCP | Windows OS | Claude Desktop MCP Servers | None (Local Access) | ✅ Active | Critical | PowerShell, UI Control, App Launch. [Details →](../docs/CLAUDE_DESKTOP_CAPABILITIES.md#3-windows-control) |
+| **5** | [Google MCP](#google-mcp-full-details) | MCP | Gmail, Calendar, Drive | Claude Desktop MCP Servers | Google OAuth Token (Claude) | ✅ Active (READ) | Medium | READ-ONLY כרגע. [Details →](../docs/CLAUDE_DESKTOP_CAPABILITIES.md#4-google-workspace) |
 | **6** | GPT GitHub Agent | Python Script | GitHub Planning | `make-ops-clean/gpt_agent/github_agent.py` | GPT API Key (env) | 🚧 DRY RUN | Medium | Planner בלבד. אין write permissions |
 | **7** | GPT API Wrapper | API Client | OpenAI GPT | `make-ops-clean/gpt-api/` | OpenAI API Key (env) | 🗄️ Legacy | Low | Wrapper ל-GPT API. לא בשימוש אקטיבי |
 | **8** | GitHub Executor API | Cloud Run API | GitHub Automation | `make-ops-clean/cloud-run/google-workspace-github-api/` | GitHub PAT (Cloud Run Secrets) | 📋 Designed | Critical | **לא פרוס**. Blueprint בלבד. דורש PAT |
@@ -41,10 +50,10 @@
 | **18** | GitHub Integration Scripts | Python Scripts | GitHub API | `make-ops-clean/github_integration/` | GitHub PAT (env) | 🗄️ Legacy | High | סקריפטים ישנים. **לא בשימוש** |
 | **19** | Automation Scripts | Shell/Python | Task Automation | `make-ops-clean/automation/` | Various | 🗄️ Legacy | Medium | Makefiles, cron jobs. **לא בשימוש** |
 | **20** | Config Files | YAML/JSON | System Config | `make-ops-clean/config/` | Inline secrets (⚠️) | 🗄️ Legacy | Critical | **דורש סקירת אבטחה**. ייתכן secrets |
-| **21** | Canva Integration | API | Design Tools | Claude Desktop Tools | Canva OAuth | ✅ Active | Low | יצירת עיצובים, ניהול תוכן |
-| **22** | Browser Control MCP | MCP | Web Browser | Claude Desktop (via MCP) | None (Local) | ✅ Active | Medium | ניווט, צילומי מסך, אינטראקציה |
-| **23** | Autonomous Control | MCP | System Commands | Claude Desktop (via MCP) | None (Local) | ✅ Active | Critical | הרצת פקודות, התקנת תוכנה, Git |
-| **24** | GitHub Control | MCP | GitHub Mgmt | Claude Desktop (via MCP) | GitHub OAuth | ✅ Active | High | ניהול repos, issues, PRs |
+| **21** | [Canva Integration](#canva-mcp-full-details) | API | Design Tools | Claude Desktop Tools | Canva OAuth | ✅ Active | Low | יצירת עיצובים, ניהול תוכן. [Details →](../docs/CLAUDE_DESKTOP_CAPABILITIES.md#6-canva-integration) |
+| **22** | [Browser Control MCP](#browser-mcp-full-details) | MCP | Web Browser | Claude Desktop (via MCP) | None (Local) | ✅ Active | Medium | ניווט, צילומי מסך, אינטראקציה. [Details →](../docs/CLAUDE_DESKTOP_CAPABILITIES.md#5-web--browser) |
+| **23** | [Autonomous Control](#autonomous-control-full-details) | MCP | System Commands | Claude Desktop (via MCP) | None (Local) | ✅ Active | Critical | הרצת פקודות, התקנת תוכנה, Git. [Details →](../docs/CLAUDE_DESKTOP_CAPABILITIES.md#2-github-integration) |
+| **24** | [GitHub Control](#github-control-full-details) | MCP | GitHub Mgmt | Claude Desktop (via MCP) | GitHub OAuth | ✅ Active | High | ניהול repos, issues, PRs. [Details →](../docs/CLAUDE_DESKTOP_CAPABILITIES.md#2-github-integration) |
 
 ---
 
@@ -315,12 +324,236 @@
 ---
 
 **סטטוס מסמך זה**: ✅ Active  
-**עדכון אחרון**: 20 נובמבר 2025  
+**עדכון אחרון**: 21 נובמבר 2025  
 **כלים מתועדים**: 24  
 **כלים פעילים**: 10  
 **כלים Legacy**: 8  
 **כלים Unknown**: 4  
 **רמת סיכון**: 6 Critical, 5 High, 6 Medium, 3 Low  
+
+---
+
+## 📖 פירוט מלא של כלים פעילים
+
+לפירוט מלא על היכולות המדויקות של Claude Desktop, ראה:
+**[🔗 CLAUDE_DESKTOP_CAPABILITIES.md](../docs/CLAUDE_DESKTOP_CAPABILITIES.md)**
+
+### Claude Desktop Full Details
+
+**סוג**: MCP Client  
+**סטטוס**: ✅ פעיל  
+**רמת סיכון**: High  
+
+**תיאור**: Gateway מרכזי לכל ה-MCP servers. נגיש ל-GitHub, Filesystem, Windows, Google ועוד.
+
+**מה זה מאפשר**: גישה מלאה למחשב של אור ולגיטהאב דרך סט של MCPs.
+
+**איך זה משרת את HUMAN_TECH_INTERACTION_POLICY**:
+- ✅ אור לא צריך לפתוח אפליקציות ידנית
+- ✅ אור לא מריץ פקודות מערכת
+- ✅ אור לא עורך קבצים
+- ✅ כל העבודה הטכנית נעשית דרך Claude + MCPs
+
+[🔗 פירוט מלא →](../docs/CLAUDE_DESKTOP_CAPABILITIES.md)
+
+---
+
+### Filesystem MCP Full Details
+
+**סוג**: MCP  
+**סטטוס**: ✅ פעיל  
+**רמת סיכון**: High  
+
+**תיאור**: גישה מלאה למערכת הקבצים המקומית.
+
+**מה אני יכול לעשות**:
+- ✅ Read: קריאת קבצים (txt, md, json, yaml, py, js)
+- ✅ Write: יצירה/שכתוב של קבצים
+- ✅ Edit: עריכה line-based עם diff
+- ✅ Create Directory: יצירת תיקיות
+- ✅ List: רשימת תיקיות
+- ✅ Move: העברה/שינוי שם
+- ✅ Search: חיפוש קבצים
+
+**איך זה משרת את HUMAN_TECH_INTERACTION_POLICY**:
+- ✅ אור לא יוצר קבצים ידנית
+- ✅ אור לא עורך קבצים
+- ✅ אור רק מאשר: "צור קובץ X"
+- ✅ אני מבצע דרך MCP
+
+[🔗 פירוט מלא →](../docs/CLAUDE_DESKTOP_CAPABILITIES.md#1-filesystem-operations)
+
+---
+
+### GitHub MCP Full Details
+
+**סוג**: MCP  
+**סטטוס**: ✅ פעיל  
+**רמת סיכון**: High  
+
+**תיאור**: גישה ל-GitHub API + Git operations מקומי.
+
+**מה אני יכול לעשות**:
+- ✅ List/Create repos
+- ✅ Create issues
+- ✅ Git clone
+- ✅ Git status/add/commit/push/pull (דרך autonomous-control)
+
+**איך זה משרת את HUMAN_TECH_INTERACTION_POLICY**:
+- ✅ אור לא מריץ git commands
+- ✅ אור לא עושה clone/commit/push
+- ✅ אור רק מאשר: "עשה commit עם הודעה X"
+- ✅ אני מבצע דרך MCP
+
+[🔗 פירוט מלא →](../docs/CLAUDE_DESKTOP_CAPABILITIES.md#2-github-integration)
+
+---
+
+### Windows MCP Full Details
+
+**סוג**: MCP  
+**סטטוס**: ✅ פעיל  
+**רמת סיכון**: Critical  
+
+**תיאור**: שליטה מלאה ב-Windows OS.
+
+**מה אני יכול לעשות**:
+- ✅ Launch apps
+- ✅ PowerShell (whitelist)
+- ✅ UI automation (click, type, scroll)
+- ✅ Clipboard
+- ✅ Screenshots
+- ✅ Keyboard shortcuts
+
+**איך זה משרת את HUMAN_TECH_INTERACTION_POLICY**:
+- ✅ אור לא פותח אפליקציות
+- ✅ אור לא מריץ PowerShell
+- ✅ אור לא לוחץ על כפתורים ב-UI
+- ✅ אני עושה הכל דרך MCP
+
+[🔗 פירוט מלא →](../docs/CLAUDE_DESKTOP_CAPABILITIES.md#3-windows-control)
+
+---
+
+### Google MCP Full Details
+
+**סוג**: MCP  
+**סטטוס**: ✅ פעיל (READ-ONLY)  
+**רמת סיכון**: Medium  
+
+**תיאור**: גישה ל-Gmail, Calendar, Drive, Tasks.
+
+**מה אני יכול לעשות**:
+- ✅ קריאת emails
+- ✅ קריאת אירועי calendar
+- ✅ חיפוש ב-Drive
+- ❌ שליחת emails (פער!)
+- ❌ יצירת אירועים (פער!)
+
+**איך זה משרת את HUMAN_TECH_INTERACTION_POLICY**:
+- ✅ אור לא פותח Gmail לקרוא
+- ✅ אור לא פותח Calendar
+- ⚠️ אור עדיין צריך לשלוח מיילים ידנית (פער!)
+
+**פער מזוהה**: צריך OAuth re-consent עם write scopes.
+
+[🔗 פירוט מלא →](../docs/CLAUDE_DESKTOP_CAPABILITIES.md#4-google-workspace)
+
+---
+
+### Browser MCP Full Details
+
+**סוג**: MCP  
+**סטטוס**: ✅ פעיל  
+**רמת סיכון**: Medium  
+
+**תיאור**: אוטומציה של דפדפן.
+
+**מה אני יכול לעשות**:
+- ✅ ניווט ל-URLs
+- ✅ צילומי מסך
+- ✅ לחיצה על אלמנטים
+- ✅ הקלדה בשדות
+- ✅ חיפוש בגוגל
+
+**איך זה משרת את HUMAN_TECH_INTERACTION_POLICY**:
+- ✅ אור לא פותח דפדפן
+- ✅ אור לא מחפש בגוגל
+- ✅ אור לא לוחץ על כפתורים
+- ✅ אני עושה הכל דרך MCP
+
+[🔗 פירוט מלא →](../docs/CLAUDE_DESKTOP_CAPABILITIES.md#5-web--browser)
+
+---
+
+### Canva MCP Full Details
+
+**סוג**: MCP  
+**סטטוס**: ✅ פעיל  
+**רמת סיכון**: Low  
+
+**תיאור**: יצירה וניהול של עיצובים.
+
+**מה אני יכול לעשות**:
+- ✅ יצירת עיצובים עם AI
+- ✅ חיפוש עיצובים
+- ✅ ייצוא (PDF, PNG, JPG)
+- ✅ הוספת תגובות
+
+**איך זה משרת את HUMAN_TECH_INTERACTION_POLICY**:
+- ✅ אור לא פותח Canva
+- ✅ אור לא מעצב
+- ✅ אור רק אומר: "צור עיצוב X"
+- ✅ אני מבצע דרך MCP
+
+[🔗 פירוט מלא →](../docs/CLAUDE_DESKTOP_CAPABILITIES.md#6-canva-integration)
+
+---
+
+### Autonomous Control Full Details
+
+**סוג**: MCP  
+**סטטוס**: ✅ פעיל  
+**רמת סיכון**: Critical  
+
+**תיאור**: הרצת פקודות מערכת.
+
+**מה אני יכול לעשות**:
+- ✅ PowerShell (ללא הגבלות)
+- ✅ CMD
+- ✅ התקנת תוכנות (winget/npm/pip)
+- ✅ Git operations
+
+**איך זה משרת את HUMAN_TECH_INTERACTION_POLICY**:
+- ✅ אור לא מריץ פקודות
+- ✅ אור לא מתקין תוכנות
+- ✅ אור לא עושה git
+- ✅ אני מבצע הכל דרך MCP
+
+[🔗 פירוט מלא →](../docs/CLAUDE_DESKTOP_CAPABILITIES.md#2-github-integration)
+
+---
+
+### GitHub Control Full Details
+
+**סוג**: MCP  
+**סטטוס**: ✅ פעיל  
+**רמת סיכון**: High  
+
+**תיאור**: ניהול GitHub דרך API.
+
+**מה אני יכול לעשות**:
+- ✅ רשימת repos
+- ✅ יצירת repo
+- ✅ יצירת issue
+- ✅ Git clone
+
+**איך זה משרת את HUMAN_TECH_INTERACTION_POLICY**:
+- ✅ אור לא מנהל GitHub ידנית
+- ✅ אור לא יוצר repos/issues
+- ✅ אני מבצע דרך MCP
+
+[🔗 פירוט מלא →](../docs/CLAUDE_DESKTOP_CAPABILITIES.md#2-github-integration)
 
 ---
 
