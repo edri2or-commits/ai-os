@@ -1,6 +1,10 @@
 import os
 from pathlib import Path
 from openai import OpenAI
+from dotenv import load_dotenv
+
+# Load environment variables from .env
+load_dotenv()
 
 # הגדרה: היכן הריפו יושב
 REPO_ROOT = Path(__file__).resolve().parents[1]

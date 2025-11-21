@@ -1,0 +1,12 @@
+# AI-OS Python Dependencies
+
+# Core
+openai>=1.0.0
+python-dotenv>=1.0.0
+
+# HTTP API Server
+fastapi>=0.100.0
+uvicorn[standard]>=0.23.0
+
+# Optional: Better performance
+pydantic>=2.0.0

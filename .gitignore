@@ -15,6 +15,9 @@
 .env.test
 .env.production
 
+# EXCEPTION: Allow .env.template (safe to commit)
+!.env.template
+
 # Secret files (any format)
 secrets.*
 secret.*
