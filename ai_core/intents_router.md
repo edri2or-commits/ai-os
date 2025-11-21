@@ -495,21 +495,26 @@ def get_status(job_id: str):
 
 ## 🎯 סטטוס נוכחי
 
-**Status**: ✅ **IMPLEMENTED v0.1** - `route_intent` wraps GPT Planner
+**Status**: ✅ **IMPLEMENTED v1.0** - Structured output with full parsing
 
 **מה עובד עכשיו**:
 - ✅ קובץ: `ai_core/intent_router.py`
 - ✅ פונקציה ראשית: `route_intent(intent_text: str) -> Dict[str, Any]`
 - ✅ מקבל intent טקסטואלי
 - ✅ קורא ל-GPT Planner (`gpt_orchestrator.plan_change`)
-- ✅ מחזיר dict מובנה
+- ✅ מחזיר dict מובנה עם JSON parsing
+- ✅ GPT Planner מחזיר JSON מובנה (לא טקסט גולמי)
 
-**פורמט תשובה נוכחי (v0.1)**:
+**פורמט תשובה נוכחי (v1.0)**:
 ```python
 {
-    "raw_plan": str,  # תכנית מלאה מ-GPT Planner
-    "intent": str,    # הכוונה המקורית
-    "version": "0.1"  # גרסת Router
+    "intent": str,                    # הכוונה המקורית
+    "summary": str,                   # מה GPT הבין
+    "context": str,                   # הקשר מ-SSOT
+    "steps": List[str],               # רשימת צעדים
+    "actions_for_claude": List[str],  # פעולות טכניות
+    "decisions_for_or": List[str],    # מה אור מאשר
+    "version": "1.0"                  # גרסת Router
 }
 ```
 
@@ -518,13 +523,20 @@ def get_status(job_id: str):
 from ai_core.intent_router import route_intent
 
 result = route_intent("צור workflow חדש לגיבוי")
-print(result["raw_plan"])  # מדפיס תכנית מלאה
+
+# קבל מבנה מלא
+print(result["summary"])              # מה הבין GPT
+print(result["steps"])                # רשימת צעדים
+print(result["actions_for_claude"])  # מה Claude צריך לעשות
+print(result["decisions_for_or"])    # מה אור מאשר
 ```
 
-**מה חסר (v1.0)**:
-- ⚠️ Parsing של `raw_plan` לפי `GPT_PLANNER_CONTRACT`
-- ⚠️ חילוץ 5 הסעיפים (מה הבנתי, הקשר, תכנית, פעולות, החלטות)
-- ⚠️ Error handling מתקדם
+**שינויים מ-v0.1**:
+- ✅ GPT Planner מחזיר JSON מובנה (לא Markdown)
+- ✅ Parsing אוטומטי של התשובה
+- ✅ מבנה מלא עם 5 סעיפים
+- ✅ Error handling משופר (fallback למבנה)
+- ✅ Type hints מעודכנים
 
 **תלויות**:
 - ✅ Python 3.8+

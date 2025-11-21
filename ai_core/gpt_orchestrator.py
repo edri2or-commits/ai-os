@@ -37,10 +37,18 @@ def get_client() -> "OpenAI":
         raise RuntimeError("OPENAI_API_KEY is not set in environment")
     return OpenAI(api_key=api_key)
 
-def plan_change(intent: str) -> str:
+def plan_change(intent: str) -> dict:
     """
-    לוקח כוונה טקסטואלית (intent) ומחזיר תכנית פעולה מילולית,
+    לוקח כוונה טקסטואלית (intent) ומחזיר תכנית פעולה מובנית,
     לפי ה-SSOT והמדיניות (אור לא עושה טכני).
+    
+    Returns:
+        dict with keys:
+        - summary: str (מה הבנתי מהכוונה)
+        - context: str (הקשר מ-SSOT)
+        - steps: List[str] (תכנית צעד-צעד)
+        - actions_for_claude: List[str] (פעולות טכניות)
+        - decisions_for_or: List[str] (מה אור מאשר)
     """
     client = get_client()
     context = load_ssot_context()
@@ -54,12 +62,30 @@ def plan_change(intent: str) -> str:
     - תכבד את המדיניות ב-HUMAN_TECH_INTERACTION_POLICY.md ו-SECURITY_SECRETS_POLICY.md.
     - אם משהו דורש פעולה טכנית, הצע כיצד Claude / סוכנים אחרים יבצעו זאת, לא אור.
 
-    פורמט תשובה:
-    1. מה הבנתי מהכוונה
-    2. הקשר רלוונטי מתוך ה-SSOT (בקצרה)
-    3. תכנית פעולה צעד-צעד (ללא קוד ריצה, רק תיאור)
-    4. מה צריך Claude לעשות בפועל (פעולות טכניות)
-    5. מה אור צריך רק לאשר / להחליט
+    CRITICAL: You MUST respond with valid JSON only. No markdown, no code blocks, just pure JSON.
+    
+    JSON Format (REQUIRED):
+    {
+      "summary": "מה הבנתי מהכוונה (1-3 משפטים)",
+      "context": "הקשר רלוונטי מתוך ה-SSOT (2-4 משפטים)",
+      "steps": [
+        "צעד 1: תיאור",
+        "צעד 2: תיאור",
+        "צעד N: תיאור"
+      ],
+      "actions_for_claude": [
+        "פעולה טכנית 1",
+        "פעולה טכנית 2",
+        "פעולה טכנית N"
+      ],
+      "decisions_for_or": [
+        "החלטה 1",
+        "החלטה 2"
+      ]
+    }
+    
+    DO NOT include anything except valid JSON in your response.
+    DO NOT wrap JSON in markdown code blocks.
     """
 
     user_prompt = f"""
@@ -71,6 +97,8 @@ def plan_change(intent: str) -> str:
 
     אל תמציא דברים שלא קיימים ב-SSOT.
     הקפד שכל פעולה טכנית משויכת ל-Claude / סוכנים אחרים, לא לאור.
+    
+    RESPOND WITH VALID JSON ONLY.
     """
 
     response = client.chat.completions.create(
@@ -82,8 +110,27 @@ def plan_change(intent: str) -> str:
         ],
     )
 
-    # פענוח פשוט של הטקסט מהתשובה
-    return response.choices[0].message.content.strip()
+    # Parse JSON response
+    import json
+    response_text = response.choices[0].message.content.strip()
+    
+    # Remove markdown code blocks if present (safety fallback)
+    if response_text.startswith("```"):
+        lines = response_text.split("\n")
+        response_text = "\n".join(lines[1:-1])  # Remove first and last line
+    
+    try:
+        plan_dict = json.loads(response_text)
+        return plan_dict
+    except json.JSONDecodeError as e:
+        # Fallback: return error in structured format
+        return {
+            "summary": f"שגיאה בפרסור: {str(e)}",
+            "context": "GPT לא החזיר JSON תקין",
+            "steps": [response_text],
+            "actions_for_claude": [],
+            "decisions_for_or": ["בדוק את התשובה ידנית"]
+        }
 
 if __name__ == "__main__":
     import sys
