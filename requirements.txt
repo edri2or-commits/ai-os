@@ -8,5 +8,8 @@ python-dotenv>=1.0.0
 fastapi>=0.100.0
 uvicorn[standard]>=0.23.0
 
+# Chat1 (Telegram Bot)
+python-telegram-bot>=20.0
+
 # Optional: Better performance
 pydantic>=2.0.0

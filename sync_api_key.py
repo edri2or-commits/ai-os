@@ -1,11 +1,11 @@
 """
-Auto-Sync API Key from SSOT
+API Key Sync - From SSOT to AI-OS
 
-This script automatically syncs OPENAI_API_KEY from the SSOT location
-to the AI-OS .env file, without requiring manual copy-paste.
+This script automatically syncs OPENAI_API_KEY and TELEGRAM_BOT_TOKEN
+from the SSOT location to the AI-OS .env file.
 
-SSOT Location: C:\Users\edri2\make-ops-clean\SECRETS\.env.local
-Target: C:\Users\edri2\Work\AI-Projects\ai-os-claude-workspace\.env
+SSOT Location: C:/Users/edri2/make-ops-clean/SECRETS/.env.local
+Target: C:/Users/edri2/Work/AI-Projects/ai-os-claude-workspace/.env
 
 Usage:
     python sync_api_key.py
@@ -55,7 +55,25 @@ if not api_key.startswith('sk-'):
     sys.exit(1)
 
 masked_key = f"{api_key[:7]}...{api_key[-4:]}"
-print(f"✅ API Key found: {masked_key}")
+print(f"✅ OPENAI_API_KEY found: {masked_key}")
+
+# Extract Telegram token (optional)
+telegram_token = None
+for line in ssot_content.split('\n'):
+    if line.strip().startswith('TELEGRAM_BOT_TOKEN='):
+        telegram_token = line.split('=', 1)[1].strip()
+        break
+
+if telegram_token:
+    # Mask token (format: 123456:ABC-DEF...)
+    if ':' in telegram_token:
+        parts = telegram_token.split(':')
+        masked_token = f"{parts[0][:3]}...:{parts[1][:3]}...{parts[1][-4:]}"
+    else:
+        masked_token = f"{telegram_token[:6]}...{telegram_token[-4:]}"
+    print(f"✅ TELEGRAM_BOT_TOKEN found: {masked_token}")
+else:
+    print("⚠️  TELEGRAM_BOT_TOKEN not found (Chat1 will be disabled)")
 
 # Step 2: Create/Update .env
 print("\n📋 Step 2: Updating .env...")
@@ -74,6 +92,9 @@ OPENAI_API_KEY={api_key}
 # OpenAI Model
 OPENAI_MODEL=gpt-4o-mini
 
+# Telegram Bot Token (from SSOT)
+TELEGRAM_BOT_TOKEN={telegram_token if telegram_token else ''}
+
 # Server Port
 SERVER_PORT=8000
 """
@@ -90,12 +111,18 @@ import os
 load_dotenv(TARGET_PATH)
 
 loaded_key = os.getenv('OPENAI_API_KEY', '')
+loaded_telegram = os.getenv('TELEGRAM_BOT_TOKEN', '')
 demo_mode = os.getenv('DEMO_MODE', 'true').lower() == 'true'
 
 if loaded_key == api_key:
-    print("✅ API key verified in .env")
+    print("✅ OPENAI_API_KEY verified in .env")
 else:
-    print("⚠️  API key mismatch")
+    print("⚠️  OPENAI_API_KEY mismatch")
+
+if telegram_token and loaded_telegram == telegram_token:
+    print("✅ TELEGRAM_BOT_TOKEN verified in .env")
+elif telegram_token:
+    print("⚠️  TELEGRAM_BOT_TOKEN mismatch")
 
 if not demo_mode:
     print("✅ Demo mode: OFF")
@@ -107,6 +134,12 @@ print("✅ API Key Sync Complete!")
 print("=" * 70)
 
 print("\n💡 Next steps:")
-print("   1. Run: python test_real_gpt.py")
-print("   2. Run: python start.py")
+if not telegram_token:
+    print("   1. Get Telegram Bot Token from @BotFather")
+    print("   2. Add to SSOT: TELEGRAM_BOT_TOKEN=your_token")
+    print("   3. Run sync again: python sync_api_key.py")
+    print("   4. Start system: python start.py")
+else:
+    print("   1. Run: python start.py")
+    print("   2. Chat1 (Telegram) will start automatically!")
 print("\n" + "=" * 70)
