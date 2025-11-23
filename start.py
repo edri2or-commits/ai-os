@@ -183,7 +183,31 @@ for path_str in critical_paths:
 print("✅ All core files present")
 
 # ============================================================================
-# Step 6: Start Server
+# Step 6: Check Chat1 (Telegram)
+# ============================================================================
+
+print("\n📋 Step 6: Checking Chat1 (Telegram)...")
+
+telegram_token = os.getenv('TELEGRAM_BOT_TOKEN', '')
+telegram_enabled = False
+
+if telegram_token:
+    # Mask token
+    if ':' in telegram_token:
+        parts = telegram_token.split(':')
+        masked = f"{parts[0][:3]}...:{parts[1][:3]}...{parts[1][-4:]}"
+    else:
+        masked = f"{telegram_token[:6]}...{telegram_token[-4:]}"
+    
+    print(f"✅ Chat1: Enabled")
+    print(f"   Token: {masked}")
+    telegram_enabled = True
+else:
+    print("⚠️  Chat1: Disabled (no TELEGRAM_BOT_TOKEN)")
+    print("   💡 To enable: Add token to SSOT and run sync_api_key.py")
+
+# ============================================================================
+# Step 7: Start Server
 # ============================================================================
 
 print("\n" + "=" * 70)

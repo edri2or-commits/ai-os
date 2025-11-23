@@ -31,7 +31,9 @@ ai-os/
 ├── policies/                    ✅ 1 מדיניות
 │   └── SECURITY_SECRETS_POLICY.md ✅ מדיניות אבטחה (720 שורות)
 ├── ai_core/                     🆕 **חדש!**
-│   └── gpt_orchestrator.py      ✅ GPT Planner - המוח הרשמי
+│   ├── gpt_orchestrator.py      ✅ GPT Planner - המוח הרשמי
+│   ├── agent_gateway_server.py  ✅ HTTP API Server
+│   └── ssot_writer.py           ✅ SSOT Update Service 🎉
 └── archive/                     📁 ריק (לעתיד)
 ```
 
@@ -735,3 +737,154 @@ GitHub / Windows / Google / Web (המערכות האמיתיות)
 
 **הצעד הבא: Chat1 Integration** 🤖
 לחבר Custom GPT או Telegram Bot ל-Agent Gateway ולשלוח intents דרך HTTP API!
+
+---
+
+## 12. SSOT Update Service 🎉
+
+**תאריך**: 2025-11-23  
+**מטרה**: לאפשר לסוכנים חיצוניים (GPT, Telegram, n8n) לעדכן מסמכי SSOT באופן אוטומטי
+
+### קבצים שנוצרו:
+- `ai_core/ssot_writer.py` - מודול לעידכון SSOT documents
+- `ai_core/agent_gateway_server.py` - עודכן עם endpoint חדש: `POST /ssot/update`
+
+### מה השירות עושה?
+השירות מאפשר לסוכנים אחרים לעדכן את מסמכי ה-SSOT של המערכת באופן אוטומטי, בלי שאור צריך לבצע פעולות טכניות:
+
+1. **שליחת POST request** ל-`/ssot/update`
+2. **עידכון הקובץ** באופן אוטומטי
+3. **git commit + push** אוטומטי ל-GitHub
+4. **החזרת SHA** של ה-commit וסטטוס
+
+### מסמכים שניתן לעדכן:
+- `system_snapshot` → `docs/SYSTEM_SNAPSHOT.md`
+- `capabilities_matrix` → `docs/CAPABILITIES_MATRIX.md`
+- `decisions` → `docs/DECISIONS_AI_OS.md`
+
+### API Endpoint:
+**POST** `http://localhost:8000/ssot/update`
+
+**Request Body:**
+```json
+{
+  "target": "system_snapshot",
+  "mode": "replace_full",
+  "content": "# System Snapshot\n\nNew content here..."
+}
+```
+
+**Response (Success):**
+```json
+{
+  "ok": true,
+  "file_path": "docs/SYSTEM_SNAPSHOT.md",
+  "commit_sha": "abc123...",
+  "commit_message": "feat(ssot): update system_snapshot via SSOT Writer [2025-11-23 14:30:00]"
+}
+```
+
+**Response (Error):**
+```json
+{
+  "ok": false,
+  "file_path": "docs/SYSTEM_SNAPSHOT.md",
+  "commit_sha": "",
+  "commit_message": "",
+  "error": "Git operation failed: ..."
+}
+```
+
+### איך להשתמש:
+
+**1. מ-GPT עם Actions:**
+```yaml
+openapi: 3.0.0
+info:
+  title: AI-OS SSOT Update
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000
+paths:
+  /ssot/update:
+    post:
+      operationId: updateSSOT
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                target:
+                  type: string
+                  enum: [system_snapshot, capabilities_matrix, decisions]
+                mode:
+                  type: string
+                  default: replace_full
+                content:
+                  type: string
+```
+
+**2. מ-Telegram Bot:**
+```python
+import requests
+
+def update_ssot(target: str, content: str):
+    response = requests.post(
+        "http://localhost:8000/ssot/update",
+        json={
+            "target": target,
+            "mode": "replace_full",
+            "content": content
+        }
+    )
+    return response.json()
+```
+
+**3. מ-n8n Workflow:**
+```json
+{
+  "nodes": [
+    {
+      "type": "n8n-nodes-base.httpRequest",
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:8000/ssot/update",
+        "jsonParameters": true,
+        "bodyParametersJson": {
+          "target": "system_snapshot",
+          "mode": "replace_full",
+          "content": "{{$json.content}}"
+        }
+      }
+    }
+  ]
+}
+```
+
+### גבולות ובטיחות:
+- ✅ **רק מסמכי SSOT** - אי אפשר לעדכן קוד או קבצי config
+- ✅ **וולידציה** - התוכן חייב להיות לא ריק
+- ✅ **git אוטומטי** - commit + push באופן אוטומטי
+- ✅ **הודעות commit ברורות** - כולל timestamp ומידע על העידכון
+- ❌ **אין secrets** - אי אפשר לשלוח secrets בתוכן
+
+### תוצאה:
+✅ **סוכנים יכולים לעדכן SSOT בלי עבודה טכנית מאור!**
+
+**דוגמא לזרימה מלאה:**
+```
+1. GPT Planner: "עדכן את SYSTEM_SNAPSHOT עם מידע על Slice 4"
+   ↓
+2. GPT שולח POST ל-/ssot/update עם התוכן המעודכן
+   ↓
+3. SSOT Writer:
+   - כותב לקובץ
+   - git add + commit + push
+   - מחזיר SHA
+   ↓
+4. GPT מדווח לאור: "✅ עודכן! commit: abc123"
+```
+
+**זה הבסיס ל-Agent Gateway המלא!** 🚀

@@ -1,0 +1,57 @@
+{
+  "intent": "הוסף ל-README סעיף קצר שמסביר שיש עכשיו Intent Router, GPT Planner ו-Action Executor, ושכל שינוי עובר דרכם לפני ביצוע בפועל.",
+  "summary": "אור רוצה להוסיף סעיף ל-README שמתעד את הארכיטקטורה החדשה: Intent Router, GPT Planner, Action Executor.",
+  "context": "README.md קיים. המערכת החדשה כוללת 3 רכיבים מרכזיים שעובדים בתיאום. צריך להוסיף הסבר קצר על התהליך.",
+  "steps": [
+    "קרא את README.md הנוכחי",
+    "הוסף סעיף 'Architecture' או עדכן אותו",
+    "הסבר את התהליך: Intent → GPT Planner → Router → Executor",
+    "commit עם הודעה תיאורית",
+    "push לגיטהאב"
+  ],
+  "actions_for_claude": [
+    {
+      "type": "file.update",
+      "params": {
+        "path": "README.md",
+        "edits": [
+          {
+            "old_text": "# AI-OS",
+            "new_text": "# AI-OS\n\n## 🏗️ Architecture\n\nAI-OS operates through a structured pipeline:\n\n1. **Intent Router** - Entry point for user intents (natural language)\n2. **GPT Planner** - Converts intents into structured action plans\n3. **Action Executor** - Executes validated actions automatically\n4. **Git Integration** - Commits and pushes changes to GitHub\n\nEvery change flows through this pipeline, ensuring consistency and traceability."
+          }
+        ]
+      },
+      "approval": "auto",
+      "description": "הוספת סעיף Architecture ל-README"
+    },
+    {
+      "type": "git.commit",
+      "params": {
+        "files": [
+          "README.md"
+        ],
+        "message": "docs: add Architecture section explaining Intent Router flow"
+      },
+      "approval": "auto",
+      "description": "commit של עדכון README"
+    },
+    {
+      "type": "git.push",
+      "params": {},
+      "approval": "auto",
+      "description": "העלאה לגיטהאב"
+    }
+  ],
+  "decisions_for_or": [
+    "האם התוכן של סעיף Architecture מתאים",
+    "האם המיקום בתחילת README נכון"
+  ],
+  "actions_validation": {
+    "valid": true,
+    "total": 3,
+    "valid_count": 3,
+    "invalid_count": 0,
+    "errors": []
+  },
+  "version": "2.0"
+}

@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    import sys; sys.path.insert(0, '.'); from ai_core.intent_router import route_intent; import json; result = route_intent('הוסף ל-README סעיף קצר שמסביר שיש עכשיו Intent Router, GPT Planner ו-Action Executor, ושכל שינוי עובר דרכם לפני ביצוע בפועל.'); print(json.dumps(result, ensure_ascii=False, indent=2))
+                                                                                                               ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\edri2\Work\AI-Projects\ai-os-claude-workspace\ai_core\intent_router.py", line 130, in route_intent
+    plan_dict = plan_change(intent_text)
+  File "C:\Users\edri2\Work\AI-Projects\ai-os-claude-workspace\ai_core\gpt_orchestrator.py", line 54, in plan_change
+    client = get_client()
+  File "C:\Users\edri2\Work\AI-Projects\ai-os-claude-workspace\ai_core\gpt_orchestrator.py", line 38, in get_client
+    raise RuntimeError("OPENAI_API_KEY is not set in environment")
+RuntimeError: OPENAI_API_KEY is not set in environment

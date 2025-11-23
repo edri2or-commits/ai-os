@@ -119,10 +119,10 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             dry_run=False
         )
         
-        status = result.get('status')
-        
-        if status == 'success':
-            plan = result.get('plan', {})
+        # GPT Orchestrator returns plan directly (no status wrapper)
+        # Check if we got a valid plan structure
+        if 'summary' in result and 'actions_for_claude' in result:
+            plan = result
             summary = plan.get('summary', '')
             steps = plan.get('steps', [])
             actions = plan.get('actions_for_claude', [])
@@ -175,7 +175,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             
             print(f"✅ Plan sent to user {user_id}, awaiting approval")
         
-        elif status == 'planning_failed':
+        elif 'error' in result:
             error_msg = result.get('error', 'Unknown error')
             
             await processing_msg.edit_text(
@@ -188,11 +188,11 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         
         else:
             await processing_msg.edit_text(
-                f"⚠️ **סטטוס לא צפוי**: {status}\n\n"
+                f"⚠️ **תגובה לא צפויה מהמערכת**\n\n"
                 f"נסה שוב מאוחר יותר."
             )
             
-            print(f"⚠️ Unexpected status for user {user_id}: {status}")
+            print(f"⚠️ Unexpected response for user {user_id}: {result}")
     
     except Exception as e:
         await processing_msg.edit_text(

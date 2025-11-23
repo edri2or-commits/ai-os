@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "C:\Users\edri2\Work\AI-Projects\ai-os-claude-workspace\run_intent.py", line 10, in <module>
+    result = route_intent(intent)
+  File "C:\Users\edri2\Work\AI-Projects\ai-os-claude-workspace\ai_core\intent_router.py", line 130, in route_intent
+    plan_dict = plan_change(intent_text)
+  File "C:\Users\edri2\Work\AI-Projects\ai-os-claude-workspace\ai_core\gpt_orchestrator.py", line 54, in plan_change
+    client = get_client()
+  File "C:\Users\edri2\Work\AI-Projects\ai-os-claude-workspace\ai_core\gpt_orchestrator.py", line 38, in get_client
+    raise RuntimeError("OPENAI_API_KEY is not set in environment")
+RuntimeError: OPENAI_API_KEY is not set in environment

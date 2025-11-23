@@ -25,6 +25,7 @@ from fastapi.responses import HTMLResponse
 from pydantic import BaseModel, Field
 
 from ai_core.agent_gateway import plan_and_optionally_execute
+from ai_core.ssot_writer import SSOTWriter, VALID_TARGETS
 
 
 # Pydantic models for request/response validation
@@ -76,6 +77,52 @@ class IntentResponse(BaseModel):
     error: Optional[str] = Field(
         None,
         description="Error message if status indicates failure"
+    )
+
+
+class SSOTUpdateRequest(BaseModel):
+    """Request body for /ssot/update endpoint"""
+    target: str = Field(
+        ...,
+        description="Target SSOT document: 'system_snapshot', 'capabilities_matrix', or 'decisions'",
+        examples=["system_snapshot"]
+    )
+    mode: str = Field(
+        default="replace_full",
+        description="Update mode (currently only 'replace_full' is supported)"
+    )
+    content: str = Field(
+        ...,
+        description="Full new markdown content for the document",
+        min_length=1
+    )
+    commit_message: Optional[str] = Field(
+        None,
+        description="Optional custom commit message"
+    )
+
+
+class SSOTUpdateResponse(BaseModel):
+    """Response from /ssot/update endpoint"""
+    ok: bool = Field(
+        ...,
+        description="Success status"
+    )
+    file_path: str = Field(
+        ...,
+        description="Path to the updated file"
+    )
+    commit_sha: str = Field(
+        default="",
+        description="Git commit SHA (if successful)"
+    )
+    commit_message: str = Field(
+        default="",
+        description="The commit message used"
+    )
+    error: Optional[str] = Field(
+        None,
+        description="Error message if update failed"
     )
 
 
@@ -639,6 +686,118 @@ async def process_intent(request: IntentRequest) -> IntentResponse:
                 "error": "Internal server error",
                 "message": str(e),
                 "intent": request.intent
+            }
+        )
+
+
+@app.post(
+    "/ssot/update",
+    response_model=SSOTUpdateResponse,
+    summary="Update SSOT document",
+    description="""
+    Update AI-OS SSOT (Single Source of Truth) documents.
+    
+    This endpoint allows external agents (GPT with Actions, Telegram bot, n8n)
+    to programmatically update core system documentation:
+    - SYSTEM_SNAPSHOT.md - System state overview
+    - CAPABILITIES_MATRIX.md - Capabilities and decisions matrix
+    - DECISIONS_AI_OS.md - Locked decisions
+    
+    **Important:**
+    - Only full document replacement is supported (mode: 'replace_full')
+    - Changes are automatically committed and pushed to GitHub
+    - Content must be valid markdown
+    - Empty content is rejected
+    
+    **Example:**
+    ```json
+    {
+        "target": "system_snapshot",
+        "mode": "replace_full",
+        "content": "# System Snapshot\n\nUpdated content..."
+    }
+    ```
+    """
+)
+async def update_ssot(request: SSOTUpdateRequest) -> SSOTUpdateResponse:
+    """
+    Update an SSOT document with new content.
+    
+    Args:
+        request: SSOTUpdateRequest with target, mode, and content
+    
+    Returns:
+        SSOTUpdateResponse with update results
+    
+    Raises:
+        HTTPException: If validation fails or update encounters an error
+    """
+    try:
+        # Validate target
+        if request.target not in VALID_TARGETS:
+            raise HTTPException(
+                status_code=400,
+                detail={
+                    "error": "Invalid target",
+                    "message": f"Target '{request.target}' is not valid. Valid targets: {list(VALID_TARGETS.keys())}",
+                    "valid_targets": list(VALID_TARGETS.keys())
+                }
+            )
+        
+        # Validate mode
+        if request.mode != "replace_full":
+            raise HTTPException(
+                status_code=400,
+                detail={
+                    "error": "Invalid mode",
+                    "message": f"Mode '{request.mode}' is not supported. Only 'replace_full' is currently supported."
+                }
+            )
+        
+        # Validate content
+        if not request.content or len(request.content.strip()) == 0:
+            raise HTTPException(
+                status_code=400,
+                detail={
+                    "error": "Invalid content",
+                    "message": "Content cannot be empty"
+                }
+            )
+        
+        # Perform update
+        writer = SSOTWriter()
+        result = writer.update_ssot(
+            target=request.target,
+            mode=request.mode,
+            content=request.content,
+            commit_message=request.commit_message
+        )
+        
+        # Check if update failed
+        if not result["ok"]:
+            raise HTTPException(
+                status_code=500,
+                detail={
+                    "error": "Update failed",
+                    "message": result.get("error", "Unknown error"),
+                    "file_path": result["file_path"]
+                }
+            )
+        
+        # Return success response
+        return SSOTUpdateResponse(**result)
+    
+    except HTTPException:
+        # Re-raise HTTP exceptions as-is
+        raise
+    
+    except Exception as e:
+        # Catch-all for unexpected errors
+        raise HTTPException(
+            status_code=500,
+            detail={
+                "error": "Internal server error",
+                "message": str(e)
             }
         )
 
