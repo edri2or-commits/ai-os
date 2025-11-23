@@ -144,14 +144,32 @@ Generate the COMPLETE updated file content. Return ONLY the file content, no exp
             
             content = response.choices[0].message.content.strip()
             
+            # Validate that we got actual content
+            if not content:
+                logger.error("OpenAI returned empty content")
+                return {
+                    "ok": False,
+                    "error_type": "empty_content",
+                    "message": "OpenAI returned empty content"
+                }
+            
             # Remove markdown code fences if present
             if content.startswith("```"):
                 lines = content.split("\n")
                 if lines[0].startswith("```"):
                     lines = lines[1:]
-                if lines[-1].startswith("```"):
+                if lines and lines[-1].startswith("```"):
                     lines = lines[:-1]
-                content = "\n".join(lines)
+                content = "\n".join(lines).strip()
+            
+            # Final validation after cleanup
+            if not content:
+                logger.error("Content became empty after markdown cleanup")
+                return {
+                    "ok": False,
+                    "error_type": "invalid_content",
+                    "message": "Generated content is invalid or empty"
+                }
             
             return {
                 "ok": True,

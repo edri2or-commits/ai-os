@@ -19,6 +19,7 @@ class Settings(BaseSettings):
     # Service Configuration
     log_level: str = "INFO"
     service_port: int = 8081
+    github_client_port: Optional[int] = None  # Alias for service_port
     
     # MCP Server Configuration (if needed for local MCP calls)
     mcp_server_url: Optional[str] = None
