@@ -1,0 +1,19 @@
+[AI-OS] Stabilize MCP GitHub Client - Add testing deps and audit
+
+## Changes
+- Add pytest and pytest-asyncio to requirements.txt for testing
+- Create STABILITY_AUDIT.md documenting response format consistency
+- Validate all endpoints return structured {ok, error_type, message}
+- Confirm error handling in MCPGitHubClient and OpenAIClient
+
+## Status
+✅ Service is stable and ready for integration
+- All endpoints follow unified response format
+- Error handling is comprehensive
+- Logging is properly configured
+- Tests verify 'ok' field presence
+
+## Next Steps (NOT in this commit)
+- Integration with start.py / start_public_server.py
+- Update .env.template with service variables
+- Update SSOT documentation
