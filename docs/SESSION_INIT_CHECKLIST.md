@@ -2,8 +2,26 @@
 
 **Version:** 0.1 (Draft)  
 **Created:** 2025-11-24  
-**Status:** 🚧 In Design – Not Yet Binding  
-**Purpose:** Standardize how all agents start a session in the AI-OS
+**Status:** ✅ Draft v0.1 — Actively used during *Route Recalculation / Infra Phase*  
+**Purpose:** Standardize how all agents start a session in the AI-OS  
+
+---
+
+### Status Update
+
+- This checklist is **operational but evolving**.  
+- It serves as the **experimental session-init protocol** for all agents working in Or’s AI-OS during the current “route recalculation” phase.  
+- The five-phase structure is **mandatory**, though some automation details (auto-sync, logging, failure handling) remain in development.  
+
+---
+
+## Minimal Operational Rules (Route Recalculation Phase)
+
+- Use `edri2or-commits/ai-os` on branch `main` as the single source of truth (SSOT).  
+- Confirm your identity, role, and limitations at session start.  
+- Verify repo sync state (branch + untracked files) before planning or editing.  
+- Load core docs: **CONSTITUTION**, **SYSTEM_SNAPSHOT**, **DECISIONS_AI_OS** (and others as required).  
+- Do **not execute** changes without explicit approval from Or.  
 
 ---
 
@@ -48,7 +66,7 @@ This checklist applies to:
 
 - [ ] **2.1** Confirm the canonical repo:
   - Remote: `https://github.com/edri2or-commits/ai-os`
-  - Local (if applicable): `C:\Users\edri2\Desktop\AI\ai-os`
+  - Local (if applicable): `C:\\Users\\edri2\\Desktop\\AI\\ai-os`
 - [ ] **2.2** Check current branch (should be `main` unless told otherwise)
 - [ ] **2.3** Check sync status with remote
   - If behind: flag it, ask whether to pull
@@ -101,7 +119,7 @@ SESSION INIT – Claude Desktop
 2. Capabilities: Full MCP (GitHub, Filesystem, Windows, Google read-only)
 3. Limitations: Cannot push to remote without approval
 
-4. Repo: C:\Users\edri2\Desktop\AI\ai-os
+4. Repo: C:\\Users\\edri2\\Desktop\\AI\\ai-os
 5. Branch: main
 6. Sync: Up to date with origin/main (commit 9ac3e7d)
 7. Untracked files: 4 (noted, not touching)
@@ -164,10 +182,4 @@ SESSION INIT – GPT Architect
 |---------|------|--------|---------|
 | 0.1 | 2025-11-24 | Claude Desktop | Initial draft created during route recalculation |
 
----
-
-**Next Steps:**
-- [ ] Review with Or and GPT
-- [ ] Refine based on feedback
-- [ ] Promote to v1.0 when stable
-- [ ] Integrate into agent onboarding docs
+**Note:** Adopted as experimental operational protocol for route recalculation sessions.
