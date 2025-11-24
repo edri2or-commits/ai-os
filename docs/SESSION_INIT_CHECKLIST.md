@@ -110,6 +110,23 @@ This checklist applies to:
 
 ---
 
+## Batch Approved Session Mode
+
+When Or explicitly approves a full session scope (for example: "Continue until Control Plane Spec is drafted"),  
+the active agent may proceed through all steps of the current session — including document reads, analysis, and draft creation —  
+without re-asking for intermediate confirmations.  
+
+The agent must still pause at each checkpoint that could alter:
+- Repository structure
+- External connections
+- System policies
+
+**Notes:**
+- This mode preserves Human-in-the-loop while reducing redundant confirmation loops.
+- At the end of each batch session, the agent must summarize all performed actions before any merge or execution.
+
+---
+
 ## Example: Claude Desktop Session Start
 
 ```
