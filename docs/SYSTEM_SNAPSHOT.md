@@ -170,12 +170,52 @@ ngrok http 8082
 
 ---
 
+## 💬 Chat & User Interfaces
+
+### Chat1 – Telegram UI (Official)
+
+| Property | Value |
+|----------|-------|
+| **Status** | 🚧 Implemented in Code, Not Fully Deployed |
+| **Location** | `chat/telegram_bot.py` |
+| **Architecture** | Telegram → Bot → Agent Gateway → GPT Planner → Action Executor |
+| **Interface** | Hebrew, Human-in-the-Loop with approval buttons |
+| **Token** | Configured in SSOT (`.env.local` → `TELEGRAM_BOT_TOKEN`) |
+
+**What Chat1 Does:**
+- Receives natural language intents from Telegram
+- Calls Agent Gateway (`ai_core/agent_gateway.py`)
+- Presents plan to user with ✅/❌ buttons
+- Executes only after explicit approval
+
+**Current State:**
+- ✅ Code implemented and functional
+- ✅ Integrated with GPT Planner (ai_core/gpt_orchestrator.py)
+- ⚠️ Not deployed as persistent service (requires manual startup)
+- ⚠️ Requires OPENAI_API_KEY in environment
+
+---
+
+### Legacy / External Prototypes (Not Part of AI-OS)
+
+There exists an **external Telegram prototype** outside this repository:
+- Uses a "small LLM" (different from GPT Planner) via simple HTTP server
+- Was used for early experimentation only
+- **Not managed as part of AI-OS architecture**
+- **Not connected to Agent Gateway**
+- Should not be used for production workflows
+
+> ⚠️ **Important**: Only Chat1 (`chat/telegram_bot.py`) is the official Telegram interface for AI-OS.
+
+---
+
 ## 🔮 Next Steps (Planned)
 
 1. [ ] Deploy to Google Cloud Run (always-on, no ngrok needed)
 2. [ ] Fixed domain for GPT Actions
 3. [ ] Merge both services into single unified service
 4. [ ] Add more Google Workspace operations (Calendar edit, Drive upload)
+5. [ ] Deploy Chat1 as persistent service
 
 ---
 

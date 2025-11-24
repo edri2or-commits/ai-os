@@ -20,6 +20,17 @@
 | **OPS Decision Manager** | `ops/decisions/` | ניהול החלטות תפעוליות (ADRs - Architectural Decision Records) | זהב | Workflow Component | מכיל קבצי החלטה כמו `2025-11-02-L2-approval.md`. מתאים ל-`workflows/` או `docs/decisions/` |
 | **OPS Diagnostics** | `ops/diag/` | כלי אבחון ובדיקות מערכת | זהב | Workflow Component | מכיל `cloudshell_check.md`, `REMOTE_MCP_EVIDENCE.md` וכו'. מתאים ל-`workflows/diagnostics/` |
 | **GitHub Executor Bootstrap** | `ops/TRIGGERS/github_executor_bootstrap.md` | מסמך bootstrap להפעלת GitHub Executor | זהב | Workflow Documentation | תיעוד טריגרים והפעלה - מתאים ל-`workflows/` |
+| **Chat1 Telegram Interface Agent** | `chat/telegram_bot.py` | ממשק טלגרם רשמי ל-AI-OS, מדבר עם Agent Gateway | זהב | סוכן UI רשמי | ממשק טלגרם יחיד ל-AI-OS. Human-in-the-Loop עם כפתורי אישור. מחובר ל-GPT Planner |
+
+---
+
+## Non-Repo Prototypes (פרוטוטיפים שלא מנוהלים כסוכנים)
+
+| שם | תיאור | סטטוס | הערות |
+|------|-------|-------|-------|
+| **Telegram + Small LLM Prototype** | פרוטוטיפ חיצוני שמחבר טלגרם ל-LLM קטן דרך HTTP פשוט | 🗄️ Legacy / External | לא חלק מריפו ai-os. אינו מחובר ל-Agent Gateway. שימש לניסוי ראשוני בלבד. **אסור לבנות עליו תהליכים רשמיים** |
+
+> ⚠️ **חשוב**: הסוכן הרשמי היחיד לממשק טלגרם הוא **Chat1** שנמצא ב-`chat/telegram_bot.py`. כל פרוטוטיפ אחר הוא לניסוי ואינו חלק מהארכיטקטורה של AI-OS.
 
 ---
 

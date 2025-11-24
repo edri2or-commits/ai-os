@@ -65,6 +65,8 @@
 | **DIAG-002** | Health Checks | בדיקות בריאות של רכיבים | - | Various | 🔄 Planned | צריך להגדיר |
 | **AUTO-001** | Self-Healing (Autopilot) | החלמה עצמית מכשלים | - | Legacy (`autopilot.py`) | 🗄️ Legacy (Reference Only) | POC בלבד, טרם הוחלט |
 | **EXEC-001** | Local Execution | ביצוע פעולות מקומיות | - | Legacy (placeholder) | 🗄️ Legacy (Reference Only) | Placeholder ריק |
+| **CHAT-001** | Chat1 Telegram UI | ממשק טלגרם רשמי ל-AI-OS עם Human-in-the-Loop | Chat1 Telegram Agent | Agent Gateway, GPT Planner | 🚧 Implemented (Not Deployed) | **ממשק רשמי יחיד** - `chat/telegram_bot.py`. לא מורם כשירות קבוע |
+| **CHAT-002** | Telegram Prototype (External) | פרוטוטיפ חיצוני עם LLM קטן | N/A | External HTTP Server | 🗄️ Legacy / External | **לא חלק מ-ai-os**. לינוסוי בלבד. אסור לבנות עליו תהליכים |
 
 ---
 
@@ -268,7 +270,7 @@
 |-------|-------|-------|
 | **Voice/Audio Control** | ❌ Not Available | לא קיים ולא בתכנית מיידית |
 | **OS GUI Automation (Advanced)** | 🔄 Planned | מעבר לשליטה בסיסית |
-| **Telegram Integration** | 🗄️ Legacy (Reference) | מוזכר באודיט, טרם הוחלט |
+| **Chat1 Telegram (Deployment)** | 🔄 Planned | קוד קיים, צריך deployment כשירות קבוע |
 | **Make.com Workflows** | 🗄️ Legacy (Reference) | מוזכר באודיט, טרם הוחלט |
 | **GPT API Direct Calls** | 🔄 Planned | לסוכנים שצריכים GPT ישירות |
 | **Multi-Agent Coordination** | 🔄 Planned | ריבוי סוכנים שעובדים ביחד |

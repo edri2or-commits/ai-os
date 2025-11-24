@@ -42,7 +42,8 @@
 | **10** | MCP GitHub Integration | Python Module | GitHub via MCP | `make-ops-clean/mcp/github/` | GitHub Token (mcp config) | 🗄️ Legacy | High | חלק מ-MCP הישן. **לא פעיל** |
 | **11** | MCP Google Integration | Python Module | Google Workspace | `make-ops-clean/mcp/google/` | Google OAuth (mcp config) | 🗄️ Legacy | High | חלק מ-MCP הישן. **לא פעיל** |
 | **12** | Make (Integromat) | SaaS | Automation Platform | `make-ops-clean/automation/` (מוזכר) | Make API Key | ❓ Unknown | Medium | מוזכר באודיט. לא ברור אם בשימוש |
-| **13** | Telegram Bot | Bot API | Messaging | `make-ops-clean/` (מוזכר באודיט) | Telegram Bot Token | ❓ Unknown | Medium | מוזכר באודיט. לא ברור אם בשימוש |
+| **13** | Chat1 Telegram Bot (Official) | Bot API | UI / Messaging | `chat/telegram_bot.py` | Telegram Bot Token (SSOT) | 🚧 Implemented (Not Deployed) | Medium | **ממשק רשמי יחיד** - מחובר ל-Agent Gateway. Hebrew UI + Human-in-the-Loop |
+| **13b** | Telegram Prototype (External) | Bot API | Legacy | External (outside repo) | Unknown | 🗄️ Legacy / External | Low | **לא חלק מ-ai-os**. לניסוי בלבד. אסור לבנות עליו |
 | **14** | GitHub Actions | CI/CD | GitHub Workflows | `.github/workflows/` (בריפו) | GitHub Secrets | ❓ Unknown | High | לא ברור אילו workflows קיימים |
 | **15** | Cloud Run | Cloud Platform | Hosting | `make-ops-clean/cloud-run/` | GCP Credentials | 🗄️ Legacy | Critical | תוכנן ל-deployment. **לא פרוס** |
 | **16** | Autopilot Script | Python Script | Self-Healing | `make-ops-clean/autopilot.py` | Google Sheets API Key | 🗄️ Legacy | Medium | POC להחלמה עצמית. **לא פעיל** |
@@ -324,12 +325,12 @@
 ---
 
 **סטטוס מסמך זה**: ✅ Active  
-**עדכון אחרון**: 21 נובמבר 2025  
-**כלים מתועדים**: 24  
-**כלים פעילים**: 10  
-**כלים Legacy**: 8  
-**כלים Unknown**: 4  
-**רמת סיכון**: 6 Critical, 5 High, 6 Medium, 3 Low  
+**עדכון אחרון**: 24 נובמבר 2025  
+**כלים מתועדים**: 25  
+**כלים פעילים**: 11 (+ Chat1 Telegram)  
+**כלים Legacy**: 9 (+ Telegram Prototype)  
+**כלים Unknown**: 3  
+**רמת סיכון**: 6 Critical, 5 High, 7 Medium, 3 Low  
 
 ---
 
