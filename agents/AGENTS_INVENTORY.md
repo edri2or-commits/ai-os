@@ -3,6 +3,7 @@
 מסמך זה מפרט את כל הסוכנים שזוהו בריפו הישן `make-ops-clean` ומספק המלצות למיקום במערכת החדשה `ai-os`.
 
 **תאריך יצירה**: 20 נובמבר 2025  
+**עדכון אחרון**: 24 נובמבר 2025  
 **מבוסס על**: `docs/REPO_AUDIT_make-ops-clean.md` + סקירה ישירה של הריפו הישן
 
 ---
@@ -78,5 +79,49 @@
 
 ---
 
-**סטטוס**: ✅ מיפוי ראשוני הושלם  
-**צעד הבא**: אישור אנושי להמלצות + ייבוא הסוכן הראשון
+## סוכנים פעילים (2025-11-24)
+
+### GPT AI-OS Manager
+| תכונה | פירוט |
+|--------|-------|
+| **שם** | AI-OS GitHub Manager |
+| **פלטפורמה** | ChatGPT Custom GPT |
+| **סטטוס** | ✅ Operational |
+| **יכולות** | GitHub (read/write/PR) + Google Workspace (מלא) |
+| **חיבור** | ngrok → localhost:8082 |
+
+**פעולות זמינות**:
+- קריאת קבצים מ-GitHub
+- יצירת Pull Requests
+- שליחת אימיילים
+- יצירת אירועים ביומן
+- חיפוש קבצים ב-Drive
+- יצירת מסמכי Google Docs
+- יצירת גיליונות Google Sheets
+- יצירת משימות
+
+---
+
+## שירותים תומכים (Backend Services)
+
+### MCP GitHub Client
+| תכונה | פירוט |
+|--------|-------|
+| **Port** | 8081 |
+| **סטטוס** | ✅ Operational |
+| **מיקום** | `services/mcp_github_client/` |
+| **תיעוד** | `services/mcp_github_client/README.md` |
+
+### Google Workspace Client
+| תכונה | פירוט |
+|--------|-------|
+| **Port** | 8082 |
+| **סטטוס** | ✅ Operational |
+| **מיקום** | `services/google_workspace_client/` |
+| **תיעוד** | `services/google_workspace_client/README.md` |
+| **Auth** | OAuth 2.0 (edri2or@gmail.com) |
+
+---
+
+**סטטוס**: ✅ מיפוי ראשוני הושלם + סוכנים פעילים  
+**צעד הבא**: Deploy ל-Cloud (תמיד פעיל)

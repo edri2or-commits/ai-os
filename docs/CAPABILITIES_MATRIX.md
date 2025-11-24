@@ -3,8 +3,8 @@
 **מפת היכולות של מערכת ההפעלה האישית**
 
 **תאריך יצירה**: 20 נובמבר 2025  
-**גרסה**: 1.1 (Critical Decisions Locked)  
-**עדכון אחרון**: 20 נובמבר 2025
+**גרסה**: 1.2 (Google Workspace Integration)  
+**עדכון אחרון**: 24 נובמבר 2025
 
 ---
 
@@ -53,7 +53,12 @@
 | **GGL-001** | Google Calendar Read | קריאת אירועים מיומן | - | Google MCP | ✅ Operational | READ-ONLY |
 | **GGL-002** | Google Gmail Read | קריאת מיילים | - | Google MCP | ✅ Operational | READ-ONLY |
 | **GGL-003** | Google Drive Read | קריאת קבצים מ-Drive | - | Google MCP | ✅ Operational | READ-ONLY |
-| **GGL-004** | Google Workspace Write | כתיבה ל-Google Workspace | - | Google MCP (להרחיב) | 🔄 Planned | דורש OAuth scopes נוספים |
+| **GGL-004** | Google Gmail Send | שליחת אימיילים דרך Gmail | GPT Custom Action | Google Workspace Client | ✅ Operational | **NEW 2025-11-24**: עובד דרך GPT Actions + ngrok |
+| **GGL-005** | Google Calendar Write | יצירת אירועים ביומן | GPT Custom Action | Google Workspace Client | ✅ Operational | **NEW 2025-11-24**: עובד דרך GPT Actions + ngrok |
+| **GGL-006** | Google Drive Search | חיפוש קבצים ב-Drive | GPT Custom Action | Google Workspace Client | ✅ Operational | **NEW 2025-11-24**: עובד דרך GPT Actions + ngrok |
+| **GGL-007** | Google Sheets Create/Read | יצירת וקריאת גיליונות | GPT Custom Action | Google Workspace Client | ✅ Operational | **NEW 2025-11-24**: עובד דרך GPT Actions + ngrok |
+| **GGL-008** | Google Docs Create | יצירת מסמכים | GPT Custom Action | Google Workspace Client | ✅ Operational | **NEW 2025-11-24**: נבדק ועובד! |
+| **GGL-009** | Google Tasks Create | יצירת משימות | GPT Custom Action | Google Workspace Client | ✅ Operational | **NEW 2025-11-24**: עובד דרך GPT Actions + ngrok |
 | **KB-001** | Knowledge Base Reading | קריאת מסמכי ידע והחלטות | - | Filesystem MCP | ✅ Operational | `docs/`, `decisions/`, `plans/` |
 | **KB-002** | Decision Records (ADRs) | ניהול החלטות אדריכליות | - | Legacy (`ops/decisions/`) | 🗄️ Legacy (Reference Only) | טרם יובא ל-AI-OS |
 | **DIAG-001** | System Diagnostics | אבחון מצב המערכת | - | Legacy (`ops/diag/`) | 🗄️ Legacy (Reference Only) | טרם יובא ל-AI-OS |

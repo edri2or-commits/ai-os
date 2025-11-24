@@ -11,7 +11,7 @@ AI-OS operates through a structured pipeline:
 
 Every change flows through this pipeline, ensuring consistency and traceability.
 
-**Last Tested**: 2025-11-21 13:40:19 (Agent Gateway Iron Test ✅) – מערכת ההפעלה האישית שלי ל-AI
+**Last Tested**: 2025-11-24 (GPT + Google Workspace Integration ✅) – מערכת ההפעלה האישית שלי ל-AI
 
 `ai-os` הוא ריפו ה־**Single Source of Truth (SSOT)** שלי למערכת הפעלה אישית מרובת־סוכנים (Multi-Agent OS).  
 זו שכבת הבקרה שמחברת בין סוכני AI, כלים, אינטגרציות ו־workflows – בצורה **בטוחה, שקופה ומבוקרת**.
@@ -68,10 +68,12 @@ ai-os/
 | **DECISIONS_AI_OS.md** | 3 החלטות קריטיות נעולות | ✅ Active |
 | **REPO_AUDIT** | אודיט מלא של `make-ops-clean` | ✅ Reference |
 
-### ✅ **סוכני AI** (1 סוכן פעיל)
-| סוכן | תפקיד | מצב ביצוע |
-|------|-------|-----------|
-| **GPT GitHub Agent** | Planner לשינויים ב-GitHub | 🚧 DRY RUN בלבד |
+### ✅ **סוכני AI ושירותים**
+| שם | תפקיד | מצב |
+|------|-------|-------|
+| **GPT AI-OS Manager** | GitHub + Google Workspace | ✅ Operational |
+| **MCP GitHub Client** | API ל-GitHub (port 8081) | ✅ Operational |
+| **Google Workspace Client** | API ל-Google (port 8082) | ✅ Operational |
 
 ### ✅ **Workflows** (1 workflow פעיל)
 | Workflow | מטרה | מתי להשתמש |
@@ -79,10 +81,10 @@ ai-os/
 | **GITHUB_PLANNING_DRY_RUN** | תכנון בטוח של שינויים ב-GitHub | כל פעם שרוצים לשנות משהו בריפו |
 
 ### ✅ **יכולות פעילות** (עיקריות)
-- 📂 **GitHub**: קריאה מלאה, כתיבה ידנית, תכנון אוטומטי
+- 📂 **GitHub**: קריאה, כתיבה, יצירת PRs (דרך GPT Actions)
 - 💻 **Windows**: פקודות PowerShell, שליטה ב-UI, פתיחת אפליקציות
 - 📁 **File System**: קריאה/כתיבה מקומית, חיפוש, ניתוח
-- 📧 **Google**: קריאת Gmail, Calendar, Drive (READ-ONLY)
+- 📧 **Google Workspace**: Gmail (שליחה+קריאה), Calendar (יצירה+קריאה), Drive (חיפוש), Docs (יצירה), Sheets (יצירה+קריאה), Tasks
 
 ---
 
@@ -376,10 +378,10 @@ MIT License - תשתמש בחופשיות, אבל בלי אחריות 😊
 
 ---
 
-**סטטוס מערכת**: ✅ Active & Operational (DRY RUN Mode)  
-**גרסה**: 1.0  
-**עדכון אחרון**: 20 נובמבר 2025  
-**צעד הבא**: להפעיל את ה-workflow על משימה אמיתית!
+**סטטוס מערכת**: ✅ Active & Operational  
+**גרסה**: 2.0 (Google Workspace Integration)  
+**עדכון אחרון**: 24 נובמבר 2025  
+**צעד הבא**: Deploy ל-Cloud (תמיד פעיל)
 
 ---
 

@@ -1,0 +1,5 @@
+Fix: Allow extra env vars in config
+
+The .env file contains variables from other services (demo_mode, telegram_bot_token, server_port) that are not relevant to MCP GitHub Client.
+
+Added `extra = "ignore"` to Config class to allow the service to run with a shared .env file.

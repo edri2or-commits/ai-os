@@ -1,0 +1,28 @@
+# Use Python 3.11
+FROM python:3.11-slim
+
+# Set working directory
+WORKDIR /app
+
+# Copy requirements first (for caching)
+COPY services/google_workspace_client/requirements.txt ./requirements.txt
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt && \
+    pip install --no-cache-dir email-validator
+
+# Copy application code
+COPY services/google_workspace_client/ ./services/google_workspace_client/
+
+# Copy credentials (these should be mounted as secrets in production)
+COPY credentials.json ./credentials.json
+COPY token.json ./token.json
+
+# Expose port 8080 (Cloud Run requirement)
+EXPOSE 8080
+
+# Set environment variable for port
+ENV PORT=8080
+
+# Run the application
+CMD uvicorn services.google_workspace_client.main:app --host 0.0.0.0 --port ${PORT}
