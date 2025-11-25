@@ -1,238 +1,52 @@
-# System Snapshot – AI-OS Current State
-### Date: 2025-11-24
+# 🧭 SYSTEM SNAPSHOT — Updated 2025-11-25
+
+## 🏗️ מצב המערכת הנוכחי
+
+| רכיב | סטטוס | תיאור |
+|------|--------|--------|
+| **Claude Desktop** | ✅ פעיל ויציב | מחובר ישירות ל־GitHub ול־Google דרך MCPs, ללא תלות ב־PowerShell. משמש כסוכן ביצוע מלא (Executor). |
+| **GPT Operator (Custom GPT)** | ✅ פעיל | פועל בריפו כ־Operator אחראי תיעוד, מחקר, וניהול מבני קבצים. שווה ביכולות לקלוד. |
+| **Chat1 (Telegram Bot)** | ⚙️ Partial | פועל ידנית דרך PowerShell; מתוכנן להפוך לשירות עצמאי בפאזה 2.5. |
+| **Google Integrations** | ✅ פעיל | Gmail, Calendar, Drive פעילים. אוטומציות יתומות במעקב. |
+| **Make Integration** | 🕓 מתוכנן | ממתין להפעלה בפאזה 2.4 – תחילת חיבור רשמי. |
+| **Control Plane** | 🏗️ בבנייה | מציין שהמערכת בפאזה 2.3→2.4. |
+| **Event Timeline** | ✅ פעיל | מתעד כל שינוי במערכת בזמן אמת. |
 
 ---
 
-## 🎯 System Overview
+## 🧩 עקרונות עדכניים
 
-AI-OS is a personal AI operating system with integrated services for GitHub and Google Workspace operations, controlled via Custom GPT Actions.
-
----
-
-## 🏗️ Architecture
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    GPT Custom Actions                        │
-│              (AI-OS GitHub + Google Manager)                │
-└─────────────────────┬───────────────────────────────────────┘
-                      │ HTTPS (ngrok)
-                      ▼
-┌─────────────────────────────────────────────────────────────┐
-│                   Local Services                             │
-├─────────────────────────────────────────────────────────────┤
-│  ┌─────────────────────┐    ┌─────────────────────────────┐ │
-│  │ MCP GitHub Client   │    │ Google Workspace Client     │ │
-│  │ Port: 8081          │    │ Port: 8082                  │ │
-│  ├─────────────────────┤    ├─────────────────────────────┤ │
-│  │ • /github/read-file │    │ • /google/gmail/send        │ │
-│  │ • /github/list-tree │    │ • /google/gmail/list        │ │
-│  │ • /github/open-pr   │    │ • /google/calendar/*        │ │
-│  │                     │    │ • /google/drive/search      │ │
-│  │                     │    │ • /google/sheets/*          │ │
-│  │                     │    │ • /google/docs/create       │ │
-│  │                     │    │ • /google/tasks/create      │ │
-│  └─────────────────────┘    └─────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────┘
-                      │                       │
-                      ▼                       ▼
-              ┌───────────────┐    ┌─────────────────────┐
-              │ GitHub API    │    │ Google Workspace    │
-              │ (edri2or-     │    │ (edri2or@gmail.com) │
-              │  commits/     │    │ OAuth 2.0           │
-              │  ai-os)       │    └─────────────────────┘
-              └───────────────┘
-```
+- אין היררכיה בין סוכנים. כל סוכן במערכת שווה ביכולות ובאחריות.
+- הביצוע מתחלק לפי חוזקה טכנית ורלוונטיות, לא לפי דרגות.
+- כל commit חייב להכיל את שם הסוכן שביצע בפועל (`performed_by`).
+- Claude ו־GPT משתפים פעולה כצוות מאוחד לביצוע, תיעוד ותחזוקה.
 
 ---
 
-## ✅ Active Services
+## 🎯 פאזה פעילה
+**Phase 2.3 – Stabilizing The Hands** (נחתמה)
 
-### 1. MCP GitHub Client
-- **Status**: ✅ Operational (Full Access)
-- **Port**: 8081
-- **Repository**: `edri2or-commits/ai-os`
-- **Endpoints**:
-  | Endpoint | Description |
-  |----------|-------------|
-  | POST `/github/read-file` | Read file content from repo |
-  | POST `/github/write-file` | **Write file directly to main** |
-  | POST `/github/delete-file` | **Delete a file** |
-  | POST `/github/list-tree` | List repository structure |
-  | GET `/github/list-branches` | **List all branches** |
-  | POST `/github/get-commits` | **Get commit history** |
-  | POST `/github/open-pr` | Create Pull Request (optional) |
-- **Location**: `services/mcp_github_client/`
-
-### 2. Google Workspace Client
-- **Status**: ✅ Operational
-- **Port**: 8082
-- **Auth**: OAuth 2.0 (edri2or@gmail.com)
-- **Endpoints**:
-  | Endpoint | Description |
-  |----------|-------------|
-  | POST `/google/gmail/send` | Send email |
-  | POST `/google/gmail/list` | List emails |
-  | POST `/google/calendar/create-event` | Create calendar event |
-  | POST `/google/calendar/list-events` | List events |
-  | POST `/google/drive/search` | Search Drive files |
-  | POST `/google/sheets/create` | Create spreadsheet |
-  | POST `/google/sheets/read` | Read spreadsheet data |
-  | POST `/google/docs/create` | Create Google Doc |
-  | POST `/google/tasks/create` | Create task |
-- **Location**: `services/google_workspace_client/`
-
-### 3. ngrok Tunnel
-- **Status**: ✅ Active
-- **URL**: `https://beauish-supersweetly-twila.ngrok-free.dev`
-- **Target**: Port 8082 (Google Workspace Client)
-- **Note**: URL changes on restart - must update GPT Actions
+מעבר ל־**Phase 2.4 – Make Integration**, הכוללת:
+1. יצירת `MAKE_INTEGRATION_SPEC.md`.
+2. הגדרת תרחיש Thin Slice ראשון (לוג בלבד).
+3. בדיקת סנכרון עם Control Plane.
 
 ---
 
-## 🤖 GPT Integration
-
-### Custom GPT: AI-OS GitHub Manager
-- **Platform**: ChatGPT
-- **Actions Configured**:
-  - GitHub operations (via localhost:8081 or ngrok)
-  - Google Workspace operations (via ngrok → localhost:8082)
-- **Authentication**: None (ngrok provides public URL)
-- **Status**: ✅ Tested and working
-
-### Tested Operations
-| Operation | Status | Test Date |
-|-----------|--------|-----------|
-| GitHub Read File | ✅ Working | 2025-11-24 |
-| GitHub Write File | ✅ Working | 2025-11-24 |
-| GitHub Delete File | ✅ Working | 2025-11-24 |
-| GitHub List Branches | ✅ Working | 2025-11-24 |
-| GitHub Get Commits | ✅ Working | 2025-11-24 |
-| Gmail Send | ✅ Working | 2025-11-24 |
-| Google Docs Create | ✅ Working | 2025-11-24 |
+## 📚 מסמכים קריטיים טעונים לסשן הבא
+- `docs/CONSTITUTION.md`
+- `docs/CONTROL_PLANE_SPEC.md`
+- `docs/CUSTOM_GPT_OPERATOR_SPEC.md`
+- `docs/DECISIONS_AI_OS.md`
+- `docs/CAPABILITIES_MATRIX.md`
+- `docs/AGENT_ONBOARDING.md`
 
 ---
 
-## 📁 Key Files & Locations
+## 🧠 הערות אסטרטגיות
 
-```
-ai-os-claude-workspace/
-├── services/
-│   ├── mcp_github_client/          # GitHub API service
-│   │   ├── main.py
-│   │   ├── api/routes_github.py
-│   │   ├── core/mcp_github_client.py
-│   │   └── INTEGRATION_GUIDE.md
-│   │
-│   └── google_workspace_client/    # Google Workspace service
-│       ├── main.py
-│       ├── api/
-│       │   ├── routes_gmail.py
-│       │   ├── routes_calendar.py
-│       │   ├── routes_drive.py
-│       │   ├── routes_sheets.py
-│       │   ├── routes_docs.py
-│       │   └── routes_tasks.py
-│       └── core/google_client.py
-│
-├── credentials.json                 # Google OAuth client config
-├── token.json                       # Google OAuth token (auto-refresh)
-├── start_github_client.py          # Start GitHub service
-├── start-all-services.bat          # Start ALL services (one click)
-└── Dockerfile                       # For cloud deployment (planned)
-```
+- המערכת פועלת במודל מעגלי ולא היררכי.
+- Or הוא בעל המערכת ומקור הכוונה הערכית – לא טכני.
+- כל שינוי נעשה בשקיפות מלאה ונרשם ב־Timeline.
 
----
-
-## 🚀 How to Start
-
-### Option 1: One-Click Start (Recommended)
-Double-click: `start-all-services.bat`
-
-This starts:
-1. GitHub Client (port 8081)
-2. Google Workspace Client (port 8082)
-3. ngrok tunnel
-
-### Option 2: Manual Start
-```powershell
-# Terminal 1: GitHub Client
-python start_github_client.py
-
-# Terminal 2: Google Workspace Client
-python -m uvicorn services.google_workspace_client.main:app --port 8082 --reload
-
-# Terminal 3: ngrok
-ngrok http 8082
-```
-
----
-
-## ⚠️ Known Limitations
-
-1. **ngrok URL changes on restart** - Must update GPT Actions each time
-2. **Services require local machine running** - No cloud deployment yet
-3. **GitHub Client not exposed via ngrok** - Only Google Workspace is public
-
----
-
-## 💬 Chat & User Interfaces
-
-### Chat1 – Telegram UI (Official)
-
-| Property | Value |
-|----------|-------|
-| **Status** | 🚧 Implemented in Code, Not Fully Deployed |
-| **Location** | `chat/telegram_bot.py` |
-| **Architecture** | Telegram → Bot → Agent Gateway → GPT Planner → Action Executor |
-| **Interface** | Hebrew, Human-in-the-Loop with approval buttons |
-| **Token** | Configured in SSOT (`.env.local` → `TELEGRAM_BOT_TOKEN`) |
-
-**What Chat1 Does:**
-- Receives natural language intents from Telegram
-- Calls Agent Gateway (`ai_core/agent_gateway.py`)
-- Presents plan to user with ✅/❌ buttons
-- Executes only after explicit approval
-
-**Current State:**
-- ✅ Code implemented and functional
-- ✅ Integrated with GPT Planner (ai_core/gpt_orchestrator.py)
-- ⚠️ Not deployed as persistent service (requires manual startup)
-- ⚠️ Requires OPENAI_API_KEY in environment
-
----
-
-### Legacy / External Prototypes (Not Part of AI-OS)
-
-There exists an **external Telegram prototype** outside this repository:
-- Uses a "small LLM" (different from GPT Planner) via simple HTTP server
-- Was used for early experimentation only
-- **Not managed as part of AI-OS architecture**
-- **Not connected to Agent Gateway**
-- Should not be used for production workflows
-
-> ⚠️ **Important**: Only Chat1 (`chat/telegram_bot.py`) is the official Telegram interface for AI-OS.
-
----
-
-## 🔮 Next Steps (Planned)
-
-1. [ ] Deploy to Google Cloud Run (always-on, no ngrok needed)
-2. [ ] Fixed domain for GPT Actions
-3. [ ] Merge both services into single unified service
-4. [ ] Add more Google Workspace operations (Calendar edit, Drive upload)
-5. [ ] Deploy Chat1 as persistent service
-
----
-
-## 📊 Version History
-
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0 | 2025-11-23 | Initial MCP GitHub Client |
-| 2.0 | 2025-11-24 | Added Google Workspace Client, GPT integration |
-
----
-
-**Last Updated**: 2025-11-24
-**Status**: ✅ Operational
+💫 *עדכון זה מסמן את סיום פאזה 2.3 והמעבר למבנה מאוחד, יציב ושוויוני בין כל הסוכנים.*
