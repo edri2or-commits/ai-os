@@ -1,53 +1,126 @@
-# Claude Healthcheck Specification — v0.1
+# CLAUDE_HEALTHCHECK_SPEC.md — Phase 2.2
 
-**Phase:** 2 — Stabilizing the Hands  
-**Mode:** INFRA_ONLY
-
-## Purpose
-To define a consistent healthcheck protocol for Claude Desktop and its connected MCPs, ensuring transparency and reliability across all executions.
-
-## MCP Health Matrix
-| MCP | Description | Status Values | Notes |
-|------|--------------|----------------|-------|
-| Filesystem | Local file operations | OK / Flaky / Broken | Used for reading and writing local files |
-| Git | Local Git operations | OK / Flaky / Broken | Manages repo sync and commits |
-| Windows | OS-level automations | OK / Flaky / Broken | PowerShell, process handling |
-| Google | Workspace integrations | OK / Flaky / Broken | Drive, Sheets, Docs, Calendar |
-| Browser | Web interactions | OK / Flaky / Broken | Automation and scraping layer |
-| Canva | Design automation | OK / Flaky / Broken | Image and presentation generation |
-| Other MCPs | Any additional or custom connectors | OK / Flaky / Broken | To be appended dynamically |
-
-## Report Format
-Each session should produce a structured report in JSON or Markdown, containing:
-```json
-{
-  "timestamp": "2025-11-25T23:54:00Z",
-  "agent": "Claude",
-  "phase": 2,
-  "mcp_status": {
-    "Filesystem": "OK",
-    "Git": "Flaky",
-    "Windows": "OK",
-    "Google": "Broken"
-  },
-  "notes": "Google API timeout, retried twice."
-}
-```
-
-## Error Digest Protocol
-1. After each major session, Claude generates a brief summary called **Error Digest**.
-2. The digest lists top 3–7 recurring issues with short explanations.
-3. Digest is logged to the Event Timeline and reviewed by Or.
-
-## Sync & Control Integration
-- The Healthcheck feeds live data to the Control Plane.
-- The Event Timeline receives updates for each MCP state change.
-- GPT Operator consolidates health reports across all agents for a unified snapshot.
+## 📅 Date: 2025-11-25
+**Status:** Draft (In Progress)
+**Owner:** GPT Operator (under Or’s supervision)
 
 ---
 
-**Tech summary:**
-- Added `CLAUDE_HEALTHCHECK_SPEC.md` v0.1
-- Defines MCP status matrix and error digest process
-- Integrates with Control Plane + Event Timeline
-- Documentation only (no automation yet)
+## 🎯 Purpose
+Define a structured health monitoring protocol for **Claude Desktop** — ensuring it can self‑report reliability, detect connection or permission issues, and summarize errors for human readability.
+
+---
+
+## 🧩 Scope
+Applies to all Claude Desktop MCP integrations and local automations:
+- Filesystem
+- Git
+- Windows Automation
+- Google (Read)
+- Browser
+- Canva
+
+---
+
+## 🩺 Healthcheck Structure
+
+Each MCP or module reports one of three states:
+| State | Meaning | Required Action |
+|--------|----------|-----------------|
+| ✅ **OK** | Fully functional | None |
+| ⚠️ **Flaky** | Intermittent or partial failures | Log in Digest, retry next session |
+| ❌ **Broken** | Persistent failure | Alert Or, create GitHub issue, mark in Control Plane |
+
+---
+
+## 🧠 Data Model
+
+```json
+{
+  "timestamp": "2025-11-25T12:34:56Z",
+  "agent": "Claude Desktop",
+  "phase": "2.2",
+  "modules": {
+    "filesystem": "OK",
+    "git": "OK",
+    "google_read": "Flaky",
+    "browser": "OK",
+    "canva": "Broken"
+  },
+  "summary": {
+    "total_ok": 3,
+    "total_flaky": 1,
+    "total_broken": 1
+  },
+  "digest": [
+    {
+      "module": "canva",
+      "error": "Authentication expired",
+      "suggested_fix": "Re‑auth via Claude settings"
+    },
+    {
+      "module": "google_read",
+      "error": "Token refresh latency",
+      "suggested_fix": "Run OAuth refresh script"
+    }
+  ]
+}
+```
+
+---
+
+## 📋 Reporting Format
+
+At the end of each Claude Desktop session:
+1. Run `claude_healthcheck.py`
+2. Generate JSON file → `reports/healthcheck_YYYYMMDD.json`
+3. Append summary line to `docs/CLAUDE_HEALTHCHECK_LOG.md`
+4. If any ❌ Broken modules → notify GPT Operator + log in Control Plane
+
+---
+
+## 🧾 Digest Example (Markdown Summary)
+
+```
+### Claude Healthcheck — 2025‑11‑25
+✅ Filesystem: OK  
+✅ Git: OK  
+⚠️ Google Read: Flaky (Token refresh latency)  
+✅ Browser: OK  
+❌ Canva: Broken (Authentication expired)
+
+**Summary:** 3 OK, 1 Flaky, 1 Broken
+**Next Step:** Re‑auth Canva, monitor Google latency.
+```
+
+---
+
+## 🔗 Integration Points
+- Update `SESSION_INIT_CHECKLIST.md` → add Healthcheck step.
+- Add `claude_status` field to `CONTROL_PLANE_SPEC.md`.
+- Report digest summary to `EVENT_TIMELINE` when active.
+
+---
+
+## 🧭 Implementation Notes
+- Python script `claude_healthcheck.py` will scan logs and APIs.
+- Uses standard exit codes: 0 (OK), 1 (Flaky), 2 (Broken).
+- Future: Add Slack/Telegram (Chat1) notification integration.
+
+---
+
+## 🔮 Evolution Path
+| Step | Description | Status |
+|------|--------------|---------|
+| 1 | Define Healthcheck Spec (this file) | ✅ Done |
+| 2 | Implement `claude_healthcheck.py` | 🚧 In Progress |
+| 3 | Integrate into Session Init & Control Plane | 🔜 Next |
+| 4 | Automate periodic reports | ⏳ Planned |
+
+---
+
+**Phase:** 2.2 – Claude Healthcheck & Error Digest  
+**Next Phases:** 2.3 Chat1 Stabilization → 2.4 Make Integration → 2.5 Consolidation  
+**Mode:** INFRA_ONLY  
+
+> “The system must feel its own heartbeat before it can move its hands.”
