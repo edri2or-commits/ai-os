@@ -1,0 +1,1 @@
+This is a direct write test to confirm direct write permissions are active. Created at 2025-11-25 22:45 UTC.
