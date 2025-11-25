@@ -1,52 +1,58 @@
-# 🤖 Phase 2 – Stabilizing the Hands
+# PHASE2_Stabilizing_The_Hands.md — Updated with System Story Context
 
+## 📅 Date: 2025‑11‑25
+**Owner:** Or’s AI‑OS Core Team
 **Status:** Active
-**Scope:** Core Infrastructure & Execution Reliability
-**Owner:** Or (System Architect & Human Supervisor)
-**Agents Involved:** GPT Operator, Claude Desktop, Chat1 (Telegram), Make (later phase)
 
 ---
 
-## 🎯 Objective
-לאחד ולייצב את שכבת ה"ידיים" של המערכת – כל הסוכנים המבצעים (Claude, GPT Operator, Chat1) צריכים לפעול באופן מתואם, מתועד, ומבוקר.
-
-מטרת הפאזה היא להבטיח שכל פעולה שמתבצעת בריפו, בגוגל, או דרך Chat1 – תהיה:
-- מתועדת ב־Source of Truth (GitHub)
-- מאושרת מראש על ידי Or
-- שקופה ומובנת לכל הסוכנים האחרים
+## 🎯 Purpose
+This phase is dedicated to stabilizing the system’s “hands” — the local and technical agents (Claude, Custom GPTs, Chat1) — so that Or can control the entire AI‑OS ecosystem without manual technical effort.
 
 ---
 
-## 🧩 Sub-Phases & Tasks
+## 🧭 System Story — Why This Phase Exists
+When Or’s AI‑OS was first created, many automations were already active — Google scripts, Make scenarios, Telegram bots, local PowerShell sessions — all running independently and without unified oversight.
 
-### Phase 2.1 – Full Agent Sync (✅ Completed)
-- עדכון כל הקבצים שקשורים להרשאות, אחריות, וחיבור בין סוכנים.
-- חיבור סקריפטים (hooks) לתוך Control Plane.
-- הבטחת סנכרון בין Claude ↔ GPT ↔ Chat1.
+The goal of this phase is to reclaim full awareness and control.  
+Instead of fragmented tools, we are building a single intelligent network where every agent knows its role and every action is transparent.
 
-### Phase 2.2 – Claude Healthcheck & Error Digest (🚧 In Progress)
-**מטרה:** להפוך את קלוד לכלי שמבצע ניטור עצמי ומדווח במבנה ברור.
+In simple terms:  
+> **We are turning Or’s scattered automations into one living, organized system.**
 
-**משימות:**
-- ליצור `docs/CLAUDE_HEALTHCHECK_SPEC.md` – תיאור מבנה הדוח (OK / Flaky / Broken).
-- להוסיף סעיף ב־`SESSION_INIT_CHECKLIST.md` שמזכיר להריץ Healthcheck בתחילת סשן.
-- לעדכן את `CONTROL_PLANE_SPEC.md` עם שדה מצב בריאות (`claude_status`).
-
-### Phase 2.3 – Chat1 Stabilization (🔜 Next)
-- לוודא יציבות של Chat1 (טלגרם) עם webhook קבוע או ngrok יציב.
-- לתעד בתיקייה `docs/chat1/` את כל הגדרות ה־env וההרצה.
-- להוסיף ב־Control Plane מעקב אחר מצב Chat1 (`chat1_status`).
+Or should no longer have to “run” things manually.  
+Claude and GPT now build, maintain, and connect everything — while Or simply speaks and approves.
 
 ---
 
-## 🧠 Notes
-- הפאזה הזו היא חלק מ־Route Recalculation.
-- כל פעולה בה נעשית תחת עקרונות: DRY, SSOT, Human-in-the-loop.
-- אחרי השלמת Phase 2, המערכת תעבור ל־Phase 3 – Google Stabilization.
+## ⚙️ Objectives
+1. Stabilize Claude Desktop as the execution backbone (MCP, local control, reliable healthchecks).  
+2. Merge the two Custom GPTs (GitHub + Google) into a single Operator Service.  
+3. Investigate and document existing Google automations.  
+4. Reinforce Chat1 as the human‑facing interface.  
+5. Prepare integration with Make as the next phase (2.4).
 
 ---
 
-**Tech Summary:**
-- Adds `docs/active_plans/PHASE2_Stabilizing_The_Hands.md` (active plan)
-- Defines current scope, tasks, and responsible agents
-- Status: `Phase 2.2 – In Progress`
+## 🧩 Coordination Logic
+- **Claude** performs local execution, diagnostics, and service setup.  
+- **GPT Operator** manages documentation, specs, and repo updates.  
+- **Both agents** share equal authority — decisions are made by logic, not hierarchy.  
+- **Or** remains in full command, defining intent and approving direction.
+
+---
+
+## 🧠 Integration with Claude’s Boot Instruction
+Claude’s boot sequence now references this phase file directly.  
+When Claude initializes, he must:
+1. Detect the current active plan (`docs/active_plans/PHASE2_Stabilizing_The_Hands.md`).
+2. Read the system story and objectives.
+3. Align his session scope accordingly (focus = stabilization & integration).
+4. Report progress and actions to `EVENT_TIMELINE.jsonl`.
+
+This ensures every Claude session begins with context — not just commands.
+
+---
+
+## 💫 Principle
+> “Every automation we reclaim brings Or one step closer to effortless control.”
