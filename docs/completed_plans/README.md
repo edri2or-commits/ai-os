@@ -1,25 +1,14 @@
-# Completed Plans — Archive
+# 📁 Completed Plans Directory
 
-This directory stores finalized and archived evolution plans of Or’s AI-OS.
+תיקייה זו שומרת את כל התוכניות שהסתיימו ונחתמו.
 
-Each plan is moved here automatically (or manually) when its status switches
-from `active` to `closed`. The filename and metadata preserve its history.
+כאשר תוכנית פעילה משנה את מצבה ל־`status: closed`,
+הסקריפט `scripts/move_completed_plan.py` מעביר אותה לכאן באופן אוטומטי.
 
----
-
-## 📁 Structure
-- `PLAN_NAME.md` — The full final version of the plan.
-- `PLAN_NAME.meta.yaml` — Metadata (dates, agents, final status, approvals).
+מבנה תיקייה זה מאפשר שמירה היסטורית מלאה של כל תהליך מערכת שהושלם.
 
 ---
 
-## 🧩 Automation (Future)
-In future phases, Control Plane or Make scenarios will:
-- Detect when an `active_plan` is marked `closed`.
-- Move the plan file and create metadata automatically.
-- Update `CONTROL_PLANE_SPEC.md` to remove the `active_master_plan` pointer.
-- Log this transition to the Event Timeline.
-
----
-
-*Created automatically as part of AI-OS Phase 2 evolution (2025-11-25).*
+**קבצים טיפוסיים:**
+- `PLAN_NAME.md` — גרסת התוכנית הסופית.
+- `PLAN_NAME.meta.yaml` — פרטי מטא־דאטה (תאריכים, סוכנים, סטטוס, חתימות).
