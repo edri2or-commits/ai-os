@@ -1,42 +1,45 @@
-# Control Plane Specification — v0.2
+# CONTROL_PLANE_SPEC — System Control Plane (v1.1)
 
-**Phase:** 2 — Stabilizing the Hands
-**Mode:** INFRA_ONLY
-
-## Purpose
-Defines how all system agents (GPT, Claude, Chat1, Make, Google) maintain synchronized state and report their status.
-
-## Core Variables
-| Variable | Description | Example |
-|-----------|--------------|----------|
-| SYSTEM_MODE | Current operational mode | "INFRA_ONLY" |
-| AUTOMATIONS_ENABLED | Global kill switch | false |
-| SANDBOX_ONLY | Restricts changes to sandbox environments | true |
-| ACTIVE_PHASE | Current development phase | "2 - Stabilizing the Hands" |
-| TTL_DEFAULT | Default time-to-live for experiments | "7d" |
-
-## Responsibilities
-- Each agent must report its status to the Control Plane.
-- Status includes: online/offline, last sync time, last error, active tasks.
-- The Control Plane aggregates all statuses into a unified system snapshot.
-- Or (the human) approves transitions between modes or phases.
-- Direct writes by any agent (GPT/Claude/Chat1) are allowed **only** if they are logged and committed with a traceable message.
-
-## Sync Cycle
-1. Each agent sends a heartbeat every session.
-2. The Control Plane updates the System Snapshot.
-3. GPT Operator generates a summary for Or if inconsistencies appear.
-4. Event Timeline is updated for every system action.
-
-## Logging & Accountability
-- Every change is logged in the Event Timeline.
-- Commits must include the actor and reason.
-- Human-Approved Writes Only: Or retains ultimate oversight on all persistent changes.
+## 🧭 Purpose
+Defines the operational state of Or’s AI-OS — modes, active plans, automation flags, and sandboxing rules.
 
 ---
 
-**Tech summary:**
-- Updated Control Plane to v0.2
-- Added direct-write transparency policy
-- Added sync + logging cycle
-- Documentation only, no automation changes
+## ⚙️ Core Fields
+
+```yaml
+SYSTEM_MODE: INFRA_ONLY
+AUTOMATIONS_ENABLED: false
+SANDBOX_ONLY: true
+ACTIVE_PHASE: 2
+TTL_DEFAULT: 7d
+active_master_plan: "docs/active_plans/PLAN_AI_OS_EVOLUTION.md"
+```
+
+---
+
+## 🔍 Description
+- **SYSTEM_MODE** — Current global mode (`INFRA_ONLY`, `LIFE_AUTOMATIONS`, `EXPERIMENT`).
+- **AUTOMATIONS_ENABLED** — Global kill-switch for external automations.
+- **SANDBOX_ONLY** — Ensures experiments run only in sandboxed environments.
+- **ACTIVE_PHASE** — Tracks which phase is currently in progress.
+- **TTL_DEFAULT** — Default time-to-live for experiments or automations.
+- **active_master_plan** — Path to the currently active evolution plan.
+
+---
+
+## 🧩 Integration Notes
+- Every agent during `Session Init` must load this file to know the global mode and current phase.
+- When a new plan opens, this file is updated automatically with the plan’s path.
+- Once a plan is closed, the pointer is cleared or replaced.
+
+---
+
+## 🧠 Future Extension
+- Add real-time sync with Control Plane dashboard (Google Sheet / Make Scenario).
+- Include agent-specific statuses (Claude, GPT, Chat1, Make).
+- Link Event Timeline entries with Control Plane state changes.
+
+---
+
+*Updated automatically as part of AI-OS Phase 2 continuation (2025-11-25).*
