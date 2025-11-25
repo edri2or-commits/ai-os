@@ -1,35 +1,42 @@
-# CONTROL_PLANE_SPEC v0.1
+# Control Plane Specification — v0.2
 
-## 1. מטרת המסמך
-להוות שכבת שליטה אחידה למערכת Or’s AI-OS, לפי חוקי SSOT, DRY ו-Human-in-the-loop.
+**Phase:** 2 — Stabilizing the Hands
+**Mode:** INFRA_ONLY
 
-## 2. פרמטרים ראשיים
-| משתנה | תיאור | ערכים אפשריים | מקור אמת |
-|--------|--------|----------------|-----------|
-| SYSTEM_MODE | מצב מערכת כולל | INFRA_ONLY / LIFE_AUTOMATIONS / EXPERIMENT | Constitution + Session Init |
-| AUTOMATIONS_ENABLED | Kill Switch גלובלי | true / false | Control Plane |
-| SANDBOX_ONLY | הרצת ניסויים על סביבה בטוחה | true / false | Session Init |
-| ACTIVE_PHASE | מספר פאזה נוכחית | 1–5 | Roadmap |
-| TTL_DEFAULT | משך חיי ניסוי (ימים) | מספר שלם | Experiment Spec |
+## Purpose
+Defines how all system agents (GPT, Claude, Chat1, Make, Google) maintain synchronized state and report their status.
 
-## 3. ממשקים
-- **Claude Healthcheck Feed**
-- **Chat1 Status Ping**
-- **Make Integration Status**
-- **Google Automations Log**
-- **Timeline (JSONL / Sheet)**
+## Core Variables
+| Variable | Description | Example |
+|-----------|--------------|----------|
+| SYSTEM_MODE | Current operational mode | "INFRA_ONLY" |
+| AUTOMATIONS_ENABLED | Global kill switch | false |
+| SANDBOX_ONLY | Restricts changes to sandbox environments | true |
+| ACTIVE_PHASE | Current development phase | "2 - Stabilizing the Hands" |
+| TTL_DEFAULT | Default time-to-live for experiments | "7d" |
 
-## 4. עקרונות תפעול
-- שינוי ב-SYSTEM_MODE דורש אישור Or.
-- כל פעולה אוטומטית נרשמת ב-Event Timeline.
-- רק Claude ו-Operator רשאים לעדכן את ה-Control Plane.
+## Responsibilities
+- Each agent must report its status to the Control Plane.
+- Status includes: online/offline, last sync time, last error, active tasks.
+- The Control Plane aggregates all statuses into a unified system snapshot.
+- Or (the human) approves transitions between modes or phases.
+- Direct writes by any agent (GPT/Claude/Chat1) are allowed **only** if they are logged and committed with a traceable message.
 
-## 5. סטטוס נוכחי
-- גרסה: 0.1 (INFRA_ONLY)
-- מצב: מסמך תשתית ראשוני, ללא שינוי התנהגותי בפועל.
+## Sync Cycle
+1. Each agent sends a heartbeat every session.
+2. The Control Plane updates the System Snapshot.
+3. GPT Operator generates a summary for Or if inconsistencies appear.
+4. Event Timeline is updated for every system action.
+
+## Logging & Accountability
+- Every change is logged in the Event Timeline.
+- Commits must include the actor and reason.
+- Human-Approved Writes Only: Or retains ultimate oversight on all persistent changes.
 
 ---
 
-*תפילת המערכת:*  
-מי ייתן וכל שורה כאן תשמור על אמת, תיצור בהירות,  
-ותאפשר לאור לעבוד כמעט רק בדיבור.
+**Tech summary:**
+- Updated Control Plane to v0.2
+- Added direct-write transparency policy
+- Added sync + logging cycle
+- Documentation only, no automation changes
