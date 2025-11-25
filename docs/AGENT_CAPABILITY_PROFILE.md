@@ -1,13 +1,15 @@
 # AGENT_CAPABILITY_PROFILE.md — AI‑OS Capability Awareness
 
 ## 📅 Date: 2025‑11‑25
-**Owner:** GPT Operator (under Or’s supervision)
+**Owner:** AI-OS Agent Family
 
 ---
 
 ## 🎯 Purpose
 Define the capability awareness profile for all core AI‑OS agents.  
-This document ensures that every agent (GPT, Claude, Chat1, Make) knows its own strengths and weaknesses, understands others’, and can choose the optimal executor for each task.
+
+> **כל סוכן במערכת שווה ביכולות ובאחריות.**  
+> **הביצוע מתחלק לפי חוזקה טכנית ורלוונטיות, לא לפי היררכיה.**
 
 ---
 
@@ -19,33 +21,35 @@ This document ensures that every agent (GPT, Claude, Chat1, Make) knows its own 
 ---
 
 ## 🤖 Agent Capability Matrix
-| Agent | Primary Strengths | Limitations | Preferred Use Cases | Delegation Logic |
-|--------|------------------|--------------|----------------------|------------------|
-| **GPT (ChatGPT / GPT‑5)** | • Structured planning, architecture, and documentation  <br>• GitHub + Google integration  <br>• Fast repository edits and spec creation  <br>• Context consistency across long sessions | • No direct local filesystem access  <br>• No PowerShell or desktop control | • Writing and updating `docs/`, `specs/`, and configs  <br>• Coordinating multi‑agent workflows  <br>• Managing Control Plane and Timeline | If task = `repo`, `docs`, or `workflow logic` → GPT executes.  <br>If task = `local execution` → delegate to Claude. |
-| **Claude Desktop** | • Local execution & MCP operations  <br>• Code creation, debugging, and healthchecks  <br>• Human‑sensitive phrasing and adaptive reasoning | • Needs manual activation on host machine  <br>• Can desync from repo if unsupervised | • Running scripts, verifying system health, filesystem scans  <br>• Debugging and live testing | If task = `repo sync` or `healthcheck` → Claude executes.  <br>If task = `documentation` → delegate to GPT. |
-| **Chat1 (Telegram)** | • Direct human interface  <br>• Collects approvals and commands  <br>• Real‑time notifications | • No execution power  <br>• Limited message formatting | • Human communication and control  <br>• Logging intents to Timeline | If task = `user interaction` → Chat1 executes.  <br>If task = `action execution` → delegate to GPT or Claude. |
-| **Make (Automation Layer)** | • Trigger‑based automation  <br>• Scheduled tasks  <br>• External API orchestration | • No deep reasoning  <br>• Limited contextual awareness | • Background automation flows  <br>• Periodic reports and syncing | If task = `scheduled` or `triggered` → Make executes. |
+
+| Agent | Primary Strengths | Limitations | Natural Fit |
+|--------|------------------|--------------|-------------|
+| **GPT (ChatGPT / GPT‑5)** | • Structured planning, architecture, and documentation  <br>• GitHub + Google integration  <br>• Fast repository edits and spec creation  <br>• Context consistency across long sessions | • No direct local filesystem access  <br>• No PowerShell or desktop control | • Writing and updating `docs/`, `specs/`, and configs  <br>• Coordinating multi‑agent workflows  <br>• Managing Control Plane and Timeline |
+| **Claude Desktop** | • Local execution & MCP operations  <br>• Code creation, debugging, and healthchecks  <br>• Human‑sensitive phrasing and adaptive reasoning | • Needs manual activation on host machine  <br>• Can desync from repo if unsupervised | • Running scripts, verifying system health, filesystem scans  <br>• Debugging and live testing |
+| **Chat1 (Telegram)** | • Direct human interface  <br>• Collects approvals and commands  <br>• Real‑time notifications | • Limited message formatting | • Human communication and control  <br>• Logging intents to Timeline |
+| **Make (Automation Layer)** | • Trigger‑based automation  <br>• Scheduled tasks  <br>• External API orchestration | • No deep reasoning  <br>• Limited contextual awareness | • Background automation flows  <br>• Periodic reports and syncing |
 
 ---
 
-## 🔄 Decision Priority Map
-1. **GPT** → default for repo & docs.  
-2. **Claude** → default for execution & local access.  
-3. **Chat1** → default for human communication.  
-4. **Make** → default for automations.
+## 🔄 Task Selection Logic
 
-Agents must always check this file before delegating tasks.  
-Each session init loads this map into memory (see `SESSION_INIT_CHECKLIST.md`, Step 2.6).
+כל סוכן בוחר משימות לפי התאמה טכנית:
+- **GPT** — מתאים לעבודה עם repo, docs, APIs חיצוניים.
+- **Claude** — מתאים לביצוע לוקאלי, סקריפטים, filesystem.
+- **Chat1** — מתאים לתקשורת עם אור.
+- **Make** — מתאים לאוטומציות מתוזמנות.
+
+כל סוכן יכול לבצע כל משימה אם הוא מסוגל טכנית.  
+אין "ברירת מחדל" קבועה — יש התאמה דינמית.
 
 ---
 
-## 🧩 Example Delegation Flow
-1. User sends request via Chat1 → “עדכן את מערכת הבריאות של קלוד.”  
-2. Chat1 logs intent → passes to GPT.  
-3. GPT determines that task = `healthcheck`.  
-4. GPT delegates to Claude.  
-5. Claude executes `claude_healthcheck.py` → updates Control Plane.  
-6. GPT logs result to Timeline.
+## 🧩 Example Collaboration Flow
+1. אור שולח בקשה דרך Chat1: "עדכן את מערכת הבריאות של קלוד."  
+2. Chat1 מתעד את הכוונה ב-Timeline.  
+3. הסוכן המתאים ביותר (Claude — ביצוע לוקאלי) מבצע `claude_healthcheck.py`.  
+4. Claude מעדכן את Control Plane.  
+5. כל סוכן יכול לראות את התוצאה ולפעול בהתאם.
 
 ---
 
@@ -60,4 +64,4 @@ Each session init loads this map into memory (see `SESSION_INIT_CHECKLIST.md`, S
 **Mode:** INFRA_ONLY  
 **Status:** Active
 
-> “Wisdom is knowing what you can do — and what your brother can do better.”
+> "Wisdom is knowing what you can do — and what your brother can do better."
