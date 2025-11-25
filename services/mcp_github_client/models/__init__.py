@@ -8,6 +8,13 @@ from .schemas import (
     OpenPRRequest,
     OpenPRResponse,
     FileChange,
+    WriteFileRequest,
+    WriteFileResponse,
+    DeleteFileRequest,
+    DeleteFileResponse,
+    ListBranchesResponse,
+    GetCommitsRequest,
+    GetCommitsResponse,
 )
 
 __all__ = [
@@ -19,4 +26,11 @@ __all__ = [
     "OpenPRRequest",
     "OpenPRResponse",
     "FileChange",
+    "WriteFileRequest",
+    "WriteFileResponse",
+    "DeleteFileRequest",
+    "DeleteFileResponse",
+    "ListBranchesResponse",
+    "GetCommitsRequest",
+    "GetCommitsResponse",
 ]

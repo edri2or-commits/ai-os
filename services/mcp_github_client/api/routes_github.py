@@ -9,6 +9,13 @@ from ..models import (
     ListTreeResponse,
     OpenPRRequest,
     OpenPRResponse,
+    WriteFileRequest,
+    WriteFileResponse,
+    DeleteFileRequest,
+    DeleteFileResponse,
+    ListBranchesResponse,
+    GetCommitsRequest,
+    GetCommitsResponse,
 )
 from ..core import MCPGitHubClient, OpenAIClient
 
@@ -205,4 +212,136 @@ async def open_pr(request: OpenPRRequest) -> Dict[str, Any]:
         ok=False,
         error_type=pr_result.get("error_type", "pr_creation_failed"),
         message=f"Failed to create PR: {pr_result.get('message')}"
+    )
+
+
+@router.post("/write-file", response_model=WriteFileResponse)
+async def write_file(request: WriteFileRequest) -> Dict[str, Any]:
+    """
+    Write a file directly to the repository (no PR required).
+    
+    This writes directly to the specified branch (default: main).
+    Use this for quick changes without PR workflow.
+    
+    Returns a standardized response with 'ok' field.
+    """
+    logger.info(f"Writing file: {request.path} to branch {request.branch}")
+    
+    # Check if file exists to get SHA (needed for updates)
+    sha = None
+    read_result = await github_client.read_file(
+        path=request.path,
+        ref=request.branch
+    )
+    if read_result.get("ok"):
+        sha = read_result.get("sha")
+        logger.info(f"File exists, updating with SHA: {sha}")
+    else:
+        logger.info(f"File does not exist, creating new file")
+    
+    # Write the file
+    result = await github_client.update_file(
+        path=request.path,
+        content=request.content,
+        branch=request.branch,
+        message=request.message,
+        sha=sha
+    )
+    
+    if result.get("ok"):
+        return WriteFileResponse(
+            ok=True,
+            path=request.path,
+            sha=result.get("content", {}).get("sha"),
+            commit_url=result.get("commit", {}).get("html_url"),
+            message=f"File written successfully to {request.branch}"
+        )
+    
+    return WriteFileResponse(
+        ok=False,
+        error_type=result.get("error_type", "write_failed"),
+        message=f"Failed to write file: {result.get('message')}"
+    )
+
+
+@router.post("/delete-file", response_model=DeleteFileResponse)
+async def delete_file(request: DeleteFileRequest) -> Dict[str, Any]:
+    """
+    Delete a file from the repository.
+    
+    Returns a standardized response with 'ok' field.
+    """
+    logger.info(f"Deleting file: {request.path} from branch {request.branch}")
+    
+    result = await github_client.delete_file(
+        path=request.path,
+        message=request.message,
+        branch=request.branch
+    )
+    
+    if result.get("ok"):
+        return DeleteFileResponse(
+            ok=True,
+            path=request.path,
+            message=f"File '{request.path}' deleted successfully"
+        )
+    
+    return DeleteFileResponse(
+        ok=False,
+        error_type=result.get("error_type", "delete_failed"),
+        message=f"Failed to delete file: {result.get('message')}"
+    )
+
+
+@router.get("/list-branches", response_model=ListBranchesResponse)
+async def list_branches() -> Dict[str, Any]:
+    """
+    List all branches in the repository.
+    
+    Returns a standardized response with 'ok' field.
+    """
+    logger.info("Listing branches")
+    
+    result = await github_client.list_branches()
+    
+    if result.get("ok"):
+        return ListBranchesResponse(
+            ok=True,
+            branches=result.get("branches", []),
+            message="Branches listed successfully"
+        )
+    
+    return ListBranchesResponse(
+        ok=False,
+        error_type=result.get("error_type", "list_failed"),
+        message=f"Failed to list branches: {result.get('message')}"
+    )
+
+
+@router.post("/get-commits", response_model=GetCommitsResponse)
+async def get_commits(request: GetCommitsRequest) -> Dict[str, Any]:
+    """
+    Get recent commits from the repository.
+    
+    Returns a standardized response with 'ok' field.
+    """
+    logger.info(f"Getting commits (branch: {request.branch}, limit: {request.limit})")
+    
+    result = await github_client.get_commits(
+        path=request.path,
+        branch=request.branch,
+        limit=request.limit
+    )
+    
+    if result.get("ok"):
+        return GetCommitsResponse(
+            ok=True,
+            commits=result.get("commits", []),
+            message="Commits retrieved successfully"
+        )
+    
+    return GetCommitsResponse(
+        ok=False,
+        error_type=result.get("error_type", "get_commits_failed"),
+        message=f"Failed to get commits: {result.get('message')}"
     )

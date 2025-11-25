@@ -69,3 +69,47 @@ class OpenPRRequest(BaseModel):
         default=False, 
         description="Whether to use AI to refine PR content"
     )
+
+
+class WriteFileRequest(BaseModel):
+    """Request to write a file directly to main branch"""
+    path: str = Field(..., description="File path in the repository")
+    content: str = Field(..., description="File content")
+    message: str = Field(..., description="Commit message")
+    branch: str = Field(default="main", description="Branch to write to")
+
+
+class WriteFileResponse(BaseResponse):
+    """Response for writing a file"""
+    path: Optional[str] = Field(None, description="File path that was written")
+    sha: Optional[str] = Field(None, description="New commit SHA")
+    commit_url: Optional[str] = Field(None, description="URL to the commit")
+
+
+class DeleteFileRequest(BaseModel):
+    """Request to delete a file"""
+    path: str = Field(..., description="File path to delete")
+    message: str = Field(..., description="Commit message")
+    branch: str = Field(default="main", description="Branch to delete from")
+
+
+class DeleteFileResponse(BaseResponse):
+    """Response for deleting a file"""
+    path: Optional[str] = Field(None, description="File path that was deleted")
+
+
+class ListBranchesResponse(BaseResponse):
+    """Response for listing branches"""
+    branches: Optional[List[Dict[str, Any]]] = Field(None, description="List of branches")
+
+
+class GetCommitsRequest(BaseModel):
+    """Request to get commits"""
+    path: Optional[str] = Field(None, description="Filter by file path")
+    branch: str = Field(default="main", description="Branch to get commits from")
+    limit: int = Field(default=10, description="Number of commits to return")
+
+
+class GetCommitsResponse(BaseResponse):
+    """Response for getting commits"""
+    commits: Optional[List[Dict[str, Any]]] = Field(None, description="List of commits")

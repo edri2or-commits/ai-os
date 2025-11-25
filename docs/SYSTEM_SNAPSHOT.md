@@ -49,15 +49,19 @@ AI-OS is a personal AI operating system with integrated services for GitHub and 
 ## ✅ Active Services
 
 ### 1. MCP GitHub Client
-- **Status**: ✅ Operational
+- **Status**: ✅ Operational (Full Access)
 - **Port**: 8081
 - **Repository**: `edri2or-commits/ai-os`
 - **Endpoints**:
   | Endpoint | Description |
   |----------|-------------|
   | POST `/github/read-file` | Read file content from repo |
+  | POST `/github/write-file` | **Write file directly to main** |
+  | POST `/github/delete-file` | **Delete a file** |
   | POST `/github/list-tree` | List repository structure |
-  | POST `/github/open-pr` | Create Pull Request with changes |
+  | GET `/github/list-branches` | **List all branches** |
+  | POST `/github/get-commits` | **Get commit history** |
+  | POST `/github/open-pr` | Create Pull Request (optional) |
 - **Location**: `services/mcp_github_client/`
 
 ### 2. Google Workspace Client
@@ -99,9 +103,11 @@ AI-OS is a personal AI operating system with integrated services for GitHub and 
 ### Tested Operations
 | Operation | Status | Test Date |
 |-----------|--------|-----------|
-| GitHub Read File | ✅ Working | 2025-11-23 |
-| GitHub List Tree | ✅ Working | 2025-11-23 |
-| GitHub Open PR | ✅ Working | 2025-11-23 |
+| GitHub Read File | ✅ Working | 2025-11-24 |
+| GitHub Write File | ✅ Working | 2025-11-24 |
+| GitHub Delete File | ✅ Working | 2025-11-24 |
+| GitHub List Branches | ✅ Working | 2025-11-24 |
+| GitHub Get Commits | ✅ Working | 2025-11-24 |
 | Gmail Send | ✅ Working | 2025-11-24 |
 | Google Docs Create | ✅ Working | 2025-11-24 |
 

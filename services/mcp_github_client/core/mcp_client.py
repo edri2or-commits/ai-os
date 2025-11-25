@@ -246,6 +246,125 @@ class MCPGitHubClient:
         
         return result
     
+    async def delete_file(
+        self,
+        path: str,
+        message: str,
+        branch: str = "main",
+        sha: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """
+        Delete a file from the repository.
+        
+        Returns:
+            {
+                "ok": True/False,
+                "path": "...",
+                "error_type": "..." (if ok=False),
+                "message": "..." (if ok=False)
+            }
+        """
+        url = f"{self.base_url}/repos/{self.owner}/{self.repo}/contents/{path}"
+        
+        # If no SHA provided, get it first
+        if not sha:
+            read_result = await self.read_file(path, ref=branch)
+            if not read_result.get("ok"):
+                return {
+                    "ok": False,
+                    "error_type": "file_not_found",
+                    "message": f"Cannot delete: file '{path}' not found"
+                }
+            sha = read_result.get("sha")
+        
+        payload = {
+            "message": message,
+            "sha": sha,
+            "branch": branch
+        }
+        
+        return await self._call_github(
+            method="DELETE",
+            url=url,
+            json_data=payload,
+            operation_name="delete_file"
+        )
+    
+    async def list_branches(self) -> Dict[str, Any]:
+        """
+        List all branches in the repository.
+        
+        Returns:
+            {
+                "ok": True/False,
+                "branches": [...] (if ok=True),
+                "error_type": "..." (if ok=False),
+                "message": "..." (if ok=False)
+            }
+        """
+        url = f"{self.base_url}/repos/{self.owner}/{self.repo}/branches"
+        
+        result = await self._call_github(
+            method="GET",
+            url=url,
+            operation_name="list_branches"
+        )
+        
+        if result.get("ok") and isinstance(result, list):
+            return {
+                "ok": True,
+                "branches": result
+            }
+        elif isinstance(result, list):
+            return {
+                "ok": True,
+                "branches": result
+            }
+        
+        return result
+    
+    async def get_commits(
+        self,
+        path: Optional[str] = None,
+        branch: str = "main",
+        limit: int = 10
+    ) -> Dict[str, Any]:
+        """
+        Get recent commits.
+        
+        Returns:
+            {
+                "ok": True/False,
+                "commits": [...] (if ok=True),
+                "error_type": "..." (if ok=False),
+                "message": "..." (if ok=False)
+            }
+        """
+        url = f"{self.base_url}/repos/{self.owner}/{self.repo}/commits"
+        
+        params = {
+            "sha": branch,
+            "per_page": limit
+        }
+        
+        if path:
+            params["path"] = path
+        
+        result = await self._call_github(
+            method="GET",
+            url=url,
+            params=params,
+            operation_name="get_commits"
+        )
+        
+        if isinstance(result, list):
+            return {
+                "ok": True,
+                "commits": result
+            }
+        
+        return result
+    
     async def _call_github(
         self,
         method: str,

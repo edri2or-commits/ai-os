@@ -3,7 +3,7 @@
 **מפת היכולות של מערכת ההפעלה האישית**
 
 **תאריך יצירה**: 20 נובמבר 2025  
-**גרסה**: 1.2 (Google Workspace Integration)  
+**גרסה**: 1.3 (Full GitHub Access + Google Workspace)  
 **עדכון אחרון**: 24 נובמבר 2025
 
 ---
@@ -37,11 +37,12 @@
 
 | CapabilityID | יכולת | תיאור קצר | Agents מעורבים | Tools / APIs | Status | Notes |
 |--------------|--------|------------|-----------------|-------------|--------|-------|
-| **GH-001** | GitHub Repository Analysis | קריאה וניתוח של ריפואים ב-GitHub | GPT GitHub Agent | GitHub MCP | ✅ Operational | עובד דרך Claude Desktop MCP |
-| **GH-002** | GitHub Planning (DRY RUN) | תכנון פעולות GitHub (ללא ביצוע) | GPT GitHub Agent | `gpt_agent/github_agent.py` | 🚧 Operational (Limited) | **DECISION 2025-11-20**: Planner בלבד, אין פעולות כתיבה אוטומטיות |
-| **GH-003** | GitHub Direct Writes (Docs) | כתיבה ישירה לקבצי תיעוד ב-GitHub | - | GitHub MCP | ✅ Operational | רק דרך Claude ידני, לא דרך GPT Agent |
-| **GH-004** | GitHub PR Creation | יצירת Pull Requests | - | GitHub MCP | ✅ Operational | ידני או דרך Claude |
-| **GH-005** | GitHub Executor API | API אוטומציה מלאה של GitHub | - | Legacy Blueprint | 📋 Designed (Not Deployed) | **DECISION 2025-11-20**: לא פרוס. משמש כ-Blueprint בלבד |
+| **GH-001** | GitHub Repository Analysis | קריאה וניתוח של ריפואים ב-GitHub | GPT Custom Action | MCP GitHub Client | ✅ Operational | עובד דרך GPT Actions |
+| **GH-002** | GitHub Write File | כתיבת קבצים ישירות ל-main | GPT Custom Action | MCP GitHub Client | ✅ Operational | **NEW 2025-11-24**: בלי PR, ישירות ל-main |
+| **GH-003** | GitHub Delete File | מחיקת קבצים | GPT Custom Action | MCP GitHub Client | ✅ Operational | **NEW 2025-11-24**: מחיקה ישירה |
+| **GH-004** | GitHub List Branches | רשימת כל הבראנצ'ים | GPT Custom Action | MCP GitHub Client | ✅ Operational | **NEW 2025-11-24** |
+| **GH-005** | GitHub Get Commits | היסטוריית commits | GPT Custom Action | MCP GitHub Client | ✅ Operational | **NEW 2025-11-24** |
+| **GH-006** | GitHub PR Creation | יצירת Pull Requests | GPT Custom Action | MCP GitHub Client | ✅ Operational | אופציונלי - אם רוצים PR |
 | **FS-001** | Local File System Access | קריאה/כתיבה לקבצים מקומיים | - | Filesystem MCP | ✅ Operational | גישה בתוך allowed directories |
 | **FS-002** | File Search & Analysis | חיפוש וניתוח קבצים | - | Filesystem MCP | ✅ Operational | תמיכה ב-patterns ו-exclusions |
 | **WIN-001** | Windows PowerShell Execution | הרצת פקודות PowerShell | - | Windows MCP | ✅ Operational | 10+ פקודות מאושרות |

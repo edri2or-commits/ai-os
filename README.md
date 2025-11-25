@@ -81,7 +81,7 @@ ai-os/
 | **GITHUB_PLANNING_DRY_RUN** | תכנון בטוח של שינויים ב-GitHub | כל פעם שרוצים לשנות משהו בריפו |
 
 ### ✅ **יכולות פעילות** (עיקריות)
-- 📂 **GitHub**: קריאה, כתיבה, יצירת PRs (דרך GPT Actions)
+- 📂 **GitHub**: קריאה, כתיבה ישירה, מחיקה, היסטוריית commits, רשימת branches
 - 💻 **Windows**: פקודות PowerShell, שליטה ב-UI, פתיחת אפליקציות
 - 📁 **File System**: קריאה/כתיבה מקומית, חיפוש, ניתוח
 - 📧 **Google Workspace**: Gmail (שליחה+קריאה), Calendar (יצירה+קריאה), Drive (חיפוש), Docs (יצירה), Sheets (יצירה+קריאה), Tasks
