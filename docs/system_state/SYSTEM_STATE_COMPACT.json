@@ -188,7 +188,7 @@
       "type": "networking",
       "status": "up",
       "access": "CLI + start-all-services.bat",
-      "notes": "WARNING: URL changes on restart, must update GPT Actions. Decision pending (DEC-004): ngrok vs Cloudflare Tunnel.",
+      "notes": "WARNING: URL changes on restart, must update GPT Actions. DEC-004 approved: Cloudflare Tunnel to replace ngrok (Phase 2.4+).",
       "critical_issue": true
     },
     {
@@ -198,7 +198,7 @@
       "status": "up",
       "access": "Docker (infra/n8n/docker-compose.yml)",
       "role": "automation_kernel_infra_only_phase_2_3",
-      "notes": "Running locally in Docker. Port 5678. INFRA_ONLY - no live workflows yet. DEC-006 approved. Will serve as automation kernel in Phase 2.4+."
+      "notes": "Running locally in Docker. Port 5678. INFRA_ONLY - no live workflows yet. Selected as official Automation Kernel per DEC-006 (approved 2025-11-27). Will serve as primary workflow platform in Phase 2.4+."
     },
     {
       "id": "make",
@@ -206,7 +206,7 @@
       "type": "automation",
       "status": "not_configured",
       "access": "External SaaS",
-      "notes": "Not part of core OS. Decision pending (DEC-006): n8n preferred over Make.com."
+      "notes": "Not part of AI-OS core per DEC-006 (approved 2025-11-27). n8n selected as official Automation Kernel. Make.com may be used for personal experiments but not as system component."
     },
     {
       "id": "docker",
@@ -222,7 +222,7 @@
       "type": "networking",
       "status": "planned",
       "access": "Not configured",
-      "notes": "Planned replacement for ngrok (Phase 2.4+). Decision pending (DEC-004)."
+      "notes": "Selected as official connectivity solution per DEC-004 (approved 2025-11-26). Will replace ngrok in Phase 2.4+."
     }
   ],
   
@@ -274,8 +274,11 @@
       "priority": "high",
       "title": "n8n vs Make.com decision",
       "description": "Need to decide which automation platform to use as kernel",
-      "possible_solution": "n8n Self-Hosted as automation kernel (DEC-006 pending)",
-      "status": "decision_in_progress"
+      "possible_solution": "n8n Self-Hosted as automation kernel",
+      "status": "closed_resolved",
+      "decision_ref": "DEC-006",
+      "resolved_date": "2025-11-27",
+      "resolution": "n8n selected as official Automation Kernel per DEC-006. Make.com not part of core OS."
     },
     {
       "id": "GAP-005",

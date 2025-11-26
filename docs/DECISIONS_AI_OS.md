@@ -87,64 +87,42 @@
 
 ---
 
-## 2025-11-20 – החלטה #3: GPT GitHub Agent – Execution Mode
+## 2025-11-20 – החלטה #3: GitHub Safe Git Policy
 
 ### הקשר
-הסוכן **GPT GitHub Agent** (`gpt_agent/github_agent.py`) הוא הסוכן המתוחכם ביותר שזוהה בריפו הישן. הוא:
-- מנתח Intent של המשתמש
-- קורא מסמכי SSOT (CAPABILITIES_MATRIX, DESIGN, SNAPSHOT)
-- מסווג פעולות ל-OS_SAFE / CLOUD_OPS_HIGH
-- מחזיר תוכנית מפורטת
+במערכת AI-OS יש מספר ממשקים (Claude Desktop, GPT, Chat1) שיכולים לגשת ל-GitHub ולבצע פעולות שונות. צריך מדיניות בטיחות אחידה שחלה על כולם.
 
-**כרגע**: הסוכן פועל במצב **DRY RUN** - מתכנן אבל לא מבצע.
-
-**שאלה**: האם לשדרג את הסוכן למצב Executor (מבצע פעולות)?
+**שאלה**: מה כללי הבטיחות לכתיבה ל-GitHub?
 
 ### ההחלטה
-**הסוכן נשאר במצב DRY RUN בלבד.**
+**Safe Git Policy - PR-First Approach**
 
-- **סטטוס**: 🚧 Operational (Limited) - DRY RUN ONLY
-- **תפקיד**: Planner בלבד - מנתח, מתכנן, מציע
-- **אין**: פעולות כתיבה אוטומטיות על GitHub
+- **סטטוס**: ✅ Active - חל על כל הממשקים
+- **כלל מרכזי**: PR-first approach - אין push ישיר ל-main ללא אישור מפורש מאור
+- **חל על**: Claude Desktop, GPT, Chat1, וכל ממשק עתידי
 
 ### רציונל
 
-**למה DRY RUN?**
-1. **בטיחות מעל הכל**: צריך לבנות אמון הדרגתי במערכת.
-2. **Human-in-the-loop חובה**: כל פעולת כתיבה צריכה אישור אנושי מפורש.
-3. **בדיקת יכולות**: DRY RUN מאפשר לבדוק את הסוכן בלי סיכון.
-4. **עקרון Data-First**: קודם מגדירים חוקים, מדיניות ובקרות - אחר כך מפעילים אוטומציות.
+**למה PR-first?**
+1. **בטיחות**: כל שינוי עובר review לפני merge ל-main
+2. **שקיפות**: כל שינוי גלוי ומתועד
+3. **Rollback**: אפשר לבטל שינויים בקלות
+4. **Human-in-the-loop**: אור מאשר כל שינוי משמעותי
 
-**מה הסוכן כן עושה?**
-- קורא את מצב המערכת (CAPABILITIES_MATRIX, SYSTEM_SNAPSHOT)
-- מנתח בקשות ומסווג רמת סיכון
-- מחזיר תוכנית מפורטת עם צעדים
-- מסביר למה כל צעד נחוץ
+**המדיניות:**
+1. כל ממשק יכול ליצור commits מקומיים
+2. כל ממשק יכול ליצור PRs (Pull Requests)
+3. רק אור מאשר merge ל-main
+4. Push ישיר ל-main רק עם אישור מפורש מאור
 
-**מה הסוכן לא עושה?**
-- ❌ לא כותב קבצים ב-GitHub
-- ❌ לא יוצר commits
-- ❌ לא פותח PRs
-- ❌ לא מפעיל workflows
+**אין היררכיה:**
+- אין "GPT = תכנון בלבד" או "Claude = ביצוע בלבד"
+- יש רק יכולות טכניות שונות + אותן מגבלות בטיחות
 
-**Roadmap עתידי**:
-- **שלב 1** (נוכחי): DRY RUN בלבד
-- **שלב 2** (אפשרי בעתיד): Executor מוגבל ל-OS_SAFE בלבד (Docs/State)
-- **שלב 3** (רחוק): Executor מלא עם אישור אנושי ל-CLOUD_OPS_HIGH
-
-**תנאים לשלב 2**:
-1. שכבות אבטחה מוגדרות בבירור
-2. מנגנון rollback אוטומטי
-3. פיקוח ומוניטורינג מלא
-4. בדיקות מקיפות של הסוכן
-5. אישור אנושי מפורש מהמשתמש (אור)
-
-### השפעה על CAPABILITIES_MATRIX
-- **GH-002**: GitHub Planning (DRY RUN) → 🚧 Operational (Limited) - **DECISION 2025-11-20**: Planner בלבד, אין כתיבה אוטומטית
-
-### השפעה על GPT_GITHUB_AGENT.md
-- יתווסף ציון מפורש: **"הסוכן פועל במצב Planner בלבד (DRY RUN)"**
-- יתווסף אזהרה: **"אין פעולות כתיבה אוטומטיות - כל פעולה דורשת אישור וביצוע ידני"**
+### השפעה על המערכת
+- כל הממשקים כפופים לאותה מדיניות Git
+- אין "DRY RUN" לממשק אחד ו-"Full Write" לאחר
+- יש capabilities שונות אבל constraints זהים
 
 ---
 
@@ -339,15 +317,254 @@
 
 ---
 
+---
+
+## 2025-11-27 – DEC-006: n8n כ-Automation Kernel רשמי של AI-OS (Make.com לא ליבה)
+
+**Date:** 2025-11-27  
+**Owner:** Or  
+**Status:** Approved  
+
+**Context:**
+AI-OS אישי בנוי על:
+- GitHub כשכבת State בקבצים (JSON/YAML/Markdown) – Source of Truth.
+- Google Workspace כ-Control Plane (UI לבני אדם – Sheets/Docs וכו'.).
+- שכבת סוכנים (AgentKit / MCP / LangChain) כ-Super-Layer.
+
+נדרש "Automation Kernel" – פלטפורמת וורקפלואים שתהיה:
+- קרובה ל-Git ולקבצים (Local / Docker),
+- ללא גביית "אופרציות" על כל צעד,
+- מוכנה לאינטגרציה עמוקה עם סוכנים (MCP / Tools),
+- ניתנת לניהול כ-Infrastructure (GitOps, Docker, backups).
+
+בוצע מחקר השוואתי n8n מול Make.com, והוגדר GAP-004: בחירת פלטפורמת אוטומציה רשמית ל-Phase 2.4+.
+
+**Options Considered:**
+1. **Option A – n8n (Self-Hosted, Docker):**
+   - רצה כ-Container מקומי/VPS.
+   - ללא הגבלה על מספר Executions (ב-Community / Self-hosted).
+   - גישה ישירה למערכת הקבצים (Volume Mount) → מתאים ל-GitHub State בקבצים.
+   - תמיכה ב-Code Nodes (JS/Python) ובאינטגרציות מודרניות (MCP / LangChain).
+   - ניתן לגרסה בתצורת INFRA_ONLY (רק אוטומציות מערכתיות, בלי לגעת בחיים האישיים).
+
+2. **Option B – Make.com (SaaS, Operation-based):**
+   - פלטפורמת SaaS נוחה, low-code.
+   - מודל תמחור לפי אופרציות – יקר לסוכנים "פטפטניים" (Agents).
+   - אין גישה ישירה ל-Filesystem/Git; עבודה בעיקר דרך GitHub API.
+   - Storage לוגיקה בפורמט קנייני בענן Make (קשה ל-GitOps).
+   - תלות חזקה ב-SaaS חיצוני לחלק הכי עמוק של ה-OS.
+
+3. **Option C – Hybrid/None:**
+   - לעבוד בלי Kernel רשמי (רק MCP/סקריפטים נקודתיים).
+   - או להשתמש גם ב-n8n וגם ב-Make.com בלי הכרעה ברורה.
+   - תוצאה: מורכבות, חוסר עקביות, קושי בניהול State ובתיעוד.
+
+**Decision:**
+- **n8n נבחר כ-Automation Kernel רשמי של ה-AI-OS** החל מ-Phase 2.4 ואילך.
+- הפרויקט יתבסס על **n8n Self-Hosted (Docker)** כתשתית ראשית לוורקפלואים:
+  - מערכתית (Infra / State / Healthchecks / Sync),
+  - ובהמשך גם לחלק מהאוטומציות על החיים, תחת קונטרול ובקרה.
+- **Make.com לא חלק מהליבה של ה-AI-OS**:
+  - לא תלוי בו, לא מסתמך עליו כקרנל.
+  - מותר שימוש נקודתי/ניסויי על ידי אור, אבל לא כמרכיב מרכזי במערכת.
+- GitHub נשאר **ה-SSOT**: גם ה-State וגם ה-Workflows של n8n יתועדו/ייגובו ב-Git.
+
+**Implementation Notes:**
+- Phase 2.3 (INFRA_ONLY):
+  - BLOCK_N8N_INFRA_BOOTSTRAP_V1 already executed (infra/n8n/* + State Layer updates).
+  - n8n מוגדר כ-service status=up, אך השימוש בו מוגבל לאינפרה בלבד.
+  - אין אוטומציות על החיים (Gmail/Calendar/Tasks) עד שינוי Mode.
+
+- Phase 2.4:
+  - להוסיף Blocks:
+    - `BLOCK_N8N_CONTROL_PLANE_INTEGRATION_V1` – workflows שעובדים רק מול GitHub State ו-Google כ-UI, עדיין INFRA בלבד.
+    - `BLOCK_N8N_BACKUP_AND_GITOPS_V1` – גיבוי אוטומטי של Workflows ל-Git (Export → Commit).
+  - לעדכן:
+    - `SERVICES_STATUS.json`: make.com = not_core / optional_saas.
+    - `SYSTEM_STATE_COMPACT.json`: להסיר סתירות ("DEC-006 pending") ולהפנות ל-DEC-006 הרשמי.
+
+- Phase 3+:
+  - אינטגרציה של n8n עם AgentKit / MCP כ-"Tool Server" עבור סוכנים.
+  - פתיחת אפשרות לאוטומציות חיים תחת Human-in-the-Loop לפי Mode/Phase.
+
+**Related:**
+- GAP-004: n8n vs Make.com → **Closed by DEC-006**
+- BLOCK_N8N_INFRA_BOOTSTRAP_V1
+- POLICY-001: NO-KOMBINOT for Infrastructure Tools
+- DEC-007: No Hierarchy Between Interfaces
+
+---
+
+## 2025-11-26 – DEC-004: Connectivity Strategy for GPT Actions & Remote Access (ngrok vs Cloudflare)
+
+**Date:** 2025-11-26  
+**Owner:** Or  
+**Status:** Approved  
+
+**Context:**  
+AI-OS האישי רץ כרגע על מחשב מקומי מאחורי NAT, עם חשיפה החוצה דרך ngrok (תוכנית חינמית).  
+GPT Actions דורשות:
+- URL יציב ב-HTTPS, עם TLS תקין,
+- שלא ישתנה בכל restart,
+- בלי מסכים באמצע (Interstitial) שיכולים לשבור קריאות אוטומטיות.
+
+בדו"ח BLOCK_NGROK_STABILITY_RESEARCH זוהה GAP-001:
+- ngrok חינמי עם URL מתחלף = חיכוך גבוה (כל restart דורש לעדכן את ה-Action),
+- תחזוקה ידנית של ה-URL שוברת את חוויית "OS" ויוצרת חוסר יציבות.
+
+מחקר עדכני מראה:
+- ל-ngrok יש היום יכולת static domain גם בחינם (דומיין קבוע אחד שלא משתנה) – אבל בתוכנית החינמית יש עדיין מגבלות קשות: session קצר, תקרה על רוחב פס, ואזהרות/interstitial לפני ה-API, מה שעלול לשבור אינטגרציה עם GPT Actions.
+- Cloudflare Tunnel מאפשר חיבור Outbound-only דרך `cloudflared` ל-edge של Cloudflare, שימוש בדומיין אישי, ו-WAF חזק – בחינם, כל עוד יש דומיין.
+
+מטרת ההחלטה:
+- להגדיר אסטרטגיית קישוריות רשמית ל-AI-OS עבור GPT Actions ושירותי HTTP,
+- בלי להתחייב עדיין ל-"production 24/7", אבל עם פחות חיכוך והרבה יותר יציבות.
+
+**Options Considered:**
+
+1. **Option A – להישאר עם ngrok חינמי כמו עכשיו**  
+   - URL אקראי (אם לא משתמשים ב-static domain).  
+   - צורך לעדכן ידנית את GPT Actions בכל restart.  
+   - מגבלות תכנית חינמית: Session קצר, תקרה על תעבורה, אזהרות/interstitial.  
+   - יתרון: 0 שינוי, 0 מאמץ.  
+   - חסרון: חוויית פיתוח שבירה, לא מתאים ל-OS.
+
+2. **Option B – ngrok Personal / Paid (דומיין קבוע + TCP)**  
+   - Personal plan (סביב $8/חודש) כולל custom domain אחד + כתובת TCP קבועה.  
+   - משפר משמעותית יציבות: דומיין/כתובת לא משתנים, בלי interstitial של Free.  
+   - עדיין: תעבורה עוברת דרך רשת ngrok, עם מגבלות שימוש וחיוב Usage-Based.  
+   - יתרון: קל להטמעה, בלי לשנות הרבה בארכיטקטורה.  
+   - חסרון: עלות קבועה לפרויקט אישי בשלב תשתית, תלות חזקה ב-SaaS יחיד.
+
+3. **Option C – Cloudflare Tunnel Free Tier + דומיין פרטי (הפתרון שנבחר בהחלטה זו)**  
+   - התקנת `cloudflared` מקומית שיוצר חיבור מוצפן חד-כיווני (Outbound-only) ל-Cloudflare.  
+   - שימוש בדומיין שלי (עלות ~10$ לשנה) + Cloudflare Free Plan (SSL, WAF, DDoS בחינם).  
+   - URL יציב לחלוטין (DNS-based), גם אם המחשב נכבה וחוזר.  
+   - הגדרת חוק WAF שמדלג על סינון עבור GPT / ChatGPT (לפי User-Agent / IP), כדי למנוע חסימות "בוטים".  
+   - יתרון:  
+     - יציבות גבוהה,  
+     - אבטחה טובה,  
+     - לא תלוי במודל התמחור של ngrok,  
+     - מתאים לטווח הבינוני והארוך של ה-OS.  
+   - חסרון: מעט יותר מורכב מ-ngrok להקמה ראשונית.
+
+4. **Option D – VPS + FRP / פתרון Self-Hosted (טווח ארוך יותר)**  
+   - שכירת VPS זול + התקנת FRP (Fast Reverse Proxy) לשליטה מלאה ב-IP וכניסות.  
+   - מתאים יותר לשלב Production (Phase 3+), לא ל-Phase 2.3 INFRA_ONLY.  
+   - יתרון: ריבונות מלאה, zero SaaS lock-in.  
+   - חסרון: דורש DevOps מלא; מוקדם מדי עכשיו.
+
+**Decision:**  
+
+1. לטווח המיידי (Phase 2.3 – INFRA_ONLY):  
+   - להפסיק להתבסס על ngrok כפתרון "מובן מאליו" ל-GPT Actions.  
+   - לא לעבור כרגע לתכנית בתשלום (Option B) – עלות קבועה מיותרת בשלב תשתית.  
+   - לאמץ Cloudflare Tunnel כפתרון הקישוריות הראשי עבור GPT Actions ושירותי HTTP הקריטיים ל-AI-OS (Option C), על בסיס דומיין פרטי.
+
+2. לטווח הבינוני (Phase 2.4 – "Nervous System"):  
+   - להשאיר ngrok ככלי משני/מקומי לפיתוח חד־פעמי (אם צריך), אבל:
+     - Cloudflare Tunnel הוא ה-"gateway הרשמי" של ה-OS מול GPT.  
+   - לשקול הוספת Tailscale / VPN ל-use cases של TCP פרטיים (לא GPT), בהחלטה נפרדת.
+
+3. לטווח הארוך (Phase 3+):  
+   - להשאיר Option D (VPS + FRP) כנתיב שדרוג אפשרי, אם ה-AI-OS יהפוך לתשתית קריטית ויהיה צריך רמת יציבות/ריבונות גבוהה יותר.
+
+**Implementation Notes (לשלבים הבאים, לא לבצע בלי אישור נוסף):**
+
+- BLOCK_CLOUDFLARE_TUNNEL_SETUP_V1  
+- BLOCK_CLOUDFLARE_WAF_RULE_FOR_GPT_V1  
+- BLOCK_GPT_ACTIONS_BASE_URL_UPDATE_V1  
+- BLOCK_SERVICES_STATUS_UPDATE_V2  
+
+**Related:**
+- GAP-001: ngrok URL instability  
+- GAP-002: No persistent deployment (indirectly)  
+- BLOCK_NGROK_STABILITY_RESEARCH  
+- Phase: 2.3 (INFRA_ONLY, Connectivity focus)
+
+---
+
+## 2025-11-26 – DEC-007: No Fixed Role Hierarchy Between Interfaces
+
+**Date:** 2025-11-26  
+**Owner:** Or  
+**Status:** Approved  
+
+**Context:**  
+במסמכים שונים של AI-OS נמצאו שרידים של ניסוח היררכי שמתאר:
+- GPT כ"מתכנן בלבד" או "DRY RUN mode"
+- Claude כ"הידיים" או "המבצע הראשי"
+- Chat1 כ"UI בלבד"
+- היררכיה תפקודית קבועה לפי ממשק
+
+זה מתנגש עם **ROLE_MODEL_SIMPLIFICATION_V1** (Block מ-2025-11-26) שביטל היררכיה קשיחה.
+
+**Problem:**  
+ניסוח כמו "GPT = DRY RUN בלבד" יוצר רושם שגוי ש-GPT "לא באמת עושה דברים", במקום לתאר בדיוק את:
+- היכולות הטכניות שלו (מה הוא יכול לעשות)
+- מגבלות הבטיחות שלו (מה אסור לעשות בלי אישור)
+
+הבעיה: ניסוחים אלה מציגים את הממשקים כ"דרגות" במקום כממשקים שונים עם יכולות שונות.
+
+**Decision:**
+
+1. **אין היררכיית תפקידים קבועה** בין הממשקים (Claude/GPT/Chat1):
+   - אין "מוח לעומת ידיים"
+   - אין "מתכנן לעומת מבצע"
+   - אין "DRY RUN לעומת אמיתי"
+   - אין "ממשק ראשי" או "ממשק משני"
+
+2. **יש רק שני סוגי מאפיינים:**
+   - **Technical Capabilities** — מה כל ממשק יכול לעשות מבחינה טכנית (גישה לכלים, APIs)
+   - **Safety Constraints** — מגבלות בטיחות שחלות על כולם (כמו Safe Git Policy)
+
+3. **מדיניות GitHub אחידה:**
+   - **לכל הממשקים** חל אותו Safe Git Policy:
+     - "PR-first approach, no direct push to main without Or's explicit approval"
+   - לא "GPT = DRY RUN" ו-"Claude = Full Write"
+
+4. **ניסוח מומלץ במסמכים:**
+   - ✅ **נכון**: "Claude Desktop: Full MCP access including local Git operations, subject to Safe Git Policy"
+   - ✅ **נכון**: "GPT: GitHub access via Custom Actions (read/write), subject to Safe Git Policy"
+   - ❌ **לא נכון**: "Claude = Primary Executor", "GPT = Planner Only", "DRY RUN mode"
+
+5. **מונחים להסיר מהתיעוד:**
+   - "Hands" / "Brain" / "Primary" / "Secondary"
+   - "Executor" / "Planner Only" / "DRY RUN mode"
+   - "Real" vs "Simulated"
+
+**Implementation:**
+עדכון 5 קבצים:
+- `docs/DECISIONS_AI_OS.md` (החלטה #3 עודכנה)
+- `docs/AGENT_SYNC_OVERVIEW.md`
+- `docs/system_state/agents/AGENT_CAPABILITY_PROFILE.md`
+- `docs/system_state/SYSTEM_STATE_COMPACT.json`
+- `docs/system_state/registries/SERVICES_STATUS.json`
+
+**Impact:**
+- תיעוד ברור יותר של יכולות ומגבלות
+- אין בלבול על "מי עושה מה"
+- גמישות בעבודה - כל ממשק יכול לעשות מה שיכול (בכפוף לבטיחות)
+
+**Related:**
+- ROLE_MODEL_SIMPLIFICATION_V1 (Block, 2025-11-26)
+- DEC-003 (Safe Git Policy)
+- CONSTITUTION.md Law #4 (Human-in-the-Loop)
+
+---
+
 ## סיכום ההחלטות
 
 | # | נושא | החלטה | סטטוס |
 |---|------|-------|-------|
 | **1** | MCP Orchestration | לא נלקח כקוד רץ | 🗄️ Legacy (Reference Only) |
 | **2** | GitHub Executor API | לא פרוס | 📋 Designed (Not Deployed) |
-| **3** | GPT GitHub Agent Mode | DRY RUN בלבד | 🚧 Operational (Limited) |
+| **3** | GitHub Safe Git Policy | PR-first for all interfaces | ✅ Active |
 | **4** | Phase 1 Foundation | הושלם | ✅ Complete - Ready for Use |
 | **5** | Telegram UI - Official Interface | Chat1 בלבד | ✅ Decision Locked |
+| **DEC-004** | Connectivity Strategy (ngrok vs Cloudflare) | Cloudflare Tunnel | ✅ Approved |
+| **DEC-006** | n8n as Automation Kernel | n8n Self-Hosted | ✅ Approved |
+| **DEC-007** | No Fixed Role Hierarchy | Capabilities + Constraints model | ✅ Approved |
 
 ---
 
@@ -363,6 +580,6 @@
 ---
 
 **סטטוס מסמך זה**: ✅ Active  
-**עדכון אחרון**: 24 נובמבר 2025  
-**החלטות נעולות**: 5 החלטות קריטיות  
+**עדכון אחרון**: 27 נובמבר 2025  
+**החלטות נעולות**: 8 החלטות קריטיות  
 **הערה**: החלטות אלה ניתנות לשינוי בעתיד, אבל רק אחרי דיון מפורש ותיעוד של הרציונל לשינוי.

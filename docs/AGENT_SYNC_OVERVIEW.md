@@ -50,7 +50,7 @@
 | Claude Desktop | ✅ up | Full MCP access |
 | GPT Actions | ✅ up | Depends on ngrok |
 | Chat1 | 🟡 partial | Not deployed persistently |
-| n8n | 📋 planned | Not configured |
+| n8n | ✅ up | Docker INFRA_ONLY, official Automation Kernel (DEC-006) |
 
 **Full details:** `docs/INFRA_MAP.md`  
 **Service status JSON:** `docs/system_state/registries/SERVICES_STATUS.json`
@@ -103,8 +103,6 @@
 
 | ID | Question | Owner | Priority |
 |----|----------|-------|----------|
-| DEC-004 | ngrok vs Cloudflare Tunnel — connectivity solution | Or + GPT | High |
-| DEC-006 | n8n vs Make.com — automation kernel | Or + GPT | High |
 | Q1 | When to deploy Chat1 persistently? | Or | Medium |
 | Q3 | Cloud deployment timing (Cloud Run)? | Or | Low |
 | Q4 | Auto-sync policy for Drive Snapshot? | Claude + Or | Low |
@@ -116,6 +114,7 @@
 - **DEC-003**: GitHub Safe Git Policy = PR-first for all interfaces
 - **DEC-004**: Connectivity Strategy = Cloudflare Tunnel (approved 2025-11-26)
 - **DEC-005**: AUTO-GAS-001 = Path C: Disable (Legacy Apps Script disabled)
+- **DEC-006**: n8n as Automation Kernel = n8n Self-Hosted, Make.com not core (approved 2025-11-27)
 - **DEC-007**: No Fixed Role Hierarchy Between Interfaces (approved 2025-11-26)
 
 **Full decisions log:** `docs/DECISIONS_AI_OS.md`
