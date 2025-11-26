@@ -1,102 +1,77 @@
-# Control Plane Specification — v0.3
+# CONTROL_PLANE_SPEC.md — Phase 2.2 Update
 
-**Phase:** 2 — Stabilizing the Hands  
+## 📅 Date: 2025-11-25
+**Owner:** GPT Operator (under Or’s supervision)
+
+---
+
+## 🎯 Purpose
+Central configuration and real‑time state tracking document for AI‑OS.
+Defines operational mode, automation state, active phase, and agent statuses.
+
+---
+
+## ⚙️ System Mode
+| Field | Description | Example |
+|-------|-------------|----------|
+| `system_mode` | Defines global operation context | `INFRA_ONLY` / `LIFE_AUTOMATIONS` / `EXPERIMENT` |
+| `automations_enabled` | Kill Switch for all automated flows | `false` |
+| `sandbox_only` | Run tests in sandbox mode only | `true` |
+| `active_phase` | Current development phase | `2.2 – Claude Healthcheck & Error Digest` |
+
+---
+
+## 🤖 Agent Status Tracking
+Each core agent reports its status via session init or periodic healthchecks.
+
+| Agent | Description | Status Field | Example |
+|--------|--------------|---------------|----------|
+| Claude Desktop | Local execution layer | `claude_status` | `OK` / `Flaky` / `Broken` |
+| GPT Operator | Central orchestrator | `gpt_status` | `OK` |
+| Chat1 | Telegram interface | `chat1_status` | `Flaky` |
+| Make | Automation agent | `make_status` | `Inactive` |
+| Google | Google Workspace connector | `google_status` | `OK` |
+
+---
+
+## 🩺 Healthcheck Integration (Phase 2.2)
+- Claude’s `services/claude_healthcheck.py` generates a JSON report under `/reports/`.
+- Operator GPT reads latest report → updates `claude_status` here.
+- Example snippet:
+
+```json
+"agents": {
+  "claude_status": "OK",
+  "gpt_status": "OK",
+  "chat1_status": "Flaky",
+  "make_status": "Inactive",
+  "google_status": "OK"
+}
+```
+
+---
+
+## 🔐 Automation Control Fields
+| Field | Description | Type | Default |
+|--------|-------------|------|----------|
+| `ttl` | Time‑to‑Live for temporary experiments | Integer (days) | `3` |
+| `approved_by` | Human approver (Or) | String | `"Or"` |
+| `last_review` | Last reviewed date | ISO‑date | `2025‑11‑25` |
+
+---
+
+## 📊 Event Timeline Link
+All significant agent state changes are logged to `EVENT_TIMELINE.md` or a JSONL file.
+
+Example entry:
+```
+2025‑11‑25T12:55:00Z | Claude | Healthcheck | Status=OK | Phase=2.2
+```
+
+---
+
+**Phase:** 2.2 – Claude Healthcheck & Error Digest  
+**Next Phases:** 2.3 Chat1 Stabilization → 2.4 Make Integration → 2.5 Consolidation  
 **Mode:** INFRA_ONLY  
-**Last Updated:** 2025-11-25 (Block 5)
 
-## Purpose
-Defines how all system agents (GPT, Claude, Chat1, Make, Google) maintain synchronized state and report their status.
-
-## Core Variables
-| Variable | Description | Example |
-|-----------|--------------|----------|
-| SYSTEM_MODE | Current operational mode | "INFRA_ONLY" |
-| AUTOMATIONS_ENABLED | Global kill switch | false |
-| SANDBOX_ONLY | Restricts changes to sandbox environments | true |
-| ACTIVE_PHASE | Current development phase | "2 - Stabilizing the Hands" |
-| TTL_DEFAULT | Default time-to-live for experiments | "7d" |
-
-## Responsibilities
-- Each agent must report its status to the Control Plane.
-- Status includes: online/offline, last sync time, last error, active tasks.
-- The Control Plane aggregates all statuses into a unified system snapshot.
-- Or (the human) approves transitions between modes or phases.
-- Direct writes by any agent (GPT/Claude/Chat1) are allowed **only** if they are logged and committed with a traceable message.
-
-## Sync Cycle
-1. Each agent sends a heartbeat every session.
-2. The Control Plane updates the System Snapshot.
-3. GPT Operator generates a summary for Or if inconsistencies appear.
-4. Event Timeline is updated for every system action.
-
-## Logging & Accountability
-- Every change is logged in the Event Timeline.
-- Commits must include the actor and reason.
-- Human-Approved Writes Only: Or retains ultimate oversight on all persistent changes.
-
----
-
-## Drive Snapshot Layer
-
-The **Drive Snapshot Layer** provides a synchronized view of the system state for agents that don't have direct repo access.
-
-### What is SYSTEM_SNAPSHOT_DRIVE?
-
-| Property | Value |
-|----------|-------|
-| **Type** | Google Doc |
-| **Name** | `SYSTEM_SNAPSHOT_DRIVE` |
-| **Location** | Google Drive (AI-OS System State folder) |
-| **Link** | https://docs.google.com/document/d/1-ysIo2isMJpHjlYXsUgIBdkL4y21QPb- |
-| **Role** | **Derivative view** of repo state, not SSOT |
-| **Primary Consumer** | GPT Planning Model |
-
-### Key Principles
-
-1. **SSOT Remains the Repo** — The Drive snapshot is a **view**, not a competing source of truth.
-2. **Human-Triggered Sync** — Updates are triggered manually by Or (at least for now).
-3. **Freshness Metadata** — Every snapshot includes generation time and confidence level.
-
-### Who Updates the Snapshot?
-
-| Actor | Role |
-|-------|------|
-| **Claude Desktop** | Primary generator — reads repo, writes to Drive |
-| **GPT GitHub Operator** | Secondary — can sync after repo PRs |
-| **Or (Human)** | Triggers updates, approves sync |
-| **GPT Planning Model** | Consumer only — reads, does not write |
-
-### When to Refresh the Snapshot
-
-| Trigger | Priority |
-|---------|----------|
-| Before planning a new system phase | 🟢 High |
-| After significant architecture changes | 🟢 High |
-| After a major block series (like Blocks 1-5) | 🟢 High |
-| Weekly refresh (prevent staleness) | 🟡 Medium |
-| On explicit request from Or or any agent | 🟢 Always |
-
-### Data Sources for Snapshot Generation
-
-The Drive snapshot is generated from these repo files:
-
-- `docs/SYSTEM_SNAPSHOT.md` — Primary state source
-- `docs/CONTROL_PLANE_SPEC.md` — Mode, phase, variables
-- `docs/system_state/AUTOMATIONS_REGISTRY.jsonl` — Automation inventory
-- `agents/AGENTS_INVENTORY.md` — Agent roles and status
-- `docs/PHASE2_CHECKLIST.md` — Current phase progress
-
-### Related Documentation
-
-- **Design Doc:** `docs/SNAPSHOT_LAYER_DESIGN.md`
-- **Template:** `docs/system_state/SYSTEM_SNAPSHOT_DRIVE_TEMPLATE.md`
-- **Registry Entry:** `AUTO-009` in `AUTOMATIONS_REGISTRY.jsonl`
-
----
-
-**Tech summary:**
-- Control Plane v0.3
-- Added direct-write transparency policy
-- Added sync + logging cycle
-- Added Drive Snapshot Layer documentation (Block 5)
-- Documentation only, no automation changes
+> “Control without visibility is illusion — the plane must always know its altitude.”
