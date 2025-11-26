@@ -1,8 +1,8 @@
 # AGENT_SYNC_OVERVIEW.md — סיכום מצב לסוכנים
 
 **Purpose:** קובץ סינכרון מהיר לכל ממשק AI-OS בתחילת סשן.  
-**Version:** 0.3  
-**Last Updated:** 2025-11-26 (Block SYSTEM_STATE_JSON_REFRESH_V2)
+**Version:** 0.4  
+**Last Updated:** 2025-11-26 (STATE_LAYER_BASELINE_V1 declared)
 
 ---
 
@@ -126,6 +126,37 @@
 
 ---
 
+## 8. STATE LAYER BASELINE
+
+### 🎯 STATE_LAYER_BASELINE_V1
+
+**Declared:** 2025-11-26  
+**Declared By:** Or (via GPT Operator)  
+**Phase:** Phase 2 – Stabilizing the Hands
+
+**Scope Blocks:**
+- `STATE_LAYER_COMPLETION_V1` — Created missing State Layer files
+- `ROLE_MODEL_SIMPLIFICATION_V1` — Simplified agent role model
+- `SYSTEM_STATE_JSON_REFRESH_V2` — Created compact JSON state
+
+**Core Files:**
+- `docs/SNAPSHOT_LAYER_DESIGN.md` — State Layer design document (704 lines)
+- `docs/system_state/SYSTEM_STATE_COMPACT.json` — Single JSON source for external agents
+- `docs/system_state/agents/AGENT_CAPABILITY_PROFILE.md` — Agent capabilities and limitations
+- `docs/system_state/registries/SERVICES_STATUS.json` — Service status registry
+- `docs/system_state/timeline/EVENT_TIMELINE.jsonl` — Chronological event log
+- `docs/system_state/AUTOMATIONS_REGISTRY.jsonl` — Automation inventory
+
+**Notes:**
+- This set of files and blocks is considered the **baseline State Layer (V1)** for Phase 2.2–2.3
+- All future infra and automation work must keep these files consistent and up to date
+- The State Layer provides synchronized state across all AI interfaces (Claude, GPT, Chat1)
+- Changes to State Layer structure require explicit approval and documentation
+
+**Status:** ✅ Declared and Locked
+
+---
+
 ## 📝 How to Use This Document
 
 **For all AI interfaces (Claude, GPT, Chat1):**
@@ -142,4 +173,4 @@
 ---
 
 **Last Updated:** 2025-11-26  
-**Updated By:** Claude Desktop (Block SYSTEM_STATE_JSON_REFRESH_V2)
+**Updated By:** Claude Desktop (STATE_LAYER_BASELINE_V1 declaration)
