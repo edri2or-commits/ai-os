@@ -1,8 +1,8 @@
 # AGENT_SYNC_OVERVIEW.md — סיכום מצב לסוכנים
 
 **Purpose:** קובץ סינכרון מהיר לכל ממשק AI-OS בתחילת סשן.  
-**Version:** 0.6  
-**Last Updated:** 2025-11-26T18:50:00Z (BLOCK_AGENT_SYNC_OVERVIEW_REFRESH_V2)
+**Version:** 0.7  
+**Last Updated:** 2025-11-26T20:00:00Z (NO-KOMBINOT Policy + BLOCK_POWERSHELL_STABILITY)
 
 ---
 
@@ -10,7 +10,7 @@
 
 | Property | Value |
 |----------|-------|
-| **Phase** | Phase 2.3 — Stabilizing the Hands (Sync & State Alignment) |
+| **Phase** | Phase 2.3 — Sync & State Alignment |
 | **Previous Phase** | Phase 2.2 — Claude Healthcheck & Error Digest |
 | **Mode** | INFRA_ONLY |
 | **Automations Enabled** | false |
@@ -92,6 +92,8 @@
 8. **PHASE2_24_SYNC_AGENT_SESSION_TEMPLATE_V1** (2025-11-26) — Created OODA loop playbook for Sync Agent sessions (EVT-008, pushed)
 9. **BLOCK_AUTO_GAS_001_DECISION** (2025-11-26) — Disabled legacy Apps Script Collector_Gmail_to_Records (EVT-009, committed not pushed)
 10. **BLOCK_PHASE_LABELING_CLARIFICATION** (2025-11-26) — Formally declared Phase 2.3 and updated CONTROL_PLANE_SPEC (committed not pushed)
+11. **BLOCK_N8N_INFRA_BOOTSTRAP_V1** (2025-11-26) — n8n infrastructure setup complete, Docker running locally (EVT-014)
+12. **BLOCK_POWERSHELL_STABILITY_AND_HEALTHCHECK_V1** (2025-11-26) — Created after EVT-INCIDENT-001, investigates PowerShell reliability issues (Open, Not Started)
 
 ---
 
@@ -111,9 +113,10 @@
 
 - **DEC-001**: MCP Orchestration = Legacy/Reference Only
 - **DEC-002**: GitHub Executor API = Not Deployed
-- **DEC-003**: GPT GitHub Agent = DRY RUN Only
-- **DEC-004**: Human-Approved Writes Only (Constitutional Amendment)
+- **DEC-003**: GitHub Safe Git Policy = PR-first for all interfaces
+- **DEC-004**: Connectivity Strategy = Cloudflare Tunnel (approved 2025-11-26)
 - **DEC-005**: AUTO-GAS-001 = Path C: Disable (Legacy Apps Script disabled)
+- **DEC-007**: No Fixed Role Hierarchy Between Interfaces (approved 2025-11-26)
 
 **Full decisions log:** `docs/DECISIONS_AI_OS.md`
 

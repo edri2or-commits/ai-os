@@ -124,9 +124,14 @@
       "id": "n8n",
       "name": "n8n Automation",
       "type": "automation",
-      "status": "planned",
-      "connected_via": "Docker (planned)",
-      "notes": "No active instance yet - design-only for Phase 2.4 as nervous system"
+      "status": "up",
+      "connected_via": "Docker (infra/n8n/docker-compose.yml)",
+      "access_patterns": [
+        "Local access: http://localhost:5678",
+        "Phase 2.3: INFRA_ONLY - no live workflows yet",
+        "Phase 2.4+: Workflow automation kernel for AI-OS"
+      ],
+      "notes": "Docker instance running locally. Basic auth enabled. SQLite database. No live automations yet - INFRA_ONLY Phase 2.3."
     },
     {
       "id": "make",
@@ -147,9 +152,9 @@
   ],
   
   "summary": {
-    "up": 8,
+    "up": 9,
     "partial": 3,
-    "planned": 2,
+    "planned": 1,
     "not_configured": 1,
     "broken": 0,
     "total": 14

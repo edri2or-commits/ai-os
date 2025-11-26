@@ -1,0 +1,16 @@
+# Environment variables (contains secrets)
+.env
+
+# n8n data directory (contains workflows and credentials)
+data/
+
+# Backup files
+*.tar.gz
+*.zip
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db

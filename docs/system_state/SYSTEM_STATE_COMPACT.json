@@ -195,9 +195,10 @@
       "id": "n8n",
       "name": "n8n Automation",
       "type": "automation",
-      "status": "planned",
-      "access": "Docker (planned)",
-      "notes": "Not configured yet. Decision pending (DEC-006): n8n as automation kernel (Phase 2.4+)."
+      "status": "up",
+      "access": "Docker (infra/n8n/docker-compose.yml)",
+      "role": "automation_kernel_infra_only_phase_2_3",
+      "notes": "Running locally in Docker. Port 5678. INFRA_ONLY - no live workflows yet. DEC-006 approved. Will serve as automation kernel in Phase 2.4+."
     },
     {
       "id": "make",
@@ -226,9 +227,9 @@
   ],
   
   "services_summary": {
-    "up": 8,
+    "up": 9,
     "partial": 3,
-    "planned": 3,
+    "planned": 2,
     "not_configured": 1,
     "broken": 0,
     "total": 15
@@ -278,6 +279,17 @@
     },
     {
       "id": "GAP-005",
+      "priority": "medium",
+      "title": "PowerShell reliability issues",
+      "description": "PowerShell commands fail silently (Status Code: 1, no error) during infrastructure operations",
+      "possible_solution": "Investigate root cause, standardize on Filesystem tools, or fix PowerShell configuration",
+      "status": "block_created",
+      "related_block": "BLOCK_POWERSHELL_STABILITY_AND_HEALTHCHECK_V1",
+      "related_incidents": ["EVT-2025-11-26-INCIDENT-001"],
+      "notes": "First infrastructure incident logged under NO-KOMBINOT policy"
+    },
+    {
+      "id": "GAP-006",
       "priority": "medium",
       "title": "Drive Snapshot sync is manual",
       "description": "No auto-refresh mechanism for GPT to get latest state",

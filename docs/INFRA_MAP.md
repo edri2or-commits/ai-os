@@ -22,7 +22,7 @@
 | `claude-desktop` | Claude Desktop | agent | ✅ up | Local app + MCPs | Primary executor, local access | Full system access |
 | `gpt-actions` | GPT Custom Actions | agent | ✅ up | HTTPS via ngrok | Planner, architecture | Depends on ngrok URL |
 | `telegram-chat1` | Chat1 Telegram Bot | ui | 🟡 partial | telegram_bot.py | Human interface | Code ready, not deployed persistently |
-| `n8n` | n8n Automation | automation | 📋 planned | Docker (planned) | Workflow automation | Not configured yet |
+| `n8n` | n8n Automation | automation | ✅ up | Docker (infra/n8n) | Workflow automation kernel | INFRA_ONLY Phase 2.3, no live workflows yet |
 | `make` | Make.com | automation | ❓ unknown | External SaaS | Automation platform | Status unclear |
 | `docker` | Docker | containerization | 📋 planned | Local Docker Desktop | Service deployment | Not in active use |
 
@@ -82,7 +82,6 @@
 
 ### High Priority
 - **Chat1 not deployed persistently**: Code ready but not running as service
-- **n8n not configured**: Planned for automation but not set up yet
 
 ### Medium Priority
 - **Make.com status unknown**: May or may not be in use
@@ -99,9 +98,9 @@
 
 | Status | Count | Services |
 |--------|-------|----------|
-| ✅ up | 8 | github, gmail, calendar, drive, docs, ngrok, claude-desktop, gpt-actions |
+| ✅ up | 9 | github, gmail, calendar, drive, docs, ngrok, claude-desktop, gpt-actions, n8n |
 | 🟡 partial | 3 | sheets, tasks, telegram-chat1 |
-| 📋 planned | 2 | n8n, docker |
+| 📋 planned | 1 | docker |
 | ❓ unknown | 1 | make |
 
 ---
@@ -115,5 +114,5 @@
 
 ---
 
-**Last Updated:** 2025-11-26  
-**Updated By:** Claude Desktop (Block STATE_LAYER_COMPLETION_V1)
+**Last Updated:** 2025-11-26T19:45:00Z  
+**Updated By:** Claude Desktop (BLOCK_N8N_INFRA_BOOTSTRAP_V1)
