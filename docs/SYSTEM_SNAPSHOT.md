@@ -1,4 +1,4 @@
-# 🧭 SYSTEM SNAPSHOT — Updated 2025-11-25
+# 🧭 SYSTEM SNAPSHOT — Updated 2025-11-26
 
 ## 🏗️ מצב המערכת הנוכחי
 
@@ -24,12 +24,15 @@
 ---
 
 ## 🎯 פאזה פעילה
-**Phase 2.3 – Stabilizing The Hands** (נחתמה)
+**Phase 2.3 – Stabilizing the Hands (Sync & State Alignment)** (פעילה)
 
-מעבר ל־**Phase 2.4 – Make Integration**, הכוללת:
-1. יצירת `MAKE_INTEGRATION_SPEC.md`.
-2. הגדרת תרחיש Thin Slice ראשון (לוג בלבד).
-3. בדיקת סנכרון עם Control Plane.
+**מטרות Phase 2.3:**
+1. יישום Sync Agent עם OODA loop
+2. יישור State Layer ותיעוד
+3. מיפוי אינטגרציות כלים (Claude vs GPT access patterns)
+4. ניקוי אוטומציות legacy
+
+**מעבר ל־ Phase 2.4 – Make/n8n Integration**
 
 ---
 

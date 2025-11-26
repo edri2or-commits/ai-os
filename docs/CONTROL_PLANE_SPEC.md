@@ -1,6 +1,6 @@
-# CONTROL_PLANE_SPEC.md — Phase 2.2 Update
+# CONTROL_PLANE_SPEC.md — Phase 2.3 Update
 
-## 📅 Date: 2025-11-25
+## 📅 Date: 2025-11-26
 **Owner:** GPT Operator (under Or's supervision)
 
 ---
@@ -17,7 +17,7 @@ Defines operational mode, automation state, active phase, and agent statuses.
 | `system_mode` | Defines global operation context | `INFRA_ONLY` / `LIFE_AUTOMATIONS` / `EXPERIMENT` |
 | `automations_enabled` | Kill Switch for all automated flows | `false` |
 | `sandbox_only` | Run tests in sandbox mode only | `true` |
-| `active_phase` | Current development phase | `2.2 – Claude Healthcheck & Error Digest` |
+| `active_phase` | Current development phase | `2.3 – Stabilizing the Hands (Sync & State Alignment)` |
 
 ---
 
@@ -95,7 +95,7 @@ Example entry:
 **Session Mode:** `INFRA_ONLY`  
 **Declared By:** GPT Operator (via Or)  
 **Declared At:** 2025-11-26T12:52:00Z  
-**Phase:** 2.2 (Claude Healthcheck & Error Digest)
+**Phase:** 2.3 (Stabilizing the Hands - Sync & State Alignment)
 
 **Session Constraints:**
 - ⛔ No automations on Or's life during this session
@@ -105,8 +105,21 @@ Example entry:
 
 ---
 
-**Phase:** 2.2 – Claude Healthcheck & Error Digest  
-**Next Phases:** 2.3 Chat1 Stabilization → 2.4 Make Integration → 2.5 Consolidation  
-**Mode:** INFRA_ONLY  
+**Phase:** 2.3 – Stabilizing the Hands (Sync & State Alignment)  
+**Previous Phase:** 2.2 – Claude Healthcheck & Error Digest (baseline establishment)  
+**Next Phases:** 2.4 Make/n8n Integration → 2.5 Consolidation  
+**Mode:** INFRA_ONLY
+
+**Phase 2.3 Focus:**
+- Sync Agent implementation and OODA loop
+- State Layer alignment and documentation
+- Tool integration mapping (Claude vs GPT access patterns)
+- Legacy automation cleanup and decisions
+
+**Phase 2.2 Achievements:**
+- Claude Desktop healthcheck system
+- STATE_LAYER_BASELINE_V1 declaration
+- Core State Layer files created
+- Role model simplification  
 
 > "Control without visibility is illusion — the plane must always know its altitude."

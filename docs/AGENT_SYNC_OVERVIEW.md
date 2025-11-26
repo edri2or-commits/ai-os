@@ -1,8 +1,8 @@
 # AGENT_SYNC_OVERVIEW.md — סיכום מצב לסוכנים
 
 **Purpose:** קובץ סינכרון מהיר לכל ממשק AI-OS בתחילת סשן.  
-**Version:** 0.4  
-**Last Updated:** 2025-11-26 (STATE_LAYER_BASELINE_V1 declared)
+**Version:** 0.5  
+**Last Updated:** 2025-11-26 (Phase 2.3 declared, Sync Agent operational)
 
 ---
 
@@ -10,11 +10,12 @@
 
 | Property | Value |
 |----------|-------|
-| **Phase** | Phase 2 — Stabilizing the Hands |
+| **Phase** | Phase 2.3 — Stabilizing the Hands (Sync & State Alignment) |
+| **Previous Phase** | Phase 2.2 — Claude Healthcheck & Error Digest |
 | **Mode** | INFRA_ONLY |
 | **Automations Enabled** | false |
 | **Sandbox Only** | true |
-| **Source** | `docs/CONTROL_PLANE_SPEC.md` (v0.3, 2025-11-25) |
+| **Source** | `docs/CONTROL_PLANE_SPEC.md` (updated 2025-11-26) |
 
 **What this means:**
 - Focus on infrastructure stability, not new features
