@@ -1,8 +1,8 @@
 # AGENT_SYNC_OVERVIEW.md — סיכום מצב לסוכנים
 
 **Purpose:** קובץ סינכרון מהיר לכל ממשק AI-OS בתחילת סשן.  
-**Version:** 0.5  
-**Last Updated:** 2025-11-26 (Phase 2.3 declared, Sync Agent operational)
+**Version:** 0.6  
+**Last Updated:** 2025-11-26T18:50:00Z (BLOCK_AGENT_SYNC_OVERVIEW_REFRESH_V2)
 
 ---
 
@@ -74,7 +74,7 @@
 
 ## 5. RECENT WORK / BLOCKS
 
-עבודה אחרונה (נכון ל-2025-11-26):
+עבודה אחרונה (נכון ל-2025-11-26T18:50:00Z):
 
 1. **Block 5** (2025-11-25) — Added Drive Snapshot Layer documentation
 2. **Block 4** (2025-11-25) — Generated first SYSTEM_SNAPSHOT_DRIVE
@@ -88,6 +88,10 @@
    - EVENT_TIMELINE.jsonl
 5. **Block ROLE_MODEL_SIMPLIFICATION_V1** (2025-11-26) — Simplified agent role model, removed rigid hierarchy
 6. **Block SYSTEM_STATE_JSON_REFRESH_V2** (2025-11-26) — Created SYSTEM_STATE_COMPACT.json for external agents
+7. **PHASE2_23_TOOL_INTEGRATION_MAP_V1** (2025-11-26) — Documented access patterns for GitHub and Google Workspace (EVT-007, pushed)
+8. **PHASE2_24_SYNC_AGENT_SESSION_TEMPLATE_V1** (2025-11-26) — Created OODA loop playbook for Sync Agent sessions (EVT-008, pushed)
+9. **BLOCK_AUTO_GAS_001_DECISION** (2025-11-26) — Disabled legacy Apps Script Collector_Gmail_to_Records (EVT-009, committed not pushed)
+10. **BLOCK_PHASE_LABELING_CLARIFICATION** (2025-11-26) — Formally declared Phase 2.3 and updated CONTROL_PLANE_SPEC (committed not pushed)
 
 ---
 
@@ -97,8 +101,9 @@
 
 | ID | Question | Owner | Priority |
 |----|----------|-------|----------|
+| DEC-004 | ngrok vs Cloudflare Tunnel — connectivity solution | Or + GPT | High |
+| DEC-006 | n8n vs Make.com — automation kernel | Or + GPT | High |
 | Q1 | When to deploy Chat1 persistently? | Or | Medium |
-| Q2 | n8n vs Make.com — which to use? | Or | Medium |
 | Q3 | Cloud deployment timing (Cloud Run)? | Or | Low |
 | Q4 | Auto-sync policy for Drive Snapshot? | Claude + Or | Low |
 
@@ -108,6 +113,7 @@
 - **DEC-002**: GitHub Executor API = Not Deployed
 - **DEC-003**: GPT GitHub Agent = DRY RUN Only
 - **DEC-004**: Human-Approved Writes Only (Constitutional Amendment)
+- **DEC-005**: AUTO-GAS-001 = Path C: Disable (Legacy Apps Script disabled)
 
 **Full decisions log:** `docs/DECISIONS_AI_OS.md`
 
@@ -173,5 +179,8 @@
 
 ---
 
-**Last Updated:** 2025-11-26  
-**Updated By:** Claude Desktop (STATE_LAYER_BASELINE_V1 declaration)
+**Last Updated:** 2025-11-26T18:50:00Z  
+**Updated By:** Claude Desktop (BLOCK_AGENT_SYNC_OVERVIEW_REFRESH_V2)
+
+**Git Status Note:**  
+There is 1 unpushed commit on main (3895719) containing BLOCK_AUTO_GAS_001_DECISION + BLOCK_PHASE_LABELING_CLARIFICATION. Push pending Or's approval.
