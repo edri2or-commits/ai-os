@@ -1,8 +1,9 @@
 # AGENT_SYNC_SPEC_BLACKBOARD_V0.md
 
-**Version:** 0.1 (Draft)  
+**Version:** 0.2 (Enhanced with Evolution Path)  
 **Created:** 2025-11-26  
-**Author:** Claude Desktop (Block 3)  
+**Updated:** 2025-11-26 (SPEC_CRITIC review applied)  
+**Author:** Claude Desktop (Block 3 + SPEC_CRITIC)  
 **Status:** 📐 Design Phase  
 **Phase:** Phase 2.2–2.3 (Stabilizing the Hands)  
 **Mode:** INFRA_ONLY
@@ -42,6 +43,41 @@
 - אין תקשורת ישירה בין סוכנים — הכל עובר דרך הלוח
 - כל שינוי מתועד ב-EVENT_TIMELINE
 - Git משמש כ-version control של הלוח
+
+---
+
+**n8n as Nervous System (Future):**
+
+In future phases (2.4+), **n8n** will serve as the "nervous system" of AI-OS — reacting to changes in the State Layer and routing tasks to appropriate agents.
+
+**3 Core Workflows:**
+1. **Watcher Workflow** — Monitors State Layer for changes:
+   - GitHub webhooks (on push to main)
+   - File polling (check EVENT_TIMELINE.jsonl every X minutes)
+   - Google Sheets onEdit (via Apps Script webhook, Phase 3+)
+   
+2. **Dispatcher Workflow** — Routes tasks based on type:
+   - `file_edit` → Claude Desktop
+   - `spec_write` → GPT Operator
+   - `healthcheck` → Run script directly
+   - `analysis` → AgentKit (Phase 3+)
+
+3. **Sync Workflow** — Periodic maintenance:
+   - Daily healthchecks
+   - Gap detection (inconsistencies between State files)
+   - "What's new since last sync" summary generation
+
+**Why "Nervous System"?**
+- Like neurons, n8n **reacts** to stimuli (events in State Layer)
+- Like synapses, n8n **routes** signals (tasks) to the right organs (agents)
+- Like reflexes, n8n **executes** simple actions automatically (healthchecks, logs)
+
+**Integration with Sync Agent:**
+- **Phase 2.2-2.3:** Sync Agent is manual (Claude Desktop runs OODA)
+- **Phase 2.4:** n8n can **trigger** Sync Agent on events (e.g., new commit → run OODA)
+- **Phase 3+:** n8n becomes primary executor, Sync Agent becomes meta-coordinator via AgentKit
+
+---
 
 ### 2.2 OODA Loop ברמת קבצים
 
@@ -182,6 +218,73 @@
 
 ---
 
+### 3.5 Future: Drive State Mirror (Phase 3+ Design)
+
+**Status:** Design Phase — NOT implemented in Phase 2.2-2.3
+
+---
+
+**In Phase 3+, State Layer expands to Google Drive:**
+
+**GitHub State Layer (current):**
+- **Purpose:** Infrastructure, services, automations, events
+- **Location:** `/docs/system_state/` in GitHub repo
+- **Files:** SYSTEM_STATE_COMPACT.json, EVENT_TIMELINE.jsonl, AUTOMATIONS_REGISTRY.jsonl, SERVICES_STATUS.json
+- **Managed by:** Claude Desktop (files, Git), GPT Operator (specs, docs)
+
+**Drive State Layer (future):**
+- **Purpose:** Tasks, context, knowledge, inbox
+- **Location:** `/AI-OS State Layer/` in Google Drive
+- **Folders:**
+  - `/01_Active_Context/` — Current tasks (JSON files with state, logs, output)
+  - `/02_Knowledge_Graph/` — Long-term knowledge (Markdown)
+  - `/03_Inbox/` — Raw inputs (emails, docs, voice notes)
+  - `/04_Archive/` — Completed tasks
+- **Managed by:** GPT Operator (Google Workspace actions), n8n (automation), AgentKit (future)
+
+---
+
+**Sync Strategy:**
+
+**No direct sync** — two layers serve different purposes:
+- **GitHub = code, infra, static docs**
+- **Drive = tasks, dynamic state, knowledge**
+
+**Links between layers:**
+- EVENT_TIMELINE (GitHub) can reference Drive files:
+  ```json
+  {
+    "event_type": "task_completed",
+    "linked_drive_file": "/Active_Context/task-uuid-001.json"
+  }
+  ```
+- Task JSON (Drive) can reference GitHub commits:
+  ```json
+  {
+    "related_github_event": "EVT-2025-11-26-009",
+    "related_commit": "abc1234"
+  }
+  ```
+
+**Sync Agent (Phase 3+) reads both:**
+- Identifies gaps: "Task in Drive but no EVENT logged in GitHub"
+- Identifies orphans: "Automation in GitHub but no task files in Drive"
+- Proposes Blocks to close gaps
+
+---
+
+**Why prepare now (Phase 2.2-2.3)?**
+- Design GitHub State Layer to be **Drive-compatible**
+- Add optional fields to EVENT_TIMELINE for Drive links
+- Avoid breaking changes when Drive layer is added
+
+**What we do NOT do now:**
+- ❌ Create Drive folders
+- ❌ Sync files to Drive
+- ❌ Configure GPT to write to Drive State Layer
+
+---
+
 ## 4. Responsibilities of Sync Agent v0
 
 **Sync Agent v0 הוא גרסה ידנית (manual)** — לא daemon, לא רץ ברקע, לא autonomous.
@@ -209,6 +312,40 @@
 **פלט:**
 - "What's new since last session" summary
 - זיהוי אם יש דברים ש-Or צריך לדעת (errors, gaps)
+
+---
+
+**Git Diff Optimization (Future):**
+
+**Current approach (Phase 2.2-2.3):**
+- Sync Agent v0 reads **entire files**: EVENT_TIMELINE.jsonl, SYSTEM_STATE_COMPACT.json
+- Filters events by timestamp: `timestamp > last_session_timestamp`
+
+**Future approach (Phase 2.4+):**
+- Use **`git diff`** to identify **deltas** instead of reading full files:
+  ```bash
+  git diff <last_session_commit> HEAD -- docs/system_state/
+  ```
+- Parse diff output to extract:
+  - New lines in EVENT_TIMELINE.jsonl
+  - Changed fields in SYSTEM_STATE_COMPACT.json
+  - New/modified files in State Layer
+
+**Benefits:**
+- **Performance:** Only process what changed, not entire state
+- **Precision:** Know exactly which fields were modified
+- **History:** Git provides full audit trail
+
+**Implementation:**
+- Phase 2: Manual file reading (simpler, sufficient for small state)
+- Phase 2.4+: Git diff parsing (optimized for larger state)
+
+**Technique from Research 2 (Blackboard + OODA):**
+- "Use Git diffs to detect deltas in the Blackboard"
+- "Observe = git diff + parse changes"
+- "Avoids re-reading entire state every session"
+
+---
 
 ### 4.3 זיהוי Gaps / אי-עקביות / הזדמנויות
 
@@ -325,30 +462,144 @@ GPT: "Spec ready: docs/specs/N8N_INTEGRATION_SPEC.md. Logged EVT-2025-11-26-008.
 
 ---
 
-### 5.3 Future: n8n / AgentKit
+### 5.3 Future: n8n as Nervous System & AgentKit as Super-Layer
 
-**תפקיד:** "המפעילים" — Automation Executors (עתידי)
+---
+
+#### 5.3.1 n8n: The Nervous System (Phase 2.4)
+
+**תפקיד:** "המערכת העצבית" — Automation Executor & Event Reactor
 
 **מתי יפעל:**
 - **כרגע:** לא פעיל (Phase 2.2–2.3 הוא INFRA_ONLY)
-- **בעתיד (Phase 2.4+):** כשעוברים ל-LIFE_AUTOMATIONS mode
+- **Phase 2.4:** n8n מופעל כ"nervous system" שמגיב לאירועים
+- **Phase 3+:** n8n כמנוע ביצוע עבור AgentKit
 
-**איך יתחברו לState Layer:**
-1. **EVENT_TIMELINE monitoring:**
-   - n8n webhook מקשיב לשינויים ב-EVENT_TIMELINE (דרך GitHub webhook או Google Sheets sync)
-   - כשאירוע חדש מתועד → n8n מפעיל workflow תואם
+---
 
-2. **AUTOMATIONS_REGISTRY as source:**
-   - n8n קורא את AUTOMATIONS_REGISTRY לזיהוי אוטומציות שצריך להפעיל
-   - AgentKit משתמש ב-SYSTEM_STATE_COMPACT כ-context למשימות
+**3 Workflows מרכזיים:**
 
-3. **Write back to State Layer:**
-   - n8n לוגג ל-EVENT_TIMELINE כל פעולה שהוא מבצע
-   - AgentKit מעדכן AUTOMATIONS_REGISTRY כש-automation חדש נוסף
+**1. Watcher Workflow — "חיישנים"**
+- **Purpose:** Detect changes in State Layer
+- **Triggers:**
+  - GitHub webhooks (on push to main)
+  - File polling (every X minutes, check for new EVENTs in EVENT_TIMELINE.jsonl)
+  - Google Sheets onEdit (via Apps Script webhook, Phase 3+)
+- **Action:** When change detected → send to Dispatcher
 
-**אבטחה:**
-- Human-in-the-loop: כל automation דורש אישור מ-Or לפני הפעלה ראשונה
-- Sandbox: בדיקות ב-test environment לפני production
+**2. Dispatcher Workflow — "מנתב"**
+- **Purpose:** Route tasks to appropriate agent
+- **Input:** Task from Watcher or COMMAND_CENTER (Sheets, Phase 3+)
+- **Logic:**
+  ```
+  IF task_type == "file_edit" → trigger Claude Desktop (via API or manual notification)
+  IF task_type == "spec_write" → trigger GPT Operator (via GitHub issue or manual)
+  IF task_type == "healthcheck" → run script directly
+  IF task_type == "analysis" → send to AgentKit (Phase 3+)
+  ```
+- **Output:** Task routed, status logged to EVENT_TIMELINE
+
+**3. Sync Workflow — "תחזוקה"**
+- **Purpose:** Periodic maintenance and gap detection
+- **Schedule:** Daily or on-demand
+- **Actions:**
+  - Run `claude_healthcheck.py`
+  - Check for inconsistencies (AUTOMATIONS_REGISTRY vs SERVICES_STATUS)
+  - Generate "What's new" summary since last sync
+  - Update SYSTEM_STATE_COMPACT.json if needed
+- **Output:** Healthcheck report, gap list
+
+---
+
+**איך n8n מתחבר ל-State Layer:**
+1. **Read:** n8n reads EVENT_TIMELINE.jsonl, AUTOMATIONS_REGISTRY.jsonl
+2. **React:** When specific event types appear (e.g., `state_baseline`, `error`), n8n triggers workflows
+3. **Write back:** n8n logs its own actions to EVENT_TIMELINE:
+   ```json
+   {
+     "timestamp": "2025-11-26T14:00:00Z",
+     "event_type": "automation_triggered",
+     "actor": "n8n Dispatcher",
+     "action": "Routed BLOCK_HEALTHCHECK_REFRESH to Claude Desktop",
+     "details": {"workflow_id": "n8n-dispatcher-v1", "task_uuid": "..."}
+   }
+   ```
+
+**Security:**
+- Human-in-the-loop: n8n can **propose** actions but requires Or's approval for critical tasks
+- Sandbox: All n8n workflows tested in dev environment before production
+- State Layer integrity: n8n can only **append** to EVENT_TIMELINE, not modify history
+
+---
+
+#### 5.3.2 AgentKit: The Super-Layer (Phase 3+)
+
+**תפקיד:** "המוח המתאם" — Reasoning & Planning Platform
+
+**מתי יפעל:**
+- **Phase 3+:** When AI-OS transitions from INFRA_ONLY to LIFE_AUTOMATIONS mode
+
+---
+
+**איך AgentKit מתחבר למערכת הקיימת:**
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                     AgentKit Platform                    │
+│  (Reasoning, Planning, Orchestration)                   │
+└────────────────┬────────────────────────────────────────┘
+                 │
+                 ├──► MCP GitHub Client (port 8081)
+                 │     └─► GitHub API → State Layer updates
+                 │
+                 ├──► MCP Google Client (port 8082)
+                 │     └─► Google Workspace → Drive State Layer
+                 │
+                 ├──► MCP Filesystem tools
+                 │     └─► Read/Write local State files
+                 │
+                 └──► n8n Webhooks
+                       └─► Trigger deterministic workflows
+```
+
+**Key Insight:** AgentKit **reuses** Claude's existing MCP servers — no duplicate integrations.
+
+---
+
+**Example Flow: AgentKit processes a task**
+
+1. **Or updates MASTER_CONTROL Sheet:** Sets task status to `QUEUED`
+2. **Apps Script webhook** → n8n Dispatcher
+3. **n8n** reads task details, sends to **AgentKit** (if task requires reasoning)
+4. **AgentKit:**
+   - Reads State Layer via **MCP Filesystem** (`SYSTEM_STATE_COMPACT.json`)
+   - Reasons about the task (using o1/GPT-4o)
+   - Decides on actions:
+     - Call **MCP GitHub Client** to update files
+     - Call **MCP Google Client** to write results to Drive
+     - Trigger **n8n workflow** for email notification
+5. **n8n** executes deterministic steps (send email, update Sheet status)
+6. **EVENT_TIMELINE** logged with all actions
+
+---
+
+**AgentKit Benefits:**
+- **Visual Builder:** Design complex agent flows without code
+- **Export to Code:** Export agent logic to Python/TS, manage in GitHub
+- **MCP Native:** Uses existing MCP tools — no rebuild needed
+- **n8n Integration:** AgentKit thinks, n8n executes
+
+**AgentKit is NOT:**
+- A replacement for Claude Desktop (still need local executor)
+- A replacement for n8n (still need deterministic workflows)
+- Required for Phase 2 (optional future enhancement)
+
+---
+
+**Constraints (Phase 2.2-2.3):**
+- AgentKit is **design-only** — not implemented yet
+- Mentioned here to prepare State Layer structure
+- Ensures future compatibility — no breaking changes needed
 
 ---
 
@@ -515,17 +766,554 @@ Gap מזוהה: "Chat1 Telegram Bot status is 'partial' but no deployment plan e
 - ✅ 2 workflows כתובים (Gap closure, Automation prep)
 - ✅ Constraints: Phase 2.2–2.3, INFRA_ONLY, Human-in-the-Loop
 
+---
+
+**Evolution Stages:**
+
+AI-OS will evolve through 3 stages as State Layer and interfaces mature:
+
+**Stage 1: Manual Sync (Phase 2.2-2.3) — Current**
+- **Sync Agent:** Manual, session-based (Claude Desktop runs OODA)
+- **State Layer:** File-based in GitHub repo only
+- **Interfaces:** Claude (hands), GPT (architect), n8n (planned but not active)
+- **Constraints:** INFRA_ONLY, no automations on Or's life, Human-in-the-Loop for all actions
+- **Focus:** Stabilizing State Layer, documenting interfaces, establishing SSOT
+
+**Stage 2: n8n Nervous System (Phase 2.4)**
+- **Sync Agent:** Semi-automated (n8n triggers OODA on events)
+- **State Layer:** GitHub repo + Drive State Layer begins (Active Context, Inbox folders)
+- **Interfaces:** Claude (executor), GPT (planner), n8n (reactive executor)
+- **n8n Workflows:** Watcher (detect changes), Dispatcher (route tasks), Sync (periodic maintenance)
+- **Constraints:** Still INFRA_ONLY, Human-in-the-Loop for critical actions, Drive State experimental
+- **Focus:** Reactive automation, gap detection, Drive State Layer setup
+
+**Stage 3: AgentKit Super-Layer (Phase 3+)**
+- **Sync Agent:** Full platform (AgentKit meta-coordinator, Sync Agent as orchestrator)
+- **State Layer:** GitHub (infra/code) + Drive (tasks/context) fully integrated
+- **Interfaces:** Claude (executor), GPT (planner), AgentKit (super-layer), n8n (executor), Google Sheets (Control Plane UI)
+- **New Capabilities:**
+  - MASTER_CONTROL Sheet: Dashboard UI with state machine
+  - AgentKit reuses MCP servers (no duplicate integrations)
+  - Visual Builder + Export to Code
+  - Apps Script webhooks → n8n workflows
+- **Constraints:** Transitions to LIFE_AUTOMATIONS mode (with safeguards), Human-in-the-Loop for sensitive tasks
+- **Focus:** Production-grade automation, knowledge management, life task execution
+
+---
+
+**Design Principle for All Stages:**
+- **State Layer remains SSOT** — files in GitHub/Drive are the truth, not agent memory
+- **Human-in-the-Loop always available** — Or can intervene at any stage
+- **Incremental enhancement** — each stage builds on the previous, no breaking changes
+
+---
+
 **Next Steps:**
-1. Or reviews this spec
+1. Or reviews this spec (including evolution path)
 2. If approved → Claude implements first Sync Agent v0 run
 3. Test workflow: Run OODA loop in next session
 4. Log results to EVENT_TIMELINE
 5. Iterate and improve based on real usage
+6. Prepare for Phase 2.4 transition (n8n integration design)
 
 ---
 
-**Version:** 0.1 (Draft)  
-**Status:** Awaiting Or's review  
-**To be committed:** After approval  
+## 9. Evolution Path & Super-Layer (Design)
 
-> "Coordination without a shared blackboard is chaos — clarity comes from a single source of truth."
+**Current State (Phase 2.2-2.3):**
+- Sync Agent v0 is **manual** and **session-based**
+- State Layer is **file-based** (GitHub repo only)
+- Interfaces: Claude (hands), GPT (architect), n8n (planned but not active)
+
+**Future State (Phase 3+):**
+- Sync Agent evolves into **Agent Platform** using **OpenAI AgentKit**
+- State Layer expands to **Google Drive** (tasks, context, knowledge)
+- Control Plane UI: **Google Sheets** (MASTER_CONTROL dashboard)
+
+---
+
+### 9.1 Evolution Stages
+
+**Stage 1: Manual Sync (Phase 2.2-2.3) — Current**
+- Sync Agent v0 = Claude Desktop running OODA manually
+- State Layer = files in GitHub (SYSTEM_STATE_COMPACT.json, EVENT_TIMELINE.jsonl, etc.)
+- No automation, full Human-in-the-Loop
+- Focus: stabilizing State Layer, documenting interfaces
+
+**Stage 2: n8n Nervous System (Phase 2.4)**
+- n8n becomes the "nervous system" of AI-OS
+- 3 core workflows:
+  - **Watcher:** Detects changes in State Layer (GitHub webhooks, file polling)
+  - **Dispatcher:** Routes tasks to appropriate agent (Claude/GPT/API)
+  - **Sync:** Periodic healthchecks, state refresh, gap detection
+- Semi-automated: n8n triggers Sync Agent on events, but Or approves actions
+- Drive State Layer begins: Active Context, Knowledge Graph files
+
+**Stage 3: AgentKit Super-Layer (Phase 3+)**
+- **OpenAI AgentKit** becomes the reasoning/planning layer
+- **MCP servers reuse:** AgentKit uses existing MCP tools (GitHub, Google, Filesystem) — no duplication
+- **Visual Builder + Export to Code:** Design agents visually, export to Python/TS, manage in GitHub
+- **Google Sheets Control Plane:** MASTER_CONTROL sheet as UI for state machine
+- **State Machine enforced:** DRAFT → QUEUED → PROCESSING → REVIEW_NEEDED → APPROVED → COMPLETED/ERROR
+- **Apps Script webhooks:** Sheet updates trigger n8n workflows
+
+---
+
+### 9.2 Why AgentKit as Super-Layer?
+
+**Reasoning from Research:**
+- AgentKit supports **MCP natively** → reuses Claude's existing MCP servers
+- Works well with **n8n** as execution engine: AgentKit decides, n8n executes
+- **Visual Builder** reduces prompt engineering burden for complex workflows
+- **Export to Code** allows version control in GitHub
+- OpenAI's **o1/GPT-4o models** provide strong planning capabilities
+
+**What AgentKit is NOT:**
+- Not a replacement for Claude Desktop (local executor)
+- Not a replacement for n8n (deterministic workflows)
+- Not a replacement for State Layer (files remain SSOT)
+
+**What AgentKit IS:**
+- A **meta-coordinator** that sits above current interfaces
+- Reads State Layer → reasons → calls MCP tools → triggers n8n flows
+- Provides **Visual UI** for designing complex agent behaviors
+
+---
+
+### 9.3 MCP Reuse Strategy
+
+**Current MCP Servers (Phase 2):**
+- GitHub Client (port 8081)
+- Google Workspace Client (port 8082)
+- Filesystem tools
+- Browser automation
+- Windows automation
+
+**Future (Phase 3+):**
+- **AgentKit agents** will call these same MCP servers
+- No need to rebuild integrations — just configure AgentKit to use MCP endpoints
+- Example flow:
+  ```
+  AgentKit Agent → MCP GitHub Client → GitHub API → Update State Layer → EVENT_TIMELINE logged
+  ```
+
+**Benefits:**
+- DRY: Don't Repeat Yourself — no duplicate integrations
+- Consistency: Same tools used by Claude and AgentKit
+- Version control: MCP server improvements benefit both
+
+---
+
+### 9.4 Design Hooks (Not Implementation)
+
+**CRITICAL:** Stage 2 and Stage 3 are **design-only** at this phase.
+
+**What we prepare now (Phase 2.2-2.3):**
+- Document State Layer structure to be **AgentKit-compatible**
+- Design EVENT_TIMELINE schema to support **state machine** fields (optional now, required later)
+- Create **placeholder** in AUTOMATIONS_REGISTRY for future AgentKit agents
+- Keep State Layer **clean and well-documented** so AgentKit can read it easily
+
+**What we do NOT implement now:**
+- No AgentKit setup or configuration
+- No n8n workflows (beyond planning)
+- No Google Sheets Control Plane UI
+- No Apps Script webhooks
+
+**Why prepare?**
+- Avoid re-architecture later — design State Layer right now
+- Make Phase 3 transition smooth — no breaking changes to State Layer
+- Keep options open — AgentKit, Vertex AI, or other platforms could work
+
+---
+
+## 10. Google Workspace Control Plane (Future Design)
+
+**Status:** Design Phase — NOT implemented in Phase 2.2-2.3
+
+**Purpose:** Use Google Sheets + Drive as UI and state management for AI-OS in Phase 3+.
+
+---
+
+### 10.1 Why Google Sheets as Control Plane?
+
+**Problem with Chat UI:**
+- No visibility into 10+ parallel tasks
+- Hard to intervene mid-execution
+- Everything is unstructured text
+- No persistent state
+
+**Solution: MASTER_CONTROL Sheet**
+- **Dashboard:** See all tasks at a glance (status, priority, links)
+- **State Machine:** Task status as FSM (DRAFT → QUEUED → PROCESSING → etc.)
+- **Human-in-the-Loop:** Or approves transitions (REVIEW_NEEDED → APPROVED)
+- **Structured Data:** Each task = row with UUID, timestamp, intent, parameters (JSON)
+
+---
+
+### 10.2 MASTER_CONTROL Sheet Structure
+
+**Sheet: COMMAND_CENTER**
+
+| TASK_UUID | TIMESTAMP | TRIGGER_SOURCE | INTENT | PARAMETERS_JSON | STATUS | LINKED_STATE_FILE | OUTPUT_SUMMARY |
+|-----------|-----------|----------------|--------|-----------------|--------|-------------------|----------------|
+| uuid-001 | 2025-11-26T10:00 | Manual | Meeting_Prep | `{"meeting_id": "cal-123"}` | COMPLETED | `/Active_Context/meeting-cal-123.json` | [Brief ready](link) |
+| uuid-002 | 2025-11-26T11:00 | Calendar | Research | `{"topic": "AI agents"}` | PROCESSING | `/Active_Context/research-ai-agents.json` | In progress... |
+| uuid-003 | 2025-11-26T12:00 | Email | Knowledge_Ingest | `{"doc_id": "doc-456"}` | REVIEW_NEEDED | `/Inbox/doc-456.md` | [Review](link) |
+
+---
+
+### 10.3 State Machine (Task Lifecycle)
+
+```
+DRAFT
+  ↓
+QUEUED ──► (Or or automation queues the task)
+  ↓
+PROCESSING ──► (Agent/n8n working on it)
+  ↓
+REVIEW_NEEDED ──► (Human review required)
+  ↓
+APPROVED ──► (Or approves)
+  ↓
+COMPLETED
+  ↓
+ARCHIVED
+
+(Error path)
+PROCESSING → ERROR → RETRY → QUEUED (or) → FAILED
+```
+
+**State Transitions:**
+- DRAFT → QUEUED: Or clicks "Queue" button or automation triggers
+- QUEUED → PROCESSING: n8n Dispatcher picks up task
+- PROCESSING → REVIEW_NEEDED: Agent completes, requires Or's approval
+- REVIEW_NEEDED → APPROVED: Or reviews and approves
+- APPROVED → COMPLETED: Final execution step
+- Any state → ERROR: Something fails, log details
+- ERROR → RETRY: Or clicks "Retry" or automation retries
+
+---
+
+### 10.4 Apps Script + n8n Integration
+
+**Apps Script (in MASTER_CONTROL Sheet):**
+```javascript
+function onEdit(e) {
+  var sheet = e.source.getActiveSheet();
+  if (sheet.getName() !== "COMMAND_CENTER") return;
+  
+  var row = e.range.getRow();
+  var col = e.range.getColumn();
+  var STATUS_COL = 6; // Column F
+  
+  if (col === STATUS_COL) {
+    var status = e.value;
+    var triggerStatuses = ["QUEUED", "APPROVED", "RETRY"];
+    
+    if (triggerStatuses.indexOf(status) !== -1) {
+      var rowData = sheet.getRange(row, 1, 1, sheet.getLastColumn()).getValues()[0];
+      var payload = {
+        task_uuid: rowData[0],
+        timestamp: rowData[1],
+        intent: rowData[3],
+        parameters: JSON.parse(rowData[4]),
+        status: rowData[5]
+      };
+      
+      // Send webhook to n8n
+      UrlFetchApp.fetch("https://n8n-webhook-url.com/command-center", {
+        method: "post",
+        contentType: "application/json",
+        payload: JSON.stringify(payload)
+      });
+    }
+  }
+}
+```
+
+**n8n Workflow (Webhook Receiver):**
+1. Receive webhook from Apps Script
+2. Parse `intent` field → route to sub-workflow:
+   - Meeting_Prep → Call AgentKit/Claude to generate briefing
+   - Research → Trigger Deep Research workflow
+   - Knowledge_Ingest → Parse doc, extract knowledge, update Knowledge Graph
+3. Execute sub-workflow
+4. Write results to Drive State Layer (`/Active_Context/...`)
+5. Update COMMAND_CENTER Sheet:
+   - Set STATUS to COMPLETED
+   - Add OUTPUT_SUMMARY with link to result
+   - Update LINKED_STATE_FILE path
+
+---
+
+### 10.5 Drive State Layer Structure
+
+**Root: `/AI-OS State Layer/`**
+
+**Folder Structure:**
+```
+/AI-OS State Layer/
+├── /01_Active_Context/          # Current tasks, active state
+│   ├── task-uuid-001.json       # Task state: status, logs, context
+│   ├── task-uuid-002.json
+│   └── meeting-cal-123.json     # Meeting prep output
+│
+├── /02_Knowledge_Graph/         # Long-term knowledge (Markdown)
+│   ├── concepts/
+│   ├── people/
+│   ├── projects/
+│   └── index.md                 # Knowledge index
+│
+├── /03_Inbox/                   # Raw inputs (emails, docs, notes)
+│   ├── email-2025-11-26.md
+│   ├── doc-456.md
+│   └── voice-note-001.txt
+│
+└── /04_Archive/                 # Completed tasks (moved from Active)
+    ├── 2025-11/
+    │   ├── task-uuid-001.json
+    │   └── task-uuid-002.json
+    └── 2025-10/
+```
+
+---
+
+**Task State JSON (Example: `/Active_Context/task-uuid-001.json`):**
+```json
+{
+  "task_uuid": "uuid-001",
+  "created_at": "2025-11-26T10:00:00Z",
+  "updated_at": "2025-11-26T10:30:00Z",
+  "intent": "Meeting_Prep",
+  "parameters": {
+    "meeting_id": "cal-123",
+    "attendees": ["alice@example.com", "bob@example.com"],
+    "agenda": "Q4 Planning"
+  },
+  "status": "COMPLETED",
+  "execution_log": [
+    {"timestamp": "2025-11-26T10:00:00Z", "actor": "n8n Dispatcher", "action": "Task queued"},
+    {"timestamp": "2025-11-26T10:05:00Z", "actor": "AgentKit", "action": "Started briefing generation"},
+    {"timestamp": "2025-11-26T10:25:00Z", "actor": "AgentKit", "action": "Briefing completed"},
+    {"timestamp": "2025-11-26T10:30:00Z", "actor": "n8n", "action": "Updated Sheet, marked COMPLETED"}
+  ],
+  "output": {
+    "type": "Google Doc",
+    "url": "https://docs.google.com/document/d/...",
+    "summary": "Meeting briefing with 3 agenda items, background research, and suggested talking points."
+  },
+  "linked_files": [
+    "/Knowledge_Graph/projects/Q4_Planning.md"
+  ]
+}
+```
+
+---
+
+### 10.6 Sync Between GitHub State & Drive State
+
+**Two State Layers:**
+- **GitHub State Layer** (Phase 2.2-2.3): Files in `/docs/system_state/`
+  - Source of truth for: infrastructure, services, automations, events
+  - Managed by: Claude Desktop, Git
+  - Format: JSON, JSONL, Markdown
+  
+- **Drive State Layer** (Phase 3+): Files in `/AI-OS State Layer/`
+  - Source of truth for: tasks, context, knowledge, inbox
+  - Managed by: GPT Operator, n8n, AgentKit
+  - Format: JSON, Markdown
+
+**Sync Strategy:**
+- **No direct sync** — two layers serve different purposes
+- **Links between layers:**
+  - EVENT_TIMELINE (GitHub) can reference Drive files: `"linked_drive_file": "/Active_Context/task-uuid-001.json"`
+  - Task JSON (Drive) can reference GitHub commits: `"related_commit": "abc123"`
+- **Sync Agent reads both:**
+  - Phase 2: Reads GitHub only
+  - Phase 3+: Reads GitHub + Drive, identifies gaps between them
+
+---
+
+### 10.7 Constraints (Phase 2.2-2.3)
+
+**This section is DESIGN-ONLY.**
+
+**What we do NOT do now:**
+- ❌ Create MASTER_CONTROL Sheet
+- ❌ Write Apps Script webhooks
+- ❌ Set up Drive State Layer folders
+- ❌ Configure n8n to listen to Sheets
+
+**What we DO prepare now:**
+- ✅ Design State Layer to be **Drive-compatible**
+- ✅ Add optional `"task_status"` field to EVENT_TIMELINE schema
+- ✅ Document future sync strategy between GitHub + Drive
+- ✅ Ensure STATE_LAYER_BASELINE_V1 remains the foundation
+
+**Why design now?**
+- Avoid re-architecture later
+- Make Phase 3 transition smooth
+- Keep State Layer clean and extensible
+
+---
+
+## 11. State Machine & Task Lifecycle (Future Design)
+
+**Status:** Design Phase — NOT implemented in Phase 2.2-2.3
+
+**Purpose:** Define task states and lifecycle for Phase 3+ (Google Sheets Control Plane).
+
+---
+
+### 11.1 Task State Machine
+
+```
+┌──────────┐
+│  DRAFT   │ ──► Or creates task, fills parameters
+└────┬─────┘
+     │
+     ↓
+┌──────────┐
+│  QUEUED  │ ──► Or or automation queues task for execution
+└────┬─────┘
+     │
+     ↓
+┌─────────────┐
+│ PROCESSING  │ ──► Agent/n8n working on task
+└──────┬──────┘
+       │
+       ├──► (Success path)
+       ↓
+ ┌─────────────────┐
+ │ REVIEW_NEEDED   │ ──► Human review required before completion
+ └────────┬────────┘
+          │
+          ↓
+    ┌──────────┐
+    │ APPROVED │ ──► Or approves, final execution
+    └────┬─────┘
+         │
+         ↓
+    ┌───────────┐
+    │ COMPLETED │ ──► Task done, results available
+    └─────┬─────┘
+          │
+          ↓
+    ┌──────────┐
+    │ ARCHIVED │ ──► Moved to /Archive/ folder
+    └──────────┘
+
+       │
+       ├──► (Error path)
+       ↓
+   ┌───────┐
+   │ ERROR │ ──► Something failed, details logged
+   └───┬───┘
+       │
+       ├──► Or clicks "Retry"
+       ↓
+   ┌───────┐
+   │ RETRY │ ──► Back to QUEUED
+   └───┬───┘
+       │
+       ├──► (If retry fails multiple times)
+       ↓
+   ┌────────┐
+   │ FAILED │ ──► Permanent failure, manual intervention needed
+   └────────┘
+```
+
+---
+
+### 11.2 Integration with Current State Layer
+
+**Phase 2.2-2.3 (Current):**
+- **Optional:** EVENT_TIMELINE events can include `"task_status"` field
+- **Example:**
+  ```json
+  {
+    "timestamp": "2025-11-26T14:00:00Z",
+    "event_type": "block_complete",
+    "event_id": "EVT-2025-11-26-009",
+    "actor": "Claude Desktop",
+    "action": "BLOCK_HEALTHCHECK_REFRESH completed",
+    "task_status": "COMPLETED"
+  }
+  ```
+- **Not required:** State machine is design-only, not enforced
+
+**Phase 3+ (Future):**
+- **Required:** Every task in MASTER_CONTROL Sheet has `STATUS` column
+- **Enforced:** Apps Script validates state transitions
+- **Logged:** Every transition logged to EVENT_TIMELINE + Drive task JSON
+
+---
+
+### 11.3 AUTOMATIONS_REGISTRY Integration
+
+**Current (Phase 2.2-2.3):**
+- AUTOMATIONS_REGISTRY tracks automations: `{"id": "AUTO-001", "status": "up", ...}`
+- Status values: `up`, `down`, `partial`, `planned`, `not_configured`
+
+**Future (Phase 3+):**
+- Add `"current_task_status"` field for automations that execute tasks:
+  ```json
+  {
+    "id": "AUTO-010",
+    "name": "n8n Meeting Prep Workflow",
+    "type": "n8n_workflow",
+    "status": "up",
+    "current_task_status": "PROCESSING",
+    "last_task_uuid": "uuid-001",
+    "last_run": "2025-11-26T14:00:00Z"
+  }
+  ```
+- Sync Agent can detect: "Automation is 'up' but task status is 'ERROR' → investigate"
+
+---
+
+### 11.4 State Transitions & Permissions
+
+**Who can transition states:**
+
+| Transition | Allowed Actors | Mechanism |
+|------------|----------------|-----------|
+| DRAFT → QUEUED | Or, GPT Operator | Manual (Sheet edit) or automation (calendar trigger) |
+| QUEUED → PROCESSING | n8n Dispatcher | Automatic (when workflow starts) |
+| PROCESSING → REVIEW_NEEDED | Agent (Claude, GPT, AgentKit) | Automatic (when task needs human review) |
+| REVIEW_NEEDED → APPROVED | Or only | Manual (Sheet edit, Or's decision) |
+| APPROVED → COMPLETED | Agent or n8n | Automatic (final execution step) |
+| COMPLETED → ARCHIVED | Sync Agent or cron | Automatic (after X days) |
+| Any → ERROR | Any agent | Automatic (on failure, with error details logged) |
+| ERROR → RETRY | Or or automation | Manual or policy-based (retry up to 3 times) |
+| RETRY → FAILED | System | Automatic (after max retries exceeded) |
+
+---
+
+### 11.5 Constraints (Phase 2.2-2.3)
+
+**This is design-only.**
+
+**What we do NOT implement now:**
+- ❌ Enforce state machine in code
+- ❌ Require `task_status` field in events
+- ❌ Build UI for state transitions
+
+**What we DO prepare now:**
+- ✅ Add **optional** `task_status` field to EVENT_TIMELINE schema
+- ✅ Document state machine for future reference
+- ✅ Design AUTOMATIONS_REGISTRY to support task tracking
+
+**Why design now?**
+- Ensure EVENT_TIMELINE schema is extensible
+- Avoid breaking changes when Sheets Control Plane is added
+- Provide clear path from manual (Phase 2) to automated (Phase 3+)
+
+---
+
+**Version:** 0.2 (Enhanced)  
+**Status:** Design complete, awaiting Or's approval  
+**To be committed:** After review  
+
+> "Coordination without a shared blackboard is chaos — clarity comes from a single source of truth. The future is designed today."
