@@ -1,9 +1,9 @@
 {
   "_schema": "SERVICES_STATUS_V0",
   "_description": "Registry of all services and their operational status in AI-OS",
-  "_status_values": ["up", "partial", "planned", "not_configured", "broken"],
+  "_status_values": ["up", "partial", "planned", "not_configured", "broken", "error_auth"],
   "_last_updated": "2025-11-26",
-  "_updated_by": "Claude Desktop (Block STATE_LAYER_COMPLETION_V1)",
+  "_updated_by": "Claude Desktop (TOOL_INTEGRATION_MAP_V1)",
   
   "services": [
     {
@@ -11,23 +11,36 @@
       "name": "GitHub",
       "type": "code_hosting",
       "status": "up",
-      "connected_via": "MCP GitHub Client (port 8081) + Claude MCP",
-      "notes": "Full R/W access, GPT Actions working"
+      "connected_via": "MCP GitHub Client (port 8081) + Claude MCP + GPT Custom Actions",
+      "access_patterns": [
+        "Claude Desktop: MCP GitHub Client + local clone (full read/write, local commits)",
+        "GPT Operator: Custom Action via ngrok (read/write files, branches, commits, PRs)"
+      ],
+      "critical_issue": "GPT access depends on stable ngrok URL - URL changes on restart",
+      "notes": "Full R/W access, GPT Actions working when ngrok is stable"
     },
     {
       "id": "google-gmail",
       "name": "Gmail",
       "type": "email",
       "status": "up",
-      "connected_via": "Google Workspace Client (port 8082)",
-      "notes": "OAuth 2.0, send/list working"
+      "connected_via": "Google Workspace Client (port 8082) + Claude MCP (read-only)",
+      "access_patterns": [
+        "GPT Operator: Google Workspace Custom Action (full read/write, send/list)",
+        "Claude Desktop: google-mcp (read-only access)"
+      ],
+      "notes": "OAuth 2.0, send/list working. Used for email automations in future phases."
     },
     {
       "id": "google-calendar",
       "name": "Google Calendar",
       "type": "calendar",
       "status": "up",
-      "connected_via": "Google Workspace Client (port 8082)",
+      "connected_via": "Google Workspace Client (port 8082) + Claude MCP (read-only)",
+      "access_patterns": [
+        "GPT Operator: Google Workspace Custom Action (full read/write, create/list events)",
+        "Claude Desktop: google-mcp (read-only access)"
+      ],
       "notes": "OAuth 2.0, create/list events working"
     },
     {
@@ -35,8 +48,12 @@
       "name": "Google Drive",
       "type": "storage",
       "status": "up",
-      "connected_via": "Google Workspace Client (port 8082) + Claude MCP",
-      "notes": "Search working, used for Drive Snapshot"
+      "connected_via": "Google Workspace Client (port 8082) + Claude MCP (read-only)",
+      "access_patterns": [
+        "GPT Operator: Google Workspace Custom Action (full read/write, search/create/update)",
+        "Claude Desktop: google-mcp (read-only, search only)"
+      ],
+      "notes": "Search working, used for Drive Snapshot. Source for future Drive State Layer."
     },
     {
       "id": "google-docs",
@@ -44,6 +61,9 @@
       "type": "documents",
       "status": "up",
       "connected_via": "Google Workspace Client (port 8082)",
+      "access_patterns": [
+        "GPT Operator: Google Workspace Custom Action (create/read/write docs)"
+      ],
       "notes": "Doc creation working, used for SYSTEM_SNAPSHOT_DRIVE"
     },
     {
@@ -52,7 +72,10 @@
       "type": "spreadsheets",
       "status": "partial",
       "connected_via": "Google Workspace Client (port 8082)",
-      "notes": "Connected but not heavily used yet"
+      "access_patterns": [
+        "GPT Operator: Google Workspace Custom Action (create/read/write sheets)"
+      ],
+      "notes": "Connected but not integrated into main workflows yet. Reserved for future Control Plane UI."
     },
     {
       "id": "google-tasks",
@@ -60,7 +83,10 @@
       "type": "tasks",
       "status": "partial",
       "connected_via": "Google Workspace Client (port 8082)",
-      "notes": "Connected but not heavily used yet"
+      "access_patterns": [
+        "GPT Operator: Google Workspace Custom Action (create/read/update tasks)"
+      ],
+      "notes": "Connected but not integrated into main workflows yet. Reserved for future task orchestration."
     },
     {
       "id": "ngrok",
@@ -100,7 +126,7 @@
       "type": "automation",
       "status": "planned",
       "connected_via": "Docker (planned)",
-      "notes": "Not configured yet"
+      "notes": "No active instance yet - design-only for Phase 2.4 as nervous system"
     },
     {
       "id": "make",
