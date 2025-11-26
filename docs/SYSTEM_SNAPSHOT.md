@@ -1,5 +1,40 @@
 # System Snapshot – AI-OS Current State
-### Date: 2025-11-24
+
+---
+
+## 📋 Metadata
+
+| Field | Value |
+|-------|-------|
+| **Snapshot ID** | SNAP-2025-11-26-003 |
+| **Last Updated** | 2025-11-26 |
+| **Updated By** | Claude Desktop (Block SYSTEM_STATE_JSON_REFRESH_V2) |
+| **Current Phase** | Phase 2 — Stabilizing the Hands |
+| **System Mode** | INFRA_ONLY |
+| **Repo** | `edri2or-commits/ai-os` |
+| **Branch** | `main` |
+| **Automations Registry** | `docs/system_state/AUTOMATIONS_REGISTRY.jsonl` |
+| **Drive Snapshot** | [SYSTEM_SNAPSHOT_DRIVE](https://docs.google.com/document/d/1-ysIo2isMJpHjlYXsUgIBdkL4y21QPb-) |
+
+---
+
+## 🌐 Drive Snapshot
+
+This document has a **companion in Google Drive** for agents without direct repo access:
+
+| Property | Value |
+|----------|-------|
+| **Name** | `SYSTEM_SNAPSHOT_DRIVE` |
+| **Type** | Google Doc |
+| **Link** | https://docs.google.com/document/d/1-ysIo2isMJpHjlYXsUgIBdkL4y21QPb- |
+| **Purpose** | State view for GPT Planning Model and external tools |
+| **Update Policy** | Manual trigger by Or (see `CONTROL_PLANE_SPEC.md`) |
+
+**Key Points:**
+- The Drive snapshot is a **derivative view**, not a competing source of truth.
+- **This repo document (`SYSTEM_SNAPSHOT.md`) remains the SSOT.**
+- The Drive snapshot should be refreshed before major planning sessions.
+- See `docs/SNAPSHOT_LAYER_DESIGN.md` for full design documentation.
 
 ---
 
@@ -225,14 +260,72 @@ There exists an **external Telegram prototype** outside this repository:
 
 ---
 
+## 📝 Open Tasks
+
+### High Priority
+
+| Task | Status | Notes |
+|------|--------|-------|
+| Deploy Chat1 persistently | ⏳ Pending | Code ready, needs deployment as service |
+| Review n8n vs Make.com decision | ⏳ Pending | Decide which automation platform to use |
+| Fix ngrok URL instability | ⏳ Pending | Consider Cloud Run or paid ngrok plan |
+
+### Medium Priority
+
+| Task | Status | Notes |
+|------|--------|-------|
+| Sync Drive snapshot after major changes | ⏳ Pending | Manual trigger, consider automation later |
+| Update AUTOMATIONS_REGISTRY for new automations | ⏳ Ongoing | Maintain registry as system evolves |
+| Review SNAPSHOT_LAYER_DESIGN refinements | ⏳ Pending | Continuous improvement |
+
+### Low Priority
+
+| Task | Status | Notes |
+|------|--------|-------|
+| Cloud deployment timing decision | ⏳ Pending | When ready for always-on operation |
+| Integrate Google Sheets/Tasks into workflows | ⏳ Pending | Currently connected but underutilized |
+
+---
+
+## 📂 State Layer Files
+
+The State Layer provides synchronized state management across all agents:
+
+### Quick Sync Files (in `docs/`)
+
+| File | Purpose |
+|------|---------||
+| `SESSION_NOTE.md` | Current session intent and constraints |
+| `INFRA_MAP.md` | Infrastructure and integrations map |
+| `AGENT_SYNC_OVERVIEW.md` | Fast state summary for agents |
+
+### Detailed State Files (in `docs/system_state/`)
+
+| File | Purpose |
+|------|---------||  
+| `agents/AGENT_CAPABILITY_PROFILE.md` | Interface capabilities and limitations |
+| `registries/SERVICES_STATUS.json` | Service status registry |
+| `timeline/EVENT_TIMELINE.jsonl` | Chronological event log |
+| `AUTOMATIONS_REGISTRY.jsonl` | Automation inventory |
+| `SYSTEM_STATE_COMPACT.json` | Single JSON source for external agents |
+
+---
+
 ## 📊 Version History
 
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0 | 2025-11-23 | Initial MCP GitHub Client |
 | 2.0 | 2025-11-24 | Added Google Workspace Client, GPT integration |
+| 2.1 | 2025-11-25 | Added Metadata section, TODO-by-Actor section (Block 3) |
+| 2.2 | 2025-11-25 | First Drive Snapshot generated (Block 4) |
+| 2.3 | 2025-11-25 | Added Drive Snapshot bridge section (Block 5) |
+| 2.4 | 2025-11-26 | Added State Layer Files section (Block STATE_LAYER_COMPLETION_V1) |
+| 2.5 | 2025-11-26 | Simplified role model, removed rigid hierarchy (Block ROLE_MODEL_SIMPLIFICATION_V1) |
+| 2.6 | 2025-11-26 | Added SYSTEM_STATE_COMPACT.json for external agents (Block SYSTEM_STATE_JSON_REFRESH_V2) |
 
 ---
 
-**Last Updated**: 2025-11-24
+**Last Updated**: 2025-11-26  
+**Updated By**: Claude Desktop (Block SYSTEM_STATE_JSON_REFRESH_V2)  
 **Status**: ✅ Operational

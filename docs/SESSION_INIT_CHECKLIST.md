@@ -1,202 +1,234 @@
-# SESSION_INIT_CHECKLIST.md – Agent Session Initialization (v0)
+# SESSION_INIT_CHECKLIST.md – Session Initialization
 
-**Version:** 0.1 (Draft)  
+**Version:** 0.4  
 **Created:** 2025-11-24  
-**Status:** ✅ Draft v0.1 — Actively used during *Route Recalculation / Infra Phase*  
-**Purpose:** Standardize how all agents start a session in the AI-OS  
+**Last Updated:** 2025-11-26 (Block ROLE_MODEL_SIMPLIFICATION_V1)  
+**Status:** ✅ Operational — Used during Phase 2 sessions  
+**Purpose:** Standardize how all AI interfaces start a session in AI-OS
 
 ---
 
-### Status Update
+## Status Update
 
 - This checklist is **operational but evolving**.  
-- It serves as the **experimental session-init protocol** for all agents working in Or’s AI-OS during the current “route recalculation” phase.  
-- The five-phase structure is **mandatory**, though some automation details (auto-sync, logging, failure handling) remain in development.  
+- It serves as the **session-init protocol** for all interfaces (Claude, GPT, Chat1) in AI-OS.
+- The five-phase structure is **recommended**, though some automation details remain in development.
 
 ---
 
-## Minimal Operational Rules (Route Recalculation Phase)
+## Minimal Operational Rules
 
-- Use `edri2or-commits/ai-os` on branch `main` as the single source of truth (SSOT).  
-- Confirm your identity, role, and limitations at session start.  
-- Verify repo sync state (branch + untracked files) before planning or editing.  
-- Load core docs: **CONSTITUTION**, **SYSTEM_SNAPSHOT**, **DECISIONS_AI_OS** (and others as required).  
-- Do **not execute** changes without explicit approval from Or.  
+- Use `edri2or-commits/ai-os` on branch `main` as the single source of truth (SSOT).
+- Confirm your interface identity and available capabilities at session start.
+- Verify repo sync state (if applicable) before planning or editing.
+- Load core docs: **CONSTITUTION**, **SYSTEM_SNAPSHOT**, **AGENT_SYNC_OVERVIEW**, **CONTROL_PLANE_SPEC**.
+- Do **not execute** changes without explicit approval from Or (unless pre-approved).
 
 ---
 
 ## Overview
 
-This checklist defines the **minimum steps every agent must perform** at the start of a new session (conversation, task, or workflow run).
+This checklist defines the **minimum steps every interface should perform** at the start of a new session.
 
 **Why this matters:**
-- Ensures all agents start from the same source of truth
+- Ensures consistent starting point across all interfaces
 - Prevents drift, stale state, and conflicting assumptions
-- Makes handoffs between agents (Claude ↔ GPT) predictable
-- Reduces "I don't know where things are" friction
+- Provides clear context for the current session
+- Maintains safety and transparency
 
 ---
 
 ## Scope
 
-This checklist applies to:
+This checklist applies to **all AI interfaces**:
 
-| Agent | Applies? | Notes |
-|-------|----------|-------|
-| Claude Desktop | ✅ Yes | Primary executor, local access |
-| GPT (Architect) | ✅ Yes | Planner, no MCP yet |
-| GPT + MCP (future) | ✅ Yes | When MCP access is established |
-| Any future agent | ✅ Yes | Default onboarding path |
+| Interface | Access Type | Notes |
+|-----------|-------------|-------|
+| Claude Desktop | Local MCP + Repo | Full filesystem and tool access |
+| GPT (ChatGPT) | Custom Actions + Drive | Google Workspace, GitHub Actions (DRY RUN) |
+| Chat1 Telegram | Bot + Gateway | Natural language interface, approval-based |
+| Future interfaces | TBD | Same protocol applies |
+
+**No role hierarchy.** Each interface uses what's available to it. Planning and execution happen based on capabilities, not fixed roles.
 
 ---
 
-## Session Init Checklist (v0)
+## Session Init Protocol
 
-### Phase 1: Confirm Identity & Role
+### Phase 1: Identify Interface & Capabilities
 
-- [ ] **1.1** State which agent you are (e.g., "Claude Desktop", "GPT Architect")
-- [ ] **1.2** Confirm your current capabilities and limitations
-  - What tools/MCP do you have access to?
-  - What can you NOT do in this session?
-- [ ] **1.3** Confirm the human owner (Or) is present or has delegated
+- [ ] **1.1** State which interface you are (e.g., "Claude Desktop", "GPT via ChatGPT")
+- [ ] **1.2** Confirm your current capabilities:
+  - What tools/MCP/APIs do you have access to?
+  - What **can** you do in this session?
+  - What **cannot** you do in this session?
+- [ ] **1.3** Confirm Or is present or has delegated authority
 
 ---
 
 ### Phase 2: Sync to Source of Truth
 
+**If you have repo access:**
 - [ ] **2.1** Confirm the canonical repo:
   - Remote: `https://github.com/edri2or-commits/ai-os`
-  - Local (if applicable): `C:\\Users\\edri2\\Desktop\\AI\\ai-os`
-- [ ] **2.2** Check current branch (should be `main` unless told otherwise)
+  - Local: `C:\\Users\\edri2\\Work\\AI-Projects\\ai-os-claude-workspace`
+- [ ] **2.2** Check current branch (should be `main`)
 - [ ] **2.3** Check sync status with remote
   - If behind: flag it, ask whether to pull
   - If ahead: flag it, do NOT push without approval
 - [ ] **2.4** Note any untracked or uncommitted changes
 
+**If you don't have repo access:**
+- [ ] **2.1** Confirm you're working with the latest available context (Drive Snapshot, shared docs, etc.)
+- [ ] **2.2** Flag if state seems stale and request refresh if needed
+
 ---
 
-### Phase 3: Load Critical Context
+### Phase 3: Load State Layer
 
-- [ ] **3.1** Read (or confirm awareness of) these core documents:
-  - `docs/CONSTITUTION.md` — 9 foundational rules
-  - `docs/SYSTEM_SNAPSHOT.md` — current system state
-  - `docs/DECISIONS_AI_OS.md` — locked decisions
-  - `policies/SECURITY_SECRETS_POLICY.md` — security rules
-- [ ] **3.2** Check for any recent changes to the above (git log)
-- [ ] **3.3** If a specific task is given, check for relevant:
-  - `workflows/` documents
-  - `agents/` specs
-  - `tools/` inventory
+**Quick Sync (Recommended):**
+1. **Read `AGENT_SYNC_OVERVIEW.md`** — Phase, Mode, recent work
+2. **Check `SESSION_NOTE.md`** — Current session intent (if defined)
+3. **Skim `INFRA_MAP.md`** — Infrastructure status (if relevant)
+
+**Core Documents (if needed):**
+- [ ] `docs/CONSTITUTION.md` — 9 foundational principles
+- [ ] `docs/CONTROL_PLANE_SPEC.md` — Phase, Mode, constraints
+- [ ] `docs/SYSTEM_SNAPSHOT.md` — Full system state
+- [ ] `docs/system_state/AGENT_CAPABILITY_PROFILE.md` — Interface capabilities
+
+**Additional Context (if task-specific):**
+- `docs/DECISIONS_AI_OS.md` — Locked decisions
+- `docs/system_state/registries/SERVICES_STATUS.json` — Service status
+- `docs/system_state/timeline/EVENT_TIMELINE.jsonl` — Recent events
 
 ---
 
 ### Phase 4: Confirm Session Scope
 
 - [ ] **4.1** What is the goal of this session?
-  - Broad (e.g., "route recalculation phase")
-  - Specific (e.g., "update SYSTEM_SNAPSHOT.md")
-- [ ] **4.2** What is IN scope?
+  - Broad goal (e.g., "Phase 2 infrastructure work")
+  - Specific task (e.g., "simplify role model")
+- [ ] **4.2** What is IN scope for this session?
 - [ ] **4.3** What is OUT of scope?
 - [ ] **4.4** What approvals are needed before execution?
+- [ ] **4.5** Are there any safety constraints? (INFRA_ONLY, no remote push, etc.)
 
 ---
 
-### Phase 5: Declare Readiness
+### Phase 5: Declare Readiness & Propose Next Steps
 
-- [ ] **5.1** Summarize:
-  - "I am [agent], on branch [X], synced to [commit], ready to [task]"
-- [ ] **5.2** Flag any blockers or uncertainties
-- [ ] **5.3** Wait for human confirmation before proceeding (unless pre-approved)
+- [ ] **5.1** Summarize your understanding:
+  - "I am [interface], with access to [capabilities]"
+  - "Current Phase/Mode: [X]"
+  - "Session goal: [Y]"
+  - "Ready to [action]"
+- [ ] **5.2** Propose 1-3 concrete Blocks/tasks you can help with
+- [ ] **5.3** Flag any blockers or uncertainties
+- [ ] **5.4** Wait for confirmation before proceeding (unless pre-approved)
+
+---
+
+## Drive Snapshot Awareness
+
+For interfaces **without direct repo access** (like GPT Planning via ChatGPT):
+
+- **`SYSTEM_SNAPSHOT_DRIVE`** is available as a Google Doc: [link](https://docs.google.com/document/d/1-ysIo2isMJpHjlYXsUgIBdkL4y21QPb-)
+- This is a **view** of the repo state, not the source of truth
+- Request a refresh if data seems stale
+- When in doubt, ask Or to verify against repo
+
+For interfaces **with repo access** (like Claude Desktop):
+- Always read from `docs/SYSTEM_SNAPSHOT.md` in the repo
+- Update Drive Snapshot only on explicit request from Or
 
 ---
 
 ## Batch Approved Session Mode
 
-When Or explicitly approves a full session scope (for example: "Continue until Control Plane Spec is drafted"),  
-the active agent may proceed through all steps of the current session — including document reads, analysis, and draft creation —  
-without re-asking for intermediate confirmations.  
+When Or explicitly approves a full session scope, the interface may proceed through all steps without re-asking for intermediate confirmations.
 
-The agent must still pause at each checkpoint that could alter:
-- Repository structure
+**Must still pause for:**
+- Repository structural changes
 - External connections
-- System policies
+- System policy modifications
 
-**Notes:**
-- This mode preserves Human-in-the-loop while reducing redundant confirmation loops.
-- At the end of each batch session, the agent must summarize all performed actions before any merge or execution.
+**At session end:**
+- Summarize all performed actions
+- Update State Layer (EVENT_TIMELINE, relevant docs)
+- Wait for approval before any push or deployment
 
 ---
 
-## Example: Claude Desktop Session Start
+## Example Session Inits
+
+### Claude Desktop
 
 ```
 SESSION INIT – Claude Desktop
 
-1. Identity: Claude Desktop (local executor + system analyst)
-2. Capabilities: Full MCP (GitHub, Filesystem, Windows, Google read-only)
-3. Limitations: Cannot push to remote without approval
+1. Interface: Claude Desktop
+2. Capabilities: Full MCP (GitHub, Filesystem, Windows, Google read-only, Canva, Browser)
+3. Limitations: No push without approval, no autonomous deployment
 
-4. Repo: C:\\Users\\edri2\\Desktop\\AI\\ai-os
+4. Repo: C:\Users\edri2\Work\AI-Projects\ai-os-claude-workspace
 5. Branch: main
-6. Sync: Up to date with origin/main (commit 9ac3e7d)
-7. Untracked files: 4 (noted, not touching)
+6. Sync: Up to date with origin/main
 
-8. Context loaded:
-   - CONSTITUTION.md ✓
-   - SYSTEM_SNAPSHOT.md ✓
-   - DECISIONS_AI_OS.md ✓
-   - SECURITY_SECRETS_POLICY.md ✓
+7. State loaded:
+   - AGENT_SYNC_OVERVIEW.md ✓
+   - SESSION_NOTE.md ✓ (goal: simplify role model)
+   - CONTROL_PLANE_SPEC.md ✓ (Phase 2, INFRA_ONLY)
 
-9. Session scope: Route recalculation phase
-   - IN: mapping, analysis, design proposals
-   - OUT: personal life topics, life automations
+8. Session scope: Remove rigid role hierarchy, update docs
+   - IN: AGENT_CAPABILITY_PROFILE, SESSION_INIT_CHECKLIST, State Layer
+   - OUT: n8n, Docker, production deployments
 
-10. Ready for instructions.
+9. Proposed blocks: Update AGENT_CAPABILITY_PROFILE (1), Update SESSION_INIT_CHECKLIST (2), Sync State Layer (3)
+
+10. Ready for approval.
+```
+
+### GPT (ChatGPT)
+
+```
+SESSION INIT – GPT
+
+1. Interface: GPT (ChatGPT with Custom Actions)
+2. Capabilities: Google Workspace access, GitHub Actions (DRY RUN), Drive Snapshot access
+3. Limitations: No MCP, no direct repo access, depends on ngrok tunnel
+
+4. State: Using SYSTEM_SNAPSHOT_DRIVE (last refresh: 2025-11-25)
+5. Context: Or shared AGENT_SYNC_OVERVIEW.md, SESSION_NOTE.md
+
+6. Session scope: Collaborate on architecture design
+   - IN: High-level planning, Spec writing, Analysis
+   - OUT: Direct file execution
+
+7. Ready to collaborate.
 ```
 
 ---
 
-## Example: GPT Architect Session Start
+## Safety Constraints (Apply to All)
 
-```
-SESSION INIT – GPT Architect
+These constraints apply **regardless of interface**:
 
-1. Identity: GPT (system architect, planner)
-2. Capabilities: Can read docs (via Or), can design, can plan
-3. Limitations: NO MCP access, cannot execute, cannot directly read repo
-
-4. Repo: https://github.com/edri2or-commits/ai-os (remote only)
-5. Branch: main (as reported by Claude/Or)
-6. Sync: Relying on Claude's report
-
-7. Context loaded:
-   - Or shared CONSTITUTION.md ✓
-   - Or shared SYSTEM_SNAPSHOT.md ✓
-   - Other docs as needed via Or
-
-8. Session scope: Route recalculation phase
-   - IN: architecture design, policy proposals, spec writing
-   - OUT: direct execution, file changes
-
-9. Ready to collaborate via Or.
-```
-
----
-
-## Open Questions (To Be Resolved)
-
-1. **Auto-sync policy:** Should agents auto-pull main at session start, or always ask?
-2. **Context caching:** How much context should be re-read vs. assumed from prior sessions?
-3. **Handoff protocol:** When Claude hands off to GPT (or vice versa), what must be communicated?
-4. **Session logging:** Should session init be logged somewhere (e.g., `logs/session_init.md`)?
-5. **Failure mode:** What if an agent cannot complete init (e.g., repo unreachable)?
+1. **No push without approval** — Never push to remote without Or's explicit approval
+2. **INFRA_ONLY respect** — In Phase 2, no live automations on Or's life
+3. **Human-Approved Writes** — All writes logged in EVENT_TIMELINE with clear commit messages
+4. **No CONSTITUTION changes** — Only with Or's explicit approval
+5. **Transparency** — Every change visible, explainable, logged
 
 ---
 
 ## Changelog
 
 | Version | Date | Author | Changes |
-|---------|------|--------|---------|
-| 0.1 | 2025-11-24 | Claude Desktop | Initial draft created during route recalculation |
+|---------|------|--------|--------|
+| 0.1 | 2025-11-24 | Claude Desktop | Initial draft |
+| 0.2 | 2025-11-25 | Claude Desktop | Added Drive Snapshot Awareness |
+| 0.3 | 2025-11-26 | Claude Desktop | Added Quick Sync via State Layer |
+| 0.4 | 2025-11-26 | Claude Desktop | Simplified: removed role hierarchy, unified protocol for all interfaces |
 
-**Note:** Adopted as experimental operational protocol for route recalculation sessions.
+**Note:** Operational protocol for all AI-OS interfaces.

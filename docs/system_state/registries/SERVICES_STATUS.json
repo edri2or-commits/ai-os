@@ -1,0 +1,131 @@
+{
+  "_schema": "SERVICES_STATUS_V0",
+  "_description": "Registry of all services and their operational status in AI-OS",
+  "_status_values": ["up", "partial", "planned", "not_configured", "broken"],
+  "_last_updated": "2025-11-26",
+  "_updated_by": "Claude Desktop (Block STATE_LAYER_COMPLETION_V1)",
+  
+  "services": [
+    {
+      "id": "github",
+      "name": "GitHub",
+      "type": "code_hosting",
+      "status": "up",
+      "connected_via": "MCP GitHub Client (port 8081) + Claude MCP",
+      "notes": "Full R/W access, GPT Actions working"
+    },
+    {
+      "id": "google-gmail",
+      "name": "Gmail",
+      "type": "email",
+      "status": "up",
+      "connected_via": "Google Workspace Client (port 8082)",
+      "notes": "OAuth 2.0, send/list working"
+    },
+    {
+      "id": "google-calendar",
+      "name": "Google Calendar",
+      "type": "calendar",
+      "status": "up",
+      "connected_via": "Google Workspace Client (port 8082)",
+      "notes": "OAuth 2.0, create/list events working"
+    },
+    {
+      "id": "google-drive",
+      "name": "Google Drive",
+      "type": "storage",
+      "status": "up",
+      "connected_via": "Google Workspace Client (port 8082) + Claude MCP",
+      "notes": "Search working, used for Drive Snapshot"
+    },
+    {
+      "id": "google-docs",
+      "name": "Google Docs",
+      "type": "documents",
+      "status": "up",
+      "connected_via": "Google Workspace Client (port 8082)",
+      "notes": "Doc creation working, used for SYSTEM_SNAPSHOT_DRIVE"
+    },
+    {
+      "id": "google-sheets",
+      "name": "Google Sheets",
+      "type": "spreadsheets",
+      "status": "partial",
+      "connected_via": "Google Workspace Client (port 8082)",
+      "notes": "Connected but not heavily used yet"
+    },
+    {
+      "id": "google-tasks",
+      "name": "Google Tasks",
+      "type": "tasks",
+      "status": "partial",
+      "connected_via": "Google Workspace Client (port 8082)",
+      "notes": "Connected but not heavily used yet"
+    },
+    {
+      "id": "ngrok",
+      "name": "ngrok Tunnel",
+      "type": "networking",
+      "status": "up",
+      "connected_via": "CLI + start-all-services.bat",
+      "notes": "WARNING: URL changes on restart, must update GPT Actions"
+    },
+    {
+      "id": "claude-desktop",
+      "name": "Claude Desktop",
+      "type": "agent",
+      "status": "up",
+      "connected_via": "Local app + MCPs",
+      "notes": "Primary executor, full system access"
+    },
+    {
+      "id": "gpt-actions",
+      "name": "GPT Custom Actions",
+      "type": "agent",
+      "status": "up",
+      "connected_via": "HTTPS via ngrok",
+      "notes": "Planner, depends on ngrok URL"
+    },
+    {
+      "id": "telegram-chat1",
+      "name": "Chat1 Telegram Bot",
+      "type": "ui",
+      "status": "partial",
+      "connected_via": "telegram_bot.py",
+      "notes": "Code ready, not deployed persistently"
+    },
+    {
+      "id": "n8n",
+      "name": "n8n Automation",
+      "type": "automation",
+      "status": "planned",
+      "connected_via": "Docker (planned)",
+      "notes": "Not configured yet"
+    },
+    {
+      "id": "make",
+      "name": "Make.com",
+      "type": "automation",
+      "status": "not_configured",
+      "connected_via": "External SaaS",
+      "notes": "Status unclear, may or may not be in use"
+    },
+    {
+      "id": "docker",
+      "name": "Docker",
+      "type": "containerization",
+      "status": "planned",
+      "connected_via": "Local Docker Desktop",
+      "notes": "Prepared but not in active use"
+    }
+  ],
+  
+  "summary": {
+    "up": 8,
+    "partial": 3,
+    "planned": 2,
+    "not_configured": 1,
+    "broken": 0,
+    "total": 14
+  }
+}

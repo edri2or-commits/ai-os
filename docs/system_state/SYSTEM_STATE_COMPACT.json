@@ -1,0 +1,377 @@
+{
+  "_schema": "SYSTEM_STATE_COMPACT_V1",
+  "_description": "Compact JSON representation of AI-OS current state - single source for external agents",
+  "_version": "1.0",
+  "_generated": "2025-11-26T11:10:00Z",
+  "_generated_by": "Claude Desktop (Block SYSTEM_STATE_JSON_REFRESH_V2)",
+  
+  "system": {
+    "name": "AI-OS",
+    "description": "Personal AI operating system with integrated GitHub and Google Workspace services",
+    "repo": "edri2or-commits/ai-os",
+    "branch": "main",
+    "phase": "Phase 2 – Stabilizing the Hands",
+    "mode": "INFRA_ONLY",
+    "automations_enabled": false,
+    "sandbox_only": true
+  },
+  
+  "architecture_model": {
+    "type": "unified",
+    "description": "AI-OS is a single integrated system with multiple interfaces. No rigid role hierarchy.",
+    "components": [
+      "All AI interfaces (Claude, GPT, Chat1) can plan and execute based on their technical capabilities",
+      "Or is the system owner and approver, not restricted from technical work",
+      "Services and tools are shared resources available to all interfaces"
+    ]
+  },
+  
+  "interfaces": [
+    {
+      "id": "claude_desktop",
+      "name": "Claude Desktop",
+      "type": "ai_interface",
+      "status": "up",
+      "description": "Local AI interface with full MCP access",
+      "capabilities": [
+        "Full MCP access: GitHub, Filesystem, Windows, Google (read-only), Canva, Browser",
+        "Direct local repo access",
+        "Git operations: clone, commit, push (with approval)",
+        "Windows system control: PowerShell, UI automation",
+        "Document creation: Word, PowerPoint, Excel, PDF",
+        "State Layer management"
+      ],
+      "limitations": [
+        "No push to remote without Or's explicit approval",
+        "No autonomous service deployment",
+        "No CONSTITUTION.md changes without Or's approval",
+        "No Google write access (read-only MCP)"
+      ],
+      "use_cases": [
+        "Local file operations",
+        "Code execution and PowerShell",
+        "Repo updates",
+        "Windows automation"
+      ],
+      "notes": "Part of AI-OS unified system, no fixed role"
+    },
+    {
+      "id": "gpt_chatgpt",
+      "name": "GPT (ChatGPT)",
+      "type": "ai_interface",
+      "status": "up",
+      "description": "AI interface with Custom Actions for Google Workspace and GitHub",
+      "capabilities": [
+        "Google Workspace access via Custom Actions: Gmail, Calendar, Drive, Docs, Sheets, Tasks",
+        "GitHub access via Custom Actions: read/write files, branches, commits, PRs",
+        "High-level planning and design",
+        "Spec writing and documentation",
+        "Drive Snapshot access (when available)"
+      ],
+      "limitations": [
+        "No MCP access (currently)",
+        "No direct local repo access",
+        "Depends on ngrok tunnel for local services",
+        "GitHub Actions in DRY RUN mode (decision DEC-003)"
+      ],
+      "use_cases": [
+        "Google Workspace operations",
+        "Strategic planning",
+        "Analysis and documentation",
+        "Access from anywhere (not limited to local machine)"
+      ],
+      "notes": "Part of AI-OS unified system, no fixed role"
+    },
+    {
+      "id": "chat1_telegram",
+      "name": "Chat1 Telegram Bot",
+      "type": "ai_interface",
+      "status": "partial",
+      "description": "Natural language interface via Telegram (Hebrew)",
+      "capabilities": [
+        "Natural language input (Hebrew)",
+        "Plan presentation with approval buttons (✅/❌)",
+        "Route to Agent Gateway",
+        "Human-in-the-loop enforcement"
+      ],
+      "limitations": [
+        "Not deployed persistently - requires manual startup",
+        "Limited to Telegram interface",
+        "Depends on TELEGRAM_BOT_TOKEN and OPENAI_API_KEY",
+        "UI only - does not execute without approval"
+      ],
+      "use_cases": [
+        "Mobile communication",
+        "Simple Hebrew interface",
+        "Quick plan approval"
+      ],
+      "notes": "Code ready at chat/telegram_bot.py but not running as service"
+    }
+  ],
+  
+  "owner": {
+    "name": "Or",
+    "role": "System owner and approver",
+    "authority": [
+      "Source of intent and priorities",
+      "Approves significant/risky operations",
+      "Can work directly with tools if desired"
+    ],
+    "notes": "Not restricted to 'zero technical actions' - flexible approach"
+  },
+  
+  "services": [
+    {
+      "id": "github",
+      "name": "GitHub",
+      "type": "code_hosting",
+      "status": "up",
+      "access": "MCP GitHub Client (port 8081) + Claude MCP + GPT Actions",
+      "notes": "Full R/W access, GPT Actions working"
+    },
+    {
+      "id": "google-gmail",
+      "name": "Gmail",
+      "type": "email",
+      "status": "up",
+      "access": "Google Workspace Client (port 8082)",
+      "notes": "OAuth 2.0, send/list working"
+    },
+    {
+      "id": "google-calendar",
+      "name": "Google Calendar",
+      "type": "calendar",
+      "status": "up",
+      "access": "Google Workspace Client (port 8082)",
+      "notes": "OAuth 2.0, create/list events working"
+    },
+    {
+      "id": "google-drive",
+      "name": "Google Drive",
+      "type": "storage",
+      "status": "up",
+      "access": "Google Workspace Client (port 8082) + Claude MCP",
+      "notes": "Search working, used for Drive Snapshot"
+    },
+    {
+      "id": "google-docs",
+      "name": "Google Docs",
+      "type": "documents",
+      "status": "up",
+      "access": "Google Workspace Client (port 8082)",
+      "notes": "Doc creation working, used for SYSTEM_SNAPSHOT_DRIVE"
+    },
+    {
+      "id": "google-sheets",
+      "name": "Google Sheets",
+      "type": "spreadsheets",
+      "status": "partial",
+      "access": "Google Workspace Client (port 8082)",
+      "notes": "Connected but not heavily used yet"
+    },
+    {
+      "id": "google-tasks",
+      "name": "Google Tasks",
+      "type": "tasks",
+      "status": "partial",
+      "access": "Google Workspace Client (port 8082)",
+      "notes": "Connected but not heavily used yet"
+    },
+    {
+      "id": "ngrok",
+      "name": "ngrok Tunnel",
+      "type": "networking",
+      "status": "up",
+      "access": "CLI + start-all-services.bat",
+      "notes": "WARNING: URL changes on restart, must update GPT Actions",
+      "critical_issue": true
+    },
+    {
+      "id": "n8n",
+      "name": "n8n Automation",
+      "type": "automation",
+      "status": "planned",
+      "access": "Docker (planned)",
+      "notes": "Not configured yet"
+    },
+    {
+      "id": "make",
+      "name": "Make.com",
+      "type": "automation",
+      "status": "not_configured",
+      "access": "External SaaS",
+      "notes": "Status unclear, may or may not be in use"
+    },
+    {
+      "id": "docker",
+      "name": "Docker",
+      "type": "containerization",
+      "status": "planned",
+      "access": "Local Docker Desktop",
+      "notes": "Prepared but not in active use"
+    }
+  ],
+  
+  "services_summary": {
+    "up": 8,
+    "partial": 3,
+    "planned": 2,
+    "not_configured": 1,
+    "broken": 0,
+    "total": 14
+  },
+  
+  "safety_constraints": {
+    "description": "Apply to all interfaces regardless of who uses them",
+    "rules": [
+      "No push to remote without Or's explicit approval",
+      "No live automations on Or's life during INFRA_ONLY (Phase 2)",
+      "All writes must be logged in EVENT_TIMELINE with clear commit messages",
+      "No CONSTITUTION changes without Or's explicit approval",
+      "Complete transparency - every change visible, explainable, logged"
+    ]
+  },
+  
+  "open_gaps": [
+    {
+      "id": "GAP-001",
+      "priority": "critical",
+      "title": "ngrok URL instability",
+      "description": "URL changes on every restart, breaking GPT Actions",
+      "possible_solution": "Cloud deployment (Google Cloud Run) or ngrok paid plan"
+    },
+    {
+      "id": "GAP-002",
+      "priority": "high",
+      "title": "No persistent deployment",
+      "description": "All services require local machine running - not available 24/7",
+      "possible_solution": "Cloud deployment (Google Cloud Run)"
+    },
+    {
+      "id": "GAP-003",
+      "priority": "high",
+      "title": "Chat1 not deployed persistently",
+      "description": "Code ready but not running as service",
+      "possible_solution": "Deploy as service (Docker or Cloud)"
+    },
+    {
+      "id": "GAP-004",
+      "priority": "high",
+      "title": "n8n vs Make.com decision",
+      "description": "Need to decide which automation platform to use",
+      "possible_solution": "Evaluate and choose one platform"
+    },
+    {
+      "id": "GAP-005",
+      "priority": "medium",
+      "title": "Drive Snapshot sync is manual",
+      "description": "No auto-refresh mechanism for GPT to get latest state",
+      "possible_solution": "Automation for sync (when moving from INFRA_ONLY)"
+    },
+    {
+      "id": "GAP-006",
+      "priority": "medium",
+      "title": "AUTOMATIONS_REGISTRY maintenance",
+      "description": "Need to keep registry updated as system evolves",
+      "possible_solution": "Ongoing maintenance task"
+    },
+    {
+      "id": "GAP-007",
+      "priority": "low",
+      "title": "Google Sheets/Tasks underutilized",
+      "description": "Connected but not integrated into workflows",
+      "possible_solution": "Design workflows that leverage these services"
+    },
+    {
+      "id": "GAP-008",
+      "priority": "low",
+      "title": "Cloud deployment timing",
+      "description": "Decision pending on when to move to always-on operation",
+      "possible_solution": "Define criteria for production readiness"
+    }
+  ],
+  
+  "state_layer_files": {
+    "description": "Files that provide synchronized state across all interfaces",
+    "quick_sync": [
+      {
+        "path": "docs/SESSION_NOTE.md",
+        "purpose": "Current session intent and constraints"
+      },
+      {
+        "path": "docs/INFRA_MAP.md",
+        "purpose": "Infrastructure and integrations map"
+      },
+      {
+        "path": "docs/AGENT_SYNC_OVERVIEW.md",
+        "purpose": "Fast state summary"
+      }
+    ],
+    "detailed": [
+      {
+        "path": "docs/system_state/agents/AGENT_CAPABILITY_PROFILE.md",
+        "purpose": "Interface capabilities and limitations"
+      },
+      {
+        "path": "docs/system_state/registries/SERVICES_STATUS.json",
+        "purpose": "Service status registry"
+      },
+      {
+        "path": "docs/system_state/timeline/EVENT_TIMELINE.jsonl",
+        "purpose": "Chronological event log"
+      },
+      {
+        "path": "docs/system_state/AUTOMATIONS_REGISTRY.jsonl",
+        "purpose": "Automation inventory"
+      }
+    ],
+    "core": [
+      {
+        "path": "docs/SYSTEM_SNAPSHOT.md",
+        "purpose": "Detailed system state"
+      },
+      {
+        "path": "docs/CONSTITUTION.md",
+        "purpose": "9 founding principles + constitutional amendment"
+      },
+      {
+        "path": "docs/CONTROL_PLANE_SPEC.md",
+        "purpose": "Phase/Mode/Variables definition"
+      },
+      {
+        "path": "docs/SESSION_INIT_CHECKLIST.md",
+        "purpose": "Standard interface initialization protocol"
+      }
+    ]
+  },
+  
+  "recent_work": [
+    {
+      "block_id": "STATE_LAYER_COMPLETION_V1",
+      "date": "2025-11-26",
+      "description": "Created 6 missing State Layer files"
+    },
+    {
+      "block_id": "ROLE_MODEL_SIMPLIFICATION_V1",
+      "date": "2025-11-26",
+      "description": "Simplified agent role model - removed rigid hierarchy"
+    },
+    {
+      "block_id": "SYSTEM_STATE_JSON_REFRESH_V2",
+      "date": "2025-11-26",
+      "description": "Created SYSTEM_STATE_COMPACT.json for external agents"
+    }
+  ],
+  
+  "usage_guide": {
+    "purpose": "This file serves as a single, compact source of truth for external agents or research tools",
+    "when_to_use": [
+      "When an external agent needs to understand AI-OS without reading multiple markdown files",
+      "For Deep Research or analysis tools that need structured JSON input",
+      "As a quick reference for system capabilities and constraints",
+      "For generating reports or documentation about the system"
+    ],
+    "refresh_policy": "Update after significant system changes (Phase changes, new services, architecture updates)",
+    "relationship_to_other_files": "This is a derivative view - SYSTEM_SNAPSHOT.md and State Layer files remain the authoritative source"
+  }
+}
