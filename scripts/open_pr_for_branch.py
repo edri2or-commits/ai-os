@@ -28,7 +28,7 @@ from typing import Optional, Dict, Any
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 try:
-    from github import Github, GithubException
+    from github import Github, GithubException, Auth
 except ImportError:
     print("[ERROR] PyGithub not installed")
     print("Install with: pip install PyGithub")
@@ -55,16 +55,16 @@ def load_github_config() -> Dict[str, str]:
         print("[INFO] Trying environment variables...")
     
     config = {
-        "token": os.getenv("GITHUB_TOKEN"),
+        "token": os.getenv("GITHUB_PAT") or os.getenv("GITHUB_TOKEN"),  # Try both for compatibility
         "owner": os.getenv("GITHUB_OWNER", "edri2or-commits"),
         "repo": os.getenv("GITHUB_REPO", "ai-os"),
     }
     
     if not config["token"]:
-        print("[ERROR] GITHUB_TOKEN not found in .env or environment")
+        print("[ERROR] GITHUB_PAT not found in .env or environment")
         print("\nPlease create services/mcp_github_client/.env from .env.template:")
         print("  cp services/mcp_github_client/.env.template services/mcp_github_client/.env")
-        print("  # Then edit .env and add: GITHUB_TOKEN=ghp_your_token_here")
+        print("  # Then edit .env and add: GITHUB_PAT=ghp_your_token_here")
         sys.exit(1)
     
     return config
@@ -122,8 +122,9 @@ def create_pull_request(
 ) -> Optional[str]:
     """Create a Pull Request using GitHub API"""
     try:
-        # Initialize GitHub client
-        g = Github(config["token"])
+        # Initialize GitHub client with modern Auth API
+        auth = Auth.Token(config["token"])
+        g = Github(auth=auth)
         repo = g.get_repo(f"{config['owner']}/{config['repo']}")
         
         print(f"[INFO] Creating PR...")
