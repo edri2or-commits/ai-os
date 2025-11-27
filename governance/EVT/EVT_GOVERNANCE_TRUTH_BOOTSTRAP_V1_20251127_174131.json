@@ -1,0 +1,26 @@
+{
+  "timestamp": "2025-11-27T17:41:31Z",
+  "event_type": "GOVERNANCE_TRUTH_BOOTSTRAP_V1_COMPLETED",
+  "source": "slice-governance-truth-bootstrap",
+  "payload": {
+    "snapshot_id": "GOVERNANCE_SNAPSHOT_2025-11-27T17:41:31.923257Z",
+    "snapshot_path": "governance/snapshots/SNAPSHOT_20251127_174131.json",
+    "branch": "feature/slice_governance_truth_bootstrap_v1",
+    "commit": "7d21b60",
+    "dec_reference": "docs/DECISIONS_AI_OS.md#DEC-010",
+    "fitness_metrics": {
+      "FITNESS_001_FRICTION": {
+        "open_gaps_count": 8,
+        "time_since_last_daily_context_sync_minutes": 87,
+        "recent_error_events_count": 0
+      },
+      "FITNESS_002_CCI": {
+        "active_services_count": 9,
+        "total_services_count": 14,
+        "recent_event_types_count": 12,
+        "recent_work_blocks_count": 9,
+        "pending_decisions_count": 2
+      }
+    }
+  }
+}

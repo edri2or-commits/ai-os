@@ -553,6 +553,363 @@ GPT Actions דורשות:
 
 ---
 
+## 2025-11-27 – DEC-008: Governance Layer Bootstrap V1 + OS Core MCP Minimal
+
+**Date:** 2025-11-27  
+**Owner:** Or  
+**Status:** Approved  
+
+**Context:**
+
+AI-OS v2 planning requires systematic measurement of operational fitness:
+- **FITNESS_001**: Friction (operational overhead, tool retries, decision latency)
+- **FITNESS_002**: CCI (Cognitive Capacity Index - autonomy vs manual work)
+- **FITNESS_003**: Tool Efficacy (success rates, execution times)
+
+Additionally, multiple agents (Claude Desktop, GPT Operator, future LangGraph workflows, n8n) need unified, programmatic access to State Layer without directly manipulating JSON files.
+
+Current state (Phase 2.3):
+- State Layer exists as JSON files in `docs/system_state/`
+- No measurement/governance infrastructure
+- No unified API gateway to State
+- Agents access files directly → risk of inconsistency
+
+**Decision:**
+
+**Part A: Governance Layer Bootstrap V1**
+
+Create `/governance` directory structure at repo root:
+```
+governance/
+├── DEC/           # Decision records (governance-related)
+├── EVT/           # Event logs (governance-specific)
+├── metrics/       # Computed metrics storage
+├── scripts/       # Measurement scripts
+│   ├── measure_friction.py
+│   ├── measure_cci.py
+│   ├── measure_tool_efficacy.py
+│   └── generate_snapshot.py
+└── snapshots/     # Periodic governance snapshots
+```
+
+**Bootstrap V1 Scope:**
+- Directory structure created
+- Scripts are **stubs** (interface defined, no implementation yet)
+- Each script prints "TODO: Governance V1" when run
+- README.md documents purpose and next steps
+
+**Not in Bootstrap V1:**
+- Actual measurement logic (comes in subsequent vertical slice)
+- Metrics storage format (TBD)
+- Periodic snapshot generation (needs n8n or cron)
+- Visualization/reporting layer (Phase 3+)
+
+**Part B: OS Core MCP Minimal**
+
+Create unified HTTP gateway to State Layer at `services/os_core_mcp/`:
+- FastAPI server on port 8083
+- Three core tools:
+  1. `GET /state` → read SYSTEM_STATE_COMPACT.json
+  2. `GET /services` → read SERVICES_STATUS.json
+  3. `POST /events` → append to EVENT_TIMELINE.jsonl
+
+**Design Principles:**
+- All file paths are relative to repo root (not hardcoded to specific machine)
+- Graceful error handling (404 if file missing, 500 if JSON invalid)
+- Auto-create EVENT_TIMELINE.jsonl if it doesn't exist
+- Logging of all state access
+- CORS enabled for GPT Custom Actions integration
+
+**Not in Minimal:**
+- Write operations on state/services (read-only for now, except events)
+- Validation/schemas (comes later)
+- Caching (not needed yet)
+- Access control (all agents have same permissions)
+- Webhooks/notifications (Phase 3+)
+
+**Rationale:**
+
+**Why Governance Layer now?**
+1. **Measurement-driven evolution**: Can't optimize what we don't measure
+2. **Aligns with v2 planning**: CONTROL_PLANE_GOVERNANCE_SPEC_V1 and AIOS_V2_INFRA_UPGRADE_PLAN
+3. **Bootstrap early**: Infrastructure in place, implementation follows incrementally
+4. **Thin Slice approach**: Structure first, logic later (Slice 2+)
+
+**Why OS Core MCP?**
+1. **Single point of access**: Instead of 5 agents manipulating files directly
+2. **Consistency**: All state access goes through one gateway
+3. **Observability**: Can log/track who accessed what
+4. **Future-proof**: Easy to add validation, caching, access control later
+5. **Integration ready**: Works with Claude Desktop, GPT Actions, n8n, future LangGraph
+
+**Why minimal scope?**
+- Avoids over-engineering
+- Gets core functionality working immediately
+- Follows Thin Slices principle (Law #6)
+- Can iterate based on real usage
+
+**Implementation Notes:**
+
+Files created:
+- `governance/` directory structure (6 directories)
+- `governance/README.md` (documentation)
+- `governance/scripts/*.py` (4 stub scripts)
+- `services/os_core_mcp/server.py` (FastAPI server, 3 endpoints)
+- `services/os_core_mcp/README.md` (API documentation)
+- `services/os_core_mcp/requirements.txt` (dependencies)
+
+Next steps (Slice 2):
+1. Implement actual measurement logic in governance scripts
+2. Add governance metrics to SERVICES_STATUS
+3. Create first LangGraph workflow using OS Core MCP
+4. Integrate Langfuse for observability
+
+**Related:**
+- CONTROL_PLANE_GOVERNANCE_SPEC_V1 (if exists in docs/)
+- AIOS_V2_INFRA_UPGRADE_PLAN (planning document)
+- Phase 2.3: Stabilizing the Hands (current phase)
+- DEC-006: n8n as Automation Kernel
+- DEC-007: No Fixed Role Hierarchy
+
+---
+
+## 2025-11-27 – DEC-009: Slice 2A – Daily Context Sync V1 (Agent Kernel + LangGraph)
+
+**Date:** 2025-11-27  
+**Owner:** Or  
+**Status:** Approved  
+
+**Context:**
+
+Following DEC-008 (Governance Layer Bootstrap + OS Core MCP Minimal), AI-OS v2 now has:
+- Governance Layer structure (stubs ready for measurement)
+- OS Core MCP (unified HTTP gateway to State Layer on port 8083)
+
+Next step: First LangGraph-based workflow to demonstrate:
+1. Orchestration via LangGraph (graph-based AI workflows)
+2. Integration with OS Core MCP (read state, write state, log events)
+3. Systematic state updates (rather than ad-hoc file edits)
+
+This is Slice 2A of the v2 architecture - introducing the Agent Kernel as the workflow execution engine.
+
+**Decision:**
+
+**Part A: OS Core MCP Extension - State Update Endpoint**
+
+Add new endpoint to `services/os_core_mcp/server.py`:
+- `POST /state/update`
+- Input: `{"patch": {...}, "source": "..."}`
+- Behavior:
+  - Reads SYSTEM_STATE_COMPACT.json
+  - Merges patch (top-level keys only in V1)
+  - Writes back to file
+  - Returns: `{"status": "ok", "state": {...}}`
+- Error handling: 404 if file missing, 500 if JSON invalid or write fails
+
+**Part B: Agent Kernel Service - LangGraph Execution Engine**
+
+Create new service at `services/agent_kernel/`:
+- FastAPI server on port 8084
+- Endpoint: `POST /daily-context-sync/run`
+- Implements first LangGraph workflow: `daily_context_sync_graph`
+
+**Graph Structure:**
+1. **start_node**:
+   - Reads current state: `GET http://localhost:8083/state`
+   - Logs event: `POST http://localhost:8083/events` (DAILY_CONTEXT_SYNC_STARTED)
+
+2. **compute_patch**:
+   - Generates patch: `{"last_daily_context_sync_utc": "<now UTC ISO8601>"}`
+
+3. **apply_patch**:
+   - Applies patch: `POST http://localhost:8083/state/update`
+   - Logs event: `POST http://localhost:8083/events` (DAILY_CONTEXT_SYNC_COMPLETED)
+
+**Result:**
+```json
+{
+  "status": "ok",
+  "last_sync_time": "2025-11-27T16:02:21Z"
+}
+```
+
+**Side Effects:**
+- `SYSTEM_STATE_COMPACT.json` gets new field: `last_daily_context_sync_utc`
+- `EVENT_TIMELINE.jsonl` gets 2 new events (STARTED + COMPLETED)
+
+**Rationale:**
+
+**Why Daily Context Sync?**
+1. **Simple but complete**: Demonstrates full graph → OS Core MCP → State Layer flow
+2. **Non-destructive**: Only adds/updates a timestamp, doesn't delete anything
+3. **Observable**: Clear events in timeline
+4. **Extensible**: Foundation for more complex workflows
+
+**Why LangGraph?**
+1. **Graph-based orchestration**: Natural fit for multi-step AI workflows
+2. **State management**: Built-in state passing between nodes
+3. **Integration-ready**: Works with LangChain ecosystem
+4. **Observability prep**: Foundation for Langfuse integration (Slice 2B)
+
+**Why Agent Kernel as separate service?**
+1. **Separation of concerns**: State Layer (OS Core MCP) ≠ Workflow Engine (Agent Kernel)
+2. **Scalability**: Can add more workflows without touching OS Core
+3. **Technology isolation**: LangGraph in Agent Kernel, FastAPI in OS Core
+4. **Independent deployment**: Can restart Agent Kernel without affecting State access
+
+**Not in Slice 2A:**
+- n8n integration (scheduled triggers) → Slice 2B
+- Langfuse observability (tracing) → Slice 2B
+- Checkpointing/pause/resume → Future
+- More complex workflows → Future
+- Actual governance measurement implementation → Slice 3+
+
+**Implementation Notes:**
+
+Files created/modified:
+- `services/os_core_mcp/server.py` (added POST /state/update endpoint)
+- `services/agent_kernel/` (new directory)
+- `services/agent_kernel/kernel_server.py` (FastAPI server, port 8084)
+- `services/agent_kernel/requirements.txt` (langgraph, fastapi, httpx, etc.)
+- `services/agent_kernel/README.md` (documentation)
+- `services/agent_kernel/graphs/daily_context_sync_graph.py` (LangGraph implementation)
+- `services/agent_kernel/smoke_test_slice_2a.py` (end-to-end test)
+- `docs/system_state/SYSTEM_STATE_COMPACT.json` (added last_daily_context_sync_utc field)
+- `docs/system_state/timeline/EVENT_TIMELINE.jsonl` (added DAILY_CONTEXT_SYNC_* events)
+
+Smoke test results:
+- ✅ OS Core MCP /health: 200 OK
+- ✅ Agent Kernel /health: 200 OK
+- ✅ Daily Context Sync execution: 200 OK
+- ✅ State updated with timestamp
+- ✅ Events logged (STARTED + COMPLETED)
+
+Next steps (Slice 2B):
+1. n8n workflow to trigger daily context sync on schedule
+2. Langfuse integration for workflow tracing
+3. Add more workflows (weekly summary, governance metrics calculation)
+4. Implement actual governance measurement scripts
+
+**Related:**
+- DEC-008: Governance Layer Bootstrap + OS Core MCP Minimal
+- DEC-006: n8n as Automation Kernel (integration pending in Slice 2B)
+- DEC-007: No Fixed Role Hierarchy (Agent Kernel = tool for all interfaces)
+- Phase 2.3: INFRA_ONLY (this is infrastructure work, not live automations yet)
+
+---
+
+## 2025-11-27 – DEC-010: Governance Truth Layer Bootstrap V1
+
+**Date:** 2025-11-27  
+**Owner:** Or  
+**Status:** ✅ Approved  
+**Phase:** 2.3 (INFRA_ONLY)
+
+### Context
+
+Following DEC-008 (Governance Layer Bootstrap + OS Core MCP Minimal) and DEC-009 (Slice 2A – Daily Context Sync), AI-OS now has:
+- **Truth Layer** operational: EVENT_TIMELINE.jsonl + SYSTEM_STATE_COMPACT.json + SERVICES_STATUS.json
+- **OS Core MCP** providing unified API gateway (ports 8083-8084)
+- **Agent Kernel** with LangGraph workflows
+
+However, the Governance Layer (governance/) was only infrastructure (stub scripts) - no actual measurements or snapshots were being generated.
+
+### Decision
+
+**Implement Governance Truth Layer Bootstrap V1:**
+
+1. **Truth Layer Definition** (Canonical Sources):
+   - `docs/system_state/timeline/EVENT_TIMELINE.jsonl` → Event Log (append-only)
+   - `docs/system_state/SYSTEM_STATE_COMPACT.json` → System State Truth
+   - `docs/system_state/registries/SERVICES_STATUS.json` → Services Registry Truth
+
+2. **Snapshot Generation** (governance/scripts/generate_snapshot.py):
+   - Read from all 3 truth sources
+   - Collect git metadata (branch, commit)
+   - Calculate fitness metrics:
+     - **FITNESS_001_FRICTION**: open_gaps_count, time_since_last_daily_context_sync_minutes, recent_error_events_count
+     - **FITNESS_002_CCI**: active_services_count, recent_event_types_count, recent_work_blocks_count, pending_decisions_count
+   - Generate snapshot JSON with full metadata
+   - Save to: `governance/snapshots/SNAPSHOT_<timestamp>.json`
+   - Update: `governance/snapshots/GOVERNANCE_LATEST.json` (always points to latest)
+
+3. **Governance Documentation**:
+   - DEC stored in: `governance/DEC/DEC_GOVERNANCE_TRUTH_BOOTSTRAP_V1.md`
+   - EVT stored in: `governance/EVT/EVT_GOVERNANCE_TRUTH_BOOTSTRAP_V1_<timestamp>.json`
+
+### Rationale
+
+- **Operationalize Governance:** Move from stub infrastructure to actual measurements
+- **Observable Fitness:** Enable systematic tracking of system health via metrics
+- **Foundation for Automation:** Create snapshots that n8n can trigger/consume (Slice 2B+)
+- **Truth Layer Formalization:** Establish canonical sources for all governance measurements
+
+### Implementation
+
+**Branch:** `feature/slice_governance_truth_bootstrap_v1`
+
+**Files Modified:**
+- `governance/scripts/generate_snapshot.py` - full implementation (was stub)
+
+**Files Created:**
+- `governance/snapshots/SNAPSHOT_<timestamp>.json` - first real snapshot
+- `governance/snapshots/GOVERNANCE_LATEST.json` - pointer to latest snapshot
+- `governance/DEC/DEC_GOVERNANCE_TRUTH_BOOTSTRAP_V1.md` - local decision record
+- `governance/EVT/EVT_GOVERNANCE_TRUTH_BOOTSTRAP_V1_<timestamp>.json` - completion event
+
+**Snapshot Structure:**
+```json
+{
+  "snapshot_id": "GOVERNANCE_SNAPSHOT_<timestamp>",
+  "created_at": "<timestamp>",
+  "source": "governance/scripts/generate_snapshot.py",
+  "git": {"branch": "...", "last_commit": "..."},
+  "system_state": {"phase": "...", "mode": "..."},
+  "services_summary": {"up": N, "total": N},
+  "event_log_summary": {"last_event_timestamp": "...", "last_event_type": "..."},
+  "fitness_metrics": {
+    "FITNESS_001_FRICTION": {...},
+    "FITNESS_002_CCI": {...}
+  }
+}
+```
+
+### Testing
+
+**Smoke Test:**
+- Run: `python governance/scripts/generate_snapshot.py`
+- Verify: Snapshot created in `governance/snapshots/`
+- Verify: `GOVERNANCE_LATEST.json` exists and contains valid structure
+- Verify: Fitness metrics populated with real values
+
+**First Snapshot Results:**
+- ✅ Snapshot generated: `SNAPSHOT_20251127_174131.json`
+- ✅ GOVERNANCE_LATEST.json created
+- ✅ Fitness metrics calculated:
+  - FITNESS_001_FRICTION: 8 open gaps, 87 minutes since last sync, 0 recent errors
+  - FITNESS_002_CCI: 9/14 services active, 12 event types, 9 recent blocks
+
+### Next Steps (Post-Bootstrap)
+
+1. **Slice 2B:** n8n workflow to generate snapshots on schedule (daily/weekly)
+2. **Implement actual measurement scripts:**
+   - `measure_friction.py` - detailed friction analysis
+   - `measure_cci.py` - cognitive capacity deep dive
+   - `measure_tool_efficacy.py` - tool/service effectiveness
+3. **Visualization:** Build dashboard/reporting layer for governance metrics
+4. **Integration:** Connect snapshots to OS Core MCP for programmatic access
+
+### Related Decisions
+
+- **DEC-008:** Governance Layer Bootstrap (infrastructure only)
+- **DEC-009:** Slice 2A - Daily Context Sync (Agent Kernel + LangGraph)
+- **DEC-006:** n8n as Automation Kernel (will trigger snapshot generation in future)
+
+**Phase:** 2.3 (INFRA_ONLY)  
+**Mode:** Infrastructure work - no live automations yet
+
+---
+
 ## סיכום ההחלטות
 
 | # | נושא | החלטה | סטטוס |
@@ -565,6 +922,9 @@ GPT Actions דורשות:
 | **DEC-004** | Connectivity Strategy (ngrok vs Cloudflare) | Cloudflare Tunnel | ✅ Approved |
 | **DEC-006** | n8n as Automation Kernel | n8n Self-Hosted | ✅ Approved |
 | **DEC-007** | No Fixed Role Hierarchy | Capabilities + Constraints model | ✅ Approved |
+| **DEC-008** | Governance Layer Bootstrap + OS Core MCP | Bootstrap V1 + Minimal API | ✅ Approved |
+| **DEC-009** | Slice 2A – Daily Context Sync V1 | Agent Kernel + LangGraph | ✅ Approved |
+| **DEC-010** | Governance Truth Layer Bootstrap V1 | Snapshot Generation + Fitness Metrics | ✅ Approved |
 
 ---
 
@@ -581,5 +941,5 @@ GPT Actions דורשות:
 
 **סטטוס מסמך זה**: ✅ Active  
 **עדכון אחרון**: 27 נובמבר 2025  
-**החלטות נעולות**: 8 החלטות קריטיות  
+**החלטות נעולות**: 10 החלטות קריטיות  
 **הערה**: החלטות אלה ניתנות לשינוי בעתיד, אבל רק אחרי דיון מפורש ותיעוד של הרציונל לשינוי.

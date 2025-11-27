@@ -4,7 +4,6 @@
   "_version": "1.1",
   "_generated": "2025-11-26T18:55:00Z",
   "_generated_by": "Claude Desktop (BLOCK_SYSTEM_STATE_COMPACT_REFRESH_V2)",
-  
   "system": {
     "name": "AI-OS",
     "description": "Personal AI operating system with integrated GitHub and Google Workspace services",
@@ -15,7 +14,6 @@
     "automations_enabled": false,
     "sandbox_only": true
   },
-  
   "architecture_model": {
     "type": "unified",
     "description": "AI-OS is a single integrated system with multiple interfaces. No rigid role hierarchy.",
@@ -25,7 +23,6 @@
       "Services and tools are shared resources available to all interfaces"
     ]
   },
-  
   "interfaces": [
     {
       "id": "claude_desktop",
@@ -113,7 +110,6 @@
       "notes": "Code ready at chat/telegram_bot.py but not running as service"
     }
   ],
-  
   "owner": {
     "name": "Or",
     "role": "System owner and approver",
@@ -124,7 +120,6 @@
     ],
     "notes": "Not restricted to 'zero technical actions' - flexible approach"
   },
-  
   "services": [
     {
       "id": "github",
@@ -225,7 +220,6 @@
       "notes": "Selected as official connectivity solution per DEC-004 (approved 2025-11-26). Will replace ngrok in Phase 2.4+."
     }
   ],
-  
   "services_summary": {
     "up": 9,
     "partial": 3,
@@ -234,7 +228,6 @@
     "broken": 0,
     "total": 15
   },
-  
   "safety_constraints": {
     "description": "Apply to all interfaces regardless of who uses them",
     "rules": [
@@ -245,7 +238,6 @@
       "Complete transparency - every change visible, explainable, logged"
     ]
   },
-  
   "open_gaps": [
     {
       "id": "GAP-001",
@@ -288,7 +280,9 @@
       "possible_solution": "Investigate root cause, standardize on Filesystem tools, or fix PowerShell configuration",
       "status": "block_created",
       "related_block": "BLOCK_POWERSHELL_STABILITY_AND_HEALTHCHECK_V1",
-      "related_incidents": ["EVT-2025-11-26-INCIDENT-001"],
+      "related_incidents": [
+        "EVT-2025-11-26-INCIDENT-001"
+      ],
       "notes": "First infrastructure incident logged under NO-KOMBINOT policy"
     },
     {
@@ -320,7 +314,6 @@
       "possible_solution": "Define criteria for production readiness"
     }
   ],
-  
   "pending_decisions": [
     {
       "id": "DEC-004",
@@ -341,7 +334,6 @@
       "notes": "Deep Research completed, decision draft pending. Direction: n8n Self-Hosted as primary kernel."
     }
   ],
-  
   "recent_decisions": [
     {
       "id": "DEC-005",
@@ -351,7 +343,6 @@
       "description": "Disabled legacy Collector_Gmail_to_Records Apps Script that was failing hourly with auth errors"
     }
   ],
-  
   "state_layer_files": {
     "description": "Files that provide synchronized state across all interfaces",
     "quick_sync": [
@@ -414,7 +405,6 @@
       }
     ]
   },
-  
   "recent_work": [
     {
       "block_id": "STATE_LAYER_COMPLETION_V1",
@@ -474,7 +464,6 @@
       "status": "in_progress"
     }
   ],
-  
   "git_status": {
     "branch": "main",
     "unpushed_commits": 1,
@@ -482,7 +471,6 @@
     "commit_message": "BLOCK_AUTO_GAS_001_DECISION + BLOCK_PHASE_LABELING_CLARIFICATION",
     "notes": "Push pending Or's approval"
   },
-  
   "usage_guide": {
     "purpose": "This file serves as a single, compact source of truth for external agents or research tools",
     "when_to_use": [
@@ -493,5 +481,6 @@
     ],
     "refresh_policy": "Update after significant system changes (Phase changes, new services, architecture updates, or after 6+ hours of inactivity)",
     "relationship_to_other_files": "This is a derivative view - SYSTEM_SNAPSHOT.md and State Layer files remain the authoritative source"
-  }
+  },
+  "last_daily_context_sync_utc": "2025-11-27T16:14:00.083401Z"
 }
