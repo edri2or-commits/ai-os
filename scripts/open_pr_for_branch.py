@@ -140,14 +140,14 @@ def create_pull_request(
             base=base
         )
         
-        print(f"\n✅ [SUCCESS] PR created!")
+        print(f"\n[SUCCESS] PR created!")
         print(f"  Number: #{pr.number}")
         print(f"  URL: {pr.html_url}")
         
         return pr.html_url
         
     except GithubException as e:
-        print(f"\n❌ [ERROR] GitHub API error: {e.status}")
+        print(f"\n[ERROR] GitHub API error: {e.status}")
         print(f"  Message: {e.data.get('message', 'Unknown error')}")
         
         # Helpful error messages
@@ -166,7 +166,7 @@ def create_pull_request(
         return None
         
     except Exception as e:
-        print(f"\n❌ [ERROR] Unexpected error: {e}")
+        print(f"\n[ERROR] Unexpected error: {e}")
         import traceback
         traceback.print_exc()
         return None
@@ -233,24 +233,24 @@ Examples:
     # Step 2: Validate branch exists locally
     print(f"\n[2/5] Checking branch exists: {args.branch}")
     if not check_branch_exists(args.branch):
-        print(f"  ❌ Branch '{args.branch}' not found locally")
+        print(f"  [ERROR] Branch '{args.branch}' not found locally")
         print("\n  Did you mean one of these?")
         subprocess.run(["git", "branch", "--list", "*slice*"], check=False)
         sys.exit(1)
-    print(f"  ✅ Branch exists locally")
+    print(f"  [OK] Branch exists locally")
     
     # Step 3: Validate branch is pushed
     print(f"\n[3/5] Checking branch is pushed to origin...")
     if not check_branch_pushed(args.branch):
-        print(f"  ❌ Branch '{args.branch}' not found on origin")
+        print(f"  [ERROR] Branch '{args.branch}' not found on origin")
         print(f"\n  Push it with: git push origin {args.branch}")
         sys.exit(1)
-    print(f"  ✅ Branch pushed to origin")
+    print(f"  [OK] Branch pushed to origin")
     
     # Step 4: Read PR body
     print(f"\n[4/5] Reading PR body from: {args.body_file}")
     body = read_pr_body(args.body_file)
-    print(f"  ✅ PR body read: {len(body)} characters")
+    print(f"  [OK] PR body read: {len(body)} characters")
     
     # Step 5: Create PR
     print(f"\n[5/5] Creating Pull Request...")
@@ -266,7 +266,7 @@ Examples:
         print("\n" + "=" * 70)
         print("  PR Created Successfully!")
         print("=" * 70)
-        print(f"\n  🔗 {pr_url}\n")
+        print(f"\n  URL: {pr_url}\n")
         sys.exit(0)
     else:
         print("\n" + "=" * 70)

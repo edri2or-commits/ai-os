@@ -20,6 +20,19 @@
       "notes": "Full R/W access, GPT Actions working when ngrok is stable"
     },
     {
+      "id": "mcp_github_client",
+      "name": "MCP GitHub Client",
+      "type": "integration",
+      "status": "up",
+      "connected_via": "FastAPI service (port 8081)",
+      "access_patterns": [
+        "HTTP API: POST /github/open-pr, /github/read-file, /github/list-tree",
+        "Used by: scripts/open_pr_for_branch.py (PR automation)",
+        "Tested: smoke_test_open_pr.py (all 3 tests passed 2025-11-27)"
+      ],
+      "notes": "GitHub PR Automator / MCP GitHub Client. Provides programmatic access to GitHub API for PR creation, file operations. Infrastructure component for automated PR workflows."
+    },
+    {
       "id": "google-gmail",
       "name": "Gmail",
       "type": "email",
@@ -152,11 +165,11 @@
   ],
   
   "summary": {
-    "up": 9,
+    "up": 10,
     "partial": 3,
     "planned": 1,
     "not_configured": 1,
     "broken": 0,
-    "total": 14
+    "total": 15
   }
 }
