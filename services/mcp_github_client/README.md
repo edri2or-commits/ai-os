@@ -98,9 +98,69 @@ Create a Pull Request with file changes.
 }
 ```
 
+## 🚀 Quick Start
+
+### 1. Setup Configuration
+
+1. Copy the template environment file:
+   ```bash
+   cp .env.template .env
+   ```
+
+2. Edit `.env` and add your GitHub Personal Access Token:
+   - Go to: https://github.com/settings/tokens/new
+   - Select scopes: `repo` (required), `workflow` (optional)
+   - Generate token
+   - Copy token to `.env`:
+     ```env
+     GITHUB_TOKEN=ghp_your_actual_token_here
+     ```
+
+3. **IMPORTANT:** Never commit `.env` to git (it's already in `.gitignore`)
+
+### 2. Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Start the Service
+
+**Option A - Using launcher script:**
+```bash
+run_service.bat   # Windows
+```
+
+**Option B - Direct command:**
+```bash
+python -m uvicorn services.mcp_github_client.main:app --port 8081 --reload
+```
+
+### 4. Verify It's Running
+
+Open in browser: http://localhost:8081/health
+
+You should see:
+```json
+{
+  "ok": true,
+  "service": "AI-OS MCP GitHub Client",
+  "github_configured": true,
+  "repository": "edri2or-commits/ai-os"
+}
+```
+
+### 5. Test PR Creation
+
+```bash
+python smoke_test_open_pr.py
+```
+
+---
+
 ## 🔧 Configuration
 
-Create a `.env` file (see `.env.template`):
+See `.env.template` for all available options:
 
 ```env
 # GitHub Configuration
