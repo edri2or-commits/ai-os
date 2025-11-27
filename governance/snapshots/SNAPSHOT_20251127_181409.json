@@ -1,10 +1,10 @@
 {
-  "snapshot_id": "GOVERNANCE_SNAPSHOT_2025-11-27T20:26:48.948186Z",
-  "created_at": "2025-11-27T20:26:48.948186Z",
+  "snapshot_id": "GOVERNANCE_SNAPSHOT_2025-11-27T18:14:09.719659Z",
+  "created_at": "2025-11-27T18:14:09.719659Z",
   "source": "governance/scripts/generate_snapshot.py",
   "git": {
-    "branch": "main",
-    "last_commit": "43b308a"
+    "branch": "feature/slice_governance_truth_bootstrap_v1",
+    "last_commit": "5e21fd2"
   },
   "system_state": {
     "phase": "Phase 2.3 – Stabilizing the Hands (Sync & State Alignment)",
@@ -13,29 +13,29 @@
     "last_daily_context_sync_utc": "2025-11-27T16:14:00.083401Z"
   },
   "services_summary": {
-    "up": 10,
+    "up": 9,
     "partial": 3,
     "planned": 1,
     "not_configured": 1,
     "broken": 0,
-    "total": 15
+    "total": 14
   },
   "event_log_summary": {
-    "last_event_timestamp": "2025-11-27T20:04:27.000000Z",
-    "last_event_type": "PR_OPENED_SLICE_GOVERNANCE_TRUTH_BOOTSTRAP_V1",
+    "last_event_timestamp": "2025-11-27T16:15:55.211498Z",
+    "last_event_type": "SLICE_2A_COMPLETE",
     "recent_events_sampled": 20
   },
   "fitness_metrics": {
     "FITNESS_001_FRICTION": {
       "open_gaps_count": 8,
-      "time_since_last_daily_context_sync_minutes": 252,
+      "time_since_last_daily_context_sync_minutes": 120,
       "recent_error_events_count": 0
     },
     "FITNESS_002_CCI": {
-      "active_services_count": 10,
-      "total_services_count": 15,
+      "active_services_count": 9,
+      "total_services_count": 14,
       "recent_event_types_count": 12,
-      "recent_work_blocks_count": 11,
+      "recent_work_blocks_count": 9,
       "pending_decisions_count": 2
     }
   }
