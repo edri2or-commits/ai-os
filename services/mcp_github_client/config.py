@@ -1,6 +1,12 @@
 """Configuration for MCP GitHub Client service"""
+import os
+from pathlib import Path
 from pydantic_settings import BaseSettings
 from typing import Optional
+
+# Get the directory where this config file is located
+CONFIG_DIR = Path(__file__).parent
+ENV_FILE = CONFIG_DIR / ".env"
 
 
 class Settings(BaseSettings):
@@ -25,7 +31,7 @@ class Settings(BaseSettings):
     mcp_server_url: Optional[str] = None
     
     class Config:
-        env_file = ".env"
+        env_file = str(ENV_FILE)
         env_file_encoding = "utf-8"
         extra = "ignore"  # Ignore extra env vars from other services
 
