@@ -553,6 +553,126 @@ GPT Actions דורשות:
 
 ---
 
+## 2025-11-27 – DEC-008: Governance Layer Bootstrap V1 + OS Core MCP Minimal
+
+**Date:** 2025-11-27  
+**Owner:** Or  
+**Status:** Approved  
+
+**Context:**
+
+AI-OS v2 planning requires systematic measurement of operational fitness:
+- **FITNESS_001**: Friction (operational overhead, tool retries, decision latency)
+- **FITNESS_002**: CCI (Cognitive Capacity Index - autonomy vs manual work)
+- **FITNESS_003**: Tool Efficacy (success rates, execution times)
+
+Additionally, multiple agents (Claude Desktop, GPT Operator, future LangGraph workflows, n8n) need unified, programmatic access to State Layer without directly manipulating JSON files.
+
+Current state (Phase 2.3):
+- State Layer exists as JSON files in `docs/system_state/`
+- No measurement/governance infrastructure
+- No unified API gateway to State
+- Agents access files directly → risk of inconsistency
+
+**Decision:**
+
+**Part A: Governance Layer Bootstrap V1**
+
+Create `/governance` directory structure at repo root:
+```
+governance/
+├── DEC/           # Decision records (governance-related)
+├── EVT/           # Event logs (governance-specific)
+├── metrics/       # Computed metrics storage
+├── scripts/       # Measurement scripts
+│   ├── measure_friction.py
+│   ├── measure_cci.py
+│   ├── measure_tool_efficacy.py
+│   └── generate_snapshot.py
+└── snapshots/     # Periodic governance snapshots
+```
+
+**Bootstrap V1 Scope:**
+- Directory structure created
+- Scripts are **stubs** (interface defined, no implementation yet)
+- Each script prints "TODO: Governance V1" when run
+- README.md documents purpose and next steps
+
+**Not in Bootstrap V1:**
+- Actual measurement logic (comes in subsequent vertical slice)
+- Metrics storage format (TBD)
+- Periodic snapshot generation (needs n8n or cron)
+- Visualization/reporting layer (Phase 3+)
+
+**Part B: OS Core MCP Minimal**
+
+Create unified HTTP gateway to State Layer at `services/os_core_mcp/`:
+- FastAPI server on port 8083
+- Three core tools:
+  1. `GET /state` → read SYSTEM_STATE_COMPACT.json
+  2. `GET /services` → read SERVICES_STATUS.json
+  3. `POST /events` → append to EVENT_TIMELINE.jsonl
+
+**Design Principles:**
+- All file paths are relative to repo root (not hardcoded to specific machine)
+- Graceful error handling (404 if file missing, 500 if JSON invalid)
+- Auto-create EVENT_TIMELINE.jsonl if it doesn't exist
+- Logging of all state access
+- CORS enabled for GPT Custom Actions integration
+
+**Not in Minimal:**
+- Write operations on state/services (read-only for now, except events)
+- Validation/schemas (comes later)
+- Caching (not needed yet)
+- Access control (all agents have same permissions)
+- Webhooks/notifications (Phase 3+)
+
+**Rationale:**
+
+**Why Governance Layer now?**
+1. **Measurement-driven evolution**: Can't optimize what we don't measure
+2. **Aligns with v2 planning**: CONTROL_PLANE_GOVERNANCE_SPEC_V1 and AIOS_V2_INFRA_UPGRADE_PLAN
+3. **Bootstrap early**: Infrastructure in place, implementation follows incrementally
+4. **Thin Slice approach**: Structure first, logic later (Slice 2+)
+
+**Why OS Core MCP?**
+1. **Single point of access**: Instead of 5 agents manipulating files directly
+2. **Consistency**: All state access goes through one gateway
+3. **Observability**: Can log/track who accessed what
+4. **Future-proof**: Easy to add validation, caching, access control later
+5. **Integration ready**: Works with Claude Desktop, GPT Actions, n8n, future LangGraph
+
+**Why minimal scope?**
+- Avoids over-engineering
+- Gets core functionality working immediately
+- Follows Thin Slices principle (Law #6)
+- Can iterate based on real usage
+
+**Implementation Notes:**
+
+Files created:
+- `governance/` directory structure (6 directories)
+- `governance/README.md` (documentation)
+- `governance/scripts/*.py` (4 stub scripts)
+- `services/os_core_mcp/server.py` (FastAPI server, 3 endpoints)
+- `services/os_core_mcp/README.md` (API documentation)
+- `services/os_core_mcp/requirements.txt` (dependencies)
+
+Next steps (Slice 2):
+1. Implement actual measurement logic in governance scripts
+2. Add governance metrics to SERVICES_STATUS
+3. Create first LangGraph workflow using OS Core MCP
+4. Integrate Langfuse for observability
+
+**Related:**
+- CONTROL_PLANE_GOVERNANCE_SPEC_V1 (if exists in docs/)
+- AIOS_V2_INFRA_UPGRADE_PLAN (planning document)
+- Phase 2.3: Stabilizing the Hands (current phase)
+- DEC-006: n8n as Automation Kernel
+- DEC-007: No Fixed Role Hierarchy
+
+---
+
 ## סיכום ההחלטות
 
 | # | נושא | החלטה | סטטוס |
@@ -565,6 +685,7 @@ GPT Actions דורשות:
 | **DEC-004** | Connectivity Strategy (ngrok vs Cloudflare) | Cloudflare Tunnel | ✅ Approved |
 | **DEC-006** | n8n as Automation Kernel | n8n Self-Hosted | ✅ Approved |
 | **DEC-007** | No Fixed Role Hierarchy | Capabilities + Constraints model | ✅ Approved |
+| **DEC-008** | Governance Layer Bootstrap + OS Core MCP | Bootstrap V1 + Minimal API | ✅ Approved |
 
 ---
 

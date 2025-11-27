@@ -1,0 +1,12 @@
+# OS Core MCP Requirements
+
+# Core
+fastapi>=0.100.0
+uvicorn[standard]>=0.23.0
+pydantic>=2.0.0
+
+# Python standard library (no additional deps needed)
+# - json (built-in)
+# - pathlib (built-in)
+# - datetime (built-in)
+# - logging (built-in)
