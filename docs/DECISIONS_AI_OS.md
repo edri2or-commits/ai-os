@@ -798,6 +798,118 @@ Next steps (Slice 2B):
 
 ---
 
+## 2025-11-27 – DEC-010: Governance Truth Layer Bootstrap V1
+
+**Date:** 2025-11-27  
+**Owner:** Or  
+**Status:** ✅ Approved  
+**Phase:** 2.3 (INFRA_ONLY)
+
+### Context
+
+Following DEC-008 (Governance Layer Bootstrap + OS Core MCP Minimal) and DEC-009 (Slice 2A – Daily Context Sync), AI-OS now has:
+- **Truth Layer** operational: EVENT_TIMELINE.jsonl + SYSTEM_STATE_COMPACT.json + SERVICES_STATUS.json
+- **OS Core MCP** providing unified API gateway (ports 8083-8084)
+- **Agent Kernel** with LangGraph workflows
+
+However, the Governance Layer (governance/) was only infrastructure (stub scripts) - no actual measurements or snapshots were being generated.
+
+### Decision
+
+**Implement Governance Truth Layer Bootstrap V1:**
+
+1. **Truth Layer Definition** (Canonical Sources):
+   - `docs/system_state/timeline/EVENT_TIMELINE.jsonl` → Event Log (append-only)
+   - `docs/system_state/SYSTEM_STATE_COMPACT.json` → System State Truth
+   - `docs/system_state/registries/SERVICES_STATUS.json` → Services Registry Truth
+
+2. **Snapshot Generation** (governance/scripts/generate_snapshot.py):
+   - Read from all 3 truth sources
+   - Collect git metadata (branch, commit)
+   - Calculate fitness metrics:
+     - **FITNESS_001_FRICTION**: open_gaps_count, time_since_last_daily_context_sync_minutes, recent_error_events_count
+     - **FITNESS_002_CCI**: active_services_count, recent_event_types_count, recent_work_blocks_count, pending_decisions_count
+   - Generate snapshot JSON with full metadata
+   - Save to: `governance/snapshots/SNAPSHOT_<timestamp>.json`
+   - Update: `governance/snapshots/GOVERNANCE_LATEST.json` (always points to latest)
+
+3. **Governance Documentation**:
+   - DEC stored in: `governance/DEC/DEC_GOVERNANCE_TRUTH_BOOTSTRAP_V1.md`
+   - EVT stored in: `governance/EVT/EVT_GOVERNANCE_TRUTH_BOOTSTRAP_V1_<timestamp>.json`
+
+### Rationale
+
+- **Operationalize Governance:** Move from stub infrastructure to actual measurements
+- **Observable Fitness:** Enable systematic tracking of system health via metrics
+- **Foundation for Automation:** Create snapshots that n8n can trigger/consume (Slice 2B+)
+- **Truth Layer Formalization:** Establish canonical sources for all governance measurements
+
+### Implementation
+
+**Branch:** `feature/slice_governance_truth_bootstrap_v1`
+
+**Files Modified:**
+- `governance/scripts/generate_snapshot.py` - full implementation (was stub)
+
+**Files Created:**
+- `governance/snapshots/SNAPSHOT_<timestamp>.json` - first real snapshot
+- `governance/snapshots/GOVERNANCE_LATEST.json` - pointer to latest snapshot
+- `governance/DEC/DEC_GOVERNANCE_TRUTH_BOOTSTRAP_V1.md` - local decision record
+- `governance/EVT/EVT_GOVERNANCE_TRUTH_BOOTSTRAP_V1_<timestamp>.json` - completion event
+
+**Snapshot Structure:**
+```json
+{
+  "snapshot_id": "GOVERNANCE_SNAPSHOT_<timestamp>",
+  "created_at": "<timestamp>",
+  "source": "governance/scripts/generate_snapshot.py",
+  "git": {"branch": "...", "last_commit": "..."},
+  "system_state": {"phase": "...", "mode": "..."},
+  "services_summary": {"up": N, "total": N},
+  "event_log_summary": {"last_event_timestamp": "...", "last_event_type": "..."},
+  "fitness_metrics": {
+    "FITNESS_001_FRICTION": {...},
+    "FITNESS_002_CCI": {...}
+  }
+}
+```
+
+### Testing
+
+**Smoke Test:**
+- Run: `python governance/scripts/generate_snapshot.py`
+- Verify: Snapshot created in `governance/snapshots/`
+- Verify: `GOVERNANCE_LATEST.json` exists and contains valid structure
+- Verify: Fitness metrics populated with real values
+
+**First Snapshot Results:**
+- ✅ Snapshot generated: `SNAPSHOT_20251127_174131.json`
+- ✅ GOVERNANCE_LATEST.json created
+- ✅ Fitness metrics calculated:
+  - FITNESS_001_FRICTION: 8 open gaps, 87 minutes since last sync, 0 recent errors
+  - FITNESS_002_CCI: 9/14 services active, 12 event types, 9 recent blocks
+
+### Next Steps (Post-Bootstrap)
+
+1. **Slice 2B:** n8n workflow to generate snapshots on schedule (daily/weekly)
+2. **Implement actual measurement scripts:**
+   - `measure_friction.py` - detailed friction analysis
+   - `measure_cci.py` - cognitive capacity deep dive
+   - `measure_tool_efficacy.py` - tool/service effectiveness
+3. **Visualization:** Build dashboard/reporting layer for governance metrics
+4. **Integration:** Connect snapshots to OS Core MCP for programmatic access
+
+### Related Decisions
+
+- **DEC-008:** Governance Layer Bootstrap (infrastructure only)
+- **DEC-009:** Slice 2A - Daily Context Sync (Agent Kernel + LangGraph)
+- **DEC-006:** n8n as Automation Kernel (will trigger snapshot generation in future)
+
+**Phase:** 2.3 (INFRA_ONLY)  
+**Mode:** Infrastructure work - no live automations yet
+
+---
+
 ## סיכום ההחלטות
 
 | # | נושא | החלטה | סטטוס |
@@ -811,6 +923,8 @@ Next steps (Slice 2B):
 | **DEC-006** | n8n as Automation Kernel | n8n Self-Hosted | ✅ Approved |
 | **DEC-007** | No Fixed Role Hierarchy | Capabilities + Constraints model | ✅ Approved |
 | **DEC-008** | Governance Layer Bootstrap + OS Core MCP | Bootstrap V1 + Minimal API | ✅ Approved |
+| **DEC-009** | Slice 2A – Daily Context Sync V1 | Agent Kernel + LangGraph | ✅ Approved |
+| **DEC-010** | Governance Truth Layer Bootstrap V1 | Snapshot Generation + Fitness Metrics | ✅ Approved |
 
 ---
 
@@ -827,5 +941,5 @@ Next steps (Slice 2B):
 
 **סטטוס מסמך זה**: ✅ Active  
 **עדכון אחרון**: 27 נובמבר 2025  
-**החלטות נעולות**: 8 החלטות קריטיות  
+**החלטות נעולות**: 10 החלטות קריטיות  
 **הערה**: החלטות אלה ניתנות לשינוי בעתיד, אבל רק אחרי דיון מפורש ותיעוד של הרציונל לשינוי.
