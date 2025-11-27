@@ -57,6 +57,11 @@ class AppendEventRequest(BaseModel):
     source: str = "os-core-mcp"
 
 
+class UpdateStateRequest(BaseModel):
+    patch: Dict[str, Any]
+    source: str = "os-core-mcp"
+
+
 # --- Helper Functions ---
 
 def read_json_file(file_path: Path) -> Dict[str, Any]:
@@ -90,6 +95,32 @@ def append_to_jsonl(file_path: Path, event: Dict[str, Any]) -> Dict[str, Any]:
         return event
     except Exception as e:
         logger.error(f"Error appending to {file_path}: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+def update_json_file(file_path: Path, patch: Dict[str, Any]) -> Dict[str, Any]:
+    """Update a JSON file by merging patch at top level"""
+    try:
+        if not file_path.exists():
+            raise FileNotFoundError(f"File not found: {file_path}")
+        
+        # Read current state
+        with open(file_path, 'r', encoding='utf-8') as f:
+            state = json.load(f)
+        
+        # Merge patch (top-level only)
+        state.update(patch)
+        
+        # Write back
+        with open(file_path, 'w', encoding='utf-8') as f:
+            json.dump(state, f, ensure_ascii=False, indent=2)
+        
+        return state
+    except json.JSONDecodeError as e:
+        logger.error(f"Invalid JSON in {file_path}: {e}")
+        raise HTTPException(status_code=500, detail=f"Invalid JSON in file: {e}")
+    except Exception as e:
+        logger.error(f"Error updating {file_path}: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -165,6 +196,33 @@ async def read_services_status() -> Dict[str, Any]:
     logger.info(f"Reading services status from {file_path}")
     
     return read_json_file(file_path)
+
+
+@app.post("/state/update")
+async def update_state(request: UpdateStateRequest) -> Dict[str, Any]:
+    """
+    Update SYSTEM_STATE_COMPACT.json by merging a patch
+    
+    Request body:
+    {
+        "patch": { ... keys to update ... },
+        "source": "string (default: 'os-core-mcp')"
+    }
+    
+    Merges patch at top level only.
+    Returns the updated state.
+    """
+    file_path = STATE_ROOT / "SYSTEM_STATE_COMPACT.json"
+    
+    logger.info(f"Updating system state from {file_path}: {len(request.patch)} keys from {request.source}")
+    
+    updated_state = update_json_file(file_path, request.patch)
+    
+    return {
+        "status": "ok",
+        "source": request.source,
+        "state": updated_state
+    }
 
 
 @app.post("/events")
