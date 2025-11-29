@@ -1,132 +1,198 @@
-﻿# Agents Inventory - מלאי הסוכנים במערכת
+ï»¿# Agents Inventory - ×××× ××¡××× ×× ×××¢×¨××ª
 
 ---
 
-## טבלת סוכנים
+## ××××ª ×¡××× ××
 
 | AgentName | OldPath | Role | StatusFromAudit | SuggestedRoleInAIOS | Notes |
 |-----------|---------|------|-----------------|---------------------|-------|
-| **Local Execution Agent** | `agents/local_execution_agent.py` | ביצוע פעולות מקומיות על המחשב (קובץ placeholder בסיסי) | זהב | סוכן עזר / Archive | הקובץ מכיל רק הדפסת Hello World. דורש החלטה: האם זה היה מתוכנן לפיתוח עתידי או שרק placeholder? |
-| **GPT GitHub Agent** | `gpt_agent/github_agent.py` | מתכנן משימות GitHub ומנתח אינטנט המשתמש לפי CAPABILITIES_MATRIX. פועל במצב DRY RUN. | זהב | סוכן ליבה | זהו סוכן מתוחכם שמתכנן פעולות על בסיס מסמכי DESIGN ו-CAPABILITIES_MATRIX. מומלץ לייבא ולפתח עוד. |
-| **MCP Master Control Program** | `mcp/` (כל התיקייה) | הלב של המערכת: ניהול סוכנים, תזמון, אינטגרציות (GitHub, Google), ו-API server | זהב | Workflow Engine / סוכן ליבה | מכיל clients, servers ו-integrations. זהו ה"מוח" של מערכת הסוכנים. דורש פירוק לרכיבים: `mcp/server/` → workflows/, `mcp/clients/` → tools/ |
-| **GitHub Executor API** | `mcp/server/worker/` + תיעוד ב-CAPABILITIES_MATRIX | API אוטומציה של GitHub (קוד מלא, deployment חסום) | זהב (מתוכנן) | כלי / API Wrapper | לפי CAPABILITIES_MATRIX זה קוד מוכן שמחכה ל-deployment. מומלץ להעביר ל-`tools/` עם תיעוד מלא. |
-| **Autopilot / Self-Healing Agent** | `autopilot.py` + `autopilot-state.json` | סוכן החלמה עצמית (Self-Healing) - מנסה לשחזר גישה ל-Google Sheets | ניסוי/ישן | Archive / סוכן עזר | נראה כ-POC של מנגנון החלמה. דורש החלטה: האם רלוונטי עדיין? |
-| **OPS Decision Manager** | `ops/decisions/` | ניהול החלטות תפעוליות (ADRs - Architectural Decision Records) | זהב | Workflow Component | מכיל קבצי החלטה כמו `2025-11-02-L2-approval.md`. מתאים ל-`workflows/` או `docs/decisions/` |
-| **OPS Diagnostics** | `ops/diag/` | כלי אבחון ובדיקות מערכת | זהב | Workflow Component | מכיל `cloudshell_check.md`, `REMOTE_MCP_EVIDENCE.md` וכו'. מתאים ל-`workflows/diagnostics/` |
-| **GitHub Executor Bootstrap** | `ops/TRIGGERS/github_executor_bootstrap.md` | מסמך bootstrap להפעלת GitHub Executor | זהב | Workflow Documentation | תיעוד טריגרים והפעלה - מתאים ל-`workflows/` |
-| **Chat1 Telegram Interface Agent** | `chat/telegram_bot.py` | ממשק טלגרם רשמי ל-AI-OS, מדבר עם Agent Gateway | זהב | סוכן UI רשמי | ממשק טלגרם יחיד ל-AI-OS. Human-in-the-Loop עם כפתורי אישור. מחובר ל-GPT Planner |
+| **Local Execution Agent** | `agents/local_execution_agent.py` | ×××¦××¢ ×¤×¢××××ª ××§×××××ª ×¢× ××××©× (×§×××¥ placeholder ××¡××¡×) | ××× | ×¡××× ×¢××¨ / Archive | ××§×××¥ ×××× ×¨×§ ×××¤×¡×ª Hello World. ×××¨×© ×××××: ××× ×× ××× ××ª××× × ××¤××ª×× ×¢×ª××× ×× ×©×¨×§ placeholder? |
+| **GPT GitHub Agent** | `gpt_agent/github_agent.py` | ××ª×× × ××©××××ª GitHub ××× ×ª× ××× ×× × ×××©×ª××© ××¤× CAPABILITIES_MATRIX. ×¤××¢× ×××¦× DRY RUN. | ××× | ×¡××× ×××× | ××× ×¡××× ××ª×××× ×©××ª×× × ×¤×¢××××ª ×¢× ××¡××¡ ××¡××× DESIGN ×-CAPABILITIES_MATRIX. ×××××¥ ××××× ×××¤×ª× ×¢××. |
+| **MCP Master Control Program** | `mcp/` (×× ××ª××§×××) | ××× ×©× ×××¢×¨××ª: × ×××× ×¡××× ××, ×ª××××, ××× ×××¨×¦×××ª (GitHub, Google), ×-API server | ××× | Workflow Engine / ×¡××× ×××× | ×××× clients, servers ×-integrations. ××× ×"×××" ×©× ××¢×¨××ª ××¡××× ××. ×××¨×© ×¤××¨××§ ××¨×××××: `mcp/server/` â workflows/, `mcp/clients/` â tools/ |
+| **GitHub Executor API** | `mcp/server/worker/` + ×ª××¢×× ×-CAPABILITIES_MATRIX | API ××××××¦×× ×©× GitHub (×§×× ×××, deployment ××¡××) | ××× (××ª××× ×) | ××× / API Wrapper | ××¤× CAPABILITIES_MATRIX ×× ×§×× ×××× ×©×××× ×-deployment. ×××××¥ ×××¢×××¨ ×-`tools/` ×¢× ×ª××¢×× ×××. |
+| **Autopilot / Self-Healing Agent** | `autopilot.py` + `autopilot-state.json` | ×¡××× ××××× ×¢×¦×××ª (Self-Healing) - ×× ×¡× ××©×××¨ ×××©× ×-Google Sheets | × ××¡××/××©× | Archive / ×¡××× ×¢××¨ | × ×¨×× ×-POC ×©× ×× ×× ×× ×××××. ×××¨×© ×××××: ××× ×¨×××× ×× ×¢××××? |
+| **OPS Decision Manager** | `ops/decisions/` | × ×××× ××××××ª ×ª×¤×¢×××××ª (ADRs - Architectural Decision Records) | ××× | Workflow Component | ×××× ×§××¦× ××××× ××× `2025-11-02-L2-approval.md`. ××ª××× ×-`workflows/` ×× `docs/decisions/` |
+| **OPS Diagnostics** | `ops/diag/` | ××× ××××× ×××××§××ª ××¢×¨××ª | ××× | Workflow Component | ×××× `cloudshell_check.md`, `REMOTE_MCP_EVIDENCE.md` ×××'. ××ª××× ×-`workflows/diagnostics/` |
+| **GitHub Executor Bootstrap** | `ops/TRIGGERS/github_executor_bootstrap.md` | ××¡×× bootstrap ×××¤×¢××ª GitHub Executor | ××× | Workflow Documentation | ×ª××¢×× ××¨×××¨×× ×××¤×¢×× - ××ª××× ×-`workflows/` |
+| **Chat1 Telegram Interface Agent** | `chat/telegram_bot.py` | ×××©×§ ××××¨× ×¨×©×× ×-AI-OS, ××××¨ ×¢× Agent Gateway | ××× | ×¡××× UI ×¨×©×× | ×××©×§ ××××¨× ×××× ×-AI-OS. Human-in-the-Loop ×¢× ××¤×ª××¨× ×××©××¨. ×××××¨ ×-GPT Planner |
 
 ---
 
-## Non-Repo Prototypes (פרוטוטיפים שלא מנוהלים כסוכנים)
+## Non-Repo Prototypes (×¤×¨××××××¤×× ×©×× ×× ××××× ××¡××× ××)
 
-| שם | תיאור | סטטוס | הערות |
+| ×©× | ×ª××××¨ | ×¡××××¡ | ××¢×¨××ª |
 |------|-------|-------|-------|
-| **Telegram + Small LLM Prototype** | פרוטוטיפ חיצוני שמחבר טלגרם ל-LLM קטן דרך HTTP פשוט | 🗄️ Legacy / External | לא חלק מריפו ai-os. אינו מחובר ל-Agent Gateway. שימש לניסוי ראשוני בלבד. **אסור לבנות עליו תהליכים רשמיים** |
+| **Telegram + Small LLM Prototype** | ×¤×¨××××××¤ ×××¦×× × ×©××××¨ ××××¨× ×-LLM ×§×× ××¨× HTTP ×¤×©×× | ðï¸ Legacy / External | ×× ×××§ ××¨××¤× ai-os. ××× × ×××××¨ ×-Agent Gateway. ×©×××© ×× ××¡×× ×¨××©×× × ××××. **××¡××¨ ××× ××ª ×¢××× ×ª×××××× ×¨×©××××** |
 
-> ⚠️ **חשוב**: הסוכן הרשמי היחיד לממשק טלגרם הוא **Chat1** שנמצא ב-`chat/telegram_bot.py`. כל פרוטוטיפ אחר הוא לניסוי ואינו חלק מהארכיטקטורה של AI-OS.
-
----
-
-## סיכום ממצאים
-
-### סוכנים שזוהו בבירור:
-1. **GPT GitHub Agent** – סוכן ליבה מתוחכם (מתכנן משימות)
-2. **MCP** – תשתית/מנוע ניהול מרכזי (לא סוכן בודד אלא מערכת)
-3. **GitHub Executor API** – כלי אוטומציה (API wrapper)
-4. **Autopilot** – סוכן החלמה עצמית (נראה POC)
-5. **Local Execution Agent** – placeholder / לא מפותח
-
-### רכיבים תפעוליים (לא בהכרח "סוכנים" אלא תהליכים):
-- **OPS/decisions** – מנהל החלטות
-- **OPS/diag** – כלי אבחון
-- **OPS/TRIGGERS** – מנגנוני הפעלה
+> â ï¸ **××©××**: ××¡××× ××¨×©×× ××××× ××××©×§ ××××¨× ××× **Chat1** ×©× ××¦× ×-`chat/telegram_bot.py`. ×× ×¤×¨××××××¤ ×××¨ ××× ×× ××¡×× ×××× × ×××§ ××××¨××××§×××¨× ×©× AI-OS.
 
 ---
 
-## דברים שדורשים החלטה אנושית
+## ×¡×××× ×××¦×××
 
-1. **Local Execution Agent**: האם זה היה אמור להיות סוכן אמיתי או סתם placeholder? צריך להחליט אם לזרוק או לפתח.
+### ×¡××× ×× ×©×××× ××××¨××¨:
+1. **GPT GitHub Agent** â ×¡××× ×××× ××ª×××× (××ª×× × ××©××××ª)
+2. **MCP** â ×ª×©×ª××ª/×× ××¢ × ×××× ××¨××× (×× ×¡××× ×××× ××× ××¢×¨××ª)
+3. **GitHub Executor API** â ××× ××××××¦×× (API wrapper)
+4. **Autopilot** â ×¡××× ××××× ×¢×¦×××ª (× ×¨×× POC)
+5. **Local Execution Agent** â placeholder / ×× ××¤××ª×
 
-2. **MCP Structure**: התיקייה `mcp/` ענקית ומכילה שרתים, לקוחות ואינטגרציות. צריך לפרק אותה לרכיבים:
-   - `mcp/server/` → `workflows/mcp-server/`
-   - `mcp/clients/` → `tools/mcp-clients/`
-   - `mcp/github/`, `mcp/google/` → `tools/integrations/`
-
-3. **Autopilot Status**: האם מנגנון ההחלמה העצמית עדיין רלוונטי? אם כן - צריך לשדרג ולתעד. אם לא - לארכב.
-
-4. **OPS Components**: האם `ops/` הוא חלק ממערכת הסוכנים או רק כלי תפעול תומך? יש צורך בהבחנה ברורה.
-
-5. **GitHub Executor API**: קוד מוכן שמחכה ל-deployment. צריך להחליט:
-   - האם לייבא כמו שהוא?
-   - האם לשלב במערכת MCP?
-   - האם להפוך לכלי עצמאי ב-`tools/`?
+### ×¨××××× ×ª×¤×¢××××× (×× ××××¨× "×¡××× ××" ××× ×ª××××××):
+- **OPS/decisions** â ×× ×× ××××××ª
+- **OPS/diag** â ××× ×××××
+- **OPS/TRIGGERS** â ×× ×× ×× × ××¤×¢××
 
 ---
 
-## המלצות צעד הבא
+## ×××¨×× ×©×××¨×©×× ××××× ×× ××©××ª
 
-1. **להתחיל עם GPT GitHub Agent**:
-   - לייבא את `gpt_agent/github_agent.py` → `agents/gpt-github-agent/`
-   - לייבא את מסמכי התיעוד הנלווים (AGENT_GPT_MASTER_DESIGN.md וכו')
-   - ליצור README.md בתיקייה שמסביר תפקיד, dependencies והרצה
+1. **Local Execution Agent**: ××× ×× ××× ××××¨ ×××××ª ×¡××× ××××ª× ×× ×¡×ª× placeholder? ×¦×¨×× ×××××× ×× ×××¨××§ ×× ××¤×ª×.
 
-2. **לתעד את MCP כ-Workflow Engine**:
-   - ליצור `workflows/MCP_OVERVIEW.md`
-   - להחליט על פירוק לרכיבים
+2. **MCP Structure**: ××ª××§××× `mcp/` ×¢× ×§××ª ×××××× ×©×¨×ª××, ××§××××ª ×××× ×××¨×¦×××ª. ×¦×¨×× ××¤×¨×§ ×××ª× ××¨×××××:
+   - `mcp/server/` â `workflows/mcp-server/`
+   - `mcp/clients/` â `tools/mcp-clients/`
+   - `mcp/github/`, `mcp/google/` â `tools/integrations/`
 
-3. **להעביר את GitHub Executor API ל-tools/**:
-   - ליצור `tools/github-executor-api/`
-   - לתעד deployment requirements
+3. **Autopilot Status**: ××× ×× ×× ×× ×××××× ××¢×¦×××ª ×¢×××× ×¨×××× ××? ×× ×× - ×¦×¨×× ××©××¨× ×××ª×¢×. ×× ×× - ×××¨××.
 
-4. **לארכב את Autopilot**:
-   - להעביר ל-`archive/autopilot/` אלא אם יש החלטה אחרת
+4. **OPS Components**: ××× `ops/` ××× ×××§ ×××¢×¨××ª ××¡××× ×× ×× ×¨×§ ××× ×ª×¤×¢×× ×ª×××? ××© ×¦××¨× ××××× × ××¨××¨×.
+
+5. **GitHub Executor API**: ×§×× ×××× ×©×××× ×-deployment. ×¦×¨×× ××××××:
+   - ××× ××××× ××× ×©×××?
+   - ××× ××©×× ×××¢×¨××ª MCP?
+   - ××× ×××¤×× ×××× ×¢×¦××× ×-`tools/`?
 
 ---
 
-## סוכנים פעילים (2025-11-24)
+## ××××¦××ª ×¦×¢× ×××
+
+1. **×××ª××× ×¢× GPT GitHub Agent**:
+   - ××××× ××ª `gpt_agent/github_agent.py` â `agents/gpt-github-agent/`
+   - ××××× ××ª ××¡××× ××ª××¢×× ×× ××××× (AGENT_GPT_MASTER_DESIGN.md ×××')
+   - ×××¦××¨ README.md ××ª××§××× ×©××¡×××¨ ×ª×¤×§××, dependencies ×××¨×¦×
+
+2. **××ª×¢× ××ª MCP ×-Workflow Engine**:
+   - ×××¦××¨ `workflows/MCP_OVERVIEW.md`
+   - ×××××× ×¢× ×¤××¨××§ ××¨×××××
+
+3. **×××¢×××¨ ××ª GitHub Executor API ×-tools/**:
+   - ×××¦××¨ `tools/github-executor-api/`
+   - ××ª×¢× deployment requirements
+
+4. **×××¨×× ××ª Autopilot**:
+   - ×××¢×××¨ ×-`archive/autopilot/` ××× ×× ××© ××××× ×××¨×ª
+
+---
+
+## ×¡××× ×× ×¤×¢×××× (2025-11-24)
 
 ### GPT AI-OS Manager
-| תכונה | פירוט |
+| ×ª××× × | ×¤××¨×× |
 |--------|-------|
-| **שם** | AI-OS GitHub Manager |
-| **פלטפורמה** | ChatGPT Custom GPT |
-| **סטטוס** | ✅ Operational |
-| **יכולות** | GitHub (read/write/PR) + Google Workspace (מלא) |
-| **חיבור** | ngrok → localhost:8082 |
+| **×©×** | AI-OS GitHub Manager |
+| **×¤×××¤××¨××** | ChatGPT Custom GPT |
+| **×¡××××¡** | â Operational |
+| **××××××ª** | GitHub (read/write/PR) + Google Workspace (×××) |
+| **×××××¨** | ngrok â localhost:8082 |
 
-**פעולות זמינות**:
-- קריאת קבצים מ-GitHub
-- יצירת Pull Requests
-- שליחת אימיילים
-- יצירת אירועים ביומן
-- חיפוש קבצים ב-Drive
-- יצירת מסמכי Google Docs
-- יצירת גיליונות Google Sheets
-- יצירת משימות
+**×¤×¢××××ª ×××× ××ª**:
+- ×§×¨×××ª ×§××¦×× ×-GitHub
+- ××¦××¨×ª Pull Requests
+- ×©××××ª ××××××××
+- ××¦××¨×ª ×××¨××¢×× ×××××
+- ×××¤××© ×§××¦×× ×-Drive
+- ××¦××¨×ª ××¡××× Google Docs
+- ××¦××¨×ª ×××××× ××ª Google Sheets
+- ××¦××¨×ª ××©××××ª
 
 ---
 
-## שירותים תומכים (Backend Services)
+## ×©××¨××ª×× ×ª××××× (Backend Services)
 
 ### MCP GitHub Client
-| תכונה | פירוט |
+| ×ª××× × | ×¤××¨×× |
 |--------|-------|
 | **Port** | 8081 |
-| **סטטוס** | ✅ Operational |
-| **מיקום** | `services/mcp_github_client/` |
-| **תיעוד** | `services/mcp_github_client/README.md` |
+| **×¡××××¡** | â Operational |
+| **×××§××** | `services/mcp_github_client/` |
+| **×ª××¢××** | `services/mcp_github_client/README.md` |
 
 ### Google Workspace Client
-| תכונה | פירוט |
+| ×ª××× × | ×¤××¨×× |
 |--------|-------|
 | **Port** | 8082 |
-| **סטטוס** | ✅ Operational |
-| **מיקום** | `services/google_workspace_client/` |
-| **תיעוד** | `services/google_workspace_client/README.md` |
+| **×¡××××¡** | â Operational |
+| **×××§××** | `services/google_workspace_client/` |
+| **×ª××¢××** | `services/google_workspace_client/README.md` |
 | **Auth** | OAuth 2.0 (edri2or@gmail.com) |
 
 ---
 
-**סטטוס**: ✅ מיפוי ראשוני הושלם + סוכנים פעילים  
-**צעד הבא**: Deploy ל-Cloud (תמיד פעיל)
+**×¡××××¡**: â ×××¤×× ×¨××©×× × ×××©×× + ×¡××× ×× ×¤×¢××××  
+**×¦×¢× ×××**: Deploy ×-Cloud (×ª××× ×¤×¢××)
+
+---
+
+## Claude Desktop
+
+**Role:** Primary Executor  
+**Status:** ✅ Operational  
+**Last Verified:** 2025-11-29
+
+### Integration Method
+
+**GitHub Access:**
+- Method: PowerShell → HTTP API calls
+- Server: MCP GitHub Client (localhost:8081)
+- Tool: Windows-MCP:Powershell-Tool
+- Protocol: HTTP REST API (not stdio MCP)
+
+**Other Integrations:**
+- Google Workspace: google-mcp (OAuth, read-only)
+- Windows: Windows-MCP (PowerShell, app control, filesystem)
+- File System: filesystem-mcp (local file access)
+
+### Verified Operations (2025-11-29)
+
+✅ **GitHub Operations:**
+- Read files from repository
+- List repository tree structure
+- Create Pull Requests (PR #22, #23, #24 created successfully)
+- Write files to main branch
+- Delete files
+- List branches
+- Get commit history
+
+✅ **HTTP API Endpoints Used:**
+- /github/read-file - Fetch file content
+- /github/open-pr - Create Pull Requests
+- /github/list-tree - Browse repository
+- /health - Server health check
+
+### Example Usage
+
+```powershell
+# Read file from GitHub
+$body = @{ path = "README.md"; ref = "main" } | ConvertTo-Json
+$response = Invoke-RestMethod -Uri "http://localhost:8081/github/read-file" `
+    -Method Post -Body $body -ContentType "application/json"
+
+# Create PR
+$prBody = @{
+    title = "Update documentation"
+    description = "Description here..."
+    files = @(
+        @{ path = "docs/file.md"; content = "..."; operation = "create" }
+    )
+    base_branch = "main"
+} | ConvertTo-Json -Depth 10
+
+$pr = Invoke-RestMethod -Uri "http://localhost:8081/github/open-pr" `
+    -Method Post -Body $prBody -ContentType "application/json"
+```
+
+### Related
+
+- **DEC-011:** Claude Desktop HTTP Integration
+- **MCP GitHub Server:** services/mcp_github_client/
+- **Test PRs:** #22, #23, #24
