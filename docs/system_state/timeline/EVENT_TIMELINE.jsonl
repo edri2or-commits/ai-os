@@ -1,1 +1,1 @@
-﻿
+﻿{"timestamp": "2025-11-29T22:50:23.899478Z", "event_type": "STATE_RECONCILIATION", "source": "reconciler_v1", "payload": {"drift_detected": {"services_count": "15 → 0", "timestamp_gap_hours": 48.2, "fitness_metrics": "Updated from GOVERNANCE snapshot"}, "reconciliation_applied": ["Updated timestamp (was 48.2h old)", "Fixed services count: 15 → 0", "Updated from GOVERNANCE snapshot"]}}
