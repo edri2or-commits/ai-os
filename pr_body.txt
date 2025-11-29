@@ -1,0 +1,71 @@
+## Summary
+
+This PR introduces the first two infrastructure slices of AI-OS v2:
+
+### Slice 1: Governance Layer Bootstrap V1 + OS Core MCP Minimal
+- **Governance Layer Bootstrap V1**:
+  - Created `/governance` directory structure (DEC/, EVT/, metrics/, scripts/, snapshots/)
+  - Added 4 stub measurement scripts (friction, CCI, tool_efficacy, snapshot)
+  - Aligns with CONTROL_PLANE_GOVERNANCE_SPEC_V1 for FITNESS_001/002/003
+
+- **OS Core MCP Minimal**:
+  - Created `services/os_core_mcp/` as unified HTTP gateway to State Layer
+  - FastAPI server on port 8083 with 3 endpoints:
+    - GET /state → read SYSTEM_STATE_COMPACT.json
+    - GET /services → read SERVICES_STATUS.json
+    - POST /events → append to EVENT_TIMELINE.jsonl
+  - Relative paths from repo root (no hardcoded paths)
+  - Full error handling (404/500) + logging
+  - CORS enabled for GPT Actions integration
+
+### Slice 2A: Daily Context Sync V1 (Agent Kernel + LangGraph)
+- **OS Core MCP Extended**:
+  - Added POST /state/update endpoint for state patch merging
+  - Top-level merge support into SYSTEM_STATE_COMPACT.json
+  - Returns updated state with error handling
+
+- **Agent Kernel + LangGraph**:
+  - Created `services/agent_kernel/` as LangGraph-based workflow engine
+  - FastAPI server on port 8084
+  - Implemented first workflow: daily_context_sync_graph with 3 nodes:
+    1. start_node: Read state + log STARTED event
+    2. compute_patch: Generate timestamp patch
+    3. apply_patch: Apply patch + log COMPLETED event
+  - Full smoke test suite included and verified
+
+## Testing
+- ✅ Slice 1: Smoke test passed (all 4 endpoints operational)
+- ✅ Slice 2A: End-to-end smoke test passed:
+  - /daily-context-sync/run updates last_daily_context_sync_utc
+  - Events DAILY_CONTEXT_SYNC_STARTED/COMPLETED written to timeline
+  - State file updated correctly
+
+## Decisions
+- **DEC-008**: Governance Layer Bootstrap + OS Core MCP Minimal
+- **DEC-009**: Slice 2A – Daily Context Sync V1
+
+## Phase & Mode
+- **Phase**: 2.3 (INFRA_ONLY)
+- **Mode**: Infrastructure work, no live automations yet
+
+## Next Steps (Slice 2B - Not in this PR)
+- n8n workflow integration:
+  - Cron/manual trigger for daily context sync
+  - HTTP POST to Agent Kernel /daily-context-sync/run
+  - Basic retry logic for network failures
+- Langfuse observability preparation
+- Additional workflows (weekly summary, governance metrics)
+
+## Files Changed
+**Slice 1:**
+- governance/ (new directory structure + 4 stub scripts + README)
+- services/os_core_mcp/ (new service: server.py, README, requirements.txt, smoke_test.py)
+- docs/DECISIONS_AI_OS.md (added DEC-008)
+- docs/system_state/timeline/EVENT_TIMELINE.jsonl (added events)
+
+**Slice 2A:**
+- services/os_core_mcp/server.py (added POST /state/update)
+- services/agent_kernel/ (new service: complete LangGraph workflow engine)
+- docs/system_state/SYSTEM_STATE_COMPACT.json (added last_daily_context_sync_utc)
+- docs/system_state/timeline/EVENT_TIMELINE.jsonl (added workflow + bootstrap events)
+- docs/DECISIONS_AI_OS.md (added DEC-009)

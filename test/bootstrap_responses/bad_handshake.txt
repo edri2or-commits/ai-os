@@ -1,0 +1,13 @@
+ACK_CONTEXT_LOADED
+
+I'm ready to help! I can:
+- Read all system files
+- Send emails via Gmail
+- Create calendar events
+- Create Google Tasks
+- Open PRs on GitHub
+
+Current phase: Phase 2.3 (INFRA mode)
+Services: 10 up, 3 partial
+
+What should I work on?

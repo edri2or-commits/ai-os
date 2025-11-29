@@ -1,0 +1,218 @@
+# SLICE_GOVERNANCE_TRUTH_BOOTSTRAP_V1 – Governance Snapshot + Fitness Metrics
+
+## Overview
+
+This PR implements **Governance Truth Layer Bootstrap V1** - transforming the Governance Layer from stub infrastructure to an operational measurement system with real snapshots and fitness metrics.
+
+**Branch:** `feature/slice_governance_truth_bootstrap_v1`  
+**Base:** `infra/slice-1-2a` → `main` (after merge)  
+**Commit:** 5e21fd2
+
+---
+
+## What Changed
+
+### 1. Snapshot Generation (Real Implementation)
+
+**File:** `governance/scripts/generate_snapshot.py`
+- **Before:** Stub script that printed "TODO: Governance V1"
+- **After:** Full implementation (270+ lines) that:
+  - Reads from 3 Truth Layer sources (EVENT_TIMELINE, SYSTEM_STATE_COMPACT, SERVICES_STATUS)
+  - Collects git metadata (branch, commit hash)
+  - Calculates 2 Fitness Metrics
+  - Generates timestamped snapshots
+  - Updates GOVERNANCE_LATEST.json (always points to latest)
+
+### 2. Governance Snapshots Directory
+
+**New Directory:** `governance/snapshots/`
+- Contains timestamped snapshots: `SNAPSHOT_YYYYMMDD_HHMMSS.json`
+- Contains latest pointer: `GOVERNANCE_LATEST.json`
+- **First snapshots generated:** 4 snapshots created during development/testing
+
+### 3. Smoke Test
+
+**New File:** `governance/scripts/smoke_test_truth_layer.py`
+- Validates snapshot generation works correctly
+- Tests: file creation, JSON structure, required keys, fitness metrics
+- **Result:** All tests passing ✅
+
+### 4. Governance Documentation
+
+**New Files:**
+- `governance/DEC/DEC_GOVERNANCE_TRUTH_BOOTSTRAP_V1.md` - Local decision record
+- `governance/EVT/EVT_GOVERNANCE_TRUTH_BOOTSTRAP_V1_20251127_174131.json` - Completion event
+
+**Updated:**
+- `docs/DECISIONS_AI_OS.md` - Added DEC-010 (Governance Truth Layer Bootstrap V1)
+- Updated decisions summary table (now 10 decisions)
+
+---
+
+## Snapshot Structure
+
+Each snapshot includes:
+
+```json
+{
+  "snapshot_id": "GOVERNANCE_SNAPSHOT_<timestamp>",
+  "created_at": "<timestamp>",
+  "source": "governance/scripts/generate_snapshot.py",
+  "git": {
+    "branch": "...",
+    "last_commit": "..."
+  },
+  "system_state": {
+    "phase": "...",
+    "mode": "...",
+    "automations_enabled": false,
+    "last_daily_context_sync_utc": "..."
+  },
+  "services_summary": {
+    "up": N,
+    "partial": N,
+    "total": N
+  },
+  "event_log_summary": {
+    "last_event_timestamp": "...",
+    "last_event_type": "...",
+    "recent_events_sampled": N
+  },
+  "fitness_metrics": {
+    "FITNESS_001_FRICTION": {...},
+    "FITNESS_002_CCI": {...}
+  }
+}
+```
+
+---
+
+## Fitness Metrics (Latest Snapshot)
+
+### FITNESS_001_FRICTION (Operational Overhead)
+```json
+{
+  "open_gaps_count": 8,
+  "time_since_last_daily_context_sync_minutes": 101,
+  "recent_error_events_count": 0
+}
+```
+
+**Interpretation:**
+- ✅ Low friction: 0 recent errors
+- ⚠️ 8 open gaps being tracked
+- ⚠️ 101 minutes since last sync (~1.7 hours)
+
+### FITNESS_002_CCI (Cognitive Capacity Index)
+```json
+{
+  "active_services_count": 9,
+  "total_services_count": 14,
+  "recent_event_types_count": 12,
+  "recent_work_blocks_count": 9,
+  "pending_decisions_count": 2
+}
+```
+
+**Interpretation:**
+- ✅ Good capacity: 9/14 services operational (64%)
+- ✅ High activity diversity: 12 event types
+- ✅ Active development: 9 recent work blocks
+- ✅ Low decision backlog: 2 pending decisions
+
+---
+
+## Truth Layer Definition
+
+This slice formalizes 3 canonical sources:
+
+| Source | Purpose | Path |
+|--------|---------|------|
+| **EVENT_TIMELINE.jsonl** | Append-only event log | `docs/system_state/timeline/EVENT_TIMELINE.jsonl` |
+| **SYSTEM_STATE_COMPACT.json** | System state snapshot | `docs/system_state/SYSTEM_STATE_COMPACT.json` |
+| **SERVICES_STATUS.json** | Services registry | `docs/system_state/registries/SERVICES_STATUS.json` |
+
+All governance measurements read from these sources.
+
+---
+
+## Testing
+
+**Smoke Test Results:**
+```
+[1/4] Running generate_snapshot.py...
+   [PASS] Script executed successfully
+
+[2/4] Checking GOVERNANCE_LATEST.json exists...
+   [PASS] File exists
+
+[3/4] Validating JSON structure...
+   [PASS] All required keys present
+
+[4/4] Validating fitness_metrics...
+   [PASS] FITNESS_001_FRICTION: open_gaps_count, time_since_last_daily_context_sync_minutes, recent_error_events_count
+   [PASS] FITNESS_002_CCI: active_services_count, total_services_count, recent_event_types_count, recent_work_blocks_count, pending_decisions_count
+
+[SUCCESS] All smoke tests passed!
+```
+
+**To run smoke test:**
+```bash
+cd governance/scripts
+python smoke_test_truth_layer.py
+```
+
+---
+
+## Files Changed
+
+**Modified (2):**
+- `docs/DECISIONS_AI_OS.md` (+112 lines for DEC-010)
+- `governance/scripts/generate_snapshot.py` (+270 lines, real implementation)
+
+**Created (8):**
+- `governance/DEC/DEC_GOVERNANCE_TRUTH_BOOTSTRAP_V1.md`
+- `governance/EVT/EVT_GOVERNANCE_TRUTH_BOOTSTRAP_V1_20251127_174131.json`
+- `governance/scripts/smoke_test_truth_layer.py`
+- `governance/snapshots/GOVERNANCE_LATEST.json`
+- `governance/snapshots/SNAPSHOT_20251127_174042.json`
+- `governance/snapshots/SNAPSHOT_20251127_174131.json`
+- `governance/snapshots/SNAPSHOT_20251127_175530.json`
+- `governance/snapshots/SNAPSHOT_20251127_180035.json`
+
+**Total:** 10 files changed, 888 insertions(+), 34 deletions(-)
+
+---
+
+## Related
+
+- **Predecessor:** DEC-008 (Governance Layer Bootstrap - stub only)
+- **Predecessor:** DEC-009 (Slice 2A - Agent Kernel + Daily Context Sync)
+- **Phase:** 2.3 (INFRA_ONLY)
+- **Master Decision:** DEC-010 in `docs/DECISIONS_AI_OS.md`
+
+---
+
+## Next Steps (Not in This PR)
+
+1. **Slice 2B:** n8n workflow to trigger snapshot generation on schedule (daily/weekly)
+2. **Detailed Measurement Scripts:**
+   - `measure_friction.py` - Deep friction analysis
+   - `measure_cci.py` - Cognitive capacity metrics
+   - `measure_tool_efficacy.py` - Tool/service effectiveness
+3. **OS Core MCP Integration:** Add endpoint for programmatic snapshot access
+4. **Visualization:** Dashboard for governance metrics (Phase 3+)
+
+---
+
+## Merge Checklist
+
+- [x] Smoke test passes
+- [x] All files committed
+- [x] Branch pushed to origin
+- [x] DEC-010 added to DECISIONS_AI_OS.md
+- [x] Local DEC + EVT created
+- [x] No breaking changes
+- [x] Follows Safe Git Policy (PR-first approach)
+
+**Ready for review!** 🎯

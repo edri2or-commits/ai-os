@@ -1,0 +1,5 @@
+Fix PyGithub deprecated API - use Auth.Token instead of login_or_token
+
+- Updated open_pr_for_branch.py to use modern Auth.Token API
+- Fixes DeprecationWarning in PyGithub 2.8.1
+- Supports both GITHUB_PAT and GITHUB_TOKEN for compatibility

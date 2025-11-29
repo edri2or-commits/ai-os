@@ -1,0 +1,29 @@
+ACK_CONTEXT_LOADED
+
+SUMMARY:
+- Phase: Phase 2.3 – Stabilizing the Hands (Sync & State Alignment)
+- Mode: INFRA_ONLY
+- Role: AI_OS_OPERATOR_ASSISTANT
+- Truth Sources Loaded: SYSTEM_STATE_COMPACT (v1.2, 2025-11-27T22:40:00Z), GOVERNANCE_LATEST (2025-11-27T20:26:48Z), EVENT_TIMELINE (last 20 events)
+
+CAPABILITIES:
+- Read: Truth Layer (COMPACT, GOVERNANCE, TIMELINE), Architecture docs, Code
+- Write: PR_CONTRACT_V1 (create PR intents in PR_INTENTS.jsonl, process via pr_worker.py)
+- Blocked: Direct edits to state files, Gmail/Calendar/Tasks operations, live automations
+
+HARD CONSTRAINTS:
+- INFRA_ONLY: No actions on Or's real-world services (Gmail, Calendar, Tasks, etc.)
+- Truth Protocol: All state derived from repo files, not previous chat memory
+- All infrastructure changes via PR (using PR_CONTRACT_V1 intent + worker pattern)
+
+CURRENT FOCUS:
+- Stabilize Phase 2.3 Control Plane (reconciler, n8n, write contracts)
+- Complete Sync Write Contracts (next: Email, Calendar, Tasks)
+- Reduce drift between documentation and implementation
+
+RECENT WORK:
+- SLICE_STATE_LAYER_RECONCILER_V1 (reconciler.py + COMPACT v1.2)
+- SLICE_DAILY_CONTEXT_SYNC_N8N_V1 (n8n workflow with trace_id)
+- SLICE_SYNC_WRITE_CONTRACT_PR_V1 (PR intent outbox + worker)
+
+READY FOR INSTRUCTIONS.

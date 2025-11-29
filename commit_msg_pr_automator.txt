@@ -1,0 +1,28 @@
+SLICE_GITHUB_PR_AUTOMATOR_V1 - GitHub PR automation infrastructure
+
+Setup MCP GitHub Client as the official PR gateway for AI-OS.
+
+Added (5 new files):
+- docs/slices/SLICE_GITHUB_PR_AUTOMATOR_V1.md (slice specification)
+- services/mcp_github_client/.env.template (config template with GITHUB_PAT)
+- services/mcp_github_client/run_service.bat (service launcher)
+- services/mcp_github_client/smoke_test_open_pr.py (PR creation test)
+- scripts/open_pr_for_branch.py (PR wrapper for existing branches)
+
+Modified (2 files):
+- services/mcp_github_client/README.md (added Quick Start section)
+- services/mcp_github_client/config.py (fixed .env path resolution)
+
+Test Results:
+- Smoke test: ALL PASSED
+- Test PR created: https://github.com/edri2or-commits/ai-os/pull/19
+- GitHub configured: True
+- Service running on port 8081
+
+Next Steps:
+1. Close test PR #19 (verification complete)
+2. Test open_pr_for_branch.py with existing slice branches
+3. Enable automated PR creation workflow
+
+Related: DEC-003 (Safe Git Policy)
+Phase: 2.3 (INFRA_ONLY)

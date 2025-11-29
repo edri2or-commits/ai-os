@@ -1,0 +1,34 @@
+{
+  "timestamp": "2025-11-26T12:47:24.307179Z",
+  "agent": "Claude Desktop",
+  "phase": "2.2",
+  "modules": {
+    "filesystem": "Flaky",
+    "git": "Flaky",
+    "google_read": "Flaky",
+    "browser": "OK",
+    "canva": "OK"
+  },
+  "summary": {
+    "total_ok": 2,
+    "total_flaky": 3,
+    "total_broken": 0
+  },
+  "digest": [
+    {
+      "module": "filesystem",
+      "error": "Intermittent issue detected in filesystem",
+      "suggested_fix": "Check logs for filesystem"
+    },
+    {
+      "module": "git",
+      "error": "Intermittent issue detected in git",
+      "suggested_fix": "Check logs for git"
+    },
+    {
+      "module": "google_read",
+      "error": "Intermittent issue detected in google_read",
+      "suggested_fix": "Check logs for google_read"
+    }
+  ]
+}

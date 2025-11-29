@@ -1,0 +1,135 @@
+{
+  "_comment": "SESSION_MANIFEST_TEMPLATE_V1 - Template for chat session manifests in AI-OS",
+  "_usage": "This template shows what a session manifest should contain. In V1, manifests are assembled internally by agents during bootstrap. In future versions, this may be auto-generated.",
+  
+  "schema_version": "SESSION_MANIFEST_V1",
+  "generated_at_utc": "<TO_BE_FILLED_BY_AGENT>",
+  "session_id": "<TO_BE_FILLED_BY_AGENT>",
+  
+  "agent": {
+    "role": "AI_OS_OPERATOR_ASSISTANT",
+    "type": "claude|gpt|custom",
+    "capabilities_claimed": [
+      "read_truth_layer",
+      "read_docs",
+      "read_code",
+      "write_pr_contract_v1"
+    ]
+  },
+  
+  "system_state": {
+    "phase": "Phase 2.3 – Stabilizing the Hands (Sync & State Alignment)",
+    "mode": "INFRA_ONLY",
+    "automations_enabled": false,
+    "sandbox_only": true
+  },
+  
+  "truth_sources": {
+    "system_state_compact": {
+      "path": "docs/system_state/SYSTEM_STATE_COMPACT.json",
+      "version": "1.2",
+      "generated_at": "2025-11-27T22:40:00Z",
+      "loaded": true
+    },
+    "governance_latest": {
+      "path": "governance/snapshots/GOVERNANCE_LATEST.json",
+      "snapshot_id": "GOVERNANCE_SNAPSHOT_2025-11-27T20:26:48.948186Z",
+      "created_at": "2025-11-27T20:26:48.948186Z",
+      "loaded": true
+    },
+    "event_timeline": {
+      "path": "docs/system_state/timeline/EVENT_TIMELINE.jsonl",
+      "events_loaded": 20,
+      "last_event_timestamp": "2025-11-28T00:30:00Z",
+      "loaded": true
+    },
+    "decisions_log": {
+      "path": "docs/DECISIONS_AI_OS.md",
+      "loaded": false,
+      "note": "Optional in V1"
+    }
+  },
+  
+  "capabilities": {
+    "read_only": [
+      "Truth Layer (COMPACT, GOVERNANCE, TIMELINE)",
+      "Architecture & design docs (docs/)",
+      "Code (services/, scripts/, governance/)",
+      "Slice specs (docs/slices/)",
+      "Sync contracts (docs/sync_contracts/)"
+    ],
+    "write_via_contracts": [
+      {
+        "contract": "PR_CONTRACT_V1",
+        "operations": ["create_pr_intent", "view_pr_intents"],
+        "outbox_file": "docs/system_state/outbox/PR_INTENTS.jsonl",
+        "worker": "scripts/pr_worker.py",
+        "status": "active"
+      }
+    ],
+    "blocked_direct_write": [
+      "State files (SYSTEM_STATE_COMPACT.json, GOVERNANCE_LATEST.json)",
+      "Event timeline (EVENT_TIMELINE.jsonl) - except via approved events",
+      "Service configurations (unless via PR)",
+      "User data (Gmail, Calendar, Tasks) - INFRA_ONLY restriction"
+    ]
+  },
+  
+  "hard_constraints": [
+    "INFRA_ONLY – No actions on Or's real-world services (Gmail, Calendar, Tasks, etc.)",
+    "Truth Protocol – Rely only on repo files, not previous chat memory or assumptions",
+    "No direct state file edits – Use reconciler or approved contracts only",
+    "All infrastructure changes via PR – Using PR_CONTRACT_V1 (intent + worker pattern)",
+    "Sandbox only – No production deployments or live automation triggers"
+  ],
+  
+  "fitness_focus": [
+    "Stabilize Phase 2.3 Control Plane (reconciler, n8n, write contracts)",
+    "Reduce drift between documentation and implementation",
+    "Complete Sync Write Contracts (next: Email, Calendar, Tasks)",
+    "Improve Fitness metrics (FITNESS_001_FRICTION, FITNESS_002_CCI)"
+  ],
+  
+  "services_summary": {
+    "up": 10,
+    "partial": 3,
+    "planned": 1,
+    "not_configured": 1,
+    "broken": 0,
+    "total": 15,
+    "note": "From SYSTEM_STATE_COMPACT.services_summary"
+  },
+  
+  "recent_work": [
+    {
+      "slice_id": "SLICE_STATE_LAYER_RECONCILER_V1",
+      "timestamp": "2025-11-27T22:40:05Z",
+      "summary": "Reconciler for drift detection and COMPACT updates"
+    },
+    {
+      "slice_id": "SLICE_DAILY_CONTEXT_SYNC_N8N_V1",
+      "timestamp": "2025-11-27T23:15:00Z",
+      "summary": "n8n workflow for Daily Context Sync with trace_id"
+    },
+    {
+      "slice_id": "SLICE_SYNC_WRITE_CONTRACT_PR_V1",
+      "timestamp": "2025-11-28T00:30:00Z",
+      "summary": "First Sync Write Contract - PR creation via intent outbox"
+    }
+  ],
+  
+  "known_limitations_v1": [
+    "Manifest is not auto-generated - agents assemble internally during bootstrap",
+    "No automated validation of handshake responses",
+    "No session ID tracking or multi-agent coordination",
+    "Capability discovery is manual - not auto-detected from contracts"
+  ],
+  
+  "next_steps_v2": [
+    "Auto-generate manifest via scripts/generate_session_manifest.py",
+    "Bootstrap validation script (validate_bootstrap_response.py)",
+    "Session ID generation and tracking",
+    "Multi-agent manifest sharing",
+    "n8n bootstrap validator workflow"
+  ]
+}

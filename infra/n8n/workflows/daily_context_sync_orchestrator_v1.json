@@ -1,0 +1,258 @@
+{
+  "name": "DAILY_CONTEXT_SYNC_ORCHESTRATOR_V1",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Generate unique trace_id for this workflow execution\nconst timestamp = Date.now();\nconst random = Math.random().toString(36).substring(7);\nconst trace_id = `n8n-dcs-${timestamp}-${random}`;\n\n// Log trace_id to n8n console\nconsole.log(`[n8n] Generated trace_id: ${trace_id}`);\n\nreturn {\n  trace_id: trace_id,\n  workflow_name: 'daily_context_sync',\n  started_at: new Date().toISOString()\n};"
+      },
+      "id": "2b3c4d5e-6f7g-8h9i-0j1k-2l3m4n5o6p7q",
+      "name": "Generate Trace ID",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://localhost:8083/events",
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "event_type",
+              "value": "N8N_WORKFLOW_STARTED"
+            },
+            {
+              "name": "source",
+              "value": "n8n-orchestrator"
+            },
+            {
+              "name": "payload",
+              "value": "={{ { \"trace_id\": $json.trace_id, \"workflow\": $json.workflow_name, \"started_at\": $json.started_at } }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3c4d5e6f-7g8h-9i0j-1k2l-3m4n5o6p7q8r",
+      "name": "Log Workflow Started",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://localhost:8084/daily-context-sync/run",
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Trace-ID",
+              "value": "={{ $json.trace_id }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "4d5e6f7g-8h9i-0j1k-2l3m-4n5o6p7q8r9s",
+      "name": "Call Agent Kernel",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.status }}",
+              "operation": "equals",
+              "value2": "ok"
+            }
+          ]
+        }
+      },
+      "id": "5e6f7g8h-9i0j-1k2l-3m4n-5o6p7q8r9s0t",
+      "name": "Check Success",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1050, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://localhost:8083/events",
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "event_type",
+              "value": "N8N_WORKFLOW_COMPLETE"
+            },
+            {
+              "name": "source",
+              "value": "n8n-orchestrator"
+            },
+            {
+              "name": "payload",
+              "value": "={{ { \"trace_id\": $('Generate Trace ID').item.json.trace_id, \"workflow\": \"daily_context_sync\", \"status\": \"success\", \"last_sync_time\": $json.last_sync_time } }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "6f7g8h9i-0j1k-2l3m-4n5o-6p7q8r9s0t1u",
+      "name": "Log Success",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1250, 200]
+    },
+    {
+      "parameters": {
+        "url": "http://localhost:8083/events",
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "event_type",
+              "value": "N8N_WORKFLOW_ERROR"
+            },
+            {
+              "name": "source",
+              "value": "n8n-orchestrator"
+            },
+            {
+              "name": "payload",
+              "value": "={{ { \"trace_id\": $('Generate Trace ID').item.json.trace_id, \"workflow\": \"daily_context_sync\", \"status\": \"error\", \"error\": $json.error || 'Unknown error' } }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7g8h9i0j-1k2l-3m4n-5o6p-7q8r9s0t1u2v",
+      "name": "Log Error",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1250, 400]
+    },
+    {
+      "parameters": {
+        "command": "cd C:\\Users\\edri2\\Desktop\\AI\\ai-os && python services/os_core_mcp/reconciler.py",
+        "options": {}
+      },
+      "id": "8h9i0j1k-2l3m-4n5o-6p7q-8r9s0t1u2v3w",
+      "name": "Run Reconciler (Optional)",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [1450, 200],
+      "disabled": true,
+      "notes": "Enable this node manually if you want to run reconciler after sync.\nDisabled by default to keep workflow minimal."
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Generate Trace ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Trace ID": {
+      "main": [
+        [
+          {
+            "node": "Log Workflow Started",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Workflow Started": {
+      "main": [
+        [
+          {
+            "node": "Call Agent Kernel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Agent Kernel": {
+      "main": [
+        [
+          {
+            "node": "Check Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Success": {
+      "main": [
+        [
+          {
+            "node": "Log Success",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Success": {
+      "main": [
+        [
+          {
+            "node": "Run Reconciler (Optional)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "AI-OS",
+      "id": "ai-os-tag"
+    },
+    {
+      "name": "Phase-2.3",
+      "id": "phase-2-3-tag"
+    }
+  ],
+  "pinData": {},
+  "versionId": "1.0.0",
+  "meta": {
+    "instanceId": "ai-os-local"
+  }
+}
