@@ -4,7 +4,7 @@ MAINTENANCE RULE: Update QUICK STATUS after EVERY completed slice
 -->
 
 ---
-**QUICK STATUS:** AI Life OS Migration | Phase 1: Cleanup (~30% done) | Just finished: Archive tools/ (Slice 1.2b) | Next: Remove duplicates OR fix drift
+**QUICK STATUS:** AI Life OS Migration | Phase 1: Cleanup (~40% done) | Just finished: Drift fix + SERVICES_STATUS bootstrap + Git tracking (Slice 1.3) | Next: Remove duplicates OR legacy path fixes
 ---
 
 <!--
@@ -43,13 +43,13 @@ GROUNDING:
 # Current Focus
 
 **Phase:** Phase 1 – Investigation & Foundation Cleanup  
-**Status:** ~30% complete (3/10 slices done)  
-**Active Work:** Just completed Slice 1.2b (Archive tools/)  
+**Status:** ~40% complete (4/10 slices done)  
+**Active Work:** Just completed Slice 1.3 + Sub-Slice 1.3a (Fix drift + bootstrap SERVICES_STATUS)  
 
 **What we're doing:**
 - Cleaning up legacy/unclear components (ai_core/, tools/)
 - Removing duplicates (EVENT_TIMELINE, research folders)
-- Fixing critical drift (Git HEAD mismatch)
+- Fixing critical drift (Git HEAD mismatch) ✅ DONE
 - Establishing clean baseline for Phase 2
 
 **Pattern:**
@@ -61,6 +61,37 @@ GROUNDING:
 ---
 
 # Recent Changes
+
+**2025-11-29 – Slice 1.3 + Sub-Slice 1.3a: Drift fix + SERVICES_STATUS bootstrap + Git tracking**
+- Problem: Truth Layer showed last_commit: 43b308a, actual HEAD was eefc5d3 (3 commits behind)
+- Root cause: SERVICES_STATUS.json was empty → reconciler failed silently
+- Discovery: State files (governance/, docs/system_state/) were not tracked in git
+- Solution:
+  - Bootstrapped SERVICES_STATUS.json as minimal placeholder (BOOTSTRAP_PLACEHOLDER)
+  - Ran snapshot generator → updated GOVERNANCE_LATEST.json  
+  - Ran reconciler → updated SYSTEM_STATE_COMPACT.json
+  - Updated .gitignore to track current state files but ignore noisy derived files
+  - Architectural decision: Option A (track LATEST/COMPACT/SERVICES_STATUS, ignore timestamped snapshots/timeline)
+- Files changed:
+  - .gitignore (NEW: ignore rules for noisy derived files)
+  - docs/system_state/registries/SERVICES_STATUS.json (NEW: bootstrap placeholder, now tracked)
+  - governance/snapshots/GOVERNANCE_LATEST.json (already tracked, reconciled)
+  - docs/system_state/SYSTEM_STATE_COMPACT.json (already tracked, reconciled)
+- Incident: Git MCP server not configured → required manual PowerShell bridge (documented as technical debt)
+- Commit: 29c328d
+- Duration: ~60 min (including research mode + git strategy analysis)
+- Research alignment: Dual Truth Architecture, Git-backed Truth Layer, Observed State pattern
+
+**2025-11-29 – Meta-Slice: Memory Bank Bootstrap**
+- Created memory-bank/ infrastructure for project continuity
+- Files:
+  - project-brief.md (Vision, Requirements, TL;DR)
+  - 01-active-context.md (Quick Status, Current Focus, Recent, Next)
+  - 02-progress.md (chronological log)
+- Purpose: New chats can load context in <30 seconds
+- Pattern: Two-level TL;DR (Quick Status + TL;DR)
+- Protocol: AT START (load context) + AT END (update files)
+- Commit: eefc5d3f
 
 **2025-11-29 – Slice 1.2b: Archive tools/**
 - Moved `tools/` → `archive/one-time/tools/`
@@ -77,19 +108,6 @@ GROUNDING:
 - Impact: Demo/test scripts broken (expected, not operational)
 - Commit: 0e6614fe
 - Docs updated: INVESTIGATION_RESULTS.md, migration_plan.md, current_vs_target_matrix.md, current_state_map.md
-
-**2025-11-29 – Slice 1.1a: Legacy Component Investigation**
-- Static analysis of ai_core/, tools/, scripts/, root scripts
-- Method: Import analysis, code inspection, git history
-- Result: docs/INVESTIGATION_RESULTS.md (comprehensive findings)
-- Confidence: High for ai_core/tools/, Medium for scripts/
-
-**2025-11-29 – Phase 0: System Mapping (Complete)**
-- Created 4 professional mapping docs:
-  - current_state_map.md (90+ elements mapped)
-  - target_architecture_summary.md (7 core principles)
-  - current_vs_target_matrix.md (action plan per element)
-  - migration_plan.md (4 phases, 16 slices)
 
 ---
 
@@ -111,16 +129,16 @@ GROUNDING:
 - Risk: Low (duplicates confirmed)
 - Benefit: Cleaner repo structure
 
-**Option C: Slice 1.3 – Fix Critical Drift (15-30 min)**
-- Problem: Truth Layer reports `last_commit: 43b308a`, actual HEAD is `869ad5ce`
-- Action: Run reconciler to update Truth Layer
-- Risk: Low (just reconciler execution)
-- Benefit: Fix split-brain condition (high value)
+**Option C: Slice 1.4 – Fix Legacy File Paths (20-30 min)**
+- Problem: Some docs reference old paths (e.g., ai_core/ before archive)
+- Action: Search & update references in docs/
+- Risk: Low (documentation only)
+- Benefit: Maintain documentation accuracy
 
 **Strategic Note:**
 - Consider doing 1.2c + 1.2d back-to-back (finish all cleanup)
-- Then 1.3 (drift fix) before Phase 2
-- Or jump to Phase 2 if cleanup fatigue
+- Phase 1 is ~40% complete, good momentum
+- Could transition to Phase 2 after cleanup
 
 **User Preference:**
 - ADHD-aware: prefer momentum + quick wins
@@ -129,5 +147,5 @@ GROUNDING:
 
 ---
 
-**Last Updated:** 2025-11-29 (after Slice 1.2b)  
+**Last Updated:** 2025-11-29 (after Slice 1.3 + 1.3a)  
 **Next Update:** After next completed slice

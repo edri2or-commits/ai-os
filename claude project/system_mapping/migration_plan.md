@@ -144,30 +144,58 @@ git rm -r "maby relevant/" "mcp/" "מחקרי ארכיטקטורה/"
 
 ---
 
-### Slice 1.3: Critical Drift Fix
+### Slice 1.3: Critical Drift Fix ✅ COMPLETE
 
-**Duration:** 2 hours
+**Date:** 2025-11-29  
+**Duration:** ~60 min (including research mode + git strategy decision)  
+**Status:** ✅ COMPLETE
 
-**Problem:** Truth Layer says `last_commit: 43b308a`, actual HEAD is `41581fae`
+**Problem:** 
+- Truth Layer showed `last_commit: 43b308a`, actual HEAD was `eefc5d3` (3 commits behind)
+- SERVICES_STATUS.json was empty → reconciler failed silently
+- State files (governance/, docs/system_state/) not tracked in git
 
-**Fix:**
-```python
-# Update reconciler to check actual git HEAD
-def get_actual_git_head():
-    result = subprocess.run(
-        ['git', 'rev-parse', 'HEAD'],
-        capture_output=True, text=True,
-        cwd='/path/to/ai-os'
-    )
-    return result.stdout.strip()
+**Sub-Slice 1.3a: Bootstrap SERVICES_STATUS.json**
+- Created minimal valid placeholder with BOOTSTRAP_PLACEHOLDER status
+- Honest about reality (total: 0, services: [])
+- Unblocked reconciler pipeline
+- Will be replaced by Observer in Phase 2
 
-# Run reconciler
-python services/os_core_mcp/reconciler.py
-```
+**Git Tracking Strategy (Research Mode):**
+- Entered Research Mode when discovered state files not in git
+- Consulted research docs (02, 08, 13) on Dual Truth Architecture
+- Designed Option A/B/C for git tracking strategy
+- Selected Option A: Track current state files, ignore high-noise derived files
 
-**Success:** SYSTEM_STATE_COMPACT.json shows correct HEAD
+**Actions Completed:**
+1. Created SERVICES_STATUS.json (bootstrap placeholder)
+2. Ran `generate_snapshot.py` → updated GOVERNANCE_LATEST.json  
+3. Ran `reconciler.py` → updated SYSTEM_STATE_COMPACT.json
+4. Updated .gitignore with clear rationale:
+   - Track: GOVERNANCE_LATEST, SYSTEM_STATE_COMPACT, SERVICES_STATUS (current state)
+   - Ignore: SNAPSHOT_*.json, EVENT_TIMELINE.jsonl (high-noise derived)
+5. Git commit via manual PowerShell bridge (Git MCP not configured)
 
-**Research:** 08, 13, msg_020
+**Files Changed:**
+- `.gitignore` - NEW: state files section with ignore rules
+- `docs/system_state/registries/SERVICES_STATUS.json` - NEW, tracked
+- `governance/snapshots/GOVERNANCE_LATEST.json` - reconciled (already tracked)
+- `docs/system_state/SYSTEM_STATE_COMPACT.json` - reconciled (already tracked)
+
+**Result:**
+- ✅ Drift fixed: git_status.last_commit now shows `29c328d`
+- ✅ Reconciler pipeline operational
+- ✅ Git tracking strategy established (Option A)
+- ✅ Future noise mitigation: state commits only on manual slices or approved CRs
+
+**Technical Incident:**
+- Git MCP server not configured in Claude Desktop
+- Required manual PowerShell bridge for git operations
+- Documented as technical debt (see Technical Debt section below)
+
+**Commit:** `29c328d` - fix(drift): Reconcile Truth Layer + bootstrap SERVICES_STATUS + track state files
+
+**Research Alignment:** Dual Truth Architecture (08), Git-backed Truth Layer (01), Observed State pattern (02, 08), Split-brain prevention (13)
 
 ---
 
@@ -731,6 +759,45 @@ Week 9-12: Phase 4 (Cleanup)
 - Before activating Observer (Slice 2.3)
 - Before deprecating components (Slice 4.1)
 - Final go-live (end of Phase 4)
+
+---
+
+## Technical Debt
+
+**Purpose:** Track known limitations and future infrastructure improvements
+
+### TD-001: Git MCP Server Not Configured
+
+**Discovered:** 2025-11-29 (during Slice 1.3)  
+**Impact:** Claude Desktop cannot perform git operations autonomously  
+**Current Workaround:** Manual PowerShell bridge for git add/commit/diff  
+**Root Cause:** Git MCP server not configured in `claude_desktop_config.json`  
+
+**Required Fix (Future Slice):**
+1. Install `mcp-server-git` (Python package)
+2. Add to `%APPDATA%\Claude\claude_desktop_config.json`:
+   ```json
+   {
+     "mcpServers": {
+       "git": {
+         "command": "python",
+         "args": ["-m", "mcp_server_git", "--repo", "C:\\Users\\edri2\\Desktop\\AI\\ai-os"]
+       }
+     }
+   }
+   ```
+3. Restart Claude Desktop
+4. Test git operations via MCP tools
+5. Remove manual workaround documentation
+
+**Priority:** Medium (not blocking, but reduces friction)  
+**Estimated Effort:** 1-2 hours (configuration + testing)  
+**Proposed Slice:** 2.0 (Infrastructure Setup) or dedicated slice before Phase 2  
+
+**Research References:**
+- 01_architectural-blueprint_phase-3-ai-os.md (Table 1: MCP Scope Configuration)
+- 09_agentic_kernel_claude_desktop_mcp.md (Git Integration section)
+- msg_027.md (MCP configuration management)
 
 ---
 

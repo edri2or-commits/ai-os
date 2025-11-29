@@ -40,6 +40,27 @@
   - Commit: 869ad5ce
   - Safety: Separate archive/one-time/ created for clarity
 
+- 2025-11-29 – Meta-Slice: Memory Bank Bootstrap
+  - Created memory-bank/ infrastructure for project continuity
+  - Files: project-brief.md, 01-active-context.md, 02-progress.md
+  - Purpose: New chats can load context in <30 seconds
+  - Pattern: Two-level TL;DR (Quick Status + TL;DR), Protocol (start/end)
+  - Research: Memory Bank pattern, Truth Layer, ADHD-aware design
+  - Commit: eefc5d3f
+
+- 2025-11-29 – Slice 1.3 + Sub-Slice 1.3a: Drift fix + SERVICES_STATUS bootstrap + Git tracking
+  - Problem: Truth Layer showed last_commit: 43b308a, actual HEAD was eefc5d3 (3 commits behind)
+  - Root cause: SERVICES_STATUS.json was empty → reconciler failed silently
+  - Discovery: State files not tracked in git → entered Research Mode, analyzed options
+  - Solution: Bootstrapped SERVICES_STATUS.json, ran snapshot generator + reconciler, updated .gitignore
+  - Architectural decision: Track current state files (Option A), ignore noisy derived files
+  - Files changed: .gitignore (new rules), SERVICES_STATUS.json (new, tracked), GOVERNANCE_LATEST + SYSTEM_STATE_COMPACT (reconciled)
+  - Result: Drift fixed, reconciler pipeline operational, git tracking strategy established
+  - Incident: Git MCP not configured → manual PowerShell bridge (technical debt documented)
+  - Commit: 29c328d
+  - Duration: ~60 min (research mode + git strategy + manual bridge)
+  - Research: Dual Truth Architecture, Git-backed Truth Layer, Observed State pattern
+
 ---
 
 ## Phase 2: Core Infrastructure (Pending)
@@ -61,5 +82,5 @@
 ---
 
 **Last Updated:** 2025-11-29  
-**Slices Completed:** 3 (1.1a, 1.2a, 1.2b)  
-**Current Phase:** Phase 1 (~30% complete)
+**Slices Completed:** 5 (1.1a, 1.2a, 1.2b, Meta, 1.3+1.3a)  
+**Current Phase:** Phase 1 (~40% complete)
