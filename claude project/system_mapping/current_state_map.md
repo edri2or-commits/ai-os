@@ -38,20 +38,26 @@ ai-os/
 │
 ├── services/                   # MCP servers and backend services
 ├── infra/                      # Infrastructure (n8n, Docker)
-├── ai_core/                    # Core AI components (agent gateway, orchestrator)
 ├── agents/                     # Agent documentation
 ├── workflows/                  # Workflow documentation
-├── tools/                      # Tool documentation
 ├── policies/                   # Security & operational policies
 ├── scripts/                    # Utility scripts
 ├── chat/                       # Telegram bot (unclear if active)
 ├── test/                       # Test fixtures
 │
-├── archive/                    # Legacy/archived materials
-├── maby relevant/              # Empty directory (typo: "maybe")
-├── mcp/                        # Empty directory
-└── מחקרי ארכיטקטורה/          # Empty directory (Hebrew: "Architecture Research")
+├── archive/                    # ✅ Archived/deprecated components
+│   ├── legacy/                 # Legacy architecture (superseded)
+│   │   └── ai_core/            # [ARCHIVED 2025-11-29] Pre-MCP orchestration
+│   └── one-time/               # One-time utilities (completed)
+│       └── tools/              # [ARCHIVED 2025-11-29] Repo initialization
+│
+├── [multiple root scripts]     # Start scripts, demos, tests (see Section 15)
+└── [miscellaneous]             # Config files, zips, temp files
 ```
+
+**Migration Notes (2025-11-29):**
+- ✅ `ai_core/` archived to `archive/legacy/ai_core/` (Slice 1.2a)
+- ✅ `tools/` archived to `archive/one-time/tools/` (Slice 1.2b)
 
 ---
 

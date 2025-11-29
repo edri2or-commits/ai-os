@@ -1,0 +1,37 @@
+chore(migration): Archive tools/ one-time utilities
+
+- Moved tools/ → archive/one-time/tools/
+- Reason: One-time repo initialization utilities, no active usage
+- Components archived:
+  * repo_bootstrap_agent.py - Initial directory setup (deprecated)
+  * repo_introspection_agent.py - Repo analysis (one-time)
+  * repo_reader_base.py - Base class (unused)
+  * system_init.py - System initialization (one-time)
+  * TOOLS_INVENTORY.md - Documentation
+
+Impact:
+- Zero expected breakage (no imports, no references)
+- All one-time utilities, no longer needed
+
+Evidence (from Slice 1.1a):
+- ZERO external imports found in codebase
+- Code quality issues (typos) suggest never production-grade
+- Directory structure they create already exists
+
+Migration:
+- Slice: 1.2b (Phase 1 cleanup)
+- Refs: INVESTIGATION_RESULTS.md (Slice 1.1a findings)
+- Pattern: Archive > Delete (safety-first)
+- Rollback: git revert HEAD or git mv archive/one-time/tools tools/
+
+Documentation Updated:
+- docs/INVESTIGATION_RESULTS.md - Added migration completion note
+- claude project/system_mapping/migration_plan.md - Marked Slice 1.2b complete
+- claude project/system_mapping/current_vs_target_matrix.md - Updated tools/ status
+- claude project/system_mapping/current_state_map.md - Updated directory structure
+- archive/one-time/README.md - Created archive documentation
+
+Architecture:
+- Cleanup: One-time utilities completed their purpose
+- Pattern: Preserve in archive for historical reference
+- Alignment: Safety/Governance research family - "Prevention < Recovery"

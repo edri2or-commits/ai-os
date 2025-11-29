@@ -246,16 +246,19 @@
 ### 6.3 Tools
 
 | Current Path | Type | Target Role | Action | Notes / Sources |
-|--------------|------|-------------|--------|-----------------|
-| `tools/repo_bootstrap_agent.py` | file | Tools | ⚠️ investigate | Repository bootstrap. Check if used or one-time utility. |
-| `tools/repo_introspection_agent.py` | file | Tools | ⚠️ investigate | Repo introspection. Check if used or one-time utility. |
-| `tools/repo_reader_base.py` | file | Tools | ⚠️ investigate | Repo reader base. Check dependencies. |
-| `tools/system_init.py` | file | Tools | ⚠️ investigate | System initialization. Check if used or legacy. |
-| `tools/TOOLS_INVENTORY.md` | file | Governance (Tool Registry) | ✅ keep/as-is | Tool inventory. Useful reference. |
+|--------------|------|-------------|--------|------------------|
+| `tools/` (entire directory) | dir | Legacy (One-Time) | ✅ **DEPRECATED** | **Archived to `archive/one-time/tools/` (Slice 1.2b, 2025-11-29)**. One-time repo initialization utilities, no active usage. **Sources:** INVESTIGATION_RESULTS.md |
+
+**Migration Complete:**
+- ✅ All tools/ archived to archive/one-time/tools/
+- Components: repo_bootstrap_agent.py, repo_introspection_agent.py, repo_reader_base.py, system_init.py, TOOLS_INVENTORY.md
+- Evidence: ZERO external imports, no active references
+- Impact: Zero breakage expected
+- Slice: 1.2b (2025-11-29)
 
 **Key Decision:**
-- Python tools unclear → investigate usage
-- Inventory doc → keep
+- One-time utilities → deprecated and archived
+- No ongoing usage → safe to archive
 
 ---
 

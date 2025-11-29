@@ -87,9 +87,12 @@ python ai_core/agent_gateway.py --help
 **Result:** ✅ Legacy pre-MCP orchestration layer safely archived  
 **Commit:** chore(migration): Archive ai_core/ legacy orchestration layer  
 
-#### Slice 1.2b: Archive tools/ (PENDING)
+#### Slice 1.2b: Archive tools/ ✅ COMPLETE
 
-**Action:** Archive tools/ → archive/one-time/tools/  
+**Date:** 2025-11-29  
+**Action:** Archived tools/ → archive/one-time/tools/  
+**Result:** ✅ One-time initialization utilities safely archived  
+**Commit:** chore(migration): Archive tools/ one-time utilities  
 
 #### Slice 1.2c: Remove EVENT_TIMELINE duplicate (PENDING)
 

@@ -8,7 +8,7 @@ Write-Host "`n=== Git Status ===" -ForegroundColor Cyan
 & $gitPath status --short
 
 Write-Host "`n=== Git Commit ===" -ForegroundColor Cyan
-& $gitPath commit -F COMMIT_MSG_SLICE_1_2a.txt
+& $gitPath commit -F COMMIT_MSG_SLICE_1_2b.txt
 
 Write-Host "`n=== Verify Commit ===" -ForegroundColor Cyan
 & $gitPath log --oneline -1

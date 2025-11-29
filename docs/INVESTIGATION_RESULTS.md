@@ -22,7 +22,7 @@
 
 **Migration Status:**
 - ✅ **ai_core/** - Archived to `archive/legacy/ai_core/` (Slice 1.2a, 2025-11-29)
-- ⏸️ **tools/** - Pending (Slice 1.2b or later)
+- ✅ **tools/** - Archived to `archive/one-time/tools/` (Slice 1.2b, 2025-11-29)
 - ⏸️ **scripts/** - Pending investigation
 - ⏸️ **Root scripts** - Pending categorization
 
@@ -375,6 +375,34 @@ Creates initial directory structure (core/, system/, agents/, workflows/)
 1. Quick skim of remaining files to confirm hypothesis
 2. Move tools/ to archive/one-time/
 3. Document in REMOVED_COMPONENTS.md
+
+---
+
+### ✅ MIGRATION COMPLETE (Slice 1.2b)
+
+**Date:** 2025-11-29  
+**Action:** tools/ archived to `archive/one-time/tools/`  
+**Status:** ✅ **ARCHIVED**  
+**Location:** `archive/one-time/tools/`  
+**Reason:** One-time repo initialization utilities, no active usage  
+**Rollback:** `git mv archive/one-time/tools tools/` or `git revert HEAD`  
+
+**Impact:**
+- Zero expected breakage (no imports, no references)
+- All one-time setup utilities, already executed their purpose
+- No production impact (ZERO external imports confirmed)
+
+**Components Archived:**
+- repo_bootstrap_agent.py - Initial directory setup (deprecated)
+- repo_introspection_agent.py - Repo analysis (one-time)
+- repo_reader_base.py - Base class (unused)
+- system_init.py - System initialization (one-time)
+- TOOLS_INVENTORY.md - Documentation
+
+**Next Steps:**
+- Monitor for 1 week for any unexpected breakage (unlikely)
+- If stable, mark as permanent deprecation
+- Continue to Slice 1.2c/d (duplicates removal) or Phase 2
 
 ---
 
