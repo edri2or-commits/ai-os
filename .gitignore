@@ -132,6 +132,18 @@ Desktop.ini
 /test-data/
 
 # ============================================================================
+# STATE FILES (DERIVED, HIGH-NOISE)
+# ============================================================================
+# Track current state snapshots (GOVERNANCE_LATEST, SYSTEM_STATE_COMPACT, SERVICES_STATUS)
+# but ignore high-noise derived files (timestamped snapshots, event timeline)
+
+# Timestamped snapshots (generated from GOVERNANCE_LATEST)
+governance/snapshots/SNAPSHOT_*.json
+
+# Event timeline (append-only log, too noisy for git)
+docs/system_state/timeline/EVENT_TIMELINE.jsonl
+
+# ============================================================================
 # NOTES
 # ============================================================================
 # This .gitignore protects ai-os from accidentally committing sensitive data.
