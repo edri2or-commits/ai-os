@@ -1,175 +1,180 @@
 {
-  "_schema": "SERVICES_STATUS_V0",
-  "_description": "Registry of all services and their operational status in AI-OS",
-  "_status_values": ["up", "partial", "planned", "not_configured", "broken", "error_auth"],
-  "_last_updated": "2025-11-26",
-  "_updated_by": "Claude Desktop (TOOL_INTEGRATION_MAP_V1)",
-  
-  "services": [
-    {
-      "id": "github",
-      "name": "GitHub",
-      "type": "code_hosting",
-      "status": "up",
-      "connected_via": "MCP GitHub Client (port 8081) + Claude MCP + GPT Custom Actions",
-      "access_patterns": [
-        "Claude Desktop: MCP GitHub Client + local clone (full read/write, local commits)",
-        "GPT Operator: Custom Action via ngrok (read/write files, branches, commits, PRs)"
-      ],
-      "critical_issue": "GPT access depends on stable ngrok URL - URL changes on restart",
-      "notes": "Full R/W access, GPT Actions working when ngrok is stable"
-    },
-    {
-      "id": "mcp_github_client",
-      "name": "MCP GitHub Client",
-      "type": "integration",
-      "status": "up",
-      "connected_via": "FastAPI service (port 8081)",
-      "access_patterns": [
-        "HTTP API: POST /github/open-pr, /github/read-file, /github/list-tree",
-        "Used by: scripts/open_pr_for_branch.py (PR automation)",
-        "Tested: smoke_test_open_pr.py (all 3 tests passed 2025-11-27)"
-      ],
-      "notes": "GitHub PR Automator / MCP GitHub Client. Provides programmatic access to GitHub API for PR creation, file operations. Infrastructure component for automated PR workflows."
-    },
-    {
-      "id": "google-gmail",
-      "name": "Gmail",
-      "type": "email",
-      "status": "up",
-      "connected_via": "Google Workspace Client (port 8082) + Claude MCP (read-only)",
-      "access_patterns": [
-        "GPT Operator: Google Workspace Custom Action (full read/write, send/list)",
-        "Claude Desktop: google-mcp (read-only access)"
-      ],
-      "notes": "OAuth 2.0, send/list working. Used for email automations in future phases."
-    },
-    {
-      "id": "google-calendar",
-      "name": "Google Calendar",
-      "type": "calendar",
-      "status": "up",
-      "connected_via": "Google Workspace Client (port 8082) + Claude MCP (read-only)",
-      "access_patterns": [
-        "GPT Operator: Google Workspace Custom Action (full read/write, create/list events)",
-        "Claude Desktop: google-mcp (read-only access)"
-      ],
-      "notes": "OAuth 2.0, create/list events working"
-    },
-    {
-      "id": "google-drive",
-      "name": "Google Drive",
-      "type": "storage",
-      "status": "up",
-      "connected_via": "Google Workspace Client (port 8082) + Claude MCP (read-only)",
-      "access_patterns": [
-        "GPT Operator: Google Workspace Custom Action (full read/write, search/create/update)",
-        "Claude Desktop: google-mcp (read-only, search only)"
-      ],
-      "notes": "Search working, used for Drive Snapshot. Source for future Drive State Layer."
-    },
-    {
-      "id": "google-docs",
-      "name": "Google Docs",
-      "type": "documents",
-      "status": "up",
-      "connected_via": "Google Workspace Client (port 8082)",
-      "access_patterns": [
-        "GPT Operator: Google Workspace Custom Action (create/read/write docs)"
-      ],
-      "notes": "Doc creation working, used for SYSTEM_SNAPSHOT_DRIVE"
-    },
-    {
-      "id": "google-sheets",
-      "name": "Google Sheets",
-      "type": "spreadsheets",
-      "status": "partial",
-      "connected_via": "Google Workspace Client (port 8082)",
-      "access_patterns": [
-        "GPT Operator: Google Workspace Custom Action (create/read/write sheets)"
-      ],
-      "notes": "Connected but not integrated into main workflows yet. Reserved for future Control Plane UI."
-    },
-    {
-      "id": "google-tasks",
-      "name": "Google Tasks",
-      "type": "tasks",
-      "status": "partial",
-      "connected_via": "Google Workspace Client (port 8082)",
-      "access_patterns": [
-        "GPT Operator: Google Workspace Custom Action (create/read/update tasks)"
-      ],
-      "notes": "Connected but not integrated into main workflows yet. Reserved for future task orchestration."
-    },
-    {
-      "id": "ngrok",
-      "name": "ngrok Tunnel",
-      "type": "networking",
-      "status": "up",
-      "connected_via": "CLI + start-all-services.bat",
-      "notes": "WARNING: URL changes on restart, must update GPT Actions"
-    },
-    {
-      "id": "claude-desktop",
-      "name": "Claude Desktop",
-      "type": "agent",
-      "status": "up",
-      "connected_via": "Local app + MCPs",
-      "notes": "Primary executor, full system access"
-    },
-    {
-      "id": "gpt-actions",
-      "name": "GPT Custom Actions",
-      "type": "agent",
-      "status": "up",
-      "connected_via": "HTTPS via ngrok",
-      "notes": "Planner, depends on ngrok URL"
-    },
-    {
-      "id": "telegram-chat1",
-      "name": "Chat1 Telegram Bot",
-      "type": "ui",
-      "status": "partial",
-      "connected_via": "telegram_bot.py",
-      "notes": "Code ready, not deployed persistently"
-    },
-    {
-      "id": "n8n",
-      "name": "n8n Automation",
-      "type": "automation",
-      "status": "up",
-      "connected_via": "Docker (infra/n8n/docker-compose.yml)",
-      "access_patterns": [
-        "Local access: http://localhost:5678",
-        "Phase 2.3: INFRA_ONLY - no live workflows yet",
-        "Phase 2.4+: Workflow automation kernel for AI-OS"
-      ],
-      "notes": "Docker instance running locally. Basic auth enabled. SQLite database. No live automations yet - INFRA_ONLY Phase 2.3."
-    },
-    {
-      "id": "make",
-      "name": "Make.com",
-      "type": "automation",
-      "status": "not_configured",
-      "connected_via": "External SaaS",
-      "notes": "Status unclear, may or may not be in use"
-    },
-    {
-      "id": "docker",
-      "name": "Docker",
-      "type": "containerization",
-      "status": "planned",
-      "connected_via": "Local Docker Desktop",
-      "notes": "Prepared but not in active use"
-    }
-  ],
-  
-  "summary": {
-    "up": 10,
-    "partial": 3,
-    "planned": 1,
-    "not_configured": 1,
-    "broken": 0,
-    "total": 15
-  }
+    "_schema":  "SERVICES_STATUS_V0",
+    "_description":  "Registry of all services and their operational status in AI-OS",
+    "_status_values":  [
+                           "up",
+                           "partial",
+                           "planned",
+                           "not_configured",
+                           "broken",
+                           "error_auth"
+                       ],
+    "_last_updated":  "2025-11-26",
+    "_updated_by":  "Claude Desktop (TOOL_INTEGRATION_MAP_V1)",
+    "services":  [
+                     {
+                         "id":  "github",
+                         "name":  "GitHub",
+                         "type":  "code_hosting",
+                         "status":  "up",
+                         "connected_via":  "MCP GitHub Client (port 8081) + Claude MCP + GPT Custom Actions",
+                         "access_patterns":  [
+                                                 "Claude Desktop: MCP GitHub Client + local clone (full read/write, local commits)",
+                                                 "GPT Operator: Custom Action via ngrok (read/write files, branches, commits, PRs)"
+                                             ],
+                         "critical_issue":  "GPT access depends on stable ngrok URL - URL changes on restart",
+                         "notes":  "Full R/W access, GPT Actions working when ngrok is stable"
+                     },
+                     {
+                         "id":  "mcp_github_client",
+                         "name":  "MCP GitHub Client",
+                         "type":  "integration",
+                         "status":  "up",
+                         "connected_via":  "FastAPI service (port 8081)",
+                         "access_patterns":  [
+                                                 "HTTP API: POST /github/open-pr, /github/read-file, /github/list-tree",
+                                                 "Used by: Claude Desktop (PowerShell → HTTP), GPT Operator (Custom Actions), Chat1 (future)",
+                                                 "Tested: PRs #22, #23, #24, #25, #26, #27, #28 created successfully (2025-11-29)"
+                                             ],
+                         "notes":  "GitHub PR Automator / MCP GitHub Client. Provides programmatic access to GitHub API for PR creation, file operations. Infrastructure component for automated PR workflows. Multi-agent server serving Claude Desktop, GPT Operator, and future agents."
+                     },
+                     {
+                         "id":  "google-gmail",
+                         "name":  "Gmail",
+                         "type":  "email",
+                         "status":  "up",
+                         "connected_via":  "Google Workspace Client (port 8082) + Claude MCP (read-only)",
+                         "access_patterns":  [
+                                                 "GPT Operator: Google Workspace Custom Action (full read/write, send/list)",
+                                                 "Claude Desktop: google-mcp (read-only access)"
+                                             ],
+                         "notes":  "OAuth 2.0, send/list working. Used for email automations in future phases."
+                     },
+                     {
+                         "id":  "google-calendar",
+                         "name":  "Google Calendar",
+                         "type":  "calendar",
+                         "status":  "up",
+                         "connected_via":  "Google Workspace Client (port 8082) + Claude MCP (read-only)",
+                         "access_patterns":  [
+                                                 "GPT Operator: Google Workspace Custom Action (full read/write, create/list events)",
+                                                 "Claude Desktop: google-mcp (read-only access)"
+                                             ],
+                         "notes":  "OAuth 2.0, create/list events working"
+                     },
+                     {
+                         "id":  "google-drive",
+                         "name":  "Google Drive",
+                         "type":  "storage",
+                         "status":  "up",
+                         "connected_via":  "Google Workspace Client (port 8082) + Claude MCP (read-only)",
+                         "access_patterns":  [
+                                                 "GPT Operator: Google Workspace Custom Action (full read/write, search/create/update)",
+                                                 "Claude Desktop: google-mcp (read-only, search only)"
+                                             ],
+                         "notes":  "Search working, used for Drive Snapshot. Source for future Drive State Layer."
+                     },
+                     {
+                         "id":  "google-docs",
+                         "name":  "Google Docs",
+                         "type":  "documents",
+                         "status":  "up",
+                         "connected_via":  "Google Workspace Client (port 8082)",
+                         "access_patterns":  [
+                                                 "GPT Operator: Google Workspace Custom Action (create/read/write docs)"
+                                             ],
+                         "notes":  "Doc creation working, used for SYSTEM_SNAPSHOT_DRIVE"
+                     },
+                     {
+                         "id":  "google-sheets",
+                         "name":  "Google Sheets",
+                         "type":  "spreadsheets",
+                         "status":  "partial",
+                         "connected_via":  "Google Workspace Client (port 8082)",
+                         "access_patterns":  [
+                                                 "GPT Operator: Google Workspace Custom Action (create/read/write sheets)"
+                                             ],
+                         "notes":  "Connected but not integrated into main workflows yet. Reserved for future Control Plane UI."
+                     },
+                     {
+                         "id":  "google-tasks",
+                         "name":  "Google Tasks",
+                         "type":  "tasks",
+                         "status":  "partial",
+                         "connected_via":  "Google Workspace Client (port 8082)",
+                         "access_patterns":  [
+                                                 "GPT Operator: Google Workspace Custom Action (create/read/update tasks)"
+                                             ],
+                         "notes":  "Connected but not integrated into main workflows yet. Reserved for future task orchestration."
+                     },
+                     {
+                         "id":  "ngrok",
+                         "name":  "ngrok Tunnel",
+                         "type":  "networking",
+                         "status":  "up",
+                         "connected_via":  "CLI + start-all-services.bat",
+                         "notes":  "WARNING: URL changes on restart, must update GPT Actions"
+                     },
+                     {
+                         "id":  "claude-desktop",
+                         "name":  "Claude Desktop",
+                         "type":  "agent",
+                         "status":  "up",
+                         "connected_via":  "Local app + MCPs",
+                         "notes":  "Primary executor, full system access. GitHub integration: PowerShell → HTTP API (localhost:8081). Verified 2025-11-29 with successful PRs #22-#28."
+                     },
+                     {
+                         "id":  "gpt-actions",
+                         "name":  "GPT Custom Actions",
+                         "type":  "agent",
+                         "status":  "up",
+                         "connected_via":  "HTTPS via ngrok",
+                         "notes":  "Planner, depends on ngrok URL"
+                     },
+                     {
+                         "id":  "telegram-chat1",
+                         "name":  "Chat1 Telegram Bot",
+                         "type":  "ui",
+                         "status":  "partial",
+                         "connected_via":  "telegram_bot.py",
+                         "notes":  "Code ready, not deployed persistently"
+                     },
+                     {
+                         "id":  "n8n",
+                         "name":  "n8n Automation",
+                         "type":  "automation",
+                         "status":  "up",
+                         "connected_via":  "Docker (infra/n8n/docker-compose.yml)",
+                         "access_patterns":  [
+                                                 "Local access: http://localhost:5678",
+                                                 "Phase 2.3: INFRA_ONLY - no live workflows yet",
+                                                 "Phase 2.4+: Workflow automation kernel for AI-OS"
+                                             ],
+                         "notes":  "Docker instance running locally. Basic auth enabled. SQLite database. No live automations yet - INFRA_ONLY Phase 2.3."
+                     },
+                     {
+                         "id":  "make",
+                         "name":  "Make.com",
+                         "type":  "automation",
+                         "status":  "not_configured",
+                         "connected_via":  "External SaaS",
+                         "notes":  "Status unclear, may or may not be in use"
+                     },
+                     {
+                         "id":  "docker",
+                         "name":  "Docker",
+                         "type":  "containerization",
+                         "status":  "planned",
+                         "connected_via":  "Local Docker Desktop",
+                         "notes":  "Prepared but not in active use"
+                     }
+                 ],
+    "summary":  {
+                    "up":  10,
+                    "partial":  3,
+                    "planned":  1,
+                    "not_configured":  1,
+                    "broken":  0,
+                    "total":  15
+                }
 }
