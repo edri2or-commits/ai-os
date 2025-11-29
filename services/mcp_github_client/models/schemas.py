@@ -1,4 +1,4 @@
-"""Pydantic models for request/response schemas"""
+﻿"""Pydantic models for request/response schemas"""
 from pydantic import BaseModel, Field
 from typing import Optional, Dict, Any, List
 
@@ -113,3 +113,30 @@ class GetCommitsRequest(BaseModel):
 class GetCommitsResponse(BaseResponse):
     """Response for getting commits"""
     commits: Optional[List[Dict[str, Any]]] = Field(None, description="List of commits")
+
+
+class MergePRRequest(BaseModel):
+    """Request to merge a Pull Request"""
+    pr_number: int = Field(..., description="PR number to merge")
+    merge_method: str = Field(
+        default="squash",
+        description="Merge method: merge, squash, or rebase"
+    )
+    commit_title: Optional[str] = Field(
+        default=None,
+        description="Custom commit title (optional)"
+    )
+    commit_message: Optional[str] = Field(
+        default=None,
+        description="Custom commit message (optional)"
+    )
+
+
+class MergePRResponse(BaseModel):
+    """Response from merging a PR"""
+    ok: bool
+    message: str
+    error_type: Optional[str] = None
+    status_code: Optional[int] = None
+    sha: Optional[str] = None
+    merged: Optional[bool] = None

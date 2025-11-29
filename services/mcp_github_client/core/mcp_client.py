@@ -1,4 +1,4 @@
-"""MCP GitHub Client - wraps GitHub API calls with structured error handling"""
+﻿"""MCP GitHub Client - wraps GitHub API calls with structured error handling"""
 import httpx
 import logging
 from typing import Dict, Any, Optional
@@ -431,3 +431,71 @@ class MCPGitHubClient:
                     "message": str(e),
                     "status_code": 500
                 }
+
+    async def merge_pull_request(
+        self,
+        pr_number: int,
+        merge_method: str = "squash",
+        commit_title: str = None,
+        commit_message: str = None
+    ) -> Dict[str, Any]:
+        """
+        Merge a pull request.
+        
+        Args:
+            pr_number: The PR number to merge
+            merge_method: Method to use (merge, squash, rebase)
+            commit_title: Optional custom commit title
+            commit_message: Optional custom commit message
+            
+        Returns:
+            Dict with 'ok', 'message', and optionally 'sha', 'merged'
+        """
+        try:
+            # Get the PR first to validate it exists and is mergeable
+            pr = self.repo.get_pull(pr_number)
+            
+            if pr.merged:
+                return {
+                    "ok": False,
+                    "message": f"PR #{pr_number} is already merged",
+                    "error_type": "already_merged"
+                }
+            
+            if pr.state != "open":
+                return {
+                    "ok": False,
+                    "message": f"PR #{pr_number} is not open (state: {pr.state})",
+                    "error_type": "not_open"
+                }
+            
+            # Merge the PR
+            result = pr.merge(
+                commit_title=commit_title,
+                commit_message=commit_message,
+                merge_method=merge_method
+            )
+            
+            return {
+                "ok": True,
+                "message": f"PR #{pr_number} merged successfully",
+                "sha": result.sha,
+                "merged": result.merged
+            }
+            
+        except GithubException as e:
+            logger.error(f"GitHub API error merging PR #{pr_number}: {e}")
+            return {
+                "ok": False,
+                "message": f"Failed to merge PR: {e.data.get('message', str(e))}",
+                "error_type": "github_error",
+                "status_code": e.status
+            }
+        except Exception as e:
+            logger.error(f"Unexpected error merging PR #{pr_number}: {e}")
+            return {
+                "ok": False,
+                "message": f"Unexpected error: {str(e)}",
+                "error_type": "unexpected_error"
+            }
+

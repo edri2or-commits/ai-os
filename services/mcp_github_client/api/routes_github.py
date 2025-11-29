@@ -1,4 +1,4 @@
-"""GitHub operations API routes"""
+﻿"""GitHub operations API routes"""
 import logging
 from fastapi import APIRouter, HTTPException
 from typing import Dict, Any
@@ -345,3 +345,46 @@ async def get_commits(request: GetCommitsRequest) -> Dict[str, Any]:
         error_type=result.get("error_type", "get_commits_failed"),
         message=f"Failed to get commits: {result.get('message')}"
     )
+
+
+@router.post("/merge-pr", response_model=MergePRResponse)
+async def merge_pr(request: MergePRRequest) -> Dict[str, Any]:
+    """
+    Merge a Pull Request.
+    
+    This endpoint allows merging an existing PR after it has been reviewed
+    and approved. Supports different merge methods (merge, squash, rebase).
+    
+    Process:
+    1. Validate PR exists and is open
+    2. Check if PR is mergeable
+    3. Merge using specified method
+    4. Return merge status
+    
+    Returns a standardized response with 'ok' field.
+    """
+    logger.info(f"Merging PR #{request.pr_number} with method: {request.merge_method}")
+    
+    result = await github_client.merge_pull_request(
+        pr_number=request.pr_number,
+        merge_method=request.merge_method,
+        commit_title=request.commit_title,
+        commit_message=request.commit_message
+    )
+    
+    if result.get("ok"):
+        return MergePRResponse(
+            ok=True,
+            message=result.get("message"),
+            sha=result.get("sha"),
+            merged=result.get("merged")
+        )
+    
+    # Error case
+    return MergePRResponse(
+        ok=False,
+        error_type=result.get("error_type", "merge_failed"),
+        message=result.get("message"),
+        status_code=result.get("status_code")
+    )
+
