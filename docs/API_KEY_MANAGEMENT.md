@@ -1,4 +1,4 @@
-# API Key Management - SSOT Mapping
+﻿# API Key Management - SSOT Mapping
 
 **Created**: 2025-11-21  
 **Purpose**: Document automatic API key management from SSOT  
@@ -16,7 +16,7 @@ AI-OS automatically manages OPENAI_API_KEY by reading from a Single Source of Tr
 
 **Primary SSOT**:
 ```
-C:\Users\edri2\make-ops-clean\SECRETS\.env.local
+[LEGACY PATH - REMOVED]
 ```
 
 **Target Location** (AI-OS):
@@ -119,7 +119,7 @@ The sync script automatically extracts this value.
 
 Check:
 ```bash
-dir C:\Users\edri2\make-ops-clean\SECRETS\.env.local
+dir [LEGACY PATH - REMOVED]
 ```
 
 If missing, the SSOT location may have changed.

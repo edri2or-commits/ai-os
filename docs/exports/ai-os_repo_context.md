@@ -1,4 +1,4 @@
-# ai-os – Repo Context for GPT (Route Recalculation Phase)
+﻿# ai-os – Repo Context for GPT (Route Recalculation Phase)
 
 **Date (UTC):** 2025-11-24  
 **Repo:** edri2or-commits/ai-os  
@@ -76,7 +76,6 @@ docs/
 ├── IRON_TEST_SUMMARY.md
 ├── LOCAL_WORKSPACES.md
 ├── PUBLIC_HTTPS_SETUP.md
-├── REPO_AUDIT_make-ops-clean.md
 ├── SECURITY_DISCOVERY_REPORT_config_2025-11-20.md
 ├── SESSION_INIT_CHECKLIST.md
 ├── SETUP.md

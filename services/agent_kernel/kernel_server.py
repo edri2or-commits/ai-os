@@ -6,8 +6,8 @@ Currently supports: Daily Context Sync
 """
 
 import logging
-from typing import Dict, Any
-from fastapi import FastAPI, HTTPException
+from typing import Dict, Any, Optional
+from fastapi import FastAPI, HTTPException, Header
 from fastapi.middleware.cors import CORSMiddleware
 
 # Import graphs
@@ -71,9 +71,14 @@ async def health():
 
 
 @app.post("/daily-context-sync/run")
-async def run_daily_context_sync_endpoint() -> Dict[str, Any]:
+async def run_daily_context_sync_endpoint(
+    x_trace_id: Optional[str] = Header(None, alias="X-Trace-ID")
+) -> Dict[str, Any]:
     """
     Execute Daily Context Sync workflow
+    
+    Headers:
+        X-Trace-ID (optional): Trace identifier for observability
     
     This workflow:
     1. Reads current state from OS Core MCP
@@ -84,23 +89,28 @@ async def run_daily_context_sync_endpoint() -> Dict[str, Any]:
     {
         "status": "ok" | "error",
         "last_sync_time": "2025-11-27T15:30:00Z",
+        "trace_id": "..." (if provided),
         "error": "error message" (if status == "error")
     }
     """
-    logger.info("Executing Daily Context Sync workflow...")
+    trace_id = x_trace_id or "no-trace"
+    logger.info(f"Executing Daily Context Sync workflow... [trace_id={trace_id}]")
     
     try:
-        result = run_daily_context_sync()
+        result = run_daily_context_sync(trace_id=trace_id)
         
-        logger.info(f"Daily Context Sync completed: {result['status']}")
+        logger.info(f"Daily Context Sync completed: {result['status']} [trace_id={trace_id}]")
         
         if result["status"] == "error":
             raise HTTPException(status_code=500, detail=result.get("error", "Unknown error"))
         
+        # Include trace_id in response
+        result["trace_id"] = trace_id
+        
         return result
         
     except Exception as e:
-        logger.error(f"Error executing Daily Context Sync: {e}")
+        logger.error(f"Error executing Daily Context Sync: {e} [trace_id={trace_id}]")
         raise HTTPException(status_code=500, detail=str(e))
 
 

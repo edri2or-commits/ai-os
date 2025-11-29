@@ -1,4 +1,4 @@
-# Human-Tech Interaction Policy
+﻿# Human-Tech Interaction Policy
 
 **Status**: ✅ Active  
 **Version**: 1.0  
@@ -51,7 +51,6 @@
 
 **בסיס מדיניות**:
 > "User (Aor): NO technical execution"  
-> — GPT_OS_POLICY.md, make-ops-clean
 
 ---
 
@@ -628,7 +627,6 @@ Secret חשוף בגיטהאב → אור עושה force-push מיידי
 
 **Status**: ✅ Active  
 **Created**: 2025-11-21  
-**Authors**: Claude (based on make-ops-clean sources)  
 **Approved By**: Or  
 **Effective**: 2025-11-21
 

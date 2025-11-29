@@ -1,4 +1,4 @@
-# Chat1 Status - Telegram Bot
+﻿# Chat1 Status - Telegram Bot
 
 **Version**: 1.0  
 **Status**: ✅ Implemented  
@@ -60,7 +60,7 @@ Chat1 is the Telegram Bot interface for AI-OS. It allows you to send natural lan
 
 ### **Step 2: Add Token to SSOT**
 
-Edit: `C:\Users\edri2\make-ops-clean\SECRETS\.env.local`
+Edit: `[REMOVED]
 
 Add line:
 ```

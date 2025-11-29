@@ -1,4 +1,4 @@
-# Chat1 Integration Guide
+﻿# Chat1 Integration Guide
 
 **Created**: 2025-11-21  
 **Status**: ✅ **Implemented v1.0**  
@@ -23,7 +23,7 @@ Chat1 (Telegram Bot) is now fully implemented and ready to use!
 
 ### **2. Add to SSOT**
 ```
-C:\Users\edri2\make-ops-clean\SECRETS\.env.local
+[REMOVED]
 
 Add: TELEGRAM_BOT_TOKEN=your_token
 ```

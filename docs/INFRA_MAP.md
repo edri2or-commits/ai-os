@@ -1,4 +1,4 @@
-# INFRA_MAP.md — מפת תשתיות ואינטגרציות
+﻿# INFRA_MAP.md — מפת תשתיות ואינטגרציות
 
 **Version:** 0.1  
 **Created:** 2025-11-26  
@@ -90,8 +90,6 @@
 
 ### Low Priority
 - **Docker not in active use**: Prepared but not deployed
-- **Legacy MCP code exists**: In make-ops-clean, not migrated
-
 ---
 
 ## 📋 Service Status Summary

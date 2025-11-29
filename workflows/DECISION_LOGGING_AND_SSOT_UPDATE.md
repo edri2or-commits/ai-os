@@ -1,4 +1,4 @@
-# Workflow: Decision Logging & SSOT Update (WF-002)
+﻿# Workflow: Decision Logging & SSOT Update (WF-002)
 
 **Workflow ID**: WF-002  
 **גרסה**: 1.0  
@@ -436,7 +436,6 @@ README:
 
 **Context**:
 ```
-בדקנו את make-ops-clean.
 מצאנו התייחסות ל-Make.com.
 לא ברור אם בשימוש.
 אחרי בדיקה: לא בשימוש כבר 6 חודשים.

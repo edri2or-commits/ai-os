@@ -1,4 +1,4 @@
-# Tools & Integrations Inventory – מלאי כלים ואינטגרציות
+﻿# Tools & Integrations Inventory – מלאי כלים ואינטגרציות
 
 **מטרת המסמך**: מיפוי מקיף של כל הכלים, אינטגרציות וממשקים במערכת AI-OS.
 
@@ -35,22 +35,9 @@
 | **3** | [Filesystem MCP](#filesystem-mcp-full-details) | MCP | Local Files | Claude Desktop MCP Servers | None (Local Access) | ✅ Active | High | גישה לקבצים מקומיים. [Details →](../docs/CLAUDE_DESKTOP_CAPABILITIES.md#1-filesystem-operations) |
 | **4** | [Windows MCP](#windows-mcp-full-details) | MCP | Windows OS | Claude Desktop MCP Servers | None (Local Access) | ✅ Active | Critical | PowerShell, UI Control, App Launch. [Details →](../docs/CLAUDE_DESKTOP_CAPABILITIES.md#3-windows-control) |
 | **5** | [Google MCP](#google-mcp-full-details) | MCP | Gmail, Calendar, Drive | Claude Desktop MCP Servers | Google OAuth Token (Claude) | ✅ Active (READ) | Medium | READ-ONLY כרגע. [Details →](../docs/CLAUDE_DESKTOP_CAPABILITIES.md#4-google-workspace) |
-| **6** | GPT GitHub Agent | Python Script | GitHub Planning | `make-ops-clean/gpt_agent/github_agent.py` | GPT API Key (env) | 🚧 DRY RUN | Medium | Planner בלבד. אין write permissions |
-| **7** | GPT API Wrapper | API Client | OpenAI GPT | `make-ops-clean/gpt-api/` | OpenAI API Key (env) | 🗄️ Legacy | Low | Wrapper ל-GPT API. לא בשימוש אקטיבי |
-| **8** | GitHub Executor API | Cloud Run API | GitHub Automation | `make-ops-clean/cloud-run/google-workspace-github-api/` | GitHub PAT (Cloud Run Secrets) | 📋 Designed | Critical | **לא פרוס**. Blueprint בלבד. דורש PAT |
-| **9** | MCP Server (Legacy) | Python Server | Agent Orchestration | `make-ops-clean/mcp/server/` | Various (config files) | 🗄️ Legacy | High | Master Control. **לא פעיל**. Reference בלבד |
-| **10** | MCP GitHub Integration | Python Module | GitHub via MCP | `make-ops-clean/mcp/github/` | GitHub Token (mcp config) | 🗄️ Legacy | High | חלק מ-MCP הישן. **לא פעיל** |
-| **11** | MCP Google Integration | Python Module | Google Workspace | `make-ops-clean/mcp/google/` | Google OAuth (mcp config) | 🗄️ Legacy | High | חלק מ-MCP הישן. **לא פעיל** |
-| **12** | Make (Integromat) | SaaS | Automation Platform | `make-ops-clean/automation/` (מוזכר) | Make API Key | ❓ Unknown | Medium | מוזכר באודיט. לא ברור אם בשימוש |
 | **13** | Chat1 Telegram Bot (Official) | Bot API | UI / Messaging | `chat/telegram_bot.py` | Telegram Bot Token (SSOT) | 🚧 Implemented (Not Deployed) | Medium | **ממשק רשמי יחיד** - מחובר ל-Agent Gateway. Hebrew UI + Human-in-the-Loop |
 | **13b** | Telegram Prototype (External) | Bot API | Legacy | External (outside repo) | Unknown | 🗄️ Legacy / External | Low | **לא חלק מ-ai-os**. לניסוי בלבד. אסור לבנות עליו |
 | **14** | GitHub Actions | CI/CD | GitHub Workflows | `.github/workflows/` (בריפו) | GitHub Secrets | ❓ Unknown | High | לא ברור אילו workflows קיימים |
-| **15** | Cloud Run | Cloud Platform | Hosting | `make-ops-clean/cloud-run/` | GCP Credentials | 🗄️ Legacy | Critical | תוכנן ל-deployment. **לא פרוס** |
-| **16** | Autopilot Script | Python Script | Self-Healing | `make-ops-clean/autopilot.py` | Google Sheets API Key | 🗄️ Legacy | Medium | POC להחלמה עצמית. **לא פעיל** |
-| **17** | Local Execution Agent | Python Script | Local Commands | `make-ops-clean/agents/local_execution_agent.py` | None | 🗄️ Legacy | High | Placeholder ריק. **לא פעיל** |
-| **18** | GitHub Integration Scripts | Python Scripts | GitHub API | `make-ops-clean/github_integration/` | GitHub PAT (env) | 🗄️ Legacy | High | סקריפטים ישנים. **לא בשימוש** |
-| **19** | Automation Scripts | Shell/Python | Task Automation | `make-ops-clean/automation/` | Various | 🗄️ Legacy | Medium | Makefiles, cron jobs. **לא בשימוש** |
-| **20** | Config Files | YAML/JSON | System Config | `make-ops-clean/config/` | Inline secrets (⚠️) | 🗄️ Legacy | Critical | **דורש סקירת אבטחה**. ייתכן secrets |
 | **21** | [Canva Integration](#canva-mcp-full-details) | API | Design Tools | Claude Desktop Tools | Canva OAuth | ✅ Active | Low | יצירת עיצובים, ניהול תוכן. [Details →](../docs/CLAUDE_DESKTOP_CAPABILITIES.md#6-canva-integration) |
 | **22** | [Browser Control MCP](#browser-mcp-full-details) | MCP | Web Browser | Claude Desktop (via MCP) | None (Local) | ✅ Active | Medium | ניווט, צילומי מסך, אינטראקציה. [Details →](../docs/CLAUDE_DESKTOP_CAPABILITIES.md#5-web--browser) |
 | **23** | [Autonomous Control](#autonomous-control-full-details) | MCP | System Commands | Claude Desktop (via MCP) | None (Local) | ✅ Active | Critical | הרצת פקודות, התקנת תוכנה, Git. [Details →](../docs/CLAUDE_DESKTOP_CAPABILITIES.md#2-github-integration) |
@@ -140,13 +127,11 @@
 
 ### 🚨 **אזהרות אבטחה**
 
-1. **Config Files (`make-ops-clean/config/`)** - **דחוף**:
    - ייתכן שיש secrets inline בקבצי YAML/JSON
    - **חובה**: סרוק ומזז ל-environment variables או secret manager
    - **אל תעלה** את התיקייה הזו לגיט ציבורי
 
 2. **SECRETS/ Directory** - **אל תפתח**:
-   - התיקייה `make-ops-clean/SECRETS/` מכילה חומר רגיש
    - **לא לגלוש בה** בלי הכנה מתאימה
    - **לא להעביר** ל-`ai-os` ללא encryption
 
@@ -224,7 +209,6 @@
 ### 🚨 **דחוף** (Critical Priority)
 
 1. **סקירת אבטחה של `config/`**:
-   - סרוק את `make-ops-clean/config/` לחיפוש secrets
    - מזז כל secret ל-environment variables
    - תעד מה מצאת ב-`DECISIONS_AI_OS.md`
 

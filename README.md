@@ -1,4 +1,4 @@
-# AI-OS
+﻿# AI-OS
 
 ## 🏗️ Architecture
 
@@ -40,7 +40,6 @@ ai-os/
 │   ├── SYSTEM_SNAPSHOT.md           ← מצב המערכת כרגע
 │   ├── CAPABILITIES_MATRIX.md       ← מפת היכולות (22 יכולות)
 │   ├── DECISIONS_AI_OS.md           ← 3 החלטות קריטיות נעולות
-│   └── REPO_AUDIT_make-ops-clean.md ← אודיט הריפו הישן
 │
 ├── agents/            🤖 סוכני AI
 │   ├── AGENTS_INVENTORY.md          ← רשימת כל הסוכנים
@@ -66,7 +65,6 @@ ai-os/
 | **SYSTEM_SNAPSHOT.md** | צילום מצב: ריפואים, כלים, מה עובד | ✅ Active |
 | **CAPABILITIES_MATRIX.md** | 22 יכולות מתועדות (GitHub, Windows, Google...) | ✅ v1.1 |
 | **DECISIONS_AI_OS.md** | 3 החלטות קריטיות נעולות | ✅ Active |
-| **REPO_AUDIT** | אודיט מלא של `make-ops-clean` | ✅ Reference |
 
 ### ✅ **סוכני AI ושירותים**
 | שם | תפקיד | מצב |
@@ -249,7 +247,6 @@ ai-os/
 
 ### **להבנת החלטות**:
 7. [`docs/DECISIONS_AI_OS.md`](docs/DECISIONS_AI_OS.md) - החלטות נעולות
-8. [`docs/REPO_AUDIT_make-ops-clean.md`](docs/REPO_AUDIT_make-ops-clean.md) - מה היה קודם
 
 ---
 
@@ -349,9 +346,6 @@ ai-os/
 
 ### **ש: למה DRY RUN ולא ביצוע אוטומטי?**
 **ת**: כי צריך לבנות אמון הדרגתי. אחרי שנראה שהתכנון עובד טוב (100+ הפעלות מוצלחות), נשקול semi-automation.
-
-### **ש: איפה הקוד של הסוכנים?**
-**ת**: כרגע הקוד בריפו הישן (`make-ops-clean`). אנחנו מתכננים בצורה מבוקרת איך לייבא אותו. ראה [`docs/DECISIONS_AI_OS.md`](docs/DECISIONS_AI_OS.md).
 
 ### **ש: למה יש כל כך הרבה תיעוד?**
 **ת**: כי **תיעוד = זיכרון**. בלי תיעוד, כל שיחה עם AI מתחילה מאפס. עם תיעוד - המערכת זוכרת הכל.

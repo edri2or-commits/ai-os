@@ -1,10 +1,10 @@
-"""
+﻿"""
 API Key Sync - From SSOT to AI-OS
 
 This script automatically syncs OPENAI_API_KEY and TELEGRAM_BOT_TOKEN
 from the SSOT location to the AI-OS .env file.
 
-SSOT Location: C:/Users/edri2/make-ops-clean/SECRETS/.env.local
+SSOT Location: REMOVED_OLD_PATH
 Target: C:/Users/edri2/Work/AI-Projects/ai-os-claude-workspace/.env
 
 Usage:
@@ -24,7 +24,7 @@ print("API Key Sync - From SSOT to AI-OS")
 print("=" * 70)
 
 # Paths
-SSOT_PATH = Path("C:/Users/edri2/make-ops-clean/SECRETS/.env.local")
+SSOT_PATH = Path("REMOVED_OLD_PATH")
 TARGET_PATH = Path(__file__).parent / ".env"
 
 # Step 1: Read SSOT

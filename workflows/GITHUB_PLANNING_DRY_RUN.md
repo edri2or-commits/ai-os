@@ -1,4 +1,4 @@
-# Workflow: GitHub Planning (DRY RUN)
+﻿# Workflow: GitHub Planning (DRY RUN)
 
 **Workflow ID**: WF-001  
 **גרסה**: 1.0  
@@ -23,7 +23,6 @@
 | **אור (Human)** | מנסח בקשות, מאשר תוכניות, מבצע פעולות | החלטה סופית על כל שינוי | - |
 | **GPT GitHub Agent** | Planner – מנתח, מתכנן, מציע | קריאת מסמכים, ניתוח, תכנון | ❌ אין כתיבה, commits, PRs |
 | **Claude Desktop** | מבצע ידני / מסייע | GitHub MCP, Filesystem, Commands | פועל תחת פיקוח אנושי |
-| **GitHub** | פלטפורמת קוד | אחסון ריפואים (`ai-os`, `make-ops-clean` וכו') | - |
 
 ---
 
@@ -49,7 +48,6 @@
    - `docs/CAPABILITIES_MATRIX.md` (מפת יכולות)
    - `docs/SYSTEM_SNAPSHOT.md` (צילום מצב)
    - `docs/DECISIONS_AI_OS.md` (החלטות נעולות)
-   - `docs/REPO_AUDIT_make-ops-clean.md` (אודיט ריפו ישן)
 
 ---
 

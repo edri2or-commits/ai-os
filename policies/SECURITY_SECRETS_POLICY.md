@@ -1,4 +1,4 @@
-# AI-OS – מדיניות סיקרטים ואבטחה (Security & Secrets Policy)
+﻿# AI-OS – מדיניות סיקרטים ואבטחה (Security & Secrets Policy)
 
 **Policy ID**: SEC-001  
 **גרסה**: 1.0  
@@ -24,9 +24,7 @@
 מדיניות זו חלה על:
 
 ### **ריפואים**:
-- ✅ `ai-os` (הריפו הנוכחי)
-- ✅ `make-ops-clean` (הריפו הישן)
-- ✅ כל ריפו עתידי שיהיה חלק ממערכת AI-OS
+- ✅ `ai-os` (הריפו הנוכחי)- ✅ כל ריפו עתידי שיהיה חלק ממערכת AI-OS
 
 ### **כלים וממשקים**:
 - ✅ GitHub (repos, secrets, tokens)
@@ -129,7 +127,6 @@
 
 ### 🚨 **Zone 1: SECRETS/ Directory**
 
-**Location**: `make-ops-clean/SECRETS/`
 
 **Classification**: **CRITICAL - OFF LIMITS**
 
@@ -154,7 +151,6 @@
 
 ### ⚠️ **Zone 2: config/ Directory**
 
-**Location**: `make-ops-clean/config/`
 
 **Classification**: **HIGH RISK - Potential Inline Secrets**
 
@@ -391,7 +387,6 @@ def scan_file(filepath):
 #### **Step 1: Identification**
 ```bash
 # Scan config directory
-find make-ops-clean/config/ -type f \
   \( -name "*.yaml" -o -name "*.json" \) \
   -exec grep -l "password\|token\|secret\|key" {} \;
 ```
