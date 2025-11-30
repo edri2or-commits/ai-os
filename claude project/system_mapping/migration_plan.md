@@ -11,7 +11,7 @@
 **Migration Goal:** Transform ai-os from current state to fully operational Personal AI Life OS
 
 **Key Gaps Identified:**
-1. ⚠️ **25+ unclear components** (ai_core/, scripts/, tools/)
+1. ⚠️ **25+ unclear components** (~~ai_core/~~, scripts/, ~~tools/~~) - ai_core/ & tools/ archived ✅
 2. 🆕 **Critical missing:** Memory Bank, Circuit Breakers, Proactive Observer
 3. 🐛 **Active drift:** Git HEAD mismatch (43b308a vs 41581fae)
 4. 🗑️ **Duplicates:** research folders, event timelines

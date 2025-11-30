@@ -190,29 +190,27 @@
 
 ## Section 5: Core AI Components
 
-### 5.1 ai_core/ (Unclear Status)
+### 5.1 ai_core/ - ✅ **MIGRATED**
 
 | Current Path | Type | Target Role | Action | Notes / Sources |
 |--------------|------|-------------|--------|-----------------|
-| `ai_core/action_executor.py` | file | Legacy | ⚠️ investigate | Action executor. Check if superseded by MCP servers or still in use. |
-| `ai_core/agent_gateway.py` | file | Legacy | ⚠️ investigate | Agent gateway. Relationship to current MCP architecture unclear. |
-| `ai_core/agent_gateway_server.py` | file | Legacy | ⚠️ investigate | Gateway server. Check if operational or legacy. |
-| `ai_core/gpt_orchestrator.py` | file | Legacy | ⚠️ investigate | GPT orchestrator. Check relationship to current kernel (services/agent_kernel/). |
-| `ai_core/intent_router.py` | file | Legacy | ⚠️ investigate | Intent router. Check if used or superseded. |
-| `ai_core/ssot_writer.py` | file | Legacy | ⚠️ investigate | SSOT writer. Check if used by current Truth Layer updates. |
+| `ai_core/` (entire directory) | dir | Legacy | ✅ **DEPRECATED** | **Archived to `archive/legacy/ai_core/` (Slice 1.2a, 2025-11-29)**. Legacy pre-MCP orchestration layer. **Sources:** INVESTIGATION_RESULTS.md |
+
+**Migration Complete:**
+- ✅ All ai_core/ archived to archive/legacy/ai_core/
+- Components: action_executor.py, agent_gateway.py, agent_gateway_server.py, gpt_orchestrator.py, intent_router.py, ssot_writer.py, intents_router.md
+- Evidence: Legacy pre-MCP architecture, no production imports, duplicates MCP functionality
+- Impact: Demo/test scripts broken (expected, not operational)
+- Slice: 1.2a (2025-11-29)
 
 **Key Decision:**
-- **CRITICAL:** ai_core/ status unclear
-- Hypothesis: Legacy multi-agent infrastructure from earlier phase
-- Action: Investigate each component:
-  - If operational → document and keep
-  - If superseded by MCP servers → deprecate
-  - If partially used → refactor or extract needed logic
+- Legacy multi-agent infrastructure from earlier phase → deprecated and archived
+- Superseded by MCP servers (GitHub, Google, OS Core, Agent Kernel)
 
 **Research Note:**
 - Target architecture emphasizes Supervisor-Worker (Claude + MCP)
-- ai_core/ suggests earlier mesh network or complex orchestration
-- May be pre-MCP architecture
+- ai_core/ was earlier mesh network / complex orchestration
+- Pre-MCP architecture confirmed
 
 ---
 

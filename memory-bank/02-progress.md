@@ -72,6 +72,15 @@
   - Duration: ~15 min
   - Research: Architectural correctness principle
 
+- 2025-11-30 – Slice 1.4: Fix legacy paths in documentation
+  - Problem: Mapping docs referenced old paths (ai_core/, tools/) that were archived in Slices 1.2a-b
+  - Solution: Updated migration_plan.md and current_vs_target_matrix.md to reflect archived status
+  - Files changed: 2 mapping documents
+  - Result: Documentation accurate, all references updated to archive/ paths
+  - Technical Note: Manual git bridge (TD-001: Git MCP not configured)
+  - Duration: ~20 min
+  - Research: Documentation accuracy principle
+
 - 2025-11-30 – Slice 1.2d: Remove research duplicates
   - Problem: Multiple duplicate research folders scattered across repo (Knowl/, מחסן מחקרים/, empty dirs)
   - Analysis:
@@ -108,5 +117,5 @@
 ---
 
 **Last Updated:** 2025-11-30  
-**Slices Completed:** 7 (1.1a, 1.2a, 1.2b, 1.2c, 1.2d, Meta, 1.3+1.3a)  
-**Current Phase:** Phase 1 (~70% complete)
+**Slices Completed:** 8 (1.1a, 1.2a, 1.2b, 1.2c, 1.2d, 1.4, Meta, 1.3+1.3a)  
+**Current Phase:** Phase 1 (~80% complete)

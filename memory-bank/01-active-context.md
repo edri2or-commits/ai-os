@@ -4,7 +4,7 @@ MAINTENANCE RULE: Update QUICK STATUS after EVERY completed slice
 -->
 
 ---
-**QUICK STATUS:** AI Life OS Migration | Phase 1: Cleanup (~70% done) | Just finished: Remove research duplicates (Slice 1.2d) | Next: Fix legacy paths OR Git MCP setup OR transition to Phase 2
+**QUICK STATUS:** AI Life OS Migration | Phase 1: Cleanup (~80% done) | Just finished: Fix legacy paths (Slice 1.4) | Next: Git MCP setup OR transition to Phase 2
 ---
 
 <!--
@@ -43,8 +43,8 @@ GROUNDING:
 # Current Focus
 
 **Phase:** Phase 1 – Investigation & Foundation Cleanup  
-**Status:** ~70% complete (7/10 slices done)  
-**Active Work:** Just completed Slice 1.2d (Remove research duplicates)  
+**Status:** ~80% complete (8/10 slices done)  
+**Active Work:** Just completed Slice 1.4 (Fix legacy paths in docs)  
 
 **What we're doing:**
 - Cleaning up legacy/unclear components (ai_core/, tools/)
@@ -61,6 +61,18 @@ GROUNDING:
 ---
 
 # Recent Changes
+
+**2025-11-30 – Slice 1.4: Fix legacy paths in documentation**
+- Problem: Mapping docs (migration_plan.md, current_vs_target_matrix.md) referenced old paths for ai_core/ & tools/
+- Solution: Updated documentation to reflect archived status
+- Changes:
+  - migration_plan.md: Updated "Key Gaps" to show ai_core/ & tools/ as archived ✅
+  - current_vs_target_matrix.md: Changed ai_core/ from ⚠️ investigate to ✅ DEPRECATED with full migration details
+- Files updated: 2 mapping documents
+- Result: Documentation accurate, reflects actual system state post-archival
+- Technical Note: Manual git bridge (TD-001: Git MCP not configured)
+- Duration: ~20 min
+- Research alignment: Documentation accuracy principle
 
 **2025-11-30 – Slice 1.2d: Remove research duplicates**
 - Problem: Multiple duplicate research folders scattered across repo (Knowl/, מחסן מחקרים/, empty dirs)
@@ -189,30 +201,24 @@ GROUNDING:
 
 **Immediate Candidates (from migration_plan.md):**
 
-**Option A: Slice 1.4 – Fix Legacy File Paths (20-30 min)**
-- Problem: Some docs reference old paths (e.g., ai_core/ before archive)
-- Action: Search & update references in docs/
-- Risk: Low (documentation only)
-- Benefit: Maintain documentation accuracy
-
-**Option B: Infrastructure Slice – Configure Git MCP (TD-001) (1-2 hours)**
+**Option A: Infrastructure Slice – Configure Git MCP (TD-001) (1-2 hours)**
 - Problem: Git MCP server not configured → manual git bridges required
 - Action: Install mcp-server-git, configure in claude_desktop_config.json, test
 - Risk: Medium (requires config + Claude Desktop restart)
 - Benefit: Full autonomy for git operations, removes friction
 
-**Option C: Transition to Phase 2 – Observer + Reconciler**
-- Now that Phase 1 cleanup is ~70% complete, could start Phase 2 work
+**Option B: Transition to Phase 2 – Observer + Reconciler**
+- Now that Phase 1 cleanup is ~80% complete, could start Phase 2 work
 - Observer (read-only drift detection)
 - Reconciler (CR-based state sync)
 - Would run in parallel with remaining Phase 1 slices
 
 **Strategic Note:**
-- Phase 1 is ~70% complete, excellent momentum
-- Most cleanup done (ai_core, tools, duplicates all archived/removed)
-- Remaining: Legacy path fixes (Slice 1.4) + potentially more discovery
+- Phase 1 is ~80% complete, excellent momentum
+- Most cleanup done (ai_core, tools, duplicates all archived/removed, docs updated)
+- Remaining: Potentially more discovery or can transition to Phase 2
 - Git MCP (TD-001) could be done now or deferred
-- Could transition to Phase 2 while finishing Phase 1 cleanup
+- Ready to transition to Phase 2 while finishing remaining Phase 1 items
 
 **User Preference:**
 - ADHD-aware: prefer momentum + quick wins
@@ -221,5 +227,5 @@ GROUNDING:
 
 ---
 
-**Last Updated:** 2025-11-30 (after Slice 1.2d)  
+**Last Updated:** 2025-11-30 (after Slice 1.4)  
 **Next Update:** After next completed slice
