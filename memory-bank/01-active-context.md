@@ -4,7 +4,7 @@ MAINTENANCE RULE: Update QUICK STATUS after EVERY completed slice
 -->
 
 ---
-**QUICK STATUS:** AI Life OS Migration | Phase 1: Cleanup (~40% done) | Just finished: Drift fix + SERVICES_STATUS bootstrap + Git tracking (Slice 1.3) | Next: Remove duplicates OR legacy path fixes
+**QUICK STATUS:** AI Life OS Migration | Phase 1: Cleanup (~55% done) | Just finished: Remove EVENT_TIMELINE duplicate (Slice 1.2c) | Next: Remove research duplicates OR fix legacy paths OR Git MCP setup
 ---
 
 <!--
@@ -43,8 +43,8 @@ GROUNDING:
 # Current Focus
 
 **Phase:** Phase 1 – Investigation & Foundation Cleanup  
-**Status:** ~40% complete (4/10 slices done)  
-**Active Work:** Just completed Slice 1.3 + Sub-Slice 1.3a (Fix drift + bootstrap SERVICES_STATUS)  
+**Status:** ~55% complete (6/10 slices done)  
+**Active Work:** Just completed Slice 1.2c (Remove EVENT_TIMELINE duplicate)  
 
 **What we're doing:**
 - Cleaning up legacy/unclear components (ai_core/, tools/)
@@ -61,6 +61,23 @@ GROUNDING:
 ---
 
 # Recent Changes
+
+**2025-11-30 – Slice 1.2c: Remove EVENT_TIMELINE duplicate**
+- Problem: Duplicate EVENT_TIMELINE.jsonl in repo root + canonical under docs/system_state/timeline/
+- Analysis:
+  - Root file: 172 bytes, 1 event (Nov 25 initialization), stale
+  - Canonical file: 396 bytes, active (last event: Nov 30 STATE_RECONCILIATION from Slice 1.3)
+  - Root content is strict subset of canonical
+  - No code references to root file (reconciler uses canonical path)
+- Solution: Removed root duplicate via `git rm` (atomic delete + stage)
+- Files changed:
+  - EVENT_TIMELINE.jsonl (REMOVED from root)
+  - Canonical file unchanged and operational
+- Result: Zero data loss, cleaner repo structure, correct architectural location
+- Technical Note: Used manual git bridge (TD-001: Git MCP not configured)
+- Commit: fe2fd52
+- Duration: ~15 min
+- Research alignment: Architectural correctness (all state files under docs/system_state/)
 
 **2025-11-29 – Slice 1.3 + Sub-Slice 1.3a: Drift fix + SERVICES_STATUS bootstrap + Git tracking**
 - Problem: Truth Layer showed last_commit: 43b308a, actual HEAD was eefc5d3 (3 commits behind)
@@ -115,30 +132,31 @@ GROUNDING:
 
 **Immediate Candidates (from migration_plan.md):**
 
-**Option A: Slice 1.2c – Remove EVENT_TIMELINE duplicate (15-20 min)**
-- Action: `git rm EVENT_TIMELINE.jsonl` (root duplicate)
-- Keep: `docs/system_state/timeline/EVENT_TIMELINE.jsonl`
-- Risk: Very low (verified duplicate)
-- Benefit: Quick cleanup win
-
-**Option B: Slice 1.2d – Remove research duplicates (30-45 min)**
+**Option A: Slice 1.2d – Remove research duplicates (30-45 min)**
 - Actions:
   - `git rm -r "claude project/Knowl/"`
   - `git rm -r "claude project/מחסן מחקרים/"`
   - `git rm -r "maby relevant/" "mcp/" "מחקרי ארכיטקטורה/"`
 - Risk: Low (duplicates confirmed)
-- Benefit: Cleaner repo structure
+- Benefit: Finish ALL Phase 1 cleanup, cleaner repo structure
 
-**Option C: Slice 1.4 – Fix Legacy File Paths (20-30 min)**
+**Option B: Slice 1.4 – Fix Legacy File Paths (20-30 min)**
 - Problem: Some docs reference old paths (e.g., ai_core/ before archive)
 - Action: Search & update references in docs/
 - Risk: Low (documentation only)
 - Benefit: Maintain documentation accuracy
 
+**Option C: Infrastructure Slice – Configure Git MCP (TD-001) (1-2 hours)**
+- Problem: Git MCP server not configured → manual git bridges required
+- Action: Install mcp-server-git, configure in claude_desktop_config.json, test
+- Risk: Medium (requires config + Claude Desktop restart)
+- Benefit: Full autonomy for git operations, removes friction
+
 **Strategic Note:**
-- Consider doing 1.2c + 1.2d back-to-back (finish all cleanup)
-- Phase 1 is ~40% complete, good momentum
-- Could transition to Phase 2 after cleanup
+- Phase 1 is ~55% complete, excellent momentum
+- Option A finishes Phase 1 cleanup completely (~70%)
+- Option C (Git MCP) could be done before or after remaining Phase 1 slices
+- Could transition to Phase 2 after cleanup complete
 
 **User Preference:**
 - ADHD-aware: prefer momentum + quick wins
@@ -147,5 +165,5 @@ GROUNDING:
 
 ---
 
-**Last Updated:** 2025-11-29 (after Slice 1.3 + 1.3a)  
+**Last Updated:** 2025-11-30 (after Slice 1.2c)  
 **Next Update:** After next completed slice

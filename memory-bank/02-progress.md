@@ -61,6 +61,17 @@
   - Duration: ~60 min (research mode + git strategy + manual bridge)
   - Research: Dual Truth Architecture, Git-backed Truth Layer, Observed State pattern
 
+- 2025-11-30 – Slice 1.2c: Remove EVENT_TIMELINE duplicate
+  - Problem: Duplicate EVENT_TIMELINE.jsonl in repo root vs canonical under docs/system_state/timeline/
+  - Analysis: Root file stale (172 bytes, 1 event, Nov 26), canonical active (396 bytes, last event Nov 30)
+  - Solution: Removed root duplicate via `git rm` (atomic delete + stage)
+  - Files changed: EVENT_TIMELINE.jsonl (REMOVED), canonical file unchanged
+  - Result: Zero data loss, cleaner repo, correct architectural location (state files under docs/)
+  - Technical Note: Manual git bridge (TD-001: Git MCP not configured)
+  - Commit: fe2fd52
+  - Duration: ~15 min
+  - Research: Architectural correctness principle
+
 ---
 
 ## Phase 2: Core Infrastructure (Pending)
@@ -81,6 +92,6 @@
 
 ---
 
-**Last Updated:** 2025-11-29  
-**Slices Completed:** 5 (1.1a, 1.2a, 1.2b, Meta, 1.3+1.3a)  
-**Current Phase:** Phase 1 (~40% complete)
+**Last Updated:** 2025-11-30  
+**Slices Completed:** 6 (1.1a, 1.2a, 1.2b, 1.2c, Meta, 1.3+1.3a)  
+**Current Phase:** Phase 1 (~55% complete)

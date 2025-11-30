@@ -117,14 +117,55 @@ python ai_core/agent_gateway.py --help
 
 **Commit:** feat(meta): Bootstrap Memory Bank for project continuity  
 
-#### Slice 1.2c: Remove EVENT_TIMELINE duplicate (PENDING)
+#### Slice 1.2c: Remove EVENT_TIMELINE duplicate ✅ COMPLETE
+
+**Date:** 2025-11-30  
+**Duration:** ~15 min  
+**Status:** ✅ COMPLETE
+
+**Problem:**
+- Duplicate EVENT_TIMELINE.jsonl found in repo root
+- Canonical file located at docs/system_state/timeline/EVENT_TIMELINE.jsonl
+
+**Analysis:**
+- Root file: 172 bytes, 1 event (Nov 25 initialization), stale (last modified Nov 26)
+- Canonical file: 396 bytes, active (last event: Nov 30 STATE_RECONCILIATION from Slice 1.3)
+- Root content is strict subset of canonical (no data loss)
+- No code references to root file (reconciler.py uses canonical path at line 47)
+- Architectural correctness: All state files should be under docs/system_state/
 
 **Actions:**
 ```bash
-# 1. Remove duplicate EVENT_TIMELINE (after verifying identical)
-diff EVENT_TIMELINE.jsonl docs/system_state/timeline/EVENT_TIMELINE.jsonl
+# Verification
+Test-Path "EVENT_TIMELINE.jsonl"  # True (before)
+Test-Path "docs\system_state\timeline\EVENT_TIMELINE.jsonl"  # True
+
+# Removal (atomic: delete + stage)
 git rm EVENT_TIMELINE.jsonl
+
+# Verification
+Test-Path "EVENT_TIMELINE.jsonl"  # False (after)
+Test-Path "docs\system_state\timeline\EVENT_TIMELINE.jsonl"  # True (unchanged)
 ```
+
+**Files Changed:**
+- `EVENT_TIMELINE.jsonl` - REMOVED from repo root
+- Canonical file unchanged and operational
+
+**Result:**
+- ✅ Root duplicate removed
+- ✅ Canonical timeline intact (verified readable)
+- ✅ Zero data loss (root was subset of canonical)
+- ✅ Correct architectural location enforced
+
+**Git Operations:**
+- Used `git rm` for atomic delete + stage
+- Manual git bridge due to TD-001 (Git MCP not configured)
+- Clean git diff: `1 file changed, 1 deletion(-)`
+
+**Commit:** `fe2fd52` - chore(cleanup): Remove duplicate EVENT_TIMELINE.jsonl from repo root
+
+**Research Alignment:** Architectural correctness principle (state files under docs/system_state/)
 
 #### Slice 1.2d: Remove research duplicates (PENDING)
 
