@@ -301,7 +301,98 @@ Test-Path "claude project\ai-life-os-claude-project-playbook.md"  # True (canoni
 
 ---
 
-### Slice 1.4: Documentation Consolidation
+### Slice 1.4: Fix Legacy Paths in Documentation ✅ COMPLETE
+
+**Date:** 2025-11-30  
+**Duration:** ~20 min  
+**Status:** ✅ COMPLETE
+
+**Problem:**
+- Mapping docs (migration_plan.md, current_vs_target_matrix.md) referenced old paths for ai_core/ & tools/
+- These directories were archived in Slices 1.2a-b but docs not updated
+
+**Solution:**
+Updated documentation to reflect archived status:
+1. `migration_plan.md`: Updated "Key Gaps" from "(ai_core/, scripts/, tools/)" to "(~~ai_core/~~, scripts/, ~~tools/~~) - ai_core/ & tools/ archived ✅"
+2. `current_vs_target_matrix.md`: Changed ai_core/ from "⚠️ investigate" to "✅ **MIGRATED**" with full migration details
+
+**Files Changed:**
+- `claude project/system_mapping/migration_plan.md` - Line 14 updated
+- `claude project/system_mapping/current_vs_target_matrix.md` - Section 5.1 updated with complete migration details
+- `memory-bank/01-active-context.md` - Phase 1 progress 70% → 80%
+- `memory-bank/02-progress.md` - Added Slice 1.4 entry
+
+**Result:**
+- ✅ Documentation accurate, reflects actual system state post-archival
+- ✅ All mapping docs consistent
+- ✅ Memory Bank updated
+
+**Technical Note:** Manual git bridge (TD-001: Git MCP not configured)
+
+**Commit:** `6473aa3` - docs(slice-1.4): Update mapping docs - archive status for ai_core/ & tools/
+
+**Research Alignment:** Documentation accuracy principle
+
+---
+
+### Slice 1.5: Codify Canonical Architecture ✅ COMPLETE
+
+**Date:** 2025-11-30  
+**Duration:** ~2-3 hours  
+**Type:** Meta (Architecture)  
+**Status:** ✅ COMPLETE
+
+**Problem:**
+- Multiple conflicting metaphors in docs (Claude = CPU vs Adapter, MCP = Bus vs Ports)
+- No single authoritative statement of architectural model
+- Confusion about what's canonical NOW vs future vs legacy
+
+**Decision:**
+- Adopted Hexagonal Architecture (Core/Ports/Adapters) as canonical model
+- Core = Git-backed Truth Layer (single source of truth)
+- Ports = MCP servers (stateless standardized interfaces)
+- Adapters = Frontends/models (Claude Desktop, future ChatGPT/Gemini/Telegram)
+
+**Actions:**
+1. Created CANONICAL_ARCHITECTURE.md with:
+   - TL;DR (10-second version): Core/Ports/Adapters bullet summary
+   - 6 invariants (INV-001 through INV-006)
+   - Contradiction resolution table (5 contradictions)
+   - Pattern classification table (canonical/future/legacy)
+   - Research grounding note
+2. Updated target_architecture_summary.md:
+   - Added new section 1.0 (Canonical Architecture Model)
+   - Updated section 1.1 table (Claude = Adapter, not CPU)
+   - Marked old metaphors as "Historical Context"
+3. Updated migration_plan.md (added this slice)
+4. Updated Memory Bank (01-active-context + 02-progress)
+
+**Files Changed:**
+- `claude project/system_mapping/CANONICAL_ARCHITECTURE.md` - **NEW** (authoritative model)
+- `claude project/system_mapping/target_architecture_summary.md` - UPDATED (section 1.0 + 1.1)
+- `claude project/system_mapping/migration_plan.md` - UPDATED (added Slice 1.5)
+- `memory-bank/01-active-context.md` - UPDATED (Recent Changes + Strategic Note)
+- `memory-bank/02-progress.md` - UPDATED (added Slice 1.5 entry)
+
+**Result:**
+- ✅ Single authoritative architecture model
+- ✅ 5 contradictions resolved (Claude=CPU, MCP=Bus, Windows vs WSL2, PowerShell bridges, autonomy)
+- ✅ 6 invariants codified (INV-001 through INV-006)
+- ✅ Pattern classification table (canonical/future/legacy)
+- ✅ Technical Debt (TD-001) mapped to Ports completion strategy
+- ✅ Research grounding documented (3 families: Architecture, Safety, Memory)
+
+**Commit:** [to be added after manual git bridge]
+
+**Research Alignment:**
+- Hexagonal Architecture pattern (Architecture family)
+- Single Source of Truth principle (Safety/Governance family)
+- Model-agnostic design (Architecture family)
+- ADHD-aware documentation (Cognition family)
+
+---
+
+### Slice 1.6: Documentation Consolidation (Future)
 
 **Duration:** 2 hours
 

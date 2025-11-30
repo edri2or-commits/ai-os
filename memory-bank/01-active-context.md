@@ -43,8 +43,8 @@ GROUNDING:
 # Current Focus
 
 **Phase:** Phase 1 – Investigation & Foundation Cleanup  
-**Status:** ~80% complete (8/10 slices done)  
-**Active Work:** Just completed Slice 1.4 (Fix legacy paths in docs)  
+**Status:** ~85% complete (9/10 slices done)  
+**Active Work:** Just completed Slice 1.5 (Codify Canonical Architecture)  
 
 **What we're doing:**
 - Cleaning up legacy/unclear components (ai_core/, tools/)
@@ -61,6 +61,27 @@ GROUNDING:
 ---
 
 # Recent Changes
+
+**2025-11-30 – Slice 1.5: Codify Canonical Architecture (Meta-Architectural Decision)**
+- Decision: Adopted Hexagonal Architecture (Core/Ports/Adapters) as canonical model
+- Problem: Multiple conflicting metaphors (Claude = CPU vs kernel vs adapter, MCP = Bus vs Ports)
+- Solution: Created CANONICAL_ARCHITECTURE.md as authoritative architectural model
+- Changes:
+  - **NEW:** claude project/system_mapping/CANONICAL_ARCHITECTURE.md (6 invariants, pattern classification, contradiction resolution)
+  - UPDATED: target_architecture_summary.md (new section 1.0, fixed section 1.1 table)
+  - UPDATED: migration_plan.md (added Slices 1.4 + 1.5)
+- Key invariants codified:
+  - INV-001: Git repo as single Core (no state fragmentation)
+  - INV-002: All state changes via Ports or documented bridges (TD-XXX)
+  - INV-003: Adapters are replaceable (Claude, ChatGPT, Gemini, Telegram, CLI)
+  - INV-004: Ports are stateless (MCP servers store no durable state)
+  - INV-005: Adapters are REACTIVE, n8n is autonomous
+  - INV-006: Git as infinite undo (all changes tracked)
+- Contradictions resolved: 5 (Claude=CPU, MCP=Bus, Windows vs WSL2, PowerShell bridges, autonomy)
+- Pattern classification: Canonical (now) / Future (phases 2-4) / Legacy (to be updated)
+- Research grounding: 3 families (Architecture/Kernel, Safety/Drift, Memory/Truth Layer)
+- Duration: ~2-3 hours
+- Research alignment: Hexagonal Architecture, Single Source of Truth, Model-agnostic design
 
 **2025-11-30 – Slice 1.4: Fix legacy paths in documentation**
 - Problem: Mapping docs (migration_plan.md, current_vs_target_matrix.md) referenced old paths for ai_core/ & tools/
@@ -214,11 +235,12 @@ GROUNDING:
 - Would run in parallel with remaining Phase 1 slices
 
 **Strategic Note:**
-- Phase 1 is ~80% complete, excellent momentum
-- Most cleanup done (ai_core, tools, duplicates all archived/removed, docs updated)
-- Remaining: Potentially more discovery or can transition to Phase 2
-- Git MCP (TD-001) could be done now or deferred
-- Ready to transition to Phase 2 while finishing remaining Phase 1 items
+- Phase 1 is ~85% complete, canonical architecture now codified
+- Most cleanup done (ai_core, tools, duplicates all archived/removed)
+- **NEW:** Canonical architecture model (Core/Ports/Adapters) established as single source of truth
+- 6 invariants codified, 5 contradictions resolved, pattern classification (canonical/future/legacy)
+- Remaining Phase 1: Minor discovery or documentation consolidation
+- **Ready to transition to Phase 2** with clear architectural foundation
 
 **User Preference:**
 - ADHD-aware: prefer momentum + quick wins

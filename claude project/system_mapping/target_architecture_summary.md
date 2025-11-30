@@ -45,17 +45,48 @@ These 7 principles apply across all families:
 
 ## Family 1: Architecture / Kernel / OS Design
 
-### 1.1 Semantic Microkernel Architecture **[EXPLICIT]**
+### 1.0 Canonical Architecture Model **[CANONICAL]**
 
-**Core Metaphor:** Operating System for Personal AI
+**FOR AUTHORITATIVE REFERENCE:** See `CANONICAL_ARCHITECTURE.md` (created 2025-11-30)
 
-| Component | OS Metaphor | Role |
-|-----------|-------------|------|
-| Claude Desktop | CPU | Probabilistic processor, reasoning engine |
-| MCP Servers | Bus/I/O | Standardized interfaces to external systems |
-| Files + Git | Memory | Persistent state, version control |
-| Truth Layer | RAM | Current system state |
-| n8n | Scheduler | Temporal/scheduled tasks |
+**Hexagonal Architecture (Core / Ports / Adapters):**
+
+| Component | Role | Type |
+|-----------|------|------|
+| **Git-backed Truth Layer** | Single source of truth (entire repo) | **Core** |
+| **MCP servers** | Standardized interfaces (filesystem, git, GitHub, Google, n8n, os_core) | **Ports** |
+| **Claude Desktop** | Primary reasoning orchestrator (current) | **Adapter** |
+| **ChatGPT/Gemini/Telegram/CLI** | Future reasoning orchestrators | **Adapters (future)** |
+| **n8n** | Autonomous scheduled execution through Ports | **Port (scheduler)** |
+
+**Key Invariants:**
+1. Core = Git repo (no state fragmentation)
+2. All state changes via Ports or documented bridges (TD-XXX)
+3. Adapters are replaceable (model-agnostic)
+4. Ports are stateless (state lives in Core)
+5. Adapters are REACTIVE, n8n is autonomous
+6. Git as infinite undo (all changes tracked)
+
+**Previous Metaphors Superseded:**
+- "Claude = CPU" → "Claude = Adapter" (replaceable)
+- "MCP = Bus" → "MCP = Ports" (standardized interfaces)
+- See CANONICAL_ARCHITECTURE.md for full contradiction resolution
+
+---
+
+### 1.1 Semantic Microkernel Architecture **[EXPLICIT - Historical Context]**
+
+**NOTE:** This section preserved for historical context. For canonical model, see section 1.0 and CANONICAL_ARCHITECTURE.md.
+
+**Original Metaphor:** Operating System for Personal AI
+
+| Component | OS Metaphor (Legacy) | Role |
+|-----------|---------------------|------|
+| Claude Desktop | ~~CPU~~ → Adapter | Probabilistic processor, reasoning engine |
+| MCP Servers | ~~Bus/I/O~~ → Ports | Standardized interfaces to external systems |
+| Files + Git | Memory → Core | Persistent state, version control |
+| Truth Layer | ~~RAM~~ → Core | Current system state |
+| n8n | Scheduler → Port | Temporal/scheduled tasks |
 
 **Key Decision:**
 > "The kernel schedules attention and intent, not CPU cycles"

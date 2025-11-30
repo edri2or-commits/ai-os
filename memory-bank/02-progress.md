@@ -96,6 +96,28 @@
   - Duration: ~30 min
   - Research: Architectural clarity (single source of truth for research docs)
 
+- 2025-11-30 – Slice 1.5: Codify Canonical Architecture (Meta-Architectural Decision)
+  - Problem: Multiple conflicting metaphors in docs (Claude = CPU vs Adapter, MCP = Bus vs Ports), no single authoritative model
+  - Decision: Adopted Hexagonal Architecture (Core/Ports/Adapters) as canonical model
+  - Solution: Created CANONICAL_ARCHITECTURE.md with 6 invariants, contradiction resolution, pattern classification
+  - Files changed:
+    - NEW: claude project/system_mapping/CANONICAL_ARCHITECTURE.md (authoritative model)
+    - UPDATED: target_architecture_summary.md (section 1.0 + 1.1 table corrections)
+    - UPDATED: migration_plan.md (added Slices 1.4 + 1.5)
+    - UPDATED: Memory Bank (01-active-context + 02-progress)
+  - Key invariants codified:
+    - INV-001: Git repo as single Core (no state fragmentation)
+    - INV-002: All state changes via Ports or documented bridges
+    - INV-003: Adapters are replaceable (Claude, ChatGPT, Gemini, Telegram, CLI)
+    - INV-004: Ports are stateless (MCP servers)
+    - INV-005: Adapters are REACTIVE, n8n is autonomous
+    - INV-006: Git as infinite undo
+  - Contradictions resolved: 5 (Claude=CPU, MCP=Bus, Windows vs WSL2, PowerShell bridges, autonomy)
+  - Pattern classification: Canonical (now) / Future (phases 2-4) / Legacy (to be updated)
+  - Research grounding: 3 families (Architecture, Safety, Memory)
+  - Duration: ~2-3 hours
+  - Research: Hexagonal Architecture, Single Source of Truth, Model-agnostic design
+
 ---
 
 ## Phase 2: Core Infrastructure (Pending)
@@ -117,5 +139,5 @@
 ---
 
 **Last Updated:** 2025-11-30  
-**Slices Completed:** 8 (1.1a, 1.2a, 1.2b, 1.2c, 1.2d, 1.4, Meta, 1.3+1.3a)  
-**Current Phase:** Phase 1 (~80% complete)
+**Slices Completed:** 9 (1.1a, 1.2a, 1.2b, 1.2c, 1.2d, 1.3+1.3a, 1.4, 1.5, Meta)  
+**Current Phase:** Phase 1 (~85% complete)
