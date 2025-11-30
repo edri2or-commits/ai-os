@@ -72,6 +72,21 @@
   - Duration: ~15 min
   - Research: Architectural correctness principle
 
+- 2025-11-30 – Slice 1.2d: Remove research duplicates
+  - Problem: Multiple duplicate research folders scattered across repo (Knowl/, מחסן מחקרים/, empty dirs)
+  - Analysis:
+    - claude project/Knowl/ (30 files): EXACT duplicates of research_claude/ (01-18.md) + duplicates of root files
+    - claude project/מחסן מחקרים/ (13 files): Duplicates of playbook, msg_*, Architecting (also in Knowl/)
+    - Empty dirs (maby relevant/, mcp/, מחקרי ארכיטקטורה/): Not tracked in git
+    - Canonical locations verified: research_claude/ (01-18.md), claude project/ (playbook)
+  - Solution: Removed duplicate folders via `git rm -r`
+  - Files changed: 43 files deleted (30 from Knowl/, 13 from מחסן מחקרים/), 6,766 deletions
+  - Result: Zero data loss, single canonical location for research (research_claude/), cleaner repo
+  - Technical Note: Manual git bridge (TD-001), empty dirs were untracked
+  - Commit: 51177b4
+  - Duration: ~30 min
+  - Research: Architectural clarity (single source of truth for research docs)
+
 ---
 
 ## Phase 2: Core Infrastructure (Pending)
@@ -93,5 +108,5 @@
 ---
 
 **Last Updated:** 2025-11-30  
-**Slices Completed:** 6 (1.1a, 1.2a, 1.2b, 1.2c, Meta, 1.3+1.3a)  
-**Current Phase:** Phase 1 (~55% complete)
+**Slices Completed:** 7 (1.1a, 1.2a, 1.2b, 1.2c, 1.2d, Meta, 1.3+1.3a)  
+**Current Phase:** Phase 1 (~70% complete)

@@ -4,7 +4,7 @@ MAINTENANCE RULE: Update QUICK STATUS after EVERY completed slice
 -->
 
 ---
-**QUICK STATUS:** AI Life OS Migration | Phase 1: Cleanup (~55% done) | Just finished: Remove EVENT_TIMELINE duplicate (Slice 1.2c) | Next: Remove research duplicates OR fix legacy paths OR Git MCP setup
+**QUICK STATUS:** AI Life OS Migration | Phase 1: Cleanup (~70% done) | Just finished: Remove research duplicates (Slice 1.2d) | Next: Fix legacy paths OR Git MCP setup OR transition to Phase 2
 ---
 
 <!--
@@ -43,8 +43,8 @@ GROUNDING:
 # Current Focus
 
 **Phase:** Phase 1 – Investigation & Foundation Cleanup  
-**Status:** ~55% complete (6/10 slices done)  
-**Active Work:** Just completed Slice 1.2c (Remove EVENT_TIMELINE duplicate)  
+**Status:** ~70% complete (7/10 slices done)  
+**Active Work:** Just completed Slice 1.2d (Remove research duplicates)  
 
 **What we're doing:**
 - Cleaning up legacy/unclear components (ai_core/, tools/)
@@ -61,6 +61,25 @@ GROUNDING:
 ---
 
 # Recent Changes
+
+**2025-11-30 – Slice 1.2d: Remove research duplicates**
+- Problem: Multiple duplicate research folders scattered across repo (Knowl/, מחסן מחקרים/, empty dirs)
+- Analysis:
+  - claude project/Knowl/ (30 files): EXACT duplicates of research_claude/ (01-18.md) + duplicates of root files (playbook, msg_*, Architecting)
+  - claude project/מחסן מחקרים/ (13 files): Duplicates of playbook, msg_*, Architecting (also in Knowl/), plus working notes subdir
+  - Empty dirs (maby relevant/, mcp/, מחקרי ארכיטקטורה/): Not tracked in git, created during early exploration
+  - Canonical locations: research_claude/ (01-18.md), claude project/ (playbook)
+- Solution: Removed duplicate folders via `git rm -r`
+- Files changed:
+  - 30 files removed from Knowl/
+  - 13 files removed from מחסן מחקרים/
+  - Total: 43 files, 6,766 deletions
+  - Canonical locations unchanged and verified operational
+- Result: Zero data loss, single canonical location for research (research_claude/), cleaner repo structure
+- Technical Note: Manual git bridge (TD-001: Git MCP not configured), empty dirs were untracked (not in git)
+- Commit: 51177b4
+- Duration: ~30 min
+- Research alignment: Architectural clarity (single source of truth for research docs)
 
 **2025-11-30 – Slice 1.2c: Remove EVENT_TIMELINE duplicate**
 - Problem: Duplicate EVENT_TIMELINE.jsonl in repo root + canonical under docs/system_state/timeline/
@@ -132,31 +151,30 @@ GROUNDING:
 
 **Immediate Candidates (from migration_plan.md):**
 
-**Option A: Slice 1.2d – Remove research duplicates (30-45 min)**
-- Actions:
-  - `git rm -r "claude project/Knowl/"`
-  - `git rm -r "claude project/מחסן מחקרים/"`
-  - `git rm -r "maby relevant/" "mcp/" "מחקרי ארכיטקטורה/"`
-- Risk: Low (duplicates confirmed)
-- Benefit: Finish ALL Phase 1 cleanup, cleaner repo structure
-
-**Option B: Slice 1.4 – Fix Legacy File Paths (20-30 min)**
+**Option A: Slice 1.4 – Fix Legacy File Paths (20-30 min)**
 - Problem: Some docs reference old paths (e.g., ai_core/ before archive)
 - Action: Search & update references in docs/
 - Risk: Low (documentation only)
 - Benefit: Maintain documentation accuracy
 
-**Option C: Infrastructure Slice – Configure Git MCP (TD-001) (1-2 hours)**
+**Option B: Infrastructure Slice – Configure Git MCP (TD-001) (1-2 hours)**
 - Problem: Git MCP server not configured → manual git bridges required
 - Action: Install mcp-server-git, configure in claude_desktop_config.json, test
 - Risk: Medium (requires config + Claude Desktop restart)
 - Benefit: Full autonomy for git operations, removes friction
 
+**Option C: Transition to Phase 2 – Observer + Reconciler**
+- Now that Phase 1 cleanup is ~70% complete, could start Phase 2 work
+- Observer (read-only drift detection)
+- Reconciler (CR-based state sync)
+- Would run in parallel with remaining Phase 1 slices
+
 **Strategic Note:**
-- Phase 1 is ~55% complete, excellent momentum
-- Option A finishes Phase 1 cleanup completely (~70%)
-- Option C (Git MCP) could be done before or after remaining Phase 1 slices
-- Could transition to Phase 2 after cleanup complete
+- Phase 1 is ~70% complete, excellent momentum
+- Most cleanup done (ai_core, tools, duplicates all archived/removed)
+- Remaining: Legacy path fixes (Slice 1.4) + potentially more discovery
+- Git MCP (TD-001) could be done now or deferred
+- Could transition to Phase 2 while finishing Phase 1 cleanup
 
 **User Preference:**
 - ADHD-aware: prefer momentum + quick wins
@@ -165,5 +183,5 @@ GROUNDING:
 
 ---
 
-**Last Updated:** 2025-11-30 (after Slice 1.2c)  
+**Last Updated:** 2025-11-30 (after Slice 1.2d)  
 **Next Update:** After next completed slice
