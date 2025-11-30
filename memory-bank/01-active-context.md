@@ -4,7 +4,7 @@ MAINTENANCE RULE: Update QUICK STATUS after EVERY completed slice
 -->
 
 ---
-**QUICK STATUS:** AI Life OS Migration | Phase 1: Cleanup (~80% done) | Just finished: Fix legacy paths (Slice 1.4) | Next: Git MCP setup OR transition to Phase 2
+**QUICK STATUS:** AI Life OS Migration | Phase 2: Core Infrastructure (~10% done) | Just finished: PARA Memory Bank Skeleton (Slice 2.0b) | Next: Life Graph Schema OR Git MCP setup
 ---
 
 <!--
@@ -42,15 +42,15 @@ GROUNDING:
 
 # Current Focus
 
-**Phase:** Phase 1 – Investigation & Foundation Cleanup  
-**Status:** ~85% complete (9/10 slices done)  
-**Active Work:** Just completed Slice 1.5 (Codify Canonical Architecture)  
+**Phase:** Phase 2 – Core Infrastructure (Starting)  
+**Status:** ~10% complete (1 slice of ~10-12 slices)  
+**Active Work:** Just completed Slice 2.0b (PARA Memory Bank Skeleton)  
 
 **What we're doing:**
-- Cleaning up legacy/unclear components (ai_core/, tools/)
-- Removing duplicates (EVENT_TIMELINE, research folders)
-- Fixing critical drift (Git HEAD mismatch) ✅ DONE
-- Establishing clean baseline for Phase 2
+- Building Core infrastructure (Memory Bank PARA structure)
+- Foundation for Life Graph schema (Slice 2.2)
+- Preparing for Observer + Reconciler (Slice 2.3-2.4)
+- Phase 1 foundation complete (cleanup, canonical architecture)
 
 **Pattern:**
 - Small slices (30-45 min each)
@@ -61,6 +61,23 @@ GROUNDING:
 ---
 
 # Recent Changes
+
+**2025-11-30 – Slice 2.0b: PARA Memory Bank Skeleton (Core Expansion)**
+- Problem: No organized knowledge management, cross-chat continuity difficult, no standard templates
+- Solution: Created PARA folder structure (Inbox/Projects/Areas/Resources/Archive) + templates + examples
+- Changes:
+  - **NEW:** 6 PARA directories (00_Inbox/, 10_Projects/, 20_Areas/, 30_Resources/, 99_Archive/, TEMPLATES/)
+  - **NEW:** 5 templates with YAML frontmatter (project, area, task, log, context)
+  - **NEW:** 3 example files (website project, health area, inbox idea)
+  - **NEW:** memory-bank/README.md (PARA usage guide, model-agnostic design)
+  - UPDATED: migration_plan, 01-active-context, 02-progress
+- Result:
+  - ✅ PARA foundation operational
+  - ✅ Cross-chat continuity enabled (any AI model: Claude, ChatGPT, Gemini can quickly load context)
+  - ✅ Foundation for Life Graph schema (Slice 2.2)
+  - ✅ Model-agnostic infrastructure (INV-003: Adapters are replaceable)
+- Duration: ~2-3 hours
+- Research alignment: Memory/Truth Layer (12: PARA pattern), INV-001 (Core expansion), ADHD-aware (18, 11)
 
 **2025-11-30 – Slice 1.5: Codify Canonical Architecture (Meta-Architectural Decision)**
 - Decision: Adopted Hexagonal Architecture (Core/Ports/Adapters) as canonical model
