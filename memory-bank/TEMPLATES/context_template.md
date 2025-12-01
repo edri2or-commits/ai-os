@@ -2,6 +2,8 @@
 type: context
 context_name: "@context-name"
 created: YYYY-MM-DD
+energy_fit: null  # high_focus | creative | admin | low_energy
+tools_available: []  # List of tools/resources available in this context
 ---
 
 # @[Context Name]
@@ -19,3 +21,9 @@ created: YYYY-MM-DD
 ## Typical Tasks
 - Task type 1
 - Task type 2
+
+---
+**ADHD Tips:**
+- Contexts answer "What can I do RIGHT NOW?" given constraints
+- Match context to your current state (location + energy + tools)
+- Examples: @low_energy (couch + phone), @high_focus (desk + quiet)

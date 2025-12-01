@@ -34,6 +34,18 @@ AT END OF ANY MEANINGFUL SLICE:
 
 3. Keep both files SHORT and SCANNABLE (ADHD-friendly)
 
+POST-SLICE REFLECTION (Protocol 1 - Auto-Run):
+After EVERY slice (completed or interrupted), Claude should:
+1. Run the Post-Slice Reflection Checklist (see Playbook Section 15)
+2. Detect Meta-Learning Triggers (Playbook Section 9):
+   - Repetition (2nd+ occurrence) → propose AP-XXX
+   - Workaround used → propose TD-XXX
+   - User surprise → check spec clarity
+   - Research gap (3+ "not sure") → propose research slice
+   - Friction point → propose automation
+3. If incident detected, run Incident Response Protocol (Playbook Section 8)
+4. Propose documentation updates (don't wait for user to ask)
+
 GROUNDING:
 - This pattern follows Memory Bank research family
 - Truth Layer principle: Files are memory, not chat history

@@ -61,6 +61,8 @@ All items use YAML frontmatter for structured metadata. This enables:
 - Observer queries (Phase 2)
 - Context-aware task suggestions (future)
 
+**Schema Reference:** See [`docs/LIFE_GRAPH_SCHEMA.md`](docs/LIFE_GRAPH_SCHEMA.md) for the canonical definition of all entities (Area, Project, Task, Context) and ADHD-specific metadata fields.
+
 See templates in `TEMPLATES/` for examples.
 
 ## Examples
