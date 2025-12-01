@@ -1,4 +1,4 @@
-# חבילת פרויקט – AI Life OS + Claude (ZIP)
+﻿# חבילת פרויקט – AI Life OS + Claude (ZIP)
 
 החבילה הזאת מרכזת את כל מה שצריך בשביל לעבוד עם קלוד על ה־AI-OS שלך:
 
@@ -38,7 +38,7 @@
 
 3. **חיבור לרפו המקומי**  
    - אתה יכול להעתיק/להעביר את תיקיות `research_architecture` ו־`research_claude` אל התיקיות:
-     - `C:\Users\edri2\Desktop\AI\ai-os\מחקרי ארכיטקטורה`
+     - `C:\Users\edri2\Desktop\AI\ai-os\architecture-research`
      - `C:\Users\edri2\Desktop\AI\ai-os\מחקרי קלוד`
 
 4. **הגדרת פרויקט קלוד**  

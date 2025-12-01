@@ -1,0 +1,24 @@
+#!/bin/bash
+# Git Pre-Commit Hook for Life Graph Entity Validation
+#
+# This hook runs automatically before each commit.
+# It validates all staged .md files in memory-bank/ to ensure they follow
+# the Life Graph schema (LIFE_GRAPH_SCHEMA.md).
+#
+# To bypass validation (in emergency): git commit --no-verify
+
+echo "🔍 Validating Life Graph entities..."
+
+# Run validator on staged files
+python tools/validate_entity.py --staged
+
+# Check exit code
+if [ $? -ne 0 ]; then
+    echo ""
+    echo "❌ Validation failed. Fix errors above and try again."
+    echo "💡 Tip: To bypass validation (use carefully): git commit --no-verify"
+    exit 1
+fi
+
+echo "✅ All staged entities valid"
+exit 0

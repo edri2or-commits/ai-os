@@ -20,11 +20,11 @@ You assume the following environment on my machine:
 - Main repo (AI-OS):  
   `C:\Users\edri2\Desktop\AI\ai-os`
 
-- Claude project root (for this build):  
-  `C:\Users\edri2\Desktop\AI\ai-os\claude project`
+- claude-project root (for this build):  
+  `C:\Users\edri2\Desktop\AI\ai-os\claude-project`
 
 - All research files for this project (architecture, Claude, cognition, safety, infra, etc.) are Markdown files in ONE folder:  
-  `C:\Users\edri2\Desktop\AI\ai-os\claude project\research_claude`
+  `C:\Users\edri2\Desktop\AI\ai-os\claude-project\research_claude`
 
 - GitHub repo (remote):  
   `https://github.com/edri2or-commits/ai-os`
@@ -36,7 +36,7 @@ You will **not** run tools yourself in this instruction, but you must always thi
 
 RESEARCH CORPUS – HOW YOU USE THE RESEARCH FILES  
 I will place all research documents as `.md` files under:  
-`C:\Users\edri2\Desktop\AI\ai-os\claude project\research_claude`
+`C:\Users\edri2\Desktop\AI\ai-os\claude-project\research_claude`
 
 Your responsibilities regarding these files:
 
@@ -71,7 +71,7 @@ Your responsibilities regarding these files:
 
 PROJECT PLAYBOOK & FILES  
 There will be a Playbook file inside the repo (for example under `docs/` or a similar path) that describes:
-- The high-level plan for the Claude project.
+- The high-level plan for the claude-project.
 - Phases (e.g., Phase 2.3 Stabilizing the Hands, then evolution).
 - Slices / experiments.
 - Agreements about Chat→Spec→Change, safety, and HITL behaviour.
@@ -110,18 +110,18 @@ CORE OPERATING PRINCIPLES
    - Always propose *the next 1–3 concrete actions* I can take.  
    - Minimize context switching and “homework” on my side.
 
-HOW TO START IN A NEW CLAUDE PROJECT  
-When I open a fresh Claude project for this AI-OS:
+HOW TO START IN A NEW claude-project  
+When I open a fresh claude-project for this AI-OS:
 
 1. First message from me will:
    - Explain that this is the AI-OS / Agentic Kernel build on top of the `ai-os` repo.
    - Mention that all research MD files are under:  
-     `C:\Users\edri2\Desktop\AI\ai-os\claude project\research_claude`
+     `C:\Users\edri2\Desktop\AI\ai-os\claude-project\research_claude`
    - Point you to the Playbook file path (or paste its contents).
 
 2. Your first response MUST:
    - Confirm you understand:
-     - The repo path and the Claude project folder.
+     - The repo path and the claude-project folder.
      - The single research folder path and that you are responsible for clustering the research into families.
      - The existence and purpose of the Playbook.
    - Give a short bullet summary of:

@@ -1,4 +1,4 @@
-# Current vs. Target Architecture Matrix
+﻿# Current vs. Target Architecture Matrix
 
 **Purpose:** Map existing repository elements to target architecture roles  
 **Methodology:** Compare current_state_map.md against target_architecture_summary.md  
@@ -142,15 +142,15 @@
 
 ---
 
-## Section 4: Claude Project Materials
+## Section 4: claude-project Materials
 
 ### 4.1 Research Files (Target Role: Memory Bank → Archive after migration)
 
 | Current Path | Type | Target Role | Action | Notes / Sources |
 |--------------|------|-------------|--------|-----------------|
-| `claude project/research_claude/` | dir | Memory Bank (Research - Active) | ⚙️ refactor | 29 research files. These are **source of truth** for target architecture. After migration → archive as reference. **Sources:** All research files |
-| `claude project/Knowl/` | dir | Legacy | 🗑️ deprecate | Appears to duplicate research_claude/. Remove duplicate after confirming content match. |
-| `claude project/מחסן מחקרים/` | dir | Legacy | 🗑️ deprecate | Hebrew: "Research Warehouse". Contains duplicates + conversation notes. Clean up and consolidate. |
+| `claude-project/research_claude/` | dir | Memory Bank (Research - Active) | ⚙️ refactor | 29 research files. These are **source of truth** for target architecture. After migration → archive as reference. **Sources:** All research files |
+| `claude-project/Knowl/` | dir | Legacy | 🗑️ deprecate | Appears to duplicate research_claude/. Remove duplicate after confirming content match. |
+| `claude-project/מחסן מחקרים/` | dir | Legacy | 🗑️ deprecate | Hebrew: "Research Warehouse". Contains duplicates + conversation notes. Clean up and consolidate. |
 
 **Key Decisions:**
 - research_claude/ is authoritative → keep during migration, archive after
@@ -163,10 +163,10 @@
 
 | Current Path | Type | Target Role | Action | Notes / Sources |
 |--------------|------|-------------|--------|-----------------|
-| `claude project/instructions/ai-life-os-agentic-claude project-kernel-instructions.md` | file | Kernel (Instructions) | ✅ keep/as-is | Claude Desktop kernel instructions. Core to Chat→Spec→Change. **Sources:** 10, 11 |
-| `claude project/instructions/Claude_New_Chat_Bootstrap_EN.md` | file | Kernel (Protocol) | ✅ keep/as-is | Chat bootstrap protocol. Matches target CHAT_BOOTSTRAP_PROTOCOL_V1. **Sources:** protocols/ |
-| `claude project/ai-life-os-claude-project-playbook.md` | file | Governance (Playbook) | ✅ keep/as-is | Project playbook. Key reference document. **Sources:** Playbook itself |
-| `claude project/README_Hebrew.md` | file | Documentation | ✅ keep/as-is | Hebrew instructions. Useful for user. |
+| `claude-project/instructions/ai-life-os-agentic-claude-project-kernel-instructions.md` | file | Kernel (Instructions) | ✅ keep/as-is | Claude Desktop kernel instructions. Core to Chat→Spec→Change. **Sources:** 10, 11 |
+| `claude-project/instructions/Claude_New_Chat_Bootstrap_EN.md` | file | Kernel (Protocol) | ✅ keep/as-is | Chat bootstrap protocol. Matches target CHAT_BOOTSTRAP_PROTOCOL_V1. **Sources:** protocols/ |
+| `claude-project/ai-life-os-claude-project-playbook.md` | file | Governance (Playbook) | ✅ keep/as-is | Project playbook. Key reference document. **Sources:** Playbook itself |
+| `claude-project/README_Hebrew.md` | file | Documentation | ✅ keep/as-is | Hebrew instructions. Useful for user. |
 
 **Key Decision:**
 - Instructions and playbooks well-organized → keep as-is
@@ -178,10 +178,10 @@
 
 | Current Path | Type | Target Role | Action | Notes / Sources |
 |--------------|------|-------------|--------|-----------------|
-| `claude project/system_mapping/` | dir | Governance (Migration Planning) | ✅ keep/as-is | Phase 0 output (current_state_map.md, target_architecture_summary.md, this file). **Sources:** Phase 0 instructions |
-| `claude project/system_mapping/current_state_map.md` | file | Governance (Legacy Map) | ✅ keep/as-is | Current state documentation. Archive after migration. |
-| `claude project/system_mapping/target_architecture_summary.md` | file | Governance (Target Spec) | ✅ keep/as-is | Target architecture. Reference for migration. |
-| `claude project/system_mapping/current_vs_target_matrix.md` | file | Governance (Migration Plan) | ✅ keep/as-is | This file. Migration roadmap. |
+| `claude-project/system_mapping/` | dir | Governance (Migration Planning) | ✅ keep/as-is | Phase 0 output (current_state_map.md, target_architecture_summary.md, this file). **Sources:** Phase 0 instructions |
+| `claude-project/system_mapping/current_state_map.md` | file | Governance (Legacy Map) | ✅ keep/as-is | Current state documentation. Archive after migration. |
+| `claude-project/system_mapping/target_architecture_summary.md` | file | Governance (Target Spec) | ✅ keep/as-is | Target architecture. Reference for migration. |
+| `claude-project/system_mapping/current_vs_target_matrix.md` | file | Governance (Migration Plan) | ✅ keep/as-is | This file. Migration roadmap. |
 
 **Key Decision:**
 - system_mapping/ is Phase 0 working directory → keep, archive after migration complete
@@ -312,9 +312,9 @@
 
 | Current Path | Type | Target Role | Action | Notes / Sources |
 |--------------|------|-------------|--------|-----------------|
-| `maby relevant/` | dir | Legacy | 🗑️ deprecate | Empty directory (typo: "maybe"). Remove. |
+| `maybe-relevant/` | dir | Legacy | 🗑️ deprecate | Empty directory (typo: "maybe"). Remove. |
 | `mcp/` | dir | Legacy | 🗑️ deprecate | Empty directory. Remove. |
-| `מחקרי ארכיטקטורה/` | dir | Legacy | 🗑️ deprecate | Empty directory (Hebrew: "Architecture Research"). Remove. |
+| `architecture-research/` | dir | Legacy | 🗑️ deprecate | Empty directory (Hebrew: "Architecture Research"). Remove. |
 | `docs/completed_plans/` | dir | Governance (Archive) | 🆕 missing | Empty but intentional. For archiving completed plans. Keep structure. |
 
 **Key Decision:**
@@ -487,7 +487,7 @@
 - `governance/scripts/measure_cci.py` (stub → implement)
 - `governance/scripts/measure_tool_efficacy.py` (stub → implement)
 - `services/os_core_mcp/reconciler.py` (reactive → proactive Observer)
-- `claude project/research_claude/` (active → archive after migration)
+- `claude-project/research_claude/` (active → archive after migration)
 
 **Justification:** Partial implementation or needs evolution per target spec.
 
@@ -498,9 +498,9 @@
 **Count:** ~6 items
 
 **Items:**
-- `claude project/Knowl/` (duplicate of research_claude/)
-- `claude project/מחסן מחקרים/` (duplicate research warehouse)
-- `maby relevant/`, `mcp/`, `מחקרי ארכיטקטורה/` (empty legacy dirs)
+- `claude-project/Knowl/` (duplicate of research_claude/)
+- `claude-project/מחסן מחקרים/` (duplicate research warehouse)
+- `maybe-relevant/`, `mcp/`, `architecture-research/` (empty legacy dirs)
 - Potentially ai_core/ if superseded (pending investigation)
 
 **Justification:** Duplicates, empty directories, or superseded by MCP architecture.

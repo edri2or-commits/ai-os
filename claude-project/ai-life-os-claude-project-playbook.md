@@ -1,5 +1,5 @@
-# AI Life OS – Claude Project Playbook
-Version: 0.2  
+﻿# AI Life OS – claude-project Playbook
+Version: 0.5  
 Status: Draft but usable  
 Owner: אור (user)  
 Primary Agent: Claude Desktop (Agentic Kernel)
@@ -37,7 +37,7 @@ This playbook defines *how Claude should work in this project* and *how the repo
 `C:\Users\edri2\Desktop\AI\ai-os`
 
 **Architecture research folder:**  
-`C:\Users\edri2\Desktop\AI\ai-os\מחקרי ארכיטקטורה`
+`C:\Users\edri2\Desktop\AI\ai-os\architecture-research`
 
 **Claude–workflow research folder:**  
 `C:\Users\edri2\Desktop\AI\ai-os\מחקרי קלוד`
@@ -143,7 +143,7 @@ These are the core patterns Claude should follow in this project.
 Before designing something new, Claude should:
 
 1. **Scan what already exists** in the repo relevant to the task:
-   - architecture research (`מחקרי ארכיטקטורה`)
+   - architecture research (`architecture-research`)
    - Claude/agent research (`מחקרי קלוד`)
    - truth-layer JSON/YAML/MD files
    - existing runbooks/slices
@@ -618,6 +618,63 @@ These are **patterns Claude should watch for** to autonomously suggest improveme
 - I should have OFFERED to document, not waited to be asked
 - Fix: Add to Protocol 1 (automatic documentation proposal)
 
+#### Trigger F: Protocol Created (Self-Activation)
+
+**Signal:** I just created/modified a protocol, playbook section, or behavioral rule  
+**Pattern:** New protocol exists but I haven't applied it yet
+
+**Action:**
+1. **IMMEDIATELY apply the new protocol to current context**
+2. Don't wait for next slice/session
+3. Don't ask permission
+4. If protocol says "do X automatically" → do X NOW
+
+**Critical Rule:**  
+Protocols are **self-referential** - they define how I operate starting from the moment they're written, not "later".
+
+**Example (today's incident):**
+- Created Protocol 1: "Auto-update Memory Bank after slice"
+- But ASKED user instead of just updating
+- **Correct:** Create protocol → run it immediately on current slice
+- **Wrong:** Create protocol → ask user → wait for next time
+
+**Self-Check:**
+After creating any protocol:
+- [ ] Did I just write a rule about automatic behavior?
+- [ ] Am I doing that behavior RIGHT NOW?
+- [ ] If not → **STOP and execute it immediately**
+
+#### Trigger G: Major Milestone Reached
+
+**Signal:** Significant architecture or infrastructure completed  
+**Pattern:** Phase transition, key system complete, architectural decision finalized
+
+**Action:**
+1. Detect major milestone completion:
+   - Phase transition (Phase 1 → Phase 2)
+   - Architectural decision (CANONICAL_ARCHITECTURE.md created)
+   - Key infrastructure complete (Life Graph 6/6 entities, Observer operational, Circuit Breakers deployed)
+   - Major slice batch done (5+ slices in same theme)
+2. Propose bridge update:
+   - "Major milestone reached: [X]. Should I update side-architect-bridge.md?"
+3. Update sections:
+   - Recent Slices (last 3)
+   - Current Work (current slice/phase)
+   - State Overview (if entities/invariants changed)
+
+**Frequency:** ~1-2 times per phase (not every slice)
+
+**Example:**
+- Life Graph 6/6 entities complete → Update bridge (State Overview: "6/6 entities")
+- Observer deployed → Update bridge (Current Priorities: Observer operational)
+- Phase 2 → Phase 3 transition → Update both files (bridge + digest)
+
+**Self-Check:**
+- Is this a Phase transition? → YES = major milestone
+- Did core architecture change? (new invariants, entities) → YES = major milestone
+- Is key infrastructure now operational? → YES = major milestone
+- Otherwise → NO, not a major milestone
+
 ### 9.2 Meta-Learning Response Template
 
 When trigger detected:
@@ -667,9 +724,9 @@ This section documents **positive patterns** we've discovered that work well. Op
 
 ## 11. Files & Knowledge for Claude
 
-When configuring the Claude project, the user should:
+When configuring the claude-project, the user should:
 
-- Add **architecture research files** (from `מחקרי ארכיטקטורה`) to project knowledge.
+- Add **architecture research files** (from `architecture-research`) to project knowledge.
 - Add **Claude interaction research files** (from `מחקרי קלוד`) to project knowledge.
 - Ensure Claude can access the **local repo** via filesystem MCP:
   - `C:\Users\edri2\Desktop\AI\ai-os`
@@ -762,7 +819,7 @@ Claude should always know: *we are not rushing to full autonomy*. Stability and 
 - Place this file in the repo at:  
   `docs/playbooks/ai-life-os-claude-project-playbook.md`
 - Commit it to git.
-- In the Claude project’s **Project Instructions**, tell Claude explicitly to:
+- In the claude-project’s **Project Instructions**, tell Claude explicitly to:
   - read this file on every new session
   - follow its protocols
   - keep it updated with your approval
@@ -786,7 +843,85 @@ Claude should:
 
 ---
 
-## 15. Session Template (What Claude Should Do at Start)
+## 15. Post-Slice Reflection Checklist
+
+**When to run:** After EVERY completed slice (or interrupted slice)
+
+Claude should automatically:
+
+### 15.1 Self-Activation Rule (CRITICAL)
+
+**When a slice creates/modifies protocols or playbook:**
+
+1. **Apply new protocol IMMEDIATELY to current slice**
+2. **Don't wait for next slice/session**
+3. **Don't ask user permission**
+
+**Example:**
+- Created Protocol 1 in Slice 2.2c.0 → run it on Slice 2.2c END
+- Added Meta-Learning Trigger → check for triggers NOW
+- Updated playbook behavioral rule → execute that behavior NOW
+
+**Rationale:**  
+Protocols are self-referential. "Do X automatically" means starting NOW, not later.
+
+### 15.2 Standard Post-Slice Actions
+
+1. **Update Memory Bank** (Protocol 1):
+   - memory-bank/01-active-context.md (status, recent changes, next steps)
+   - memory-bank/02-progress.md (append completed slice)
+
+2. **Detect Meta-Learning Triggers** (Section 9):
+   - [ ] Trigger A: Repetition (2nd+ occurrence)
+   - [ ] Trigger B: Workaround used
+   - [ ] Trigger C: User surprise
+   - [ ] Trigger D: Research gap (3+ "not sure")
+   - [ ] Trigger E: Friction point
+   - [ ] Trigger F: Protocol created
+   - [ ] Trigger G: Major milestone reached
+
+3. **Update Side Architect Bridge** (AUTOMATIC - like Memory Bank):
+   
+   **When to update** (same importance as Memory Bank):
+   - Phase progress ≥5% change (e.g., 20%→25%)
+   - New infrastructure piece (Validator, Observer, Reconciler)
+   - Major architectural decision
+   - Trigger G (Major Milestone Reached)
+   
+   **What to update:**
+   - [ ] memory-bank/docs/side-architect-bridge.md:
+     - Header: progress_pct, current_slice, last_updated
+     - Section 3: Recent Slices (last 3)
+     - Section 4: Current Work (completed + next options)
+     - Section 5: Current Priorities (with completion status)
+   - [ ] If architecture changed: side-architect-research-digest.md
+   
+   **Examples of major milestones:**
+   - ✅ Observer created (Phase 2: 20%→25%) - YES, update bridge
+   - ✅ Validator + git hooks (infrastructure piece) - YES, update bridge
+   - ✅ Life Graph complete (6/6 entities) - YES, update bridge
+   - ❌ Fixed typo in docs - NO, don't update bridge
+   - ❌ Small edit to template - NO, don't update bridge
+   
+   **CRITICAL:** Don't ask "should I update bridge?" - just do it automatically if milestone criteria met!
+
+4. **If incident detected:**
+   - Run Incident Response Protocol (Section 8)
+   - Document in memory-bank/incidents/
+
+5. **Propose documentation updates:**
+   - AP-XXX if anti-pattern discovered
+   - BP-XXX if best practice validated
+   - TD-XXX if technical debt added
+   - Don't wait for user to ask
+
+6. **Git commit:**
+   - All changes from this slice
+   - Clear commit message
+
+---
+
+## 16. Session Template (What Claude Should Do at Start)
 
 Claude, when the user opens a new chat in this project, your **first steps** should be roughly:
 
@@ -806,6 +941,32 @@ Only after that, start the Chat → Spec → Change loop for the chosen task.
 
 ## Version History
 
+**v0.5 (2025-12-01)** - Bridge Maintenance Protocol (Strengthened)
+- **UPDATED Section 15.2 Step 3:** Made Bridge Maintenance explicit and automatic
+- Changed from "Major Milestone Check" to "Update Side Architect Bridge (AUTOMATIC)"
+- Added clear criteria: ≥5% phase progress, new infrastructure, major architectural decisions
+- Added specific checklist: What to update in bridge file (header, sections 3-5)
+- Added positive/negative examples (Observer=YES, typo fix=NO)
+- **CRITICAL addition:** "Don't ask - just do it automatically if milestone criteria met"
+- Same priority level as Memory Bank updates (Protocol 1)
+- Research grounding: ADHD friction reduction, model-agnostic onboarding, zero activation energy
+
+**v0.4 (2025-12-01)** - Bridge Maintenance Protocol (Initial)
+- Added Section 9.1: Trigger G (Major Milestone Reached)
+- Added Section 15.2: Step 3 (Major Milestone Check for Side Architect Bridge)
+- Protocol: Auto-update side-architect-bridge.md after major milestones
+- Bridge files: memory-bank/docs/side-architect-bridge.md + side-architect-research-digest.md
+- Frequency: ~1-2 times per phase (Phase transition, key infrastructure, architectural decisions)
+- Research grounding: ADHD friction reduction, model-agnostic onboarding
+
+**v0.3 (2025-11-30)** - Self-Activation & Protocol Application
+- Added Section 9.1: Trigger F (Protocol Created - Self-Activation)
+- Added Section 15: Post-Slice Reflection Checklist with Self-Activation Rule
+- Renamed old Section 15 → Section 16 (Session Template)
+- Critical fix: Protocols must be applied immediately upon creation, not "later"
+- Incident: 2025-11-30-meta-learning-gap.md (protocol created but not self-applied)
+- Research grounding: Meta-Meta-Learning, ADHD friction reduction
+
 **v0.2 (2025-11-30)** - Meta-Learning Infrastructure
 - Added Section 7: Anti-Patterns & Mitigations (AP-001: Context Window Overflow)
 - Added Section 8: Incident Response Protocol (5 Whys, classification, documentation)
@@ -822,4 +983,4 @@ Only after that, start the Chat → Spec → Change loop for the chosen task.
 
 ---
 
-End of playbook v0.2
+End of playbook v0.5

@@ -36,7 +36,7 @@ User → Claude Desktop → MCP Servers → File/Git/etc. ops
 
 **Documentation:**
 - Investigation: `docs/INVESTIGATION_RESULTS.md`
-- Migration: `claude project/system_mapping/migration_plan.md`
+- Migration: `claude-project/system_mapping/migration_plan.md`
 - Commit: `COMMIT_MSG_SLICE_1_2a.txt`
 
 **Rollback:**

@@ -1,6 +1,6 @@
-# Claude – New Chat Bootstrap (AI-OS Project)
+﻿# Claude – New Chat Bootstrap (AI-OS Project)
 
-Use this message when starting a **new chat inside the same Claude project** for my AI-OS.
+Use this message when starting a **new chat inside the same claude-project** for my AI-OS.
 
 ---
 
@@ -8,7 +8,7 @@ Hi Claude, this is a **new chat** but the **same AI-OS project**.
 
 **Context anchors:**
 - Local repo (Windows): `C:\Users\edri2\Desktop\AI\ai-os`
-- Architecture research: `C:\Users\edri2\Desktop\AI\ai-os\מחקרי ארכיטקטורה`
+- Architecture research: `C:\Users\edri2\Desktop\AI\ai-os\architecture-research`
 - Claude research: `C:\Users\edri2\Desktop\AI\ai-os\מחקרי קלוד`
 - GitHub: `https://github.com/edri2or-commits/ai-os`
 

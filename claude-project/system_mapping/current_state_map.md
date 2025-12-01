@@ -1,4 +1,4 @@
-# Current State Map – AI-OS Repository
+﻿# Current State Map – AI-OS Repository
 
 **Purpose:** Professional mapping of existing repository structure as of 2025-11-29  
 **Methodology:** Read-only inspection using filesystem + git tools  
@@ -32,7 +32,7 @@ ai-os/
 ├── .env.template               # Environment template
 ├── README.md                   # Main repository documentation (detailed)
 │
-├── claude project/             # [NEW] Claude Desktop project materials
+├── claude-project/             # [NEW] Claude Desktop project materials
 ├── docs/                       # Core documentation & Truth Layer
 ├── governance/                 # Governance Layer (DEC, EVT, snapshots)
 │
@@ -310,20 +310,20 @@ infra/n8n/
 
 ---
 
-## 6. Claude Project Materials (`claude project/`)
+## 6. claude-project Materials (`claude-project/`)
 
 **NEW DISCOVERY:** Dedicated folder for Claude Desktop project work.
 
 ```
-claude project/
+claude-project/
 ├── instructions/              # Claude instructions
-│   ├── ai-life-os-agentic-claude project-kernel-instructions.md
+│   ├── ai-life-os-agentic-claude-project-kernel-instructions.md
 │   └── Claude_New_Chat_Bootstrap_EN.md
 ├── research_claude/           # Research files (29 .md files)
 │   ├── 01_architectural-blueprint_phase-3-ai-os.md
 │   ├── 02_ai-life-os_deterministic-reliability.md
 │   ├── ... (01 through 18)
-│   ├── ai-life-os-agentic-claude project-kernel-instructions.md
+│   ├── ai-life-os-agentic-claude-project-kernel-instructions.md
 │   ├── ai-life-os-claude-project-playbook.md
 │   ├── Architecting_Personal_AI_Life_OS.md
 │   └── msg_019.md through msg_027.md
@@ -537,9 +537,9 @@ Multiple test_*.py files in root (test_e2e.py, test_gateway.py, test_slice*.py, 
 - `services/os_core_mcp/` (appears to be config-less or uses defaults)
 - `services/agent_kernel/` (appears to be config-less or uses defaults)
 
-**Claude Project Config:**
-- `claude project/instructions/ai-life-os-agentic-claude project-kernel-instructions.md`
-- `claude project/ai-life-os-claude-project-playbook.md`
+**claude-project Config:**
+- `claude-project/instructions/ai-life-os-agentic-claude-project-kernel-instructions.md`
+- `claude-project/ai-life-os-claude-project-playbook.md`
 
 **Environment Variables:**
 - `.env` (excluded from git)
@@ -595,9 +595,9 @@ reports/
 
 ### 16.5 Empty/Unclear Directories
 
-- `maby relevant/` – Empty (typo: should be "maybe")
+- `maybe-relevant/` – Empty (typo: should be "maybe")
 - `mcp/` – Empty
-- `מחקרי ארכיטקטורה/` – Empty (Hebrew: "Architecture Research")
+- `architecture-research/` – Empty (Hebrew: "Architecture Research")
 
 ---
 
@@ -612,7 +612,7 @@ reports/
 - Are Dockerfile and Dockerfile.google in use?
 
 **Need Clarification:**
-- What is the relationship between `claude project/research_claude/` and `claude project/Knowl/`? (duplicate content)
+- What is the relationship between `claude-project/research_claude/` and `claude-project/Knowl/`? (duplicate content)
 - Why is there an `EVENT_TIMELINE.jsonl` in root AND in `docs/system_state/timeline/`?
 
 ### 17.2 Current vs. Target Architecture
@@ -678,7 +678,7 @@ reports/
 3. ✅ 4 MCP servers (GitHub, Google, OS Core, Agent Kernel)
 4. ✅ n8n infrastructure ready
 5. ✅ Extensive documentation (policies, protocols, slices, runbooks)
-6. ✅ 29 research files in `claude project/research_claude/`
+6. ✅ 29 research files in `claude-project/research_claude/`
 7. ✅ Security-first approach (secrets policy, .gitignore)
 
 **Weaknesses:**

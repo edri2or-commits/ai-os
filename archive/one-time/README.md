@@ -45,8 +45,8 @@ One-time: Setup repo → tools/ scripts run → repo initialized → tools/ no l
 
 **Documentation:**
 - Investigation: `docs/INVESTIGATION_RESULTS.md` (Slice 1.1a)
-- Migration: `claude project/system_mapping/migration_plan.md` (Slice 1.2b)
-- Analysis: `claude project/system_mapping/current_vs_target_matrix.md`
+- Migration: `claude-project/system_mapping/migration_plan.md` (Slice 1.2b)
+- Analysis: `claude-project/system_mapping/current_vs_target_matrix.md`
 
 **Rollback:**
 ```bash

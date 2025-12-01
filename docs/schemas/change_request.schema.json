@@ -1,0 +1,144 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://ai-life-os.local/schemas/change_request.schema.json",
+  "title": "Change Request",
+  "description": "Schema for Change Requests (CRs) in the AI Life OS Reconciler system",
+  "type": "object",
+  "required": [
+    "cr_id",
+    "timestamp",
+    "generator",
+    "status",
+    "drift_type",
+    "affected_entity",
+    "proposed_changes",
+    "rationale",
+    "risk_level",
+    "requires_approval",
+    "reversible"
+  ],
+  "properties": {
+    "cr_id": {
+      "type": "string",
+      "pattern": "^CR-\\d{8}-\\d{3}$",
+      "description": "Unique identifier for the Change Request (format: CR-YYYYMMDD-NNN)",
+      "examples": ["CR-20251201-001", "CR-20251201-002"]
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the CR was generated (ISO 8601 format)"
+    },
+    "generator": {
+      "type": "string",
+      "enum": ["observer", "manual", "reconciler"],
+      "description": "What created this CR"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["proposed", "approved", "rejected", "applied"],
+      "description": "Current state in the CR lifecycle"
+    },
+    "drift_type": {
+      "type": "string",
+      "enum": [
+        "git_head_drift",
+        "schema_violation",
+        "orphaned_entity",
+        "broken_link",
+        "stale_timestamp"
+      ],
+      "description": "Type of drift this CR addresses (from Observer drift types)"
+    },
+    "drift_report_id": {
+      "type": ["string", "null"],
+      "pattern": "^DR-\\d{8}-\\d{3}$",
+      "description": "Links to the drift report that generated this CR (optional)",
+      "examples": ["DR-20251201-001"]
+    },
+    "affected_entity": {
+      "type": "object",
+      "required": ["type", "id", "path"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["area", "project", "task", "context", "identity", "log", "system"],
+          "description": "Entity type (or 'system' for non-entity files like SYSTEM_STATE_COMPACT.json)"
+        },
+        "id": {
+          "type": "string",
+          "description": "Entity ID (or filename for system files)"
+        },
+        "path": {
+          "type": "string",
+          "description": "Relative path to the file from repo root"
+        }
+      }
+    },
+    "proposed_changes": {
+      "type": "object",
+      "required": ["field", "operation"],
+      "properties": {
+        "field": {
+          "type": "string",
+          "description": "Field name to modify (or 'file' for move operations)"
+        },
+        "current_value": {
+          "description": "Current value of the field (any type)"
+        },
+        "proposed_value": {
+          "description": "Proposed new value (any type)"
+        },
+        "operation": {
+          "type": "string",
+          "enum": ["update", "delete", "create", "move"],
+          "description": "Type of change to apply"
+        }
+      }
+    },
+    "rationale": {
+      "type": "string",
+      "description": "Human-readable explanation of why this change is needed"
+    },
+    "risk_level": {
+      "type": "string",
+      "enum": ["low", "medium", "high"],
+      "description": "Risk assessment for this change"
+    },
+    "requires_approval": {
+      "type": "boolean",
+      "description": "Whether this CR requires explicit HITL approval before application"
+    },
+    "reversible": {
+      "type": "boolean",
+      "description": "Whether this change can be undone via git revert"
+    },
+    "backup_path": {
+      "type": ["string", "null"],
+      "description": "Optional path to backup file if created before applying changes"
+    },
+    "created_by": {
+      "type": "string",
+      "description": "Tool or user that created this CR"
+    },
+    "reviewed_by": {
+      "type": ["string", "null"],
+      "description": "Username/email of person who approved/rejected (set during HITL)"
+    },
+    "applied_at": {
+      "type": ["string", "null"],
+      "format": "date-time",
+      "description": "Timestamp when changes were applied (ISO 8601)"
+    },
+    "git_commit": {
+      "type": ["string", "null"],
+      "pattern": "^[0-9a-f]{7,40}$",
+      "description": "Git commit hash after CR application"
+    },
+    "rejection_reason": {
+      "type": ["string", "null"],
+      "description": "If rejected, explanation of why"
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,4 +1,4 @@
-# Migration Plan: Current → Target Architecture
+﻿# Migration Plan: Current → Target Architecture
 
 **Purpose:** Slice-based migration from current state to target Personal AI Life OS  
 **Duration:** 8-12 weeks  
@@ -178,44 +178,44 @@ Test-Path "docs\system_state\timeline\EVENT_TIMELINE.jsonl"  # True (unchanged)
 - Confusing structure, unclear canonical location
 
 **Analysis:**
-- `claude project/Knowl/` (30 files):
+- `claude-project/Knowl/` (30 files):
   - 01-18.md: EXACT duplicates of research_claude/ (byte-for-byte identical)
-  - ai-life-os-claude-project-playbook.md: duplicate of claude project/ root file
+  - ai-life-os-claude-project-playbook.md: duplicate of claude-project/ root file
   - Architecting_Personal_AI_Life_OS.md, msg_019-027.md: duplicates (also in מחסן מחקרים/)
   - Canonical location: research_claude/ (01-18.md)
 
-- `claude project/מחסן מחקרים/` (13 files):
-  - playbook: duplicate of claude project/ai-life-os-claude-project-playbook.md
+- `claude-project/מחסן מחקרים/` (13 files):
+  - playbook: duplicate of claude-project/ai-life-os-claude-project-playbook.md
   - msg_019-027, Architecting: duplicates (also in Knowl/)
   - איך עובדים עם קלוד/ subfolder: working notes (2 files)
-  - Canonical locations: claude project/ (playbook)
+  - Canonical locations: claude-project/ (playbook)
 
-- Empty directories (maby relevant/, mcp/, מחקרי ארכיטקטורה/):
+- Empty directories (maybe-relevant/, mcp/, architecture-research/):
   - Not tracked in git (untracked local dirs)
   - Created during early exploration phase
 
 **Actions:**
 ```bash
 # Verification (read-only)
-Test-Path "claude project\Knowl"  # True
-Test-Path "claude project\מחסן מחקרים"  # True
-(Get-ChildItem "claude project\Knowl" -File).Count  # 30
-(Get-ChildItem "claude project\מחסן מחקרים" -Recurse -File).Count  # 13
+Test-Path "claude-project\Knowl"  # True
+Test-Path "claude-project\מחסן מחקרים"  # True
+(Get-ChildItem "claude-project\Knowl" -File).Count  # 30
+(Get-ChildItem "claude-project\מחסן מחקרים" -Recurse -File).Count  # 13
 
 # Remove duplicate research folders
-git rm -r "claude project/Knowl"
-git rm -r "claude project/מחסן מחקרים"
+git rm -r "claude-project/Knowl"
+git rm -r "claude-project/מחסן מחקרים"
 
 # Attempted to remove empty dirs (were not in git)
-git rm -r "maby relevant"  # fatal: pathspec did not match any files
+git rm -r "maybe-relevant"  # fatal: pathspec did not match any files
 git rm -r "mcp"  # fatal: pathspec did not match any files
-git rm -r "מחקרי ארכיטקטורה"  # fatal: pathspec did not match any files
+git rm -r "architecture-research"  # fatal: pathspec did not match any files
 
 # Verification (post-removal)
-Test-Path "claude project\Knowl"  # False
-Test-Path "claude project\מחסן מחקרים"  # False
-Test-Path "claude project\research_claude"  # True (canonical intact)
-Test-Path "claude project\ai-life-os-claude-project-playbook.md"  # True (canonical intact)
+Test-Path "claude-project\Knowl"  # False
+Test-Path "claude-project\מחסן מחקרים"  # False
+Test-Path "claude-project\research_claude"  # True (canonical intact)
+Test-Path "claude-project\ai-life-os-claude-project-playbook.md"  # True (canonical intact)
 ```
 
 **Files Changed:**
@@ -317,8 +317,8 @@ Updated documentation to reflect archived status:
 2. `current_vs_target_matrix.md`: Changed ai_core/ from "⚠️ investigate" to "✅ **MIGRATED**" with full migration details
 
 **Files Changed:**
-- `claude project/system_mapping/migration_plan.md` - Line 14 updated
-- `claude project/system_mapping/current_vs_target_matrix.md` - Section 5.1 updated with complete migration details
+- `claude-project/system_mapping/migration_plan.md` - Line 14 updated
+- `claude-project/system_mapping/current_vs_target_matrix.md` - Section 5.1 updated with complete migration details
 - `memory-bank/01-active-context.md` - Phase 1 progress 70% → 80%
 - `memory-bank/02-progress.md` - Added Slice 1.4 entry
 
@@ -368,9 +368,9 @@ Updated documentation to reflect archived status:
 4. Updated Memory Bank (01-active-context + 02-progress)
 
 **Files Changed:**
-- `claude project/system_mapping/CANONICAL_ARCHITECTURE.md` - **NEW** (authoritative model)
-- `claude project/system_mapping/target_architecture_summary.md` - UPDATED (section 1.0 + 1.1)
-- `claude project/system_mapping/migration_plan.md` - UPDATED (added Slice 1.5)
+- `claude-project/system_mapping/CANONICAL_ARCHITECTURE.md` - **NEW** (authoritative model)
+- `claude-project/system_mapping/target_architecture_summary.md` - UPDATED (section 1.0 + 1.1)
+- `claude-project/system_mapping/migration_plan.md` - UPDATED (added Slice 1.5)
 - `memory-bank/01-active-context.md` - UPDATED (Recent Changes + Strategic Note)
 - `memory-bank/02-progress.md` - UPDATED (added Slice 1.5 entry)
 
@@ -382,7 +382,7 @@ Updated documentation to reflect archived status:
 - ✅ Technical Debt (TD-001) mapped to Ports completion strategy
 - ✅ Research grounding documented (3 families: Architecture, Safety, Memory)
 
-**Commit:** [to be added after manual git bridge]
+**Commit:** `9f2bed6` - feat(memory): Create PARA Memory Bank skeleton (Slice 2.0b)
 
 **Research Alignment:**
 - Hexagonal Architecture pattern (Architecture family)
@@ -460,7 +460,7 @@ Updated documentation to reflect archived status:
 - **NEW:** memory-bank/20_Areas/example-health.md
 - **NEW:** memory-bank/00_Inbox/example-idea-task-prioritizer.md
 - **NEW:** memory-bank/README.md
-- UPDATED: claude project/system_mapping/migration_plan.md (added Slice 2.0b)
+- UPDATED: claude-project/system_mapping/migration_plan.md (added Slice 2.0b)
 - UPDATED: memory-bank/01-active-context.md (Phase 1→2 transition, PARA foundation)
 - UPDATED: memory-bank/02-progress.md (added Slice 2.0b entry)
 
@@ -874,10 +874,10 @@ FITNESS_003_TOOL_EFFICACY = {
 **Actions:**
 ```bash
 # After migration complete, archive research
-mv "claude project/research_claude" "claude project/archive/migration_research_2025"
+mv "claude-project/research_claude" "claude-project/archive/migration_research_2025"
 
 # Create archive README
-cat > "claude project/archive/README.md" << 'EOF'
+cat > "claude-project/archive/README.md" << 'EOF'
 # Migration Archive
 
 This folder contains research and planning documents from the Phase 0-4 migration (Nov-Dec 2025).
@@ -1036,6 +1036,16 @@ Week 9-12: Phase 4 (Cleanup)
 **Impact:** Claude Desktop cannot perform git operations autonomously  
 **Current Workaround:** Manual PowerShell bridge for git add/commit/diff  
 **Root Cause:** Git MCP server not configured in `claude_desktop_config.json`  
+
+**Investigation History:**
+- **2025-12-01 (Slice 2.3a):** Attempted to resolve TD-001 before Observer work
+  - **Attempt:** Install `@modelcontextprotocol/server-git` via npm
+  - **Command:** `npm install -g @modelcontextprotocol/server-git`
+  - **Result:** `404 Not Found - '@modelcontextprotocol/server-git@*' is not in this registry`
+  - **Finding:** Package does not exist in npm registry
+  - **Decision:** Keep PowerShell bridge workaround, defer fix to future research slice
+  - **Status:** TD-001 remains open (medium priority, not blocking)
+  - **Note:** PowerShell bridge works reliably, used successfully for 18 slices without issues
 
 **Required Fix (Future Slice):**
 1. Install `mcp-server-git` (Python package)
