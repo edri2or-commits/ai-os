@@ -609,3 +609,183 @@
 **Commit Message:** "docs: Establish single architectural metaphor (Head/Hands/Truth/Nerves)"
 
 ---
+
+### 2025-12-01 • Slice NAR-1: Narrative Layer - Manifesto + First ADR
+
+**Goal:** Create the missing narrative layer (manifesto + ADR pattern) to solve "איבדתי שליטה" cognitive overload.
+
+**Context:**
+- External architectural critique identified 3 missing layers:
+  1. Layer 1: Manifesto ("Why does this exist?")
+  2. Layer 2: ADR Justifications ("Why this technical choice?")
+  3. Layer 3: ADHD-Centric Design ("How does this help me?")
+- User experienced severe cognitive overload: "איבדתי שליטה לגמרי"
+- Problem: 70% technically implemented, 0% narrated clearly
+- Solution: Not technical changes, only narrative reframing
+
+**What We Built:**
+1. **00_The_Sovereign_AI_Manifesto.md** (~300 lines)
+   - 4 Core Principles: Cognitive Sovereignty, Attention Defense, Executive Prosthesis, The Gardener
+   - Each principle with ADHD-specific justifications
+   - Journey Map: connects manifesto to existing docs (START_HERE, ARCHITECTURE_METAPHOR, decisions/, etc.)
+   - "North Star" for system - read when lost/confused
+   
+2. **ADR-001: Git Truth Layer** (~200 lines)
+   - Retroactive documentation of foundational decision
+   - Full ADR format: Context, Options (3), Decision, Justification, Consequences
+   - Energy State field: "High Clarity" (new metadata for tracking cognitive context)
+   - ADHD Relevance: Git = undo button (safety net for impulsivity), visibility (object permanence), version history (externalized memory)
+   - Validation section: 6 months of use confirms decision
+
+3. **Created decisions/ directory**
+   - `memory-bank/docs/decisions/` for all future ADRs
+   - Establishes pattern for documenting architectural choices
+
+**Files Created:**
+- `memory-bank/00_The_Sovereign_AI_Manifesto.md`
+- `memory-bank/docs/decisions/ADR-001-git-truth-layer.md`
+- `memory-bank/docs/decisions/` (directory)
+
+**Impact:**
+- ✅ Entry point established (manifesto = "Why everything exists")
+- ✅ ADR pattern proven (template for future decisions)
+- ✅ Narrative bridges 70% technical implementation
+- ✅ Energy State tracking introduced (meta-cognition for decisions)
+- ✅ Journey Map reduces "where do I start?" anxiety
+
+**Value for User:**
+- "איבדתי שליטה" → "עכשיו אני יודע למה הכל קיים"
+- Anxiety ↓↓↓ (clear map, reversible decisions, ADHD-justified choices)
+- Clarity ↑↑↑ (manifesto as North Star)
+- Foundation for Layer 2 (retrofit existing docs with justifications)
+- Foundation for Layer 3 (ATTENTION_CENTRIC_DESIGN.md)
+
+**Duration:** ~3 hours  
+**Risk:** NONE (documentation only, zero code changes)  
+**Pattern:** Chat→Spec→Change (user chose Option C, Claude executed)  
+
+**Research Alignment:**
+- Manifesto synthesis (Local-First, Humane Tech, Barkley ADHD, SSI, Permacomputing)
+- ADR pattern (industry-standard, adapted for ADHD solo dev)
+- Energy State tracking (cognitive science, meta-learning)
+
+**Next Steps:**
+- Phase 2: ATTENTION_CENTRIC_DESIGN.md (design principles)
+- Phase 3: Retrofit existing docs with ADR justifications (incremental)
+
+**Commit Message:** "docs: Add narrative layer (Manifesto + ADR-001 Git Truth Layer)"
+
+### 2025-12-01 • Slice NAR-2: Attention-Centric Design Guide
+
+**Goal:** Create comprehensive design guide for ADHD-friendly interfaces (Layer 3 of narrative architecture).
+
+**Context:**
+- Manifesto (NAR-1) established WHY system exists
+- ADR pattern established HOW to document decisions
+- Missing: Design principles for building prosthetic interfaces
+
+**What We Built:**
+**docs/ATTENTION_CENTRIC_DESIGN.md** (~450 lines)
+
+**Content Structure:**
+1. **Philosophy:** Interface as Exocortex (prosthetic extension of executive cortex)
+2. **5 Core Patterns:**
+   - Pattern A: North Star (Persistent Context) - externalizes working memory
+   - Pattern B: Time Materialization - visual timers, time horizons, calibration
+   - Pattern C: The Bouncer (Interruption Management) - notification batching, context switch friction, passive inbox
+   - Pattern D: Conversational Scaffolding - progressive disclosure, next actions, task decomposition
+   - Pattern E: Panic Button - safe state reset (nothing lost, instant clean slate)
+3. **Visual Grammar:** Typography (16px+, 1.5x spacing), Color (semantic only), Whitespace (aggressive), Lists (≤7 items), Animations (minimal)
+4. **Implementation Checklist:** Planning/Design/Visual/Code review phases
+5. **Heuristic Evaluation:** Nielsen's heuristics + 5 ADHD-specific criteria
+6. **Research Grounding:** 10 citations (Barkley, Sweller, Miller, Weiser, Humane Tech, etc.)
+
+**Impact:**
+- ✅ Layer 3 of narrative architecture complete
+- ✅ Framework for all future UI/UX work
+- ✅ Each pattern justified by cognitive science
+- ✅ Connects to Manifesto Section III (Executive Prosthesis)
+- ✅ Integration points documented (ADRs, Life Graph, Memory Bank)
+- ✅ Living document (will evolve with usage)
+
+**Value for User:**
+- Framework for evaluating tools (checklist + heuristics)
+- Clear patterns for building interfaces (5 core patterns)
+- Cognitive science backing (not "because it looks cool")
+- ADHD-specific criteria (externalizes executive function)
+- Reduces "how should I build this?" decision paralysis
+
+**Duration:** ~3 hours  
+**Risk:** NONE (documentation only, zero code changes)  
+**Pattern:** Chat→Spec→Change (user chose Option A, Claude executed)  
+
+**Research Alignment:**
+- Barkley ADHD theory (performance deficit at point of performance)
+- Cognitive Load Theory (Sweller)
+- Humane Technology (attention defense)
+- Miller's Law (7±2 items)
+- Time Timer research (visual analog > digital)
+
+**Integration Points:**
+- Manifesto Section III: Executive Prosthesis
+- All future ADRs should reference design patterns
+- Life Graph entities render ADHD metadata per these principles
+- Memory Bank supports rapid context reinstatement
+
+**Next Steps:**
+- NAR-3: Retrofit existing docs with ADR justifications (incremental)
+- Apply patterns to Observer/Reconciler CLIs (practical validation)
+- User test patterns (iterate based on feedback)
+
+**Commit Message:** "docs: Add Attention-Centric Design Guide (NAR-2)"
+
+### 2025-12-01 • Documentation Update: START_HERE + project-brief (Narrative Integration)
+
+**Goal:** Integrate narrative layer into onboarding flow so new Claude instances know about Manifesto/ADRs/Design Guide.
+
+**Context:**
+- NAR-1 + NAR-2 created narrative files but they weren't integrated into onboarding
+- New Claude instances wouldn't automatically know to read Manifesto when confused
+- project-brief.md lacked "Prosthetic Executive Cortex" framing
+
+**Changes:**
+
+**START_HERE.md:**
+- Added Step 0: "If You're Lost" section pointing to Manifesto
+- When to read Manifesto: first time, user says "איבדתי שליטה", confused about WHY
+- Updated Additional Resources: split into Narrative Layer + Technical Layer
+- Narrative Layer: Manifesto, ADRs, Design Guide (with descriptions)
+- Navigation Tips: "Confused about WHY? → Manifesto"
+
+**project-brief.md:**
+- Updated TL;DR: Added "Prosthetic Executive Cortex" framing
+- Updated Vision: Added Manifesto reference link
+- Added NEW Section: "Narrative Architecture" (~60 lines)
+  - Layer 1: Manifesto (WHY) - 4 principles, when to read
+  - Layer 2: ADRs (WHY technical choices) - format, example ADR-001
+  - Layer 3: Design Guide (HOW to build) - 5 patterns, when to use
+  - Integration: how layers connect
+- Updated metadata: Current Status (Phase 2, 38%), Last Updated (2025-12-01)
+
+**Impact:**
+- ✅ New Claude instances will know Manifesto exists and when to use it
+- ✅ project-brief now explains 3-layer narrative structure
+- ✅ Clear navigation: WHY questions → Manifesto, technical choices → ADRs, design → Guide
+- ✅ "Prosthetic Executive Cortex" framing visible from onboarding
+- ✅ All entry points (START_HERE, project-brief) now reference narrative layer
+
+**Value for User:**
+- New chats start with narrative context (not just technical)
+- When user says "איבדתי שליטה" → Claude knows to point to Manifesto
+- Onboarding includes WHY not just WHAT
+- Reduces repeated explanations
+
+**Duration:** ~30 minutes  
+**Risk:** NONE (documentation only)  
+**Pattern:** Complete Fix (Option B from user choice)
+
+**Files Modified:**
+- memory-bank/START_HERE.md (Step 0 + Additional Resources)
+- memory-bank/project-brief.md (TL;DR + Vision + Narrative Architecture section)
+
+**Commit Message:** "docs: Integrate narrative layer into onboarding (START_HERE + project-brief)"

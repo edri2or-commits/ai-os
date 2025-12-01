@@ -7,13 +7,13 @@ Most slices do NOT require updating this file.
 ---
 ## TL;DR (20-second version)
 
-**What:** Building AI Life OS where Claude Desktop orchestrates MCP servers (file/git/Google/state) against a git-backed Truth Layer, with proactive drift detection and ADHD-friendly workflows.
+**What:** Building AI Life OS - a **Prosthetic Executive Cortex** for ADHD. Claude Desktop orchestrates MCP servers (file/git/Google/state) against a git-backed Truth Layer, with proactive drift detection and ADHD-friendly workflows.
 
 **Platform:** Windows 11 + Claude Desktop + 4 MCP servers + n8n automation
 
 **Duration:** 8-12 weeks, 4 phases, 16 small slices (~30-60 min each)
 
-**Current Status:** Phase 1 cleanup (~30% done) - archiving legacy components, removing duplicates, fixing drift
+**Current Status:** Phase 2 Core Infrastructure (~38% done) - Life Graph complete, Observer/Reconciler operational, Narrative Layer established
 
 **Your Role:** Mostly approve/review; Claude does planning, execution, documentation
 
@@ -32,7 +32,7 @@ Most slices do NOT require updating this file.
 
 ## Vision
 
-Build **AI Life OS** where:
+Build **AI Life OS** - a **Prosthetic Executive Cortex** for ADHD where:
 
 - **Claude Desktop** = "Head" (reasoning + orchestration)
 - **MCP servers** = "Hands" (file ops, git, Google Workspace, system state)
@@ -44,6 +44,79 @@ Build **AI Life OS** where:
 - User (with ADHD) mostly approves/reviews/answers questions
 - Claude does heavy lifting: planning, execution, documentation
 - System mostly builds and maintains itself
+
+?? **For WHY this system exists and core principles:** Read `memory-bank/00_The_Sovereign_AI_Manifesto.md`
+
+---
+
+## Narrative Architecture
+
+The AI Life OS has a **3-layer narrative structure** that explains WHY and HOW it works:
+
+### Layer 1: The Manifesto (WHY)
+?? **File:** `memory-bank/00_The_Sovereign_AI_Manifesto.md`
+
+Answers: "Why does this system exist?"
+
+**Content:**
+- 4 Core Principles:
+  1. **Cognitive Sovereignty:** My data, my model, my interface
+  2. **Attention Defense:** System serves focus, not engagement
+  3. **Executive Prosthesis:** AI as scaffold, not builder
+  4. **The Gardener:** Cultivation over consumption
+- Each principle justified by ADHD cognitive needs
+- Journey Map connecting to all documentation
+
+**When to read:**
+- New to the project
+- Feeling lost ("איבדתי שליטה")
+- Need to explain system to others
+- Questioning architectural decisions
+
+### Layer 2: ADRs (WHY Technical Choices)
+?? **Directory:** `memory-bank/docs/decisions/`
+
+Answers: "Why did we choose technology X?"
+
+**Content:**
+- Architecture Decision Records (ADRs)
+- Format: Context ? Options ? Decision ? Justification ? Consequences
+- Each includes **ADHD Relevance** section
+- Energy State tracking (meta-cognition for decisions)
+
+**Example:** ADR-001 explains Git Truth Layer choice:
+- Why Git over Notion/PostgreSQL
+- ADHD benefits: safety net (impulsivity), visibility (object permanence), version history (externalized memory)
+
+### Layer 3: Design Guide (HOW to Build)
+?? **File:** `docs/ATTENTION_CENTRIC_DESIGN.md`
+
+Answers: "How do we build ADHD-friendly interfaces?"
+
+**Content:**
+- 5 Core Patterns (backed by cognitive science):
+  1. **North Star:** Persistent Context (externalizes working memory)
+  2. **Time Materialization:** Visual timers (combats time blindness)
+  3. **The Bouncer:** Interruption management (protects flow)
+  4. **Conversational Scaffolding:** Task decomposition (reduces paralysis)
+  5. **Panic Button:** Safe reset (nothing lost)
+- Visual Grammar: Typography, color, whitespace, lists, animations
+- Implementation Checklist + Heuristic Evaluation
+- Research grounding: Barkley, Sweller, Miller, Humane Tech
+
+**When to use:**
+- Building new UI/UX
+- Evaluating external tools (Obsidian, Notion, etc.)
+- Making design decisions
+- Validating ADHD-friendliness
+
+### Integration
+
+These 3 layers connect:
+- **Manifesto principles** ? guide ADR decisions
+- **ADR decisions** ? reference Manifesto sections
+- **Design patterns** ? implement Manifesto Executive Prosthesis principle
+- **All layers** ? grounded in ADHD cognitive science
 
 ---
 
@@ -149,6 +222,6 @@ Build **AI Life OS** where:
 
 ---
 
-**Last Updated:** 2025-11-29  
-**Current Phase:** Phase 1 (Investigation & Cleanup)  
-**Active Slice:** Just completed 1.2b (Archive tools/)
+**Last Updated:** 2025-12-01  
+**Current Phase:** Phase 2 (Core Infrastructure)  
+**Active Slice:** Just completed NAR-2 (Attention-Centric Design Guide)

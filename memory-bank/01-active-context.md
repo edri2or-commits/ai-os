@@ -31,9 +31,9 @@ Then:
 ---
 **QUICK STATUS:** AI Life OS | Phase 2: Core Infrastructure (~32% done)
 ??? **Infrastructure Operational:** Observer ? | Validator ? | Reconciler (CR + Apply Logic) ? (code ready, validation blocked by TD-002)
-**Just finished:** Slice 2.4c spec + implementation (apply logic, git safety rules, HITL protocol)
+**Just finished:** Slice NAR-2 (Attention-Centric Design Guide)
 **Blocker:** TD-002 (Windows MCP stdout capture) blocks end-to-end validation of apply flow
-**Next:** Fix TD-002 (infra) OR Scheduled Observer (2.3b) OR Continue SA track (SA-5)
+**Next:** Phase 3 NAR (retrofit existing docs with justifications) OR Apply patterns to CLIs OR Fix TD-002
 ---
 
 <!--
@@ -104,8 +104,8 @@ GROUNDING:
 # Current Focus
 
 **Phase:** Phase 2 ן¿½ Core Infrastructure (Active)  
-**Status:** ~32% complete (6 slices of ~10-12 slices)  
-**Active Work:** Just completed Slice 2.4c (Reconciler Apply Logic - spec + code), **BLOCKED by TD-002**  
+**Status:** ~38% complete (8 slices of ~10-12 slices)  
+**Active Work:** Just completed Slice NAR-1 (Narrative Layer: Manifesto + ADR-001 Git Truth Layer)  
 
 **What we're doing:**
 - Life Graph schema complete (6/6 entities: Area, Project, Task, Context, Identity, Log) ?
@@ -114,8 +114,10 @@ GROUNDING:
 - **Reconciler CR management complete (generate/list/show/approve/reject, zero entity mods)** ?
 - **Reconciler Apply Logic implemented (git safety rules, HITL protocol, dry-run + apply commands)** ? **NEW**
 - **Side-Architect onboarding system complete (instruction block + templates + maintenance protocol)** ?
+- **Narrative Layer foundation established (Manifesto + ADR pattern)** ?
+- **Attention-Centric Design Guide complete (5 patterns, implementation checklist, heuristics)** ? **NEW**
 - **BLOCKER:** TD-002 (Windows MCP stdout) prevents end-to-end validation of apply flow
-- Next: Fix TD-002 (investigate MCP) OR Scheduled Observer (2.3b) OR SA-5 (Capability Model)
+- Next: NAR-3 (retrofit docs) OR Apply design patterns to CLIs OR Fix TD-002
 
 **Pattern:**
 - Small slices (30-45 min each)
@@ -126,6 +128,39 @@ GROUNDING:
 ---
 
 # Recent Changes
+
+**2025-12-01 - Documentation Update: Narrative Integration (START_HERE + project-brief)** ? COMPLETE
+- Goal: Integrate narrative layer into onboarding so new Claude instances know about Manifesto/ADRs/Design Guide
+- Changes: START_HERE.md (Step 0 + Additional Resources split), project-brief.md (TL;DR + Narrative Architecture section)
+- Impact: ? New chats start with narrative context, ? "איבדתי שליטה" ? points to Manifesto, ? Clear navigation (WHY ? Manifesto, technical ? ADRs, design ? Guide)
+- Duration: ~30 min | Risk: NONE (documentation only)
+
+**2025-12-01 - Slice NAR-2: Attention-Centric Design Guide** ? COMPLETE
+- Goal: Create design framework for ADHD-friendly interfaces (Layer 3 of narrative architecture)
+- Problem: No design principles for building prosthetic interfaces
+- Solution: Created comprehensive design guide with cognitive science backing
+- File created: docs/ATTENTION_CENTRIC_DESIGN.md (~450 lines)
+- Content: 5 core patterns (North Star, Time Materialization, Bouncer, Scaffolding, Panic Button)
+- Visual Grammar: Typography, color, whitespace, lists, animations (all ADHD-justified)
+- Checklists: Implementation checklist + Heuristic evaluation (Nielsen + 5 ADHD-specific)
+- Research: 10 citations (Barkley, Sweller, Miller, Weiser, Humane Tech, Time Timer, etc.)
+- Result: ? Layer 3 complete, ? Framework for all future UI/UX, ? Cognitive science backing
+- Value: Reduces "how should I build this?" paralysis, clear evaluation criteria
+- Duration: ~3 hours | Risk: NONE (documentation only)
+- Integration: Connects to Manifesto III, ADR pattern, Life Graph metadata
+
+**2025-12-01 - Slice NAR-1: Narrative Layer - Manifesto + First ADR** ? COMPLETE
+- Goal: Create missing narrative layer to solve "איבדתי שליטה" cognitive overload
+- Problem: 70% technically implemented, 0% narrated clearly ? user anxiety + confusion
+- Solution: Created Manifesto (entry point) + ADR-001 (pattern example) + decisions/ directory
+- Files created: 00_The_Sovereign_AI_Manifesto.md (~300 lines), ADR-001-git-truth-layer.md (~200 lines)
+- Manifesto: 4 principles (Cognitive Sovereignty, Attention Defense, Executive Prosthesis, The Gardener)
+- ADR-001: Retroactive documentation of Git Truth Layer decision with Energy State field
+- Journey Map: connects manifesto to existing docs (reduces "where do I start?" anxiety)
+- Result: ? Entry point established, ? ADR pattern proven, ? Energy State tracking introduced
+- Value: "איבדתי שליטה" ? "עכשיו אני יודע למה הכל קיים", Anxiety ???, Clarity ???
+- Duration: ~3 hours | Risk: NONE (documentation only)
+- Foundation for: NAR-2 (ATTENTION_CENTRIC_DESIGN.md), NAR-3 (retrofit existing docs)
 
 **2025-12-01 - Architecture Cleanup: Single Metaphor Established** ג… COMPLETE
 - Goal: Eliminate competing metaphors, establish single canonical architecture

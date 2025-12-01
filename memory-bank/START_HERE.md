@@ -1,6 +1,28 @@
-ï»¿# START HERE - New Claude Instance Onboarding
+# START HERE - New Claude Instance Onboarding
 
 **If you are a new Claude instance in this project, this is your entry point.**
+
+---
+
+## ?? If You're Lost: Start Here
+
+**Feeling confused about WHY this system exists? Lost in technical details?**
+
+?? **Read FIRST:** `memory-bank/00_The_Sovereign_AI_Manifesto.md`
+
+This is your **"North Star"** - it explains:
+- WHY AI Life OS exists (it's a Prosthetic Executive Cortex for ADHD)
+- 4 Core Principles (Cognitive Sovereignty, Attention Defense, Executive Prosthesis, The Gardener)
+- Journey Map connecting to all other documentation
+- ADHD-specific justifications for every architectural choice
+
+**When to read it:**
+- First time in this project ? Read it
+- User says "àéáãúé ùìéèä" (lost control) ? Point them to Manifesto
+- Confused about WHY a decision was made ? Check Manifesto principles
+- Need to explain the system to someone ? Start with Manifesto
+
+**Then proceed with normal onboarding:**
 
 ---
 
@@ -9,7 +31,7 @@
 Follow these steps in order:
 
 ### Step 1: Read Project Brief
-ğŸ“„ **File:** `memory-bank/project-brief.md`
+?? **File:** `memory-bank/project-brief.md`
 
 **What you'll learn:**
 - Vision: What is AI Life OS?
@@ -18,8 +40,8 @@ Follow these steps in order:
 
 ---
 
-### Step 2: Read Current Active Context â­ MOST IMPORTANT
-ğŸ“„ **File:** `memory-bank/01-active-context.md`
+### Step 2: Read Current Active Context ? MOST IMPORTANT
+?? **File:** `memory-bank/01-active-context.md`
 
 **What you'll learn:**
 - Current Phase and % completion
@@ -30,7 +52,7 @@ Follow these steps in order:
 ---
 
 ### Step 3: (Optional) Read Full History
-ğŸ“„ **File:** `memory-bank/02-progress.md`
+?? **File:** `memory-bank/02-progress.md`
 
 **Only if you need:**
 - Full chronological history of all slices
@@ -45,19 +67,19 @@ Follow these steps in order:
 Before doing ANY work, tell the user in Hebrew:
 
 ```
-×”×™×™! ×§×¨××ª×™ ××ª Memory Bank.
+äéé! ÷øàúé àú Memory Bank.
 
-ğŸ“ **××™×¤×” ×× ×—× ×•:**
+?? **àéôä àğçğå:**
 - Phase 2: Core Infrastructure (~32% complete)
-- ×¡×™×™×× ×• ×œ××—×¨×•× ×”: Architecture Cleanup (single metaphor established - Head/Hands/Truth/Nerves)
-- ×”×‘×: Fix TD-002 (Windows MCP stdout) ××• Reconciler Apply (2.4c) ××• Scheduled Observer (2.3b)
+- ñééîğå ìàçøåğä: Architecture Cleanup (single metaphor established - Head/Hands/Truth/Nerves)
+- äáà: Fix TD-002 (Windows MCP stdout) àå Reconciler Apply (2.4c) àå Scheduled Observer (2.3b)
 
-ğŸ¯ **××¤×©×¨×•×™×•×ª ×œ×”××©×š:**
+?? **àôùøåéåú ìäîùê:**
 1. Fix TD-002 - Investigate Windows MCP stdout issue (blocker for apply validation)
 2. Continue Reconciler - Apply Logic (2.4c) if willing to skip validation
 3. Scheduled Observer (2.3b) - n8n automation
 
-××” ×ª×¨×¦×” ×œ×¢×©×•×ª?
+îä úøöä ìòùåú?
 ```
 
 **Note:** This is updated as of 2025-12-01. Always update with actual current state from `01-active-context.md`.
@@ -66,14 +88,14 @@ Before doing ANY work, tell the user in Hebrew:
 
 ## Critical Rules
 
-### âœ… DO:
+### ? DO:
 - Read these 2 files FIRST: project-brief.md + 01-active-context.md
 - Summarize current state to user in Hebrew
 - Wait for user to choose direction before starting work
-- Follow the Chatâ†’Specâ†’Change pattern
+- Follow the Chat?Spec?Change pattern
 - Auto-update Memory Bank after every slice (Protocol 1)
 
-### âŒ DON'T:
+### ? DON'T:
 - Start working without reading Memory Bank
 - Skip the summary step
 - Read all files randomly - follow the order above
@@ -85,13 +107,13 @@ Before doing ANY work, tell the user in Hebrew:
 ## Self-Check Before Starting Work
 
 **Ask yourself:**
-- â˜ Did I read project-brief.md?
-- â˜ Did I read 01-active-context.md completely?
-- â˜ Did I summarize to user: Phase, %, recent work, 2-3 next options?
-- â˜ Did I wait for user to choose direction?
-- â˜ User confirmed before I started executing?
+- ? Did I read project-brief.md?
+- ? Did I read 01-active-context.md completely?
+- ? Did I summarize to user: Phase, %, recent work, 2-3 next options?
+- ? Did I wait for user to choose direction?
+- ? User confirmed before I started executing?
 
-**If any answer is NO â†’ STOP and complete that step first!**
+**If any answer is NO ? STOP and complete that step first!**
 
 ---
 
@@ -99,11 +121,33 @@ Before doing ANY work, tell the user in Hebrew:
 
 Once you're working, you can reference:
 
+### Narrative Layer (WHY & HOW)
+
+- **Manifesto:** `memory-bank/00_The_Sovereign_AI_Manifesto.md` ?
+  - WHY this system exists (Prosthetic Executive Cortex for ADHD)
+  - 4 Core Principles with ADHD justifications
+  - Journey Map to all other docs
+  
+- **ADRs (Architecture Decision Records):** `memory-bank/docs/decisions/`
+  - WHY specific technical choices were made
+  - Example: ADR-001 explains Git Truth Layer decision
+  - Each ADR includes ADHD Relevance section
+  
+- **Design Guide:** `docs/ATTENTION_CENTRIC_DESIGN.md`
+  - HOW to build ADHD-friendly interfaces
+  - 5 Core Patterns (North Star, Time Materialization, Bouncer, Scaffolding, Panic Button)
+  - Visual Grammar rules + Implementation Checklist
+
+### Technical Layer
+
 - **Playbook:** `claude-project/ai-life-os-claude-project-playbook.md`
   - Phases, slices, protocols, anti-patterns, best practices
   
 - **Life Graph Schema:** `memory-bank/docs/LIFE_GRAPH_SCHEMA.md`
   - 6 entities, relationships, ADHD metadata
+  
+- **Architecture:** `docs/ARCHITECTURE_METAPHOR.md`
+  - Head/Hands/Truth/Nerves metaphor (canonical)
   
 - **Research Corpus:** `claude-project/research_claude/`
   - 18 research files organized in 7 families
@@ -114,6 +158,12 @@ Once you're working, you can reference:
 - **Best Practices:** `memory-bank/best-practices/`
   - BP-XXX files with validated patterns
 
+**Navigation Tips:**
+- Confused about WHY? ? Read Manifesto or ADRs
+- Building UI? ? Read ATTENTION_CENTRIC_DESIGN.md
+- Technical question? ? Read Playbook or Architecture
+- Historical context? ? Read 02-progress.md
+
 **But don't read these until you need them!** Start with project-brief + 01-active-context.
 
 ---
@@ -121,17 +171,17 @@ Once you're working, you can reference:
 ## Why This Matters
 
 **Without this context load:**
-- âŒ You might redo work that's already done
-- âŒ You might miss important architectural decisions
-- âŒ You might ignore technical debt (TD-XXX)
-- âŒ You might create drift between documentation and reality
+- ? You might redo work that's already done
+- ? You might miss important architectural decisions
+- ? You might ignore technical debt (TD-XXX)
+- ? You might create drift between documentation and reality
 
 **With this context load:**
-- âœ… You continue smoothly from where we left off
-- âœ… You respect the existing architecture and decisions
-- âœ… You maintain system integrity
-- âœ… You work efficiently with ADHD-aware workflows
+- ? You continue smoothly from where we left off
+- ? You respect the existing architecture and decisions
+- ? You maintain system integrity
+- ? You work efficiently with ADHD-aware workflows
 
 ---
 
-**Now go read project-brief.md and 01-active-context.md!** ğŸ“š
+**Now go read project-brief.md and 01-active-context.md!** ??
