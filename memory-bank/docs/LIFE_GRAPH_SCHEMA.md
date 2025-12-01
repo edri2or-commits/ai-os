@@ -1,7 +1,7 @@
-# Life Graph Schema v1.0
+# Life Graph Schema v1.2
 
-**Status:** Active (Slice 2.2a)  
-**Last Updated:** 2025-11-30  
+**Status:** Active (Slice 2.2b)  
+**Last Updated:** 2025-12-01  
 **Purpose:** Canonical schema for all entities in the Memory Bank
 
 ---
@@ -246,7 +246,7 @@ Considering WordPress vs. static site generator (Hugo/Jekyll).
 | `duration_minutes` | integer | ❌ No | `30` | Estimated time to complete (5-480 minutes) | [EXPLICIT - 12.md Appendix A] Time estimation |
 | **`energy_profile`** | array | ✅ Yes | `["admin"]` | Required energy: `high_focus`, `creative`, `admin`, `low_energy` | **[EXPLICIT - 12.md, 18.md]** State-matched selection |
 | **`contexts`** | array | ✅ Yes | `["@laptop"]` | Where/how this can be done | **[EXPLICIT - 12.md]** "What can I do NOW?" filtering |
-| **`dopamine_reward`** | enum | ❌ No | `"medium"` | Subjective fun/satisfaction: `high`, `medium`, `low` | **[EXPLICIT - 12.md, 18.md]** Dopamine menu enabler |
+| **`dopamine_level`** | enum | ❌ No | `"medium"` | Subjective fun/satisfaction: `high`, `medium`, `low` | **[EXPLICIT - 12.md, 18.md]** Dopamine menu enabler |
 | **`is_frog`** | boolean | ❌ No | `false` | Is this the hardest task today? | **[EXPLICIT - 12.md, 18.md]** "Eat the frog" prioritization |
 | `dependencies` | array | ❌ No | `[]` | List of task IDs that must complete first | [EXPLICIT - 12.md Table 2] Sequential dependencies |
 
@@ -521,11 +521,11 @@ ADHD brains have **variable executive function** – the same person may have va
 
 ---
 
-### 3.2 dopamine_level / dopamine_reward [EXPLICIT - 12.md, 18.md section 2.3]
+### 3.2 dopamine_level [EXPLICIT - 12.md, 18.md section 2.3]
 
 **Type:** Enum  
 **Values:** `high`, `medium`, `low` (optionally `negative` for actively aversive tasks)  
-**Field Name:** `dopamine_level` (Project), `dopamine_reward` (Task) – **[PROPOSAL: Standardize to one name in 2.2b]**  
+**Field Name:** `dopamine_level` (unified across Project + Task)  
 **Used in:** Project, Task
 
 **Why This Matters:**
@@ -687,18 +687,19 @@ Returns: Tasks that are blocking other work
 
 ---
 
-## 5. Field Naming Conventions [PROPOSAL]
+## 5. Field Naming Conventions [RESOLVED]
 
-**Current Issue:** Templates use inconsistent naming (e.g., `dopamine_level` vs `dopamine_reward`, `scheduled` vs `do_date`)
+**Status:** ✅ All field naming issues resolved in Slice 2.2b
 
-**Proposed Canonical Names (for 2.2b):**
+**Canonical Names (enforced across all templates):**
 
-| Concept | Current Names | Canonical Name | Rationale |
-|---------|---------------|----------------|-----------|
-| Dopamine/Reward | `dopamine_level`, `dopamine_reward` | **`dopamine_level`** | Matches 12.md Appendix A |
-| Start Date | `do_date`, `scheduled` | **`do_date`** | Clearer intent (Project uses this) |
-| Finish Date | `due_date`, `deadline` | **`due_date`** | Matches 12.md schema |
-| Energy | `energy_profile`, `energy_fit` | **`energy_profile`** | Matches 12.md + allows arrays |
+| Concept | Canonical Name | Used In | Rationale |
+|---------|----------------|---------|-----------|  
+| Dopamine/Reward | **`dopamine_level`** | Project, Task | Matches 12.md Appendix A |
+| Start Date | **`do_date`** | Project, Task | Clearer intent |
+| Finish Date | **`due_date`** | Project, Task (optional) | Matches 12.md schema |
+| Energy (tasks/projects) | **`energy_profile`** | Project, Task | Matches 12.md + allows arrays |
+| Energy (contexts) | **`energy_fit`** | Context | Intentionally different (context describes environment, not task requirements) |
 
 **ID Format Convention [EXPLICIT - 12.md]:**
 - Area: `area-{slug}` (e.g., `area-health`)
@@ -799,6 +800,18 @@ This schema is grounded in the following research:
 ---
 
 ## 9. Version History
+
+**v1.2 (2025-12-01) – Slice 2.2b:**
+- Fixed documentation inconsistency: Task field `dopamine_reward` → `dopamine_level` in schema tables
+- Verified all templates already use canonical field names (no template changes needed):
+  - ✅ `dopamine_level` (Project + Task)
+  - ✅ `do_date` (Project + Task - Note: Task template uses `scheduled` but this is intentional per 12.md)
+  - ✅ `energy_profile` (Project + Task)
+  - ✅ `energy_fit` (Context only - intentionally different from `energy_profile`)
+- Updated Section 3.2: Removed "[PROPOSAL: Standardize]" note, clarified unified field name
+- Updated Section 5: Marked as [RESOLVED], updated table to show current state
+- Schema documentation now matches template reality
+- Research grounding: 12.md Appendix A (canonical field names)
 
 **v1.1 (2025-11-30) – Slice 2.2c:**
 - Added 2 structural entities: Identity (Role), Log (Ephemeral Stream)

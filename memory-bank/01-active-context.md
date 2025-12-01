@@ -4,7 +4,35 @@ MAINTENANCE RULE: Update QUICK STATUS after EVERY completed slice
 -->
 
 ---
-**QUICK STATUS:** AI Life OS Migration | Phase 2: Core Infrastructure (~10% done) | Just finished: PARA Memory Bank Skeleton (Slice 2.0b) | Next: Life Graph Schema OR Git MCP setup
+?? **NEW CLAUDE INSTANCE? READ THIS FIRST!** ??
+
+**BEFORE YOU DO ANYTHING:**
+
+If you're a new Claude instance (new chat in this project), you MUST:
+
+1. **Read START_HERE.md** ? Entry point for new instances
+2. **Read memory-bank/project-brief.md** ? What is this project?
+3. **Read THIS FILE completely** ? Where are we now?
+
+Then:
+
+**CHECKLIST (check mentally before starting work):**
+- [ ] I read START_HERE.md
+- [ ] I read project-brief.md (vision)
+- [ ] I read "Current Focus" section below (which Phase/Slice)
+- [ ] I read "Recent Changes" section (what happened recently)
+- [ ] I read "Next Steps" section (proposed options)
+- [ ] I summarized to user: Phase, %, recent work, 2-3 next options
+- [ ] I waited for user to choose direction
+- [ ] User confirmed before I started executing
+
+?? **DO NOT SKIP THIS** - prevents drift, duplication, confusion!
+
+---
+**QUICK STATUS:** AI Life OS Migration | Phase 2: Core Infrastructure (~30% done)
+??? **Infrastructure Operational:** Observer ? | Validator ? | Reconciler (CR Management) ?
+**Just finished:** Side-Architect Refinement Track (SA-1 to SA-4 - onboarding system complete)
+**Next:** Reconciler Apply Logic (2.4c) OR Scheduled Observer (2.3b) OR Continue SA track (SA-5)
 ---
 
 <!--
@@ -30,21 +58,41 @@ AT END OF ANY MEANINGFUL SLICE:
    - Add new candidates to "Next Steps" from migration_plan.md
 
 2. Append to 02-progress.md:
-   - Format: "- YYYY-MM-DD – Slice X.Y: Brief description"
+   - Format: "- YYYY-MM-DD � Slice X.Y: Brief description"
 
 3. Keep both files SHORT and SCANNABLE (ADHD-friendly)
 
 POST-SLICE REFLECTION (Protocol 1 - Auto-Run):
-After EVERY slice (completed or interrupted), Claude should:
-1. Run the Post-Slice Reflection Checklist (see Playbook Section 15)
-2. Detect Meta-Learning Triggers (Playbook Section 9):
-   - Repetition (2nd+ occurrence) → propose AP-XXX
-   - Workaround used → propose TD-XXX
-   - User surprise → check spec clarity
-   - Research gap (3+ "not sure") → propose research slice
-   - Friction point → propose automation
-3. If incident detected, run Incident Response Protocol (Playbook Section 8)
-4. Propose documentation updates (don't wait for user to ask)
+After EVERY slice (completed or interrupted), Claude MUST automatically:
+1. Update Memory Bank (01-active-context.md + 02-progress.md)
+2. Update Side Architect Bridge (if major milestone: ?5% progress, new infrastructure, architectural decision)
+   - Note: Reconciler (design + implementation) qualifies as key infrastructure for Trigger G
+3. Detect Meta-Learning Triggers (Playbook Section 9):
+   - Repetition (2nd+ occurrence) ? propose AP-XXX
+   - Workaround used ? propose TD-XXX
+   - User surprise ? check spec clarity
+   - Research gap (3+ "not sure") ? propose research slice
+   - Friction point ? propose automation
+   - Major milestone reached ? update bridge (Trigger G)
+4. If incident detected, run Incident Response Protocol (Playbook Section 8)
+5. Propose documentation updates (don't wait for user to ask)
+6. Git commit all changes
+
+See Playbook Section 15 for full checklist.
+
+SIDE-ARCHITECT ASSISTANT MANAGEMENT:
+When the side-architect role or onboarding flow materially changes, Claude Desktop MUST propose synchronized updates to:
+1. `memory-bank/docs/side-architect-bridge.md` (current state snapshot)
+2. `memory-bank/docs/side-architect-onboarding.md` (instruction block + opening template + checklist)
+3. `memory-bank/README.md` ("For Side Architect Assistants" section)
+
+Examples of material changes:
+- New sections added to bridge or digest
+- Role boundaries change (new capabilities or restrictions)
+- New files become canonical sources of truth
+- Onboarding protocol changes (e.g., new required files)
+
+For starting a new side-architect assistant chat, always refer user to `memory-bank/docs/side-architect-onboarding.md` as the canonical onboarding flow.
 
 GROUNDING:
 - This pattern follows Memory Bank research family
@@ -54,227 +102,159 @@ GROUNDING:
 
 # Current Focus
 
-**Phase:** Phase 2 – Core Infrastructure (Starting)  
-**Status:** ~10% complete (1 slice of ~10-12 slices)  
-**Active Work:** Just completed Slice 2.0b (PARA Memory Bank Skeleton)  
+**Phase:** Phase 2 � Core Infrastructure (Active)  
+**Status:** ~30% complete (5 slices of ~10-12 slices)  
+**Active Work:** Just completed Side-Architect Refinement Track (SA-1 to SA-4 - onboarding system complete)  
 
 **What we're doing:**
-- Building Core infrastructure (Memory Bank PARA structure)
-- Foundation for Life Graph schema (Slice 2.2)
-- Preparing for Observer + Reconciler (Slice 2.3-2.4)
-- Phase 1 foundation complete (cleanup, canonical architecture)
+- Life Graph schema complete (6/6 entities: Area, Project, Task, Context, Identity, Log) ?
+- Observer operational (read-only drift detection) ?
+- Validator + pre-commit hook operational (zero activation energy) ?
+- **Reconciler CR management complete (generate/list/show/approve/reject, zero entity mods)** ? NEW
+- **Side-Architect onboarding system complete (instruction block + templates + maintenance protocol)** ? NEW
+- Next: Reconciler Apply Logic (2.4c) OR Scheduled Observer (2.3b) OR SA-5 (Capability Model)
 
 **Pattern:**
 - Small slices (30-45 min each)
-- Archive > delete (safety-first)
+- Surgical edits for large files (AP-001)
+- Auto-update Memory Bank (Protocol 1)
 - Git-backed reversibility
-- Update all mapping docs after each slice
 
 ---
 
 # Recent Changes
 
-**2025-11-30 – Slice 2.0b: PARA Memory Bank Skeleton (Core Expansion)**
-- Problem: No organized knowledge management, cross-chat continuity difficult, no standard templates
-- Solution: Created PARA folder structure (Inbox/Projects/Areas/Resources/Archive) + templates + examples
-- Changes:
-  - **NEW:** 6 PARA directories (00_Inbox/, 10_Projects/, 20_Areas/, 30_Resources/, 99_Archive/, TEMPLATES/)
-  - **NEW:** 5 templates with YAML frontmatter (project, area, task, log, context)
-  - **NEW:** 3 example files (website project, health area, inbox idea)
-  - **NEW:** memory-bank/README.md (PARA usage guide, model-agnostic design)
-  - UPDATED: migration_plan, 01-active-context, 02-progress
+**2025-12-01 - Slice SA-4: Side-Architect Onboarding Doc** 🎉 JUST COMPLETED
+- Goal: Create comprehensive onboarding document for starting new side-architect assistant chats
+- Solution: Created onboarding.md with instruction block, opening message template, checklist, maintenance protocol
+- Files created: memory-bank/docs/side-architect-onboarding.md (~300 lines)
+- Files modified: memory-bank/README.md, memory-bank/01-active-context.md
 - Result:
-  - ✅ PARA foundation operational
-  - ✅ Cross-chat continuity enabled (any AI model: Claude, ChatGPT, Gemini can quickly load context)
-  - ✅ Foundation for Life Graph schema (Slice 2.2)
-  - ✅ Model-agnostic infrastructure (INV-003: Adapters are replaceable)
-- Duration: ~2-3 hours
-- Research alignment: Memory/Truth Layer (12: PARA pattern), INV-001 (Core expansion), ADHD-aware (18, 11)
+  - ✅ Single source of truth for side-architect onboarding
+  - ✅ Ready-to-paste Instruction Block + Opening Message Template
+  - ✅ 5-step checklist for quick onboarding
+  - ✅ MANDATORY synchronization protocol (bridge + onboarding + README stay aligned)
+  - ✅ Model-agnostic wording (respects INV-003)
+- Duration: ~35 min | Risk: NONE (documentation only)
 
-**2025-11-30 – Slice 1.5: Codify Canonical Architecture (Meta-Architectural Decision)**
-- Decision: Adopted Hexagonal Architecture (Core/Ports/Adapters) as canonical model
-- Problem: Multiple conflicting metaphors (Claude = CPU vs kernel vs adapter, MCP = Bus vs Ports)
-- Solution: Created CANONICAL_ARCHITECTURE.md as authoritative architectural model
-- Changes:
-  - **NEW:** claude project/system_mapping/CANONICAL_ARCHITECTURE.md (6 invariants, pattern classification, contradiction resolution)
-  - UPDATED: target_architecture_summary.md (new section 1.0, fixed section 1.1 table)
-  - UPDATED: migration_plan.md (added Slices 1.4 + 1.5)
-- Key invariants codified:
-  - INV-001: Git repo as single Core (no state fragmentation)
-  - INV-002: All state changes via Ports or documented bridges (TD-XXX)
-  - INV-003: Adapters are replaceable (Claude, ChatGPT, Gemini, Telegram, CLI)
-  - INV-004: Ports are stateless (MCP servers store no durable state)
-  - INV-005: Adapters are REACTIVE, n8n is autonomous
-  - INV-006: Git as infinite undo (all changes tracked)
-- Contradictions resolved: 5 (Claude=CPU, MCP=Bus, Windows vs WSL2, PowerShell bridges, autonomy)
-- Pattern classification: Canonical (now) / Future (phases 2-4) / Legacy (to be updated)
-- Research grounding: 3 families (Architecture/Kernel, Safety/Drift, Memory/Truth Layer)
-- Duration: ~2-3 hours
-- Research alignment: Hexagonal Architecture, Single Source of Truth, Model-agnostic design
+**2025-12-01 - Slice SA-3: History Navigation Protocol** ✅ COMPLETED
+- Goal: Teach side architects how to access past work efficiently
+- Solution: Documented protocol in 3 places (bridge, digest, README)
+- Protocol: DON'T reconstruct from chat → ASK user to open 02-progress.md → search keyword → paste excerpt
+- Result: Side architects know to ask for excerpts, not guess from chat
+- Duration: ~20 min | Risk: NONE (documentation only)
 
-**2025-11-30 – Slice 1.4: Fix legacy paths in documentation**
-- Problem: Mapping docs (migration_plan.md, current_vs_target_matrix.md) referenced old paths for ai_core/ & tools/
-- Solution: Updated documentation to reflect archived status
-- Changes:
-  - migration_plan.md: Updated "Key Gaps" to show ai_core/ & tools/ as archived ✅
-  - current_vs_target_matrix.md: Changed ai_core/ from ⚠️ investigate to ✅ DEPRECATED with full migration details
-- Files updated: 2 mapping documents
-- Result: Documentation accurate, reflects actual system state post-archival
-- Technical Note: Manual git bridge (TD-001: Git MCP not configured)
-- Duration: ~20 min
-- Research alignment: Documentation accuracy principle
+**2025-12-01 - Slice SA-2: WHY Sections in Side-Architect Bridge** ✅ COMPLETED
+- Goal: Add motivational context (WHY system exists, WHO side architects are)
+- Solution: Added Section 0 "Purpose & Context" with 2 subsections
+- Changes: bridge_purpose YAML field, Section 0 (Why AI Life OS, Why Bridge, Who You Are), model-agnostic wording
+- Result: Side architects understand ADHD context, system purpose, role boundaries
+- Duration: ~25 min | Risk: NONE (documentation only)
 
-**2025-11-30 – Slice 1.2d: Remove research duplicates**
-- Problem: Multiple duplicate research folders scattered across repo (Knowl/, מחסן מחקרים/, empty dirs)
-- Analysis:
-  - claude project/Knowl/ (30 files): EXACT duplicates of research_claude/ (01-18.md) + duplicates of root files (playbook, msg_*, Architecting)
-  - claude project/מחסן מחקרים/ (13 files): Duplicates of playbook, msg_*, Architecting (also in Knowl/), plus working notes subdir
-  - Empty dirs (maby relevant/, mcp/, מחקרי ארכיטקטורה/): Not tracked in git, created during early exploration
-  - Canonical locations: research_claude/ (01-18.md), claude project/ (playbook)
-- Solution: Removed duplicate folders via `git rm -r`
-- Files changed:
-  - 30 files removed from Knowl/
-  - 13 files removed from מחסן מחקרים/
-  - Total: 43 files, 6,766 deletions
-  - Canonical locations unchanged and verified operational
-- Result: Zero data loss, single canonical location for research (research_claude/), cleaner repo structure
-- Technical Note: Manual git bridge (TD-001: Git MCP not configured), empty dirs were untracked (not in git)
-- Commit: 51177b4
-- Duration: ~30 min
-- Research alignment: Architectural clarity (single source of truth for research docs)
+**2025-12-01 - Slice SA-1: Side-Architect Bridge Consistency & Micro-Fixes** ✅ COMPLETED
+- Goal: Fix drift in side-architect-bridge.md (metadata outdated after 2.4b)
+- Solution: 4 surgical edits (YAML frontmatter, Recent Slices, Current Work, new subsection)
+- Changes: current_slice (2.4a → 2.4b), progress_pct (27 → 30), "What Side Architects Do/Don't Do" section
+- Result: Bridge reflects actual state (2.4b, 30%), side architects understand boundaries
+- Duration: ~25 min | Risk: NONE (documentation only)
 
-**2025-11-30 – Slice 1.2c: Remove EVENT_TIMELINE duplicate**
-- Problem: Duplicate EVENT_TIMELINE.jsonl in repo root + canonical under docs/system_state/timeline/
-- Analysis:
-  - Root file: 172 bytes, 1 event (Nov 25 initialization), stale
-  - Canonical file: 396 bytes, active (last event: Nov 30 STATE_RECONCILIATION from Slice 1.3)
-  - Root content is strict subset of canonical
-  - No code references to root file (reconciler uses canonical path)
-- Solution: Removed root duplicate via `git rm` (atomic delete + stage)
-- Files changed:
-  - EVENT_TIMELINE.jsonl (REMOVED from root)
-  - Canonical file unchanged and operational
-- Result: Zero data loss, cleaner repo structure, correct architectural location
-- Technical Note: Used manual git bridge (TD-001: Git MCP not configured)
-- Commit: fe2fd52
-- Duration: ~15 min
-- Research alignment: Architectural correctness (all state files under docs/system_state/)
+**2025-12-01 - Slice 2.4b: Reconciler Implementation (CR Management)** ⭐ COMPLETED
+- Goal: Implement CR lifecycle management (generate/list/approve/reject, zero entity mods)
+- Solution: Built reconciler.py (680 lines) with drift parsing, CR generation, HITL workflows
+- Result: ✅ Drift parsing, ✅ CR auto-ID, ✅ CLI 5 commands, ❌ NO apply logic (deferred to 2.4c)
+- Duration: ~1.5 hours | Risk: NONE (zero entity modifications)
 
-**2025-11-29 – Slice 1.3 + Sub-Slice 1.3a: Drift fix + SERVICES_STATUS bootstrap + Git tracking**
-- Problem: Truth Layer showed last_commit: 43b308a, actual HEAD was eefc5d3 (3 commits behind)
-- Root cause: SERVICES_STATUS.json was empty → reconciler failed silently
-- Discovery: State files (governance/, docs/system_state/) were not tracked in git
-- Solution:
-  - Bootstrapped SERVICES_STATUS.json as minimal placeholder (BOOTSTRAP_PLACEHOLDER)
-  - Ran snapshot generator → updated GOVERNANCE_LATEST.json  
-  - Ran reconciler → updated SYSTEM_STATE_COMPACT.json
-  - Updated .gitignore to track current state files but ignore noisy derived files
-  - Architectural decision: Option A (track LATEST/COMPACT/SERVICES_STATUS, ignore timestamped snapshots/timeline)
-- Files changed:
-  - .gitignore (NEW: ignore rules for noisy derived files)
-  - docs/system_state/registries/SERVICES_STATUS.json (NEW: bootstrap placeholder, now tracked)
-  - governance/snapshots/GOVERNANCE_LATEST.json (already tracked, reconciled)
-  - docs/system_state/SYSTEM_STATE_COMPACT.json (already tracked, reconciled)
-- Incident: Git MCP server not configured → required manual PowerShell bridge (documented as technical debt)
-- Commit: 29c328d
-- Duration: ~60 min (including research mode + git strategy analysis)
-- Research alignment: Dual Truth Architecture, Git-backed Truth Layer, Observed State pattern
+**2025-12-01 - Micro-Slice: Documentation Sync (Post-2.4a)** ✅ COMPLETED
+- Trigger: Protocol 1 + Trigger G (Reconciler design = key infrastructure)
+- Goal: Update documentation files to reflect completion of Slice 2.4a
+- Changes: Updated bridge.md, START_HERE.md, 01-active-context.md
+- Result: All documentation consistent and up-to-date
+- Duration: ~15 min | Risk: NONE (documentation only)
 
-**2025-11-29 – Meta-Slice: Memory Bank Bootstrap**
-- Created memory-bank/ infrastructure for project continuity
-- Files:
-  - project-brief.md (Vision, Requirements, TL;DR)
-  - 01-active-context.md (Quick Status, Current Focus, Recent, Next)
-  - 02-progress.md (chronological log)
-- Purpose: New chats can load context in <30 seconds
-- Pattern: Two-level TL;DR (Quick Status + TL;DR)
-- Protocol: AT START (load context) + AT END (update files)
-- Commit: eefc5d3f
 
-**2025-11-29 – Slice 1.2b: Archive tools/**
-- Moved `tools/` → `archive/one-time/tools/`
-- Reason: One-time repo initialization utilities, no active usage
-- Components: repo_bootstrap_agent.py, repo_introspection_agent.py, repo_reader_base.py, system_init.py, TOOLS_INVENTORY.md
-- Impact: Zero (no imports, no references)
-- Commit: 869ad5ce
-- Docs updated: INVESTIGATION_RESULTS.md, migration_plan.md, current_vs_target_matrix.md, current_state_map.md
 
-**2025-11-29 – Slice 1.2a: Archive ai_core/**
-- Moved `ai_core/` → `archive/legacy/ai_core/`
-- Reason: Legacy pre-MCP orchestration layer
-- Components: action_executor.py, agent_gateway.py, gpt_orchestrator.py, intent_router.py, ssot_writer.py
-- Impact: Demo/test scripts broken (expected, not operational)
-- Commit: 0e6614fe
-- Docs updated: INVESTIGATION_RESULTS.md, migration_plan.md, current_vs_target_matrix.md, current_state_map.md
+# Session Summary (2025-11-30 - Extended)
 
----
+**Today's Major Achievement:** Meta-Learning Infrastructure + Life Graph Schema Completion
 
-# Session Summary (2025-11-30)
+**What We Built:**
+1. ? **Reflexive Protocol Layer** (Micro-Slice 2.2c.0)
+   - Playbook v0.2 with autonomous improvement capabilities
+   - AP-001 (Context Window Overflow prevention)
+   - Incident Response Protocol (5-step analysis)
+   - Meta-Learning Triggers (5 types for pattern detection)
+   - Protocol 1 (Post-Slice Reflection auto-runs)
+   
+2. ? **Life Graph Schema Complete** (Slice 2.2c)
+   - 6/6 entities: Area, Project, Task, Context, Identity, Log
+   - All templates + JSON schemas
+   - LIFE_GRAPH_SCHEMA.md v1.1 (surgical edits per AP-001)
+   - Validator infrastructure (requirements.txt)
 
-**Productive Work Block:** 3 slices completed in ~105 minutes
+**Phase 2 Progress:** 10% ? 15% (3/~12 slices done)
 
-**What We Achieved:**
-- ✅ Slice 1.3: Fixed critical drift (Truth Layer sync 43b308a → 29c328d)
-  - Bootstrapped SERVICES_STATUS.json
-  - Established git tracking strategy (Option A)
-  - Reconciler pipeline operational
-- ✅ Slice 1.2c: Removed EVENT_TIMELINE duplicate (zero data loss)
-- ✅ Slice 1.2d: Removed research duplicates (43 files, 6,766 lines)
-  - Single canonical location: research_claude/
-  - Cleaner repo structure
+**System Capabilities Added:**
+- ? Claude detects meta-learning triggers automatically
+- ? Claude proposes documentation without being asked
+- ? Claude updates Memory Bank automatically (Protocol 1)
+- ? AP-001 prevents context overflow on large files
+- ? Incident Response Protocol operational
 
-**Phase 1 Progress:** 40% → 70% (7/10 slices done)
+**Incidents Resolved:**
+- Context window overflow (2025-11-30) ? AP-001 created + validated
 
-**Technical Debt Documented:**
-- TD-001: Git MCP Server not configured
-  - Impact: Manual PowerShell bridge required for git operations
-  - Workaround: Temporary manual scripts (working)
-  - Future fix: Install mcp-server-git + configure (1-2 hours)
+**Technical Debt:**
+- TD-001: Git MCP not configured (workaround: manual PowerShell bridge - working)
 
 **Repository State:**
-- ✅ Zero duplicates (research, timelines)
-- ✅ Zero drift (git sync working)
-- ✅ Clean structure (archive/ organized)
-- ✅ All mapping docs updated
-- ✅ Memory Bank current
-
-**Realistic Next Options:**
-1. **Slice 1.4** (Fix legacy paths) - 20-30 min warmup, completes Phase 1 cleanup
-2. **Git MCP Infra** (TD-001) - 1-2 hours, full autonomy, removes friction
-3. **Phase 2 Start** (Observer + Reconciler) - 3-6 hours, core functionality
-
-**User Decision:** Break + strategic planning (ADHD-aware rest after productive session)
+- ? Life Graph schema complete (6 entities)
+- ? Meta-learning infrastructure operational
+- ? Memory Bank updated
+- ? All changes committed to git
 
 ---
 
 # Next Steps
 
-**Immediate Candidates (from migration_plan.md):**
+**Immediate Candidates:**
 
-**Option A: Infrastructure Slice – Configure Git MCP (TD-001) (1-2 hours)**
-- Problem: Git MCP server not configured → manual git bridges required
+**Option A: Slice 2.2b � Field Standardization + Validator Enhancement (1-2 hours)**
+- Problem: Inconsistent field names (`dopamine_level` vs `dopamine_reward`, `scheduled` vs `do_date`)
+- Action: 
+  - Standardize to canonical names across all templates
+  - Enhance validator with better error messages
+  - Migration guide for existing entities
+- Risk: Low (templates only, no live data yet)
+- Benefit: Clean, consistent schema before users create entities
+
+**Option B: Infrastructure � Configure Git MCP (TD-001) (1-2 hours)**
+- Problem: Git MCP server not configured ? manual git bridges required
 - Action: Install mcp-server-git, configure in claude_desktop_config.json, test
 - Risk: Medium (requires config + Claude Desktop restart)
 - Benefit: Full autonomy for git operations, removes friction
 
-**Option B: Transition to Phase 2 – Observer + Reconciler**
-- Now that Phase 1 cleanup is ~80% complete, could start Phase 2 work
-- Observer (read-only drift detection)
-- Reconciler (CR-based state sync)
-- Would run in parallel with remaining Phase 1 slices
+**Option C: Slice 2.3a � Observer (Read-Only Drift Detection)**
+- Now that Life Graph schema is complete, could start Observer development
+- Observer reads Truth Layer + detects drift
+- Read-only, safe to experiment
+- Foundation for Reconciler
+
+**Infrastructure Note:** Side Architect Bridge created (2025-12-01)
+- `docs/side-architect-bridge.md` provides quick state snapshot for side architect
+- `docs/side-architect-research-digest.md` summarizes architecture + research families
+- Reduces friction for side architect assistant onboarding (~10 min context load vs re-reading all research)
 
 **Strategic Note:**
-- Phase 1 is ~85% complete, canonical architecture now codified
-- Most cleanup done (ai_core, tools, duplicates all archived/removed)
-- **NEW:** Canonical architecture model (Core/Ports/Adapters) established as single source of truth
-- 6 invariants codified, 5 contradictions resolved, pattern classification (canonical/future/legacy)
-- Remaining Phase 1: Minor discovery or documentation consolidation
-- **Ready to transition to Phase 2** with clear architectural foundation
+- Life Graph schema complete (6/6 entities) ?
+- Meta-learning infrastructure operational (Playbook v0.2, AP-001, Protocol 1) ?
+- Ready for either:
+  - Polish schema (2.2b) before users create entities, OR
+  - Move to Observer/Reconciler (core functionality)
 
 **User Preference:**
 - ADHD-aware: prefer momentum + quick wins
 - Safety-first: always reversible changes
-- Documentation: keep mapping docs updated
+- Autonomous improvement: Claude detects patterns + proposes fixes
 
 ---
 

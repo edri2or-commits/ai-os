@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Context Entity",
+  "description": "Schema for validating Context YAML frontmatter in the Life Graph",
+  "type": "object",
+  "properties": {
+    "type": {
+      "const": "context",
+      "description": "Entity type identifier"
+    },
+    "context_name": {
+      "type": "string",
+      "pattern": "^@[a-z_]+$",
+      "description": "Context name (format: @{name})"
+    },
+    "created": {
+      "type": "string",
+      "format": "date",
+      "description": "Date when context was created (ISO 8601)"
+    },
+    "energy_fit": {
+      "oneOf": [
+        { "enum": ["high_focus", "creative", "admin", "low_energy"] },
+        { "type": "null" }
+      ],
+      "description": "What energy level works in this context"
+    },
+    "tools_available": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of tools/resources available in this context"
+    }
+  },
+  "required": ["type", "context_name"],
+  "additionalProperties": true
+}

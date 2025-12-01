@@ -119,7 +119,7 @@ Build a **Personal AI Life OS** where:
 5. **Safety/Governance:** Drift prevention, circuit breakers, HITL
 6. **Memory/RAG:** Truth Layer, Memory Bank, vector search
 
-**Research Location:** `C:\Users\edri2\Desktop\AI\ai-os\claude project\research_claude\`
+**Research Location:** `C:\Users\edri2\Desktop\AI\ai-os\claude-project\research_claude\`
 
 ---
 

@@ -1,0 +1,90 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Project Entity",
+  "description": "Schema for validating Project YAML frontmatter in the Life Graph",
+  "type": "object",
+  "properties": {
+    "type": {
+      "const": "project",
+      "description": "Entity type identifier"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^proj-[0-9]{4}-[a-z0-9-]+$",
+      "description": "Unique identifier (format: proj-{YYYY}-{slug})"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Project title"
+    },
+    "status": {
+      "enum": ["planning", "active", "blocked", "completed", "archived"],
+      "description": "Project lifecycle state"
+    },
+    "area": {
+      "oneOf": [
+        { "type": "string", "pattern": "^area-[a-z0-9-]+$" },
+        { "type": "null" }
+      ],
+      "description": "Parent area ID"
+    },
+    "created": {
+      "type": "string",
+      "format": "date",
+      "description": "Date when project was created (ISO 8601)"
+    },
+    "do_date": {
+      "oneOf": [
+        { "type": "string", "format": "date" },
+        { "type": "null" }
+      ],
+      "description": "When to START this project (ISO 8601)"
+    },
+    "due_date": {
+      "oneOf": [
+        { "type": "string", "format": "date" },
+        { "type": "null" }
+      ],
+      "description": "When to FINISH this project (ISO 8601)"
+    },
+    "energy_profile": {
+      "type": "array",
+      "items": {
+        "enum": ["high_focus", "creative", "admin", "low_energy"]
+      },
+      "minItems": 1,
+      "description": "Required energy states for this project"
+    },
+    "is_frog": {
+      "type": "boolean",
+      "description": "Is this the hardest/most important project?"
+    },
+    "dopamine_level": {
+      "enum": ["high", "medium", "low"],
+      "description": "Subjective reward/fun level"
+    },
+    "contexts": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^@[a-z_]+$"
+      },
+      "minItems": 1,
+      "description": "Where/how this project can be worked on"
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of blocking issues or dependencies"
+    },
+    "review_cadence": {
+      "enum": ["daily", "weekly", "monthly"],
+      "description": "How often to review this project"
+    }
+  },
+  "required": ["type", "id", "title", "status"],
+  "additionalProperties": true
+}

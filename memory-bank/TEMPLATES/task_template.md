@@ -1,6 +1,7 @@
 ---
 id: task-shortname
 type: task
+title: null  # TODO: Add task title
 project: null  # proj-id if part of project
 area: null  # area-id if part of area
 status: inbox  # inbox | next | waiting | scheduled | completed

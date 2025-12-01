@@ -1,0 +1,181 @@
+---
+# =============================================================================
+# CHANGE REQUEST (CR) TEMPLATE
+# =============================================================================
+# Change Requests are proposed modifications to entities or system files
+# that address specific drift findings from the Observer.
+#
+# This template shows the structure with inline comments.
+# See docs/RECONCILER_DESIGN.md for full documentation.
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# CR METADATA
+# -----------------------------------------------------------------------------
+cr_id: "CR-20251201-001"           # Format: CR-YYYYMMDD-NNN (auto-generated)
+timestamp: "2025-12-01T10:30:00Z"  # When CR was generated (ISO 8601)
+generator: "observer"               # observer | manual | reconciler
+status: "proposed"                  # proposed | approved | rejected | applied
+
+# -----------------------------------------------------------------------------
+# DRIFT CONTEXT
+# -----------------------------------------------------------------------------
+drift_type: "stale_timestamp"       # git_head_drift | schema_violation | orphaned_entity | broken_link | stale_timestamp
+drift_report_id: "DR-20251201-001"  # Links to drift report (optional, can be null)
+
+affected_entity:
+  type: "task"                      # area | project | task | context | identity | log | system
+  id: "task-20251128-001"           # Entity ID (or filename for system files)
+  path: "memory-bank/10_Projects/website-redesign/tasks/task-20251128-001.md"
+
+# -----------------------------------------------------------------------------
+# PROPOSED CHANGE
+# -----------------------------------------------------------------------------
+proposed_changes:
+  field: "updated_at"               # Field name to modify
+  current_value: "2025-11-28T14:00:00Z"
+  proposed_value: "2025-12-01T10:30:00Z"
+  operation: "update"               # update | delete | create | move
+
+# -----------------------------------------------------------------------------
+# JUSTIFICATION
+# -----------------------------------------------------------------------------
+rationale: |
+  Observer detected stale timestamp (3 days old, task still active).
+  Updating to current timestamp to reflect ongoing work.
+
+# -----------------------------------------------------------------------------
+# SAFETY
+# -----------------------------------------------------------------------------
+risk_level: "low"                   # low | medium | high
+requires_approval: true             # HITL gate (true = human must approve)
+reversible: true                    # Can undo via git? (should always be true)
+backup_path: null                   # Optional: path to backup file before change
+
+# -----------------------------------------------------------------------------
+# AUDIT TRAIL (set during workflow, leave null in template)
+# -----------------------------------------------------------------------------
+created_by: "observer.py"           # Tool or user that created this CR
+reviewed_by: null                   # Username/email after HITL approval
+applied_at: null                    # Timestamp when changes applied (ISO 8601)
+git_commit: null                    # Commit hash after application
+rejection_reason: null              # If rejected, why?
+
+---
+
+# =============================================================================
+# EXAMPLE 1: Git HEAD Drift (LOW risk, auto-approvable)
+# =============================================================================
+# cr_id: "CR-20251201-002"
+# timestamp: "2025-12-01T11:00:00Z"
+# generator: "observer"
+# status: "proposed"
+# 
+# drift_type: "git_head_drift"
+# drift_report_id: "DR-20251201-002"
+# 
+# affected_entity:
+#   type: "system"
+#   id: "SYSTEM_STATE_COMPACT.json"
+#   path: "docs/system_state/SYSTEM_STATE_COMPACT.json"
+# 
+# proposed_changes:
+#   field: "last_commit"
+#   current_value: "43b308a"
+#   proposed_value: "eefc5d3"
+#   operation: "update"
+# 
+# rationale: |
+#   Truth Layer shows last_commit: 43b308a, but actual HEAD is eefc5d3.
+#   Updating metadata to match current git state (3 commits behind).
+# 
+# risk_level: "low"
+# requires_approval: false  # Auto-approvable if <10 commits behind
+# reversible: true
+# backup_path: null
+# 
+# created_by: "observer.py"
+# reviewed_by: null
+# applied_at: null
+# git_commit: null
+# rejection_reason: null
+
+---
+
+# =============================================================================
+# EXAMPLE 2: Orphaned Task (MEDIUM risk, requires approval)
+# =============================================================================
+# cr_id: "CR-20251201-003"
+# timestamp: "2025-12-01T11:15:00Z"
+# generator: "observer"
+# status: "proposed"
+# 
+# drift_type: "orphaned_entity"
+# drift_report_id: "DR-20251201-003"
+# 
+# affected_entity:
+#   type: "task"
+#   id: "task-20251130-005"
+#   path: "memory-bank/10_Projects/unknown-project/task-20251130-005.md"
+# 
+# proposed_changes:
+#   field: "parent_project_id"
+#   current_value: null
+#   proposed_value: "project-20251201-001"  # OR: move to archive
+#   operation: "update"  # OR: "move"
+# 
+# rationale: |
+#   Task has no parent_project_id and lives in non-existent project directory.
+#   Proposed solution: link to active project "project-20251201-001".
+#   Alternative: move to 99_Archive/ if task is abandoned.
+# 
+# risk_level: "medium"
+# requires_approval: true  # Human must decide: link to project OR archive
+# reversible: true
+# backup_path: null
+# 
+# created_by: "observer.py"
+# reviewed_by: null
+# applied_at: null
+# git_commit: null
+# rejection_reason: null
+
+---
+
+# =============================================================================
+# EXAMPLE 3: Broken Link (MEDIUM risk, requires approval)
+# =============================================================================
+# cr_id: "CR-20251201-004"
+# timestamp: "2025-12-01T11:30:00Z"
+# generator: "observer"
+# status: "proposed"
+# 
+# drift_type: "broken_link"
+# drift_report_id: "DR-20251201-004"
+# 
+# affected_entity:
+#   type: "project"
+#   id: "project-20251201-001"
+#   path: "memory-bank/10_Projects/website-redesign/project.md"
+# 
+# proposed_changes:
+#   field: "parent_area_id"
+#   current_value: "area-20251101-999"  # Non-existent area
+#   proposed_value: null  # Remove invalid link
+#   operation: "delete"
+# 
+# rationale: |
+#   Project references non-existent area "area-20251101-999".
+#   Proposed solution: remove the broken link.
+#   Alternative: create the missing area OR link to different area.
+# 
+# risk_level: "medium"
+# requires_approval: true  # Human must decide: remove link OR create area OR re-link
+# reversible: true
+# backup_path: null
+# 
+# created_by: "observer.py"
+# reviewed_by: null
+# applied_at: null
+# git_commit: null
+# rejection_reason: null

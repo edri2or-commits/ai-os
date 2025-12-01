@@ -1,6 +1,7 @@
 ---
 id: proj-YYYY-shortname
 type: project
+title: null  # TODO: Add project title
 area: null  # link to area-id if part of an area
 status: planning  # planning | active | blocked | completed | archived
 created: YYYY-MM-DD

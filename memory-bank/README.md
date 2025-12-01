@@ -77,7 +77,7 @@ See templates in `TEMPLATES/` for examples.
 - **Ports (MCP):** Access via filesystem MCP server
 - **Adapters:** Any AI model (Claude, ChatGPT, Gemini) can read/write PARA files
 
-See `claude project/system_mapping/CANONICAL_ARCHITECTURE.md` for architectural details.
+See `claude-project/system_mapping/CANONICAL_ARCHITECTURE.md` for architectural details.
 
 ## Model-Agnostic Design
 
@@ -89,3 +89,20 @@ This Memory Bank works with **any AI model or interface:**
 - **CLI tools** (future)
 
 All adapters read/write the same PARA structure via filesystem access. The Memory Bank is adapter-agnostic by design.
+
+## For Side Architect Assistants
+
+If you're a side architect (chat-based thinking partner, not executor):
+
+1. Read `docs/side-architect-research-digest.md` (~10 min) – Architecture overview and research summary
+2. Read `docs/side-architect-bridge.md` (~2 min) – Current state snapshot
+3. Read `01-active-context.md` (~2 min) – What's happening NOW
+
+These 3 files replace the need to reload all research docs on every new chat. They provide a curated map to the canonical sources.
+
+**For history / "how did we get here?" questions:**
+- Ask the user for relevant entries from `02-progress.md` and/or `migration_plan.md` instead of guessing from chat
+- Side architects have no persistent memory, so asking the user to provide excerpts is faster and more accurate than reconstructing from conversation
+
+**To start a new side-architect assistant chat:**
+- See `docs/side-architect-onboarding.md` for the complete onboarding flow (instruction block + opening message template + checklist)
