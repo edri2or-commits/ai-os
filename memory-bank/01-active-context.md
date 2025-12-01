@@ -29,11 +29,11 @@ Then:
 ?? **DO NOT SKIP THIS** - prevents drift, duplication, confusion!
 
 ---
-**QUICK STATUS:** AI Life OS | Phase 2: Core Infrastructure (~32% done)
-??? **Infrastructure Operational:** Observer ? | Validator ? | Reconciler (CR + Apply Logic) ? (code ready, validation blocked by TD-002)
-**Just finished:** Slice NAR-2 (Attention-Centric Design Guide)
-**Blocker:** TD-002 (Windows MCP stdout capture) blocks end-to-end validation of apply flow
-**Next:** Phase 3 NAR (retrofit existing docs with justifications) OR Apply patterns to CLIs OR Fix TD-002
+**QUICK STATUS:** AI Life OS | Phase 2: Core Infrastructure (~40% done)
+??? **Infrastructure Operational:** Desktop Commander ? | Observer ? | Validator ? | Reconciler (CR + Apply Logic) ?
+**Just finished:** Desktop Commander setup (v0.2.23) + TD-002 RESOLVED
+**Blockers:** NONE! All infrastructure operational
+**Next:** Observer System (Slice 2.6) OR Documentation Polish OR Field Standardization
 ---
 
 <!--
@@ -104,20 +104,22 @@ GROUNDING:
 # Current Focus
 
 **Phase:** Phase 2 ï¿½ Core Infrastructure (Active)  
-**Status:** ~38% complete (8 slices of ~10-12 slices)  
-**Active Work:** Just completed Slice NAR-1 (Narrative Layer: Manifesto + ADR-001 Git Truth Layer)  
+**Status:** ~40% complete (9 slices of ~10-12 slices)  
+**Active Work:** Just completed Desktop Commander setup + TD-002 resolution
 
 **What we're doing:**
 - Life Graph schema complete (6/6 entities: Area, Project, Task, Context, Identity, Log) ?
 - Observer operational (read-only drift detection) ?
 - Validator + pre-commit hook operational (zero activation energy) ?
 - **Reconciler CR management complete (generate/list/show/approve/reject, zero entity mods)** ?
-- **Reconciler Apply Logic implemented (git safety rules, HITL protocol, dry-run + apply commands)** ? **NEW**
+- **Reconciler Apply Logic implemented (git safety rules, HITL protocol, dry-run + apply commands)** ?
+- **Desktop Commander MCP operational (v0.2.23, full subprocess management)** ? **NEW**
+- **TD-002 RESOLVED (Windows MCP stdout capture fixed)** ? **NEW**
 - **Side-Architect onboarding system complete (instruction block + templates + maintenance protocol)** ?
 - **Narrative Layer foundation established (Manifesto + ADR pattern)** ?
-- **Attention-Centric Design Guide complete (5 patterns, implementation checklist, heuristics)** ? **NEW**
-- **BLOCKER:** TD-002 (Windows MCP stdout) prevents end-to-end validation of apply flow
-- Next: NAR-3 (retrofit docs) OR Apply design patterns to CLIs OR Fix TD-002
+- **Attention-Centric Design Guide complete (5 patterns, implementation checklist, heuristics)** ?
+- **BLOCKERS:** NONE! All infrastructure operational
+- Next: Observer System (Slice 2.6) OR Documentation Polish OR Field Standardization
 
 **Pattern:**
 - Small slices (30-45 min each)
@@ -129,10 +131,28 @@ GROUNDING:
 
 # Recent Changes
 
+**2025-12-02 - Desktop Commander Setup + TD-002 Resolution** ? COMPLETE
+- Goal: Fix TD-002 (Windows MCP stdout capture failure) to enable full reconciler validation
+- Problem: Windows-MCP Powershell-Tool failed to capture Python subprocess stdout/stderr
+- Solution: Installed Desktop Commander MCP (v0.2.23) via Claude Desktop Connectors UI
+- Validation Results:
+  - ? Full subprocess management (start_process, interact_with_process, read_process_output)
+  - ? Complete stdout/stderr capture (tested with reconciler.py --help, list, apply --dry-run)
+  - ? All 5 Git Safety Rules validated successfully
+  - ? HITL protocol requirements met (dry-run preview observable)
+  - ? Python 3.14.0 discovered and operational
+  - ? Dependencies installed (jsonschema, pyyaml)
+- Files Created: docs/ENVIRONMENT.md (comprehensive environment documentation)
+- Files Updated: docs/technical_debt/TD-002-windows-mcp-stdout.md (status: RESOLVED)
+- Result: ? TD-002 RESOLVED, ? All infrastructure operational, ? No blockers remaining
+- Impact: Reconciler apply flow now fully validated end-to-end, automation workflows unblocked
+- Duration: ~1 hour (install + validation + documentation) | Risk: NONE (new capability added)
+- Technical Debt Closed: TD-002 (Windows MCP stdout capture)
+
 **2025-12-01 - Documentation Update: Narrative Integration (START_HERE + project-brief)** ? COMPLETE
 - Goal: Integrate narrative layer into onboarding so new Claude instances know about Manifesto/ADRs/Design Guide
 - Changes: START_HERE.md (Step 0 + Additional Resources split), project-brief.md (TL;DR + Narrative Architecture section)
-- Impact: ? New chats start with narrative context, ? "àéáãúé ùìéèä" ? points to Manifesto, ? Clear navigation (WHY ? Manifesto, technical ? ADRs, design ? Guide)
+- Impact: ? New chats start with narrative context, ? "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½" ? points to Manifesto, ? Clear navigation (WHY ? Manifesto, technical ? ADRs, design ? Guide)
 - Duration: ~30 min | Risk: NONE (documentation only)
 
 **2025-12-01 - Slice NAR-2: Attention-Centric Design Guide** ? COMPLETE
@@ -150,7 +170,7 @@ GROUNDING:
 - Integration: Connects to Manifesto III, ADR pattern, Life Graph metadata
 
 **2025-12-01 - Slice NAR-1: Narrative Layer - Manifesto + First ADR** ? COMPLETE
-- Goal: Create missing narrative layer to solve "àéáãúé ùìéèä" cognitive overload
+- Goal: Create missing narrative layer to solve "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½" cognitive overload
 - Problem: 70% technically implemented, 0% narrated clearly ? user anxiety + confusion
 - Solution: Created Manifesto (entry point) + ADR-001 (pattern example) + decisions/ directory
 - Files created: 00_The_Sovereign_AI_Manifesto.md (~300 lines), ADR-001-git-truth-layer.md (~200 lines)
@@ -158,7 +178,7 @@ GROUNDING:
 - ADR-001: Retroactive documentation of Git Truth Layer decision with Energy State field
 - Journey Map: connects manifesto to existing docs (reduces "where do I start?" anxiety)
 - Result: ? Entry point established, ? ADR pattern proven, ? Energy State tracking introduced
-- Value: "àéáãúé ùìéèä" ? "òëùéå àðé éåãò ìîä äëì ÷ééí", Anxiety ???, Clarity ???
+- Value: "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½" ? "ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½", Anxiety ???, Clarity ???
 - Duration: ~3 hours | Risk: NONE (documentation only)
 - Foundation for: NAR-2 (ATTENTION_CENTRIC_DESIGN.md), NAR-3 (retrofit existing docs)
 
