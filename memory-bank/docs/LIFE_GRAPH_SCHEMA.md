@@ -16,11 +16,17 @@
 - **Object Permanence via Links** – Explicit relationships enable associative retrieval
 - **Time Blindness Mitigation** – Separate "when to start" (`do_date`) from "when to finish" (`due_date`)
 
-**4 Core Entities:**
+**6 Core Entities:**
+
+*Structural (define your world):*
 1. **Area** – Life domains with no deadline (Health, Career, Finance)
-2. **Project** – Finite goals with deadlines (Launch Website, Plan Trip)
-3. **Task** – Atomic work units (5-60 minutes, completable in one session)
-4. **Context** – Constraints on when/where work can happen (@laptop, @low_energy, @home)
+2. **Context** – Constraints on when/where work can happen (@laptop, @low_energy, @home)
+3. **Identity** – Roles/modes you operate in (Writer, Developer, Parent)
+
+*State-based (evolve over time):*
+4. **Project** – Finite goals with deadlines (Launch Website, Plan Trip)
+5. **Task** – Atomic work units (5-60 minutes, completable in one session)
+6. **Log** – Time-stamped observations, notes, journal entries
 
 **Critical ADHD Fields (appear in Project + Task):**
 - **`energy_profile`** – [high_focus | creative | admin | low_energy] – What state this requires
@@ -346,6 +352,142 @@ NOT suitable for creative work or high-focus tasks.
 
 ---
 
+### 2.5 Identity (Role) [EXPLICIT - 12.md section 3.1.1]
+
+**Purpose:** Represents roles or "modes" the user operates in, enabling mode-specific task filtering and reducing context-switching overhead.
+
+**ADHD Rationale:** ADHD users struggle with mode-switching (context switching between different types of work). Explicit identities reduce cognitive load by grouping tasks/contexts/energy states by role. For example, "Writer mode" = quiet space + morning + creative work, while "Admin mode" = any time + low energy + bureaucracy.
+
+**Location:** `memory-bank/30_Resources/role-{name}.md`
+
+#### Fields
+
+| Field | Type | Required? | Default | Description | ADHD Rationale |
+|-------|------|-----------|---------|-------------|----------------|
+| `type` | string | ✅ Yes | - | Always `"identity"` | [EXPLICIT] Entity type |
+| `id` | string | ✅ Yes | - | Format: `role-{slug}` (e.g., `role-writer`) | [EXPLICIT] Unique identifier |
+| `title` | string | ✅ Yes | - | Human-readable role name (e.g., "The Writer") | [EXPLICIT] Display name |
+| `default_context` | string | ❌ No | `null` | Preferred context for this role (e.g., `@quiet`) | [PROPOSAL] Auto-filters tasks by role |
+| `ideal_time_block` | enum | ❌ No | `null` | Best time of day: `Morning`, `Afternoon`, `Evening`, `Night` | [PROPOSAL] Circadian rhythm matching |
+| `associated_areas` | array | ❌ No | `[]` | Area IDs linked to this role (e.g., `["area-professional"]`) | [PROPOSAL] Hierarchical grouping |
+
+#### Example YAML
+
+```yaml
+---
+type: identity
+id: role-writer
+title: The Writer
+default_context: "@quiet"
+ideal_time_block: Morning
+associated_areas: ["area-professional", "area-creative"]
+---
+
+# The Writer
+
+## Purpose
+Deep, focused writing work – articles, essays, documentation, creative fiction.
+
+## Typical Activities
+- Draft blog posts
+- Write technical documentation
+- Edit manuscripts
+- Research and outline
+
+## Context & Energy
+**Best conditions:**
+- Early morning (6am-10am)
+- Quiet space (@home office or @library)
+- High-focus energy state
+- Coffee + instrumental music
+
+**Avoid:**
+- Afternoons (energy crashes)
+- Noisy environments
+- After meetings (context-switching overhead)
+
+## Projects & Tasks
+- [[proj-2025-blog-reboot]]
+- [[task-article-ai-ethics]]
+- [[task-novel-chapter-3]]
+
+## Notes
+This mode requires 90+ minutes of uninterrupted time. Don't schedule back-to-back with other roles.
+```
+
+#### Relationships
+
+- **OPERATES_IN** → Identity works best in specific Context (via `default_context`)
+- **OWNS** → Identity is responsible for certain Areas (via `associated_areas`)
+- **PERFORMS** → Tasks/Projects can be tagged with identity (future enhancement)
+
+---
+
+### 2.6 Log (Ephemeral Stream) [EXPLICIT - 12.md section 3.1.2]
+
+**Purpose:** Time-stamped, freeform capture of thoughts, observations, meeting notes, journal entries. Acts as external memory and raw material for later processing.
+
+**ADHD Rationale:** ADHD users experience "object impermanence" – if it's not written down, it didn't happen. Logs provide a low-friction capture mechanism (no structure required) that surfaces forgotten insights during review. The timestamp + optional tagging enable retrieval without imposing activation energy barriers.
+
+**Location:** `memory-bank/00_Inbox/log-{timestamp}.md`
+
+#### Fields
+
+| Field | Type | Required? | Default | Description | ADHD Rationale |
+|-------|------|-----------|---------|-------------|----------------|
+| `type` | string | ✅ Yes | - | Always `"log"` | [EXPLICIT] Entity type |
+| `id` | string | ✅ Yes | - | Format: `log-YYYY-MM-DD-HHMM` (e.g., `log-2025-11-30-1430`) | [EXPLICIT] Sortable timestamp ID |
+| `timestamp` | datetime | ✅ Yes | (auto) | ISO 8601 timestamp when log was created | [EXPLICIT] Temporal anchor |
+| `tags` | array | ❌ No | `[]` | Optional tags for filtering (e.g., `["#meeting", "#energy/low", "#idea"]`) | [PROPOSAL] Enables retrieval |
+| `linked_entities` | array | ❌ No | `[]` | Optional links to related entities (e.g., `["proj-2025-website", "task-homepage"]`) | [PROPOSAL] Graph integration |
+| `mood` | enum | ❌ No | `null` | Subjective mood at capture time: `high`, `neutral`, `low` | [PROPOSAL] Energy pattern tracking |
+
+#### Example YAML
+
+```yaml
+---
+type: log
+id: log-2025-11-30-1430
+timestamp: 2025-11-30T14:30:00
+tags: ["#meeting", "#idea", "#website"]
+linked_entities: ["proj-2025-website"]
+mood: high
+---
+
+# Meeting Notes: Website Redesign Kickoff
+
+## Key Decisions
+- Decided on Hugo static site generator (fast, markdown-native)
+- Hosting: Netlify (free tier, CI/CD built-in)
+- Timeline: Launch by March 15, 2026
+
+## Action Items
+- [ ] Sketch wireframes (me, by Dec 5)
+- [ ] Research Hugo themes (me, this week)
+- [ ] Set up GitHub repo (me, today)
+
+## Ideas
+- Maybe add a "now" page (what I'm currently working on)
+- Could integrate blog with RSS for discoverability
+- Consider dark mode toggle (nice-to-have, not MVP)
+
+## Observations
+- Felt energized after this meeting (unusual for afternoon)
+- Hugo's speed advantage matters for iteration velocity
+- Need to timebox theme research (rabbit hole risk)
+
+## Follow-up
+Schedule design review session for Dec 10.
+```
+
+#### Relationships
+
+- **MENTIONS** → Log can reference any entity via `linked_entities` or `[[wikilinks]]`
+- **TEMPORAL_SEQUENCE** → Logs are ordered by `timestamp` (chronological stream)
+- **AGGREGATES_TO** → Logs can be processed into Projects/Tasks/Areas during weekly review
+
+---
+
 ## 3. ADHD-Specific Metadata (Deep Dive)
 
 ### 3.1 energy_profile [EXPLICIT - 12.md, 18.md section 2.1-2.2]
@@ -516,6 +658,11 @@ The Life Graph uses **semantic edges** to create a navigable knowledge graph. Re
 | **HAS_TASKS** | Project | Task | Project contains tasks | `project: proj-id` field in Task |
 | **BLOCKS** | Task A | Task B | Sequential dependency | `dependencies: [task-a]` in Task B |
 | **REQUIRES_CONTEXT** | Task/Project | Context | Constraint matching | `contexts: ["@laptop"]` field |
+| **OPERATES_IN** | Identity | Context | Role works best in specific context | `default_context: "@quiet"` in Identity |
+| **OWNS** | Identity | Area | Role responsible for area | `associated_areas: ["area-X"]` in Identity |
+| **PERFORMS** | Identity | Task/Project | Role performs work (future) | Tag tasks with identity |
+| **TEMPORAL_SEQUENCE** | Log | Log | Chronological ordering | Sorted by `timestamp` |
+| **AGGREGATES_TO** | Log | Project/Task/Area | Raw notes become structured entities | Weekly review process |
 | **MENTIONS** | Any | Any | Reference (via `[[link]]`) | Markdown wikilink |
 
 ### 4.2 Graph Traversal Examples
@@ -580,6 +727,8 @@ Returns: Tasks that are blocking other work
 - **Project** → `10_Projects/proj-{year}-{name}.md`
 - **Task** → `00_Inbox/task-{name}.md` (temporary) → move after processing
 - **Context** → `30_Resources/context-{name}.md`
+- **Identity** → `30_Resources/role-{name}.md`
+- **Log** → `00_Inbox/log-{timestamp}.md`
 
 ### 6.2 Common Queries (for AI Agents)
 
@@ -650,6 +799,18 @@ This schema is grounded in the following research:
 ---
 
 ## 9. Version History
+
+**v1.1 (2025-11-30) – Slice 2.2c:**
+- Added 2 structural entities: Identity (Role), Log (Ephemeral Stream)
+- Schema now complete: 6/6 core entities from 12.md
+  - Structural: Area, Context, Identity (define your world)
+  - State-based: Project, Task, Log (evolve over time)
+- Updated TL;DR section (4→6 entities)
+- Added Section 2.5: Identity with mode-switching ADHD rationale
+- Added Section 2.6: Log with object permanence rationale
+- Updated relationships table (4.1): OPERATES_IN, OWNS, PERFORMS, TEMPORAL_SEQUENCE, AGGREGATES_TO
+- Updated quick reference (6.1): Added Identity, Log file locations
+- Research grounding: 12.md sections 3.1.1, 3.1.2 (Identity/Log entities), 18.md (ADHD patterns)
 
 **v1.0 (2025-11-30) – Slice 2.2a:**
 - Initial schema definition

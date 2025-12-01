@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Identity Entity",
+  "description": "Schema for validating Identity (Role) YAML frontmatter in the Life Graph",
+  "type": "object",
+  "properties": {
+    "type": {
+      "const": "identity",
+      "description": "Entity type identifier"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^role-[a-z0-9-]+$",
+      "description": "Unique identifier (format: role-{slug})"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Role name (e.g., 'The Writer', 'CEO Mode')"
+    },
+    "default_context": {
+      "oneOf": [
+        { "type": "string", "pattern": "^@[a-z_]+$" },
+        { "type": "null" }
+      ],
+      "description": "Default context for this role (e.g., '@quiet', '@office')"
+    },
+    "ideal_time_block": {
+      "oneOf": [
+        { "enum": ["Morning", "Afternoon", "Evening", "Night"] },
+        { "type": "null" }
+      ],
+      "description": "Preferred time of day for this role"
+    },
+    "associated_areas": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^area-[a-z0-9-]+$"
+      },
+      "description": "Areas this role typically engages with"
+    }
+  },
+  "required": ["type", "id", "title"],
+  "additionalProperties": true
+}

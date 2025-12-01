@@ -1,21 +1,17 @@
 ---
 type: log
-date: YYYY-MM-DD
-energy_morning: medium  # high | medium | low
-energy_afternoon: medium
-focus_quality: good  # excellent | good | fair | poor
+id: log-YYYY-MM-DD-HHMM
+timestamp: YYYY-MM-DDTHH:MM:SS
+tags: []  # Optional: e.g., ["#meeting", "#energy/low", "#idea"]
+linked_entities: []  # Optional: e.g., ["proj-2025-website", "task-homepage"]
+mood: null  # Optional: high | neutral | low
 ---
 
-# Daily Log - YYYY-MM-DD
+[Write freely here - thoughts, observations, meeting notes, how you're feeling...]
 
-## Completed Today
-- [x] Task 1
-- [x] Task 2
-
-## Notes & Observations
-- Note 1
-- Note 2
-
-## Tomorrow's Focus
-- [ ] Task 1
-- [ ] Task 2
+---
+**ADHD Tips:**
+- Keep it simple - just timestamp + write
+- Tags and links are OPTIONAL (add later if helpful)
+- "If you didn't write it down, it didn't happen" - external memory
+- Review logs weekly to surface forgotten insights
