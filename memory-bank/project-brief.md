@@ -7,7 +7,7 @@ Most slices do NOT require updating this file.
 ---
 ## TL;DR (20-second version)
 
-**What:** Building a Personal AI Life OS where Claude Desktop orchestrates MCP servers (file/git/Google/state) against a git-backed Truth Layer, with proactive drift detection and ADHD-friendly workflows.
+**What:** Building AI Life OS where Claude Desktop orchestrates MCP servers (file/git/Google/state) against a git-backed Truth Layer, with proactive drift detection and ADHD-friendly workflows.
 
 **Platform:** Windows 11 + Claude Desktop + 4 MCP servers + n8n automation
 
@@ -23,7 +23,7 @@ Most slices do NOT require updating this file.
 
 # Project: AI Life OS – Claude Architect for ai-os
 
-**Role:** Agentic Kernel architect for personal AI Life OS  
+**Role:** System architect for AI Life OS  
 **Platform:** Claude Desktop (Windows 11) + MCP servers  
 **Repo:** `C:\Users\edri2\Desktop\AI\ai-os` (GitHub: edri2or-commits/ai-os)  
 **Duration:** 8-12 weeks (4 phases, 16 slices)  
@@ -32,7 +32,7 @@ Most slices do NOT require updating this file.
 
 ## Vision
 
-Build a **Personal AI Life OS** where:
+Build **AI Life OS** where:
 
 - **Claude Desktop** = "Head" (reasoning + orchestration)
 - **MCP servers** = "Hands" (file ops, git, Google Workspace, system state)
@@ -51,10 +51,13 @@ Build a **Personal AI Life OS** where:
 
 ### Architectural (from research)
 
-**1. Semantic Microkernel (Kernel + Truth Layer + Governance)**
-- Chat → Spec → Change workflow
+**1. Head/Hands/Truth/Nerves Architecture**
+- **Head** = Claude Desktop (reasoning, planning, orchestration)
+- **Hands** = n8n + tools (execution, automation)
+- **Truth** = Git-backed files (single source of truth)
+- **Nerves** = MCP servers (interfaces, connectors)
+- Core workflow: Chat → Spec → Change
 - Git as safety net (all changes reversible)
-- Dual Truth Architecture (Static Policies + Derived State)
 - Human-in-the-loop at decision points
 
 **2. Memory Bank (PARA pattern)**
@@ -112,7 +115,7 @@ Build a **Personal AI Life OS** where:
 
 ### Research Families (Truth Sources)
 
-1. **Architecture/Kernel:** Agentic Kernel, Semantic Microkernel, Chat→Spec→Change
+1. **Architecture:** Head/Hands/Truth/Nerves model, Chat→Spec→Change workflow
 2. **Claude/MCP/Tools:** How Claude Desktop interacts with tools, safety, limits
 3. **Cognition/ADHD:** Executive function, working memory, friction reduction
 4. **Infrastructure:** Windows + WSL2 + Docker + n8n stability

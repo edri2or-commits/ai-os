@@ -307,6 +307,221 @@ requires_approval: true  # Human must decide
 
 ---
 
+## Git Safety Rules
+
+**Purpose:** Ensure safe, atomic, and auditable git operations during CR application.
+
+**These rules are concrete implementations of INV-CR-003 (git-reversible) and INV-CR-005 (atomic application).**
+
+---
+
+### Rule 1: NO `git add -A` in apply_cr
+
+**Problem:** `git add -A` stages ALL changes in the working tree, including:
+- Unrelated files modified by the user
+- Files from other CRs being prepared
+- Debug output, temporary files, uncommitted experiments
+
+This breaks atomicity: a CR commit could include unrelated changes.
+
+**Solution:** Targeted staging only.
+
+**Implementation:**
+- Each CR must compute a `touched_files` list (files modified by this CR)
+- Reconciler stages ONLY those files: `git add <file1> <file2> ...`
+- Alternatively: compute diff at apply time, verify staged files ⊆ touched_files
+
+**Example:**
+```python
+# ❌ WRONG
+def apply_cr_wrong(cr):
+    modify_entity(cr)
+    run_git_command(["git", "add", "-A"])  # Stages EVERYTHING
+    run_git_command(["git", "commit", "-m", f"Apply {cr.cr_id}"])
+
+# ✅ CORRECT
+def apply_cr_correct(cr):
+    touched_files = compute_touched_files(cr)  # e.g., ["memory-bank/10_Projects/task.md"]
+    modify_entity(cr)
+    for file in touched_files:
+        run_git_command(["git", "add", file])  # Stage only CR-related files
+    run_git_command(["git", "commit", "-m", f"Apply {cr.cr_id}"])
+```
+
+---
+
+### Rule 2: Working tree MUST be clean before apply
+
+**Problem:** If there are uncommitted changes from:
+- User's manual edits
+- Other CRs in progress
+- Previous failed apply operations
+
+Then applying a CR could:
+- Create merge conflicts
+- Include unrelated changes in the commit
+- Make rollback ambiguous
+
+**Solution:** Pre-flight check.
+
+**Implementation:**
+```python
+def check_working_tree_clean():
+    result = subprocess.run(
+        ["git", "status", "--porcelain"],
+        capture_output=True, text=True
+    )
+    if result.stdout.strip():
+        raise RuntimeError(
+            "Cannot apply CR: working tree is not clean.\n"
+            "Please commit, stash, or clean changes before retrying.\n"
+            f"Uncommitted changes:\n{result.stdout}"
+        )
+```
+
+**When to run:** Before EVERY `apply_cr` execution (even if applying multiple CRs in batch).
+
+**User action on failure:**
+- Commit their changes: `git commit -am "WIP: user changes"`
+- Stash their changes: `git stash`
+- Clean untracked files: `git clean -fd` (with caution)
+
+---
+
+### Rule 3: One commit per CR
+
+**Problem:** Batching multiple CRs into one commit makes:
+- Audit trail unclear (which CR caused which change?)
+- Rollback difficult (need to revert multiple CRs together)
+- Debugging harder (can't bisect individual CRs)
+
+**Solution:** One CR = one commit.
+
+**Implementation:**
+```python
+def apply_approved_crs(cr_ids):
+    for cr_id in cr_ids:
+        cr = load_cr(cr_id)
+        
+        # Apply this CR
+        touched_files = apply_cr(cr)  # Returns list of modified files
+        
+        # Stage only this CR's files
+        for file in touched_files:
+            run_git_command(["git", "add", file])
+        
+        # Commit with CR reference
+        commit_message = f"""Apply {cr.cr_id}: {cr.drift_type}
+
+{cr.rationale}
+
+Affected entity: {cr.affected_entity['path']}
+Risk level: {cr.risk_level}
+CR file: docs/system_state/change_requests/{cr.cr_id}.cr.yaml
+"""
+        run_git_command(["git", "commit", "-m", commit_message])
+        
+        # Update CR status
+        cr.status = "applied"
+        cr.applied_at = datetime.utcnow().isoformat()
+        cr.git_commit = get_current_commit_hash()
+        save_cr(cr)
+```
+
+**Commit message format:**
+- First line: `Apply CR-YYYYMMDD-NNN: <drift_type>`
+- Body: CR rationale + metadata
+- Includes CR file path for easy lookup
+
+---
+
+### Rule 4: apply.log tracks all operations
+
+**Purpose:** Audit trail for CR application (separate from git log).
+
+**Location:** `docs/system_state/change_requests/apply.log`
+
+**Format:** One line per CR applied (append-only, plain text)
+
+**Fields:**
+```
+<timestamp> | <cr_id> | <status> | <commit_hash> | <files_touched>
+```
+
+**Example:**
+```
+2025-12-01T14:30:00Z | CR-20251201-001 | applied | a1b2c3d | memory-bank/10_Projects/task-001.md
+2025-12-01T14:31:00Z | CR-20251201-002 | applied | e4f5g6h | docs/system_state/SYSTEM_STATE_COMPACT.json
+2025-12-01T14:32:00Z | CR-20251201-003 | dry-run | - | memory-bank/20_Areas/area-health.md
+```
+
+**Usage:**
+- `grep "applied" apply.log | wc -l` → count applied CRs
+- `grep "CR-20251201-001" apply.log` → find specific CR
+- `tail -n 20 apply.log` → recent operations
+
+**Implementation:**
+```python
+def log_apply(cr_id, status, commit_hash=None, touched_files=None):
+    log_path = CHANGE_REQUESTS_DIR / "apply.log"
+    timestamp = datetime.utcnow().isoformat()
+    files_str = ",".join(touched_files) if touched_files else "-"
+    commit_str = commit_hash if commit_hash else "-"
+    
+    with open(log_path, "a", encoding="utf-8") as f:
+        f.write(f"{timestamp} | {cr_id} | {status} | {commit_str} | {files_str}\n")
+```
+
+---
+
+### Rule 5: --limit flag with conservative default
+
+**Problem:** Applying 50+ CRs in one run is risky:
+- Hard to review all changes
+- Difficult to rollback if something goes wrong
+- May exceed context window if showing results
+
+**Solution:** `--limit` flag with default = 10.
+
+**Implementation:**
+```python
+# CLI
+parser.add_argument(
+    "--limit",
+    type=int,
+    default=10,
+    help="Maximum number of CRs to apply in one run (default: 10)"
+)
+
+# Apply logic
+def apply_approved_crs(limit=10):
+    approved_crs = list_crs(status="approved")
+    
+    if len(approved_crs) > limit:
+        print(f"⚠️  Found {len(approved_crs)} approved CRs, limiting to {limit}")
+        print(f"   Run again with --limit {len(approved_crs)} to apply all")
+        approved_crs = approved_crs[:limit]
+    
+    for cr in approved_crs:
+        apply_cr(cr)
+```
+
+**User override:**
+```bash
+# Apply only 5 CRs
+python tools/reconciler.py apply --limit 5
+
+# Apply all approved CRs (use with caution)
+python tools/reconciler.py apply --limit 1000
+```
+
+**Recommendation:**
+- Always run `--dry-run` FIRST to preview changes
+- Start with small limits (5-10) until confident
+- Increase limit gradually based on CR complexity
+
+---
+
 ## Safety Invariants
 
 ### INV-CR-001: All entity modifications MUST go through CR system
@@ -419,8 +634,9 @@ We may later decide that certain CRs (especially approved/applied ones) should b
 
 ---
 
-### Slice 2.4b – Minimal Reconciler Implementation
+### Slice 2.4b – Minimal Reconciler Implementation ✅ COMPLETE
 
+**Date:** 2025-12-01  
 **Goal:** Implement reconciler logic for 1-2 safe drift types only.
 
 **Scope:**
@@ -438,24 +654,44 @@ We may later decide that certain CRs (especially approved/applied ones) should b
 
 ---
 
-### Slice 2.4c – CR Approval CLI
+### Slice 2.4c – Reconciler Apply Logic (🔄 Current Slice)
 
-**Goal:** Simple CLI for approving/rejecting CRs.
+**Goal:** Implement `apply_cr` logic to execute approved CRs safely.
 
 **Scope:**
-- Commands: `reconciler list`, `reconciler show`, `reconciler approve`, `reconciler reject`
-- Interactive mode: show CR → ask user → update status
-- Apply approved CRs: `reconciler apply`
+- `apply` command: processes approved CRs
+- Git wrapper: targeted staging (NO `git add -A`)
+- Working tree check: abort if not clean
+- Apply log: track operations
+- `--dry-run` + `--limit` flags
+
+**Git Safety Rules (see section above):**
+1. ✅ NO `git add -A` – stage only touched_files
+2. ✅ Working tree clean check – abort if uncommitted changes
+3. ✅ One commit per CR – clear audit trail
+4. ✅ apply.log – separate from git log
+5. ✅ --limit flag – default 10 CRs per run
+
+**Apply Logic Implementation:**
+- Compute `touched_files` for each CR
+- Pre-flight checks: working tree clean, CR schema valid, entity exists
+- Apply changes to entity file(s)
+- Stage only touched files: `git add <file1> <file2>`
+- Commit with CR reference in message
+- Update CR status: `applied` + `git_commit` hash + `applied_at` timestamp
+- Write to apply.log
 
 **Safety:**
-- Read CR file → validate schema → show to user → wait for input
-- Clear error messages if CR invalid
+- Atomic: all-or-nothing (entity + commit + CR update + log)
+- Rollback on failure: restore entity from backup
+- `--dry-run`: show what would happen, no actual changes
+- `--limit`: conservative default (10), prevent batch disasters
 
-**Duration:** ~1 hour
+**Duration:** ~1-2 hours
 
 ---
 
-### Slice 2.4d – Expand Drift Coverage
+### Slice 2.4d – Expand Drift Coverage (⏳ Future)
 
 **Goal:** Add orphaned entities and broken links resolution.
 
@@ -473,7 +709,7 @@ We may later decide that certain CRs (especially approved/applied ones) should b
 
 ---
 
-### Slice 2.4e – Observer+Reconciler Integration
+### Slice 2.4e – Observer+Reconciler Integration (⏳ Future)
 
 **Goal:** Observer can optionally generate CRs directly.
 
@@ -505,6 +741,383 @@ We may later decide that certain CRs (especially approved/applied ones) should b
 
 ---
 
-**Document Version:** 1.0  
+## Apply Logic Implementation
+
+**Purpose:** Detailed design for `apply_cr` function (Slice 2.4c).
+
+---
+
+### High-Level Flow
+
+```
+1. User runs: reconciler.py apply [--dry-run] [--limit N]
+2. Load approved CRs (status=approved)
+3. Apply limit (default: 10)
+4. For each CR:
+   a. Pre-flight checks
+   b. Compute touched_files
+   c. Apply changes to entity
+   d. Git stage + commit
+   e. Update CR status
+   f. Log to apply.log
+5. Report summary
+```
+
+---
+
+### Step-by-Step: apply_cr(cr)
+
+**Input:** ChangeRequest object (status=approved)
+
+**Output:** 
+- Success: commit hash, list of touched files
+- Failure: exception with rollback
+
+**Steps:**
+
+#### Step 1: Pre-flight Checks
+
+```python
+def apply_cr(cr: ChangeRequest, dry_run=False) -> Dict[str, Any]:
+    # 1.1: Check working tree is clean
+    check_working_tree_clean()  # Raises RuntimeError if not clean
+    
+    # 1.2: Validate CR schema
+    if not cr.validate_schema():
+        raise ValueError(f"CR {cr.cr_id} failed schema validation")
+    
+    # 1.3: Check CR status
+    if cr.status != "approved":
+        raise ValueError(f"CR {cr.cr_id} is not approved (status: {cr.status})")
+    
+    # 1.4: Check entity file exists
+    entity_path = REPO_ROOT / cr.affected_entity["path"]
+    if not entity_path.exists():
+        raise FileNotFoundError(f"Entity not found: {entity_path}")
+```
+
+#### Step 2: Compute touched_files
+
+```python
+    # 2.1: Determine which files will be modified
+    touched_files = compute_touched_files(cr)
+    # For most CRs: just the entity file
+    # For git_head_drift: SYSTEM_STATE_COMPACT.json
+    # For future: might touch multiple files
+    
+    if not touched_files:
+        raise ValueError(f"CR {cr.cr_id} has no touched_files (invalid CR)")
+```
+
+#### Step 3: Backup (if needed)
+
+```python
+    # 3.1: Create backup if specified in CR
+    if cr.backup_path:
+        backup_entity(entity_path, cr.backup_path)
+```
+
+#### Step 4: Apply Changes
+
+```python
+    # 4.1: Read entity file
+    with open(entity_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    
+    # 4.2: Parse YAML frontmatter + body
+    entity_data = parse_entity(content)
+    
+    # 4.3: Apply CR changes
+    if cr.proposed_changes["operation"] == "update":
+        field = cr.proposed_changes["field"]
+        new_value = cr.proposed_changes["proposed_value"]
+        entity_data[field] = new_value
+    elif cr.proposed_changes["operation"] == "delete":
+        field = cr.proposed_changes["field"]
+        del entity_data[field]
+    # ... other operations
+    
+    # 4.4: Write updated entity
+    if not dry_run:
+        with open(entity_path, "w", encoding="utf-8") as f:
+            f.write(serialize_entity(entity_data))
+```
+
+#### Step 5: Git Operations
+
+```python
+    if not dry_run:
+        # 5.1: Stage ONLY touched files (NO git add -A)
+        for file in touched_files:
+            run_git_command(["git", "add", str(file)])
+        
+        # 5.2: Commit with CR reference
+        commit_message = format_commit_message(cr)
+        run_git_command(["git", "commit", "-m", commit_message])
+        
+        # 5.3: Get commit hash
+        commit_hash = get_current_commit_hash()
+```
+
+#### Step 6: Update CR Status
+
+```python
+    if not dry_run:
+        # 6.1: Update CR metadata
+        cr.status = "applied"
+        cr.applied_at = datetime.utcnow().isoformat()
+        cr.git_commit = commit_hash
+        
+        # 6.2: Save CR file
+        cr_path = CHANGE_REQUESTS_DIR / f"{cr.cr_id}.cr.yaml"
+        cr.save(cr_path)
+```
+
+#### Step 7: Log Operation
+
+```python
+    # 7.1: Write to apply.log
+    log_apply(
+        cr_id=cr.cr_id,
+        status="applied" if not dry_run else "dry-run",
+        commit_hash=commit_hash if not dry_run else None,
+        touched_files=touched_files
+    )
+```
+
+#### Step 8: Return Summary
+
+```python
+    return {
+        "cr_id": cr.cr_id,
+        "status": "applied" if not dry_run else "dry-run",
+        "commit_hash": commit_hash if not dry_run else None,
+        "touched_files": touched_files
+    }
+```
+
+---
+
+### Error Handling & Rollback
+
+```python
+def apply_cr_with_rollback(cr: ChangeRequest, dry_run=False):
+    backup_content = None
+    entity_path = REPO_ROOT / cr.affected_entity["path"]
+    
+    try:
+        # Backup entity
+        if entity_path.exists():
+            with open(entity_path, "r", encoding="utf-8") as f:
+                backup_content = f.read()
+        
+        # Apply CR
+        result = apply_cr(cr, dry_run=dry_run)
+        return result
+        
+    except Exception as e:
+        # Rollback entity
+        if backup_content and not dry_run:
+            with open(entity_path, "w", encoding="utf-8") as f:
+                f.write(backup_content)
+        
+        # Mark CR as failed
+        cr.status = "failed"
+        cr.rejection_reason = f"Apply failed: {str(e)}"
+        cr.save(CHANGE_REQUESTS_DIR / f"{cr.cr_id}.cr.yaml")
+        
+        # Log failure
+        log_apply(cr.cr_id, "failed", None, None)
+        
+        raise
+```
+
+---
+
+### Helper Functions
+
+#### compute_touched_files(cr)
+
+```python
+def compute_touched_files(cr: ChangeRequest) -> List[Path]:
+    """
+    Determine which files will be modified by this CR.
+    
+    Most CRs touch 1 file (the affected entity).
+    Some CRs might touch multiple files (e.g., moving entity + updating parent).
+    """
+    files = []
+    
+    # Primary entity file
+    entity_path = Path(cr.affected_entity["path"])
+    files.append(entity_path)
+    
+    # CR file itself (status will change)
+    cr_path = Path(f"docs/system_state/change_requests/{cr.cr_id}.cr.yaml")
+    files.append(cr_path)
+    
+    # Future: add logic for CRs that touch multiple entities
+    
+    return files
+```
+
+#### check_working_tree_clean()
+
+```python
+def check_working_tree_clean():
+    """
+    Verify no uncommitted changes exist.
+    Raises RuntimeError if working tree is not clean.
+    """
+    result = subprocess.run(
+        ["git", "status", "--porcelain"],
+        cwd=REPO_ROOT,
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    
+    if result.stdout.strip():
+        raise RuntimeError(
+            "Cannot apply CR: working tree is not clean.\n"
+            "Please commit, stash, or clean changes before retrying.\n\n"
+            "Uncommitted changes:\n" + result.stdout
+        )
+```
+
+#### format_commit_message(cr)
+
+```python
+def format_commit_message(cr: ChangeRequest) -> str:
+    """
+    Generate git commit message for a CR.
+    """
+    return f"""Apply {cr.cr_id}: {cr.drift_type}
+
+{cr.rationale}
+
+Affected entity: {cr.affected_entity['path']}
+Risk level: {cr.risk_level}
+CR file: docs/system_state/change_requests/{cr.cr_id}.cr.yaml
+"""
+```
+
+---
+
+### CLI: apply command
+
+```python
+def cmd_apply(args):
+    """Apply approved CRs"""
+    reconciler = Reconciler()
+    
+    # Load approved CRs
+    approved_crs = reconciler.list_crs(status="approved")
+    
+    if not approved_crs:
+        print("ℹ️  No approved CRs to apply")
+        return
+    
+    # Apply limit
+    if len(approved_crs) > args.limit:
+        print(f"⚠️  Found {len(approved_crs)} approved CRs, limiting to {args.limit}")
+        print(f"   Run again with --limit {len(approved_crs)} to apply all")
+        approved_crs = approved_crs[:args.limit]
+    
+    # Dry-run or real apply
+    mode = "DRY-RUN" if args.dry_run else "APPLY"
+    print(f"\n{mode}: Processing {len(approved_crs)} CR(s)...\n")
+    
+    results = []
+    for cr in approved_crs:
+        try:
+            result = reconciler.apply_cr_with_rollback(cr, dry_run=args.dry_run)
+            results.append(result)
+            
+            status_icon = "🔍" if args.dry_run else "✅"
+            print(f"{status_icon} {cr.cr_id} ({cr.drift_type})")
+            if not args.dry_run:
+                print(f"   Commit: {result['commit_hash'][:7]}")
+            print(f"   Files: {', '.join(str(f) for f in result['touched_files'])}")
+            
+        except Exception as e:
+            print(f"❌ {cr.cr_id} FAILED: {e}")
+    
+    # Summary
+    print(f"\n{'='*70}")
+    if args.dry_run:
+        print(f"DRY-RUN complete: {len(results)}/{len(approved_crs)} CRs would succeed")
+        print("Run without --dry-run to apply changes")
+    else:
+        print(f"APPLY complete: {len(results)}/{len(approved_crs)} CRs applied successfully")
+```
+
+---
+
+## Apply Log Format
+
+**Location:** `docs/system_state/change_requests/apply.log`
+
+**Purpose:** 
+- Audit trail separate from git log
+- Quick lookup of applied CRs
+- Track dry-run vs real apply operations
+
+**Format:** Plain text, pipe-delimited, append-only
+
+**Schema:**
+```
+<ISO_TIMESTAMP> | <CR_ID> | <STATUS> | <COMMIT_HASH> | <FILES_TOUCHED>
+```
+
+**Fields:**
+- `ISO_TIMESTAMP`: When operation occurred (UTC, ISO 8601)
+- `CR_ID`: Change Request ID (e.g., CR-20251201-001)
+- `STATUS`: Operation result (applied | dry-run | failed)
+- `COMMIT_HASH`: Git commit hash (7-40 chars, or "-" if dry-run/failed)
+- `FILES_TOUCHED`: Comma-separated list of modified files (or "-" if failed)
+
+**Example Log:**
+```
+2025-12-01T14:30:00Z | CR-20251201-001 | applied | a1b2c3d | memory-bank/10_Projects/task-001.md,docs/system_state/change_requests/CR-20251201-001.cr.yaml
+2025-12-01T14:31:15Z | CR-20251201-002 | applied | e4f5g6h | docs/system_state/SYSTEM_STATE_COMPACT.json,docs/system_state/change_requests/CR-20251201-002.cr.yaml
+2025-12-01T14:32:00Z | CR-20251201-003 | dry-run | - | memory-bank/20_Areas/area-health.md,docs/system_state/change_requests/CR-20251201-003.cr.yaml
+2025-12-01T14:35:00Z | CR-20251201-004 | failed | - | -
+```
+
+**Usage Examples:**
+
+```bash
+# Count applied CRs
+grep "applied" apply.log | wc -l
+
+# Find specific CR
+grep "CR-20251201-001" apply.log
+
+# Recent operations (last 20)
+tail -n 20 apply.log
+
+# CRs applied in last hour
+grep "$(date -u +%Y-%m-%dT%H)" apply.log
+
+# Failed operations
+grep "failed" apply.log
+```
+
+**Maintenance:**
+- File grows monotonically (1 line per operation)
+- No rotation needed (plain text, ~100 bytes per line)
+- Tracked in git (NOT in .gitignore, unlike CR files)
+- Can be analyzed with standard Unix tools (grep, awk, wc)
+
+**Why separate from git log?**
+- Git log shows commits (after-the-fact)
+- Apply log shows operations (including dry-runs and failures)
+- Apply log is easier to parse programmatically
+- Apply log includes CR metadata (drift_type, risk_level)
+
+---
+
+**Document Version:** 1.1  
 **Last Updated:** 2025-12-01  
-**Next Review:** After Slice 2.4b (reconciler implementation)
+**Next Review:** After Slice 2.4c (apply logic implementation)

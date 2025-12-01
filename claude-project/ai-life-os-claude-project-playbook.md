@@ -2,9 +2,9 @@
 Version: 0.5  
 Status: Draft but usable  
 Owner: אור (user)  
-Primary Agent: Claude Desktop (Agentic Kernel)
+Primary Agent: Claude Desktop (Head)
 
-This file is the *canonical playbook* for the project where Claude Desktop helps build and evolve the **Personal AI Life OS** on Windows.
+This file is the *canonical playbook* for the project where Claude Desktop helps build and evolve **AI Life OS** on Windows.
 
 Claude: treat this file as a core part of the system.  
 User: keep this file in git and update it over time.
@@ -13,7 +13,7 @@ User: keep this file in git and update it over time.
 
 ## 1. Project Purpose
 
-Build a **Personal AI Life Operating System** that acts as:
+Build **AI Life OS** that acts as:
 
 - personal executive-function prosthetic (especially for ADHD)
 - life + work operating system (projects, admin, money, learning, biz)

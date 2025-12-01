@@ -29,10 +29,11 @@ Then:
 ?? **DO NOT SKIP THIS** - prevents drift, duplication, confusion!
 
 ---
-**QUICK STATUS:** AI Life OS Migration | Phase 2: Core Infrastructure (~30% done)
-??? **Infrastructure Operational:** Observer ? | Validator ? | Reconciler (CR Management) ?
-**Just finished:** Side-Architect Refinement Track (SA-1 to SA-4 - onboarding system complete)
-**Next:** Reconciler Apply Logic (2.4c) OR Scheduled Observer (2.3b) OR Continue SA track (SA-5)
+**QUICK STATUS:** AI Life OS | Phase 2: Core Infrastructure (~32% done)
+??? **Infrastructure Operational:** Observer ? | Validator ? | Reconciler (CR + Apply Logic) ? (code ready, validation blocked by TD-002)
+**Just finished:** Slice 2.4c spec + implementation (apply logic, git safety rules, HITL protocol)
+**Blocker:** TD-002 (Windows MCP stdout capture) blocks end-to-end validation of apply flow
+**Next:** Fix TD-002 (infra) OR Scheduled Observer (2.3b) OR Continue SA track (SA-5)
 ---
 
 <!--
@@ -58,7 +59,7 @@ AT END OF ANY MEANINGFUL SLICE:
    - Add new candidates to "Next Steps" from migration_plan.md
 
 2. Append to 02-progress.md:
-   - Format: "- YYYY-MM-DD � Slice X.Y: Brief description"
+   - Format: "- YYYY-MM-DD � Slice X.Y: Brief description"
 
 3. Keep both files SHORT and SCANNABLE (ADHD-friendly)
 
@@ -102,17 +103,19 @@ GROUNDING:
 
 # Current Focus
 
-**Phase:** Phase 2 � Core Infrastructure (Active)  
-**Status:** ~30% complete (5 slices of ~10-12 slices)  
-**Active Work:** Just completed Side-Architect Refinement Track (SA-1 to SA-4 - onboarding system complete)  
+**Phase:** Phase 2 � Core Infrastructure (Active)  
+**Status:** ~32% complete (6 slices of ~10-12 slices)  
+**Active Work:** Just completed Slice 2.4c (Reconciler Apply Logic - spec + code), **BLOCKED by TD-002**  
 
 **What we're doing:**
 - Life Graph schema complete (6/6 entities: Area, Project, Task, Context, Identity, Log) ?
 - Observer operational (read-only drift detection) ?
 - Validator + pre-commit hook operational (zero activation energy) ?
-- **Reconciler CR management complete (generate/list/show/approve/reject, zero entity mods)** ? NEW
-- **Side-Architect onboarding system complete (instruction block + templates + maintenance protocol)** ? NEW
-- Next: Reconciler Apply Logic (2.4c) OR Scheduled Observer (2.3b) OR SA-5 (Capability Model)
+- **Reconciler CR management complete (generate/list/show/approve/reject, zero entity mods)** ?
+- **Reconciler Apply Logic implemented (git safety rules, HITL protocol, dry-run + apply commands)** ? **NEW**
+- **Side-Architect onboarding system complete (instruction block + templates + maintenance protocol)** ?
+- **BLOCKER:** TD-002 (Windows MCP stdout) prevents end-to-end validation of apply flow
+- Next: Fix TD-002 (investigate MCP) OR Scheduled Observer (2.3b) OR SA-5 (Capability Model)
 
 **Pattern:**
 - Small slices (30-45 min each)
@@ -124,7 +127,41 @@ GROUNDING:
 
 # Recent Changes
 
-**2025-12-01 - Slice SA-4: Side-Architect Onboarding Doc** 🎉 JUST COMPLETED
+**2025-12-01 - Architecture Cleanup: Single Metaphor Established** ✅ COMPLETE
+- Goal: Eliminate competing metaphors, establish single canonical architecture
+- Problem: 3 competing metaphors (Head/Hands, Hexagonal, Agents as Family) causing cognitive friction
+- Solution: Chose Head/Hands/Truth/Nerves as single metaphor, deprecated all others
+- Files modified: 12 files total (11 existing + 1 new: ARCHITECTURE_METAPHOR.md)
+- Naming standardized: "AI Life OS" everywhere
+- Result: Single source of truth for architecture (docs/ARCHITECTURE_METAPHOR.md), eliminated confusion
+- Duration: ~60 min | Risk: NONE | Trigger: User cognitive overload
+
+**2025-12-01 - Slice 2.4c: Reconciler Apply Logic (Spec + Implementation)** ? COMPLETE (validation blocked)
+- Goal: Implement apply command with git safety rules and HITL protocol
+- Solution: Added 280 lines to reconciler.py (apply_cr, git wrapper, CLI command, 5 Safety Rules)
+- Files modified: tools/reconciler.py (+280 lines), docs/RECONCILER_DESIGN.md (+635 lines, v1.0 → v1.1), claude-project/system_mapping/migration_plan.md (Slice 2.4 restructure)
+- Safety Rules implemented:
+  1. NO git add -A (targeted staging only via touched_files)
+  2. Working tree clean check (pre-flight, raises RuntimeError if not clean)
+  3. One commit per CR (with CR ID in message)
+  4. apply.log audit trail (timestamp | cr_id | status | commit_hash | files)
+  5. --limit flag (default 10, conservative batch size)
+- Apply Logic: 8-step flow (pre-flight → compute touched_files → backup → apply → git stage+commit → update CR → log → report)
+- HITL Protocol defined: Plan → Wait for APPROVE → Execute → Report back
+- **BLOCKER DISCOVERED:** TD-002 (Windows PowerShell MCP fails to capture Python stdout/stderr)
+  - Cannot validate dry-run output
+  - Cannot observe apply progress
+  - Breaks observability requirements for HITL safety protocol
+- Result:
+  - ✅ Code implementation COMPLETE (all 5 Safety Rules)
+  - ✅ Spec documentation COMPLETE (Git Safety Rules, Apply Logic, Apply Log Format)
+  - ✅ HITL protocol defined (strict approval gates)
+  - ❌ End-to-end validation BLOCKED (TD-002)
+  - ❌ Cannot safely run apply via MCP until TD-002 fixed
+- Duration: ~3 hours (spec + implementation + testing attempt) | Risk: NONE (code not executed)
+- Technical Debt: TD-002 filed (Windows MCP stdout capture failure)
+
+**2025-12-01 - Slice SA-4: Side-Architect Onboarding Doc** 🎉 COMPLETED
 - Goal: Create comprehensive onboarding document for starting new side-architect assistant chats
 - Solution: Created onboarding.md with instruction block, opening message template, checklist, maintenance protocol
 - Files created: memory-bank/docs/side-architect-onboarding.md (~300 lines)
@@ -218,7 +255,7 @@ GROUNDING:
 
 **Immediate Candidates:**
 
-**Option A: Slice 2.2b � Field Standardization + Validator Enhancement (1-2 hours)**
+**Option A: Slice 2.2b � Field Standardization + Validator Enhancement (1-2 hours)**
 - Problem: Inconsistent field names (`dopamine_level` vs `dopamine_reward`, `scheduled` vs `do_date`)
 - Action: 
   - Standardize to canonical names across all templates
@@ -227,13 +264,13 @@ GROUNDING:
 - Risk: Low (templates only, no live data yet)
 - Benefit: Clean, consistent schema before users create entities
 
-**Option B: Infrastructure � Configure Git MCP (TD-001) (1-2 hours)**
+**Option B: Infrastructure � Configure Git MCP (TD-001) (1-2 hours)**
 - Problem: Git MCP server not configured ? manual git bridges required
 - Action: Install mcp-server-git, configure in claude_desktop_config.json, test
 - Risk: Medium (requires config + Claude Desktop restart)
 - Benefit: Full autonomy for git operations, removes friction
 
-**Option C: Slice 2.3a � Observer (Read-Only Drift Detection)**
+**Option C: Slice 2.3a � Observer (Read-Only Drift Detection)**
 - Now that Life Graph schema is complete, could start Observer development
 - Observer reads Truth Layer + detects drift
 - Read-only, safe to experiment

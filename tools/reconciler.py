@@ -19,6 +19,7 @@ import argparse
 import json
 import os
 import re
+import subprocess
 import sys
 from dataclasses import dataclass, asdict
 from datetime import datetime
@@ -32,6 +33,7 @@ REPO_ROOT = Path(__file__).parent.parent
 DRIFT_REPORTS_DIR = REPO_ROOT / "docs" / "system_state" / "drift"
 CHANGE_REQUESTS_DIR = REPO_ROOT / "docs" / "system_state" / "change_requests"
 CR_SCHEMA_PATH = REPO_ROOT / "docs" / "schemas" / "change_request.schema.json"
+APPLY_LOG_PATH = CHANGE_REQUESTS_DIR / "apply.log"
 
 
 # ============================================================================
@@ -366,6 +368,283 @@ class Reconciler:
             print(f"❌ Error approving CR: {e}")
             return False
 
+    # ------------------------------------------------------------------------
+    # Git Operations (Safety Rules Implementation)
+    # ------------------------------------------------------------------------
+
+    def _run_git(self, args: List[str]) -> subprocess.CompletedProcess:
+        """
+        Run git command in repo root.
+        Raises CalledProcessError on failure.
+        """
+        return subprocess.run(
+            args,
+            cwd=REPO_ROOT,
+            capture_output=True,
+            text=True,
+            check=True
+        )
+
+    def _check_working_tree_clean(self):
+        """
+        SAFETY RULE 2: Working tree must be clean before apply.
+        
+        Raises RuntimeError if there are uncommitted changes.
+        """
+        result = subprocess.run(
+            ["git", "status", "--porcelain"],
+            cwd=REPO_ROOT,
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        
+        if result.stdout.strip():
+            raise RuntimeError(
+                "Cannot apply CR: working tree is not clean.\n"
+                "Please commit, stash, or clean changes before retrying.\n\n"
+                "Uncommitted changes:\n" + result.stdout
+            )
+
+    def _get_current_commit_hash(self) -> str:
+        """Get current HEAD commit hash (short form)"""
+        result = self._run_git(["git", "rev-parse", "--short", "HEAD"])
+        return result.stdout.strip()
+
+    def _compute_touched_files(self, cr: ChangeRequest) -> List[Path]:
+        """
+        Compute which files will be modified by this CR.
+        
+        Most CRs touch 2 files:
+        1. The affected entity file
+        2. The CR file itself (status will change)
+        """
+        files = []
+        
+        # Primary entity file
+        entity_path = Path(cr.affected_entity["path"])
+        files.append(entity_path)
+        
+        # CR file itself (status will change)
+        cr_path = Path(f"docs/system_state/change_requests/{cr.cr_id}.cr.yaml")
+        files.append(cr_path)
+        
+        return files
+
+    def _format_commit_message(self, cr: ChangeRequest) -> str:
+        """
+        SAFETY RULE 3: Commit message format with CR reference.
+        """
+        return f"""Apply {cr.cr_id}: {cr.drift_type}
+
+{cr.rationale}
+
+Affected entity: {cr.affected_entity['path']}
+Risk level: {cr.risk_level}
+CR file: docs/system_state/change_requests/{cr.cr_id}.cr.yaml
+"""
+
+    def _log_apply(self, cr_id: str, status: str, commit_hash: Optional[str], touched_files: Optional[List[Path]]):
+        """
+        SAFETY RULE 4: Write to apply.log.
+        
+        Format: <timestamp> | <cr_id> | <status> | <commit_hash> | <files>
+        """
+        timestamp = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
+        commit_str = commit_hash if commit_hash else "-"
+        files_str = ",".join(str(f) for f in touched_files) if touched_files else "-"
+        
+        # Ensure directory exists
+        APPLY_LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
+        
+        with open(APPLY_LOG_PATH, "a", encoding="utf-8") as f:
+            f.write(f"{timestamp} | {cr_id} | {status} | {commit_str} | {files_str}\n")
+
+    # ------------------------------------------------------------------------
+    # Apply Logic (Core Implementation)
+    # ------------------------------------------------------------------------
+
+    def apply_cr(self, cr: ChangeRequest, dry_run: bool = False) -> Dict[str, Any]:
+        """
+        Apply a Change Request to the system.
+        
+        SAFETY RULES ENFORCED:
+        1. NO git add -A (targeted staging only)
+        2. Working tree must be clean
+        3. One commit per CR
+        4. apply.log tracks operation
+        5. Atomic: all-or-nothing with rollback
+        
+        Args:
+            cr: ChangeRequest object (status must be 'approved')
+            dry_run: If True, simulate without making changes
+        
+        Returns:
+            Dict with cr_id, status, commit_hash, touched_files
+        
+        Raises:
+            RuntimeError: If working tree not clean
+            ValueError: If CR invalid or not approved
+            FileNotFoundError: If entity file missing
+        """
+        # Step 1: Pre-flight checks
+        self._check_working_tree_clean()  # RULE 2
+        
+        if not cr.validate_schema():
+            raise ValueError(f"CR {cr.cr_id} failed schema validation")
+        
+        if cr.status != "approved":
+            raise ValueError(f"CR {cr.cr_id} is not approved (status: {cr.status})")
+        
+        entity_path = REPO_ROOT / cr.affected_entity["path"]
+        if not entity_path.exists():
+            raise FileNotFoundError(f"Entity not found: {entity_path}")
+        
+        # Step 2: Compute touched files
+        touched_files = self._compute_touched_files(cr)
+        if not touched_files:
+            raise ValueError(f"CR {cr.cr_id} has no touched_files")
+        
+        # Step 3: Backup original content (for rollback)
+        backup_content = None
+        if entity_path.exists():
+            with open(entity_path, "r", encoding="utf-8") as f:
+                backup_content = f.read()
+        
+        commit_hash = None
+        
+        try:
+            # Step 4: Apply changes to entity
+            if cr.drift_type == "git_head_drift":
+                # Special case: update SYSTEM_STATE_COMPACT.json
+                self._apply_git_head_drift(cr, entity_path, dry_run)
+            elif cr.drift_type == "stale_timestamp":
+                # Update entity YAML frontmatter
+                self._apply_stale_timestamp(cr, entity_path, dry_run)
+            else:
+                raise NotImplementedError(f"Apply logic for {cr.drift_type} not yet implemented")
+            
+            if not dry_run:
+                # Step 5: Git operations (RULE 1: NO git add -A)
+                for file in touched_files:
+                    # RULE 1: Stage ONLY touched files
+                    self._run_git(["git", "add", str(file)])
+                
+                # RULE 3: Commit with CR reference
+                commit_message = self._format_commit_message(cr)
+                self._run_git(["git", "commit", "-m", commit_message])
+                
+                commit_hash = self._get_current_commit_hash()
+                
+                # Step 6: Update CR status
+                cr.status = "applied"
+                cr.applied_at = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
+                cr.git_commit = commit_hash
+                
+                cr_path = self.cr_dir / f"{cr.cr_id}.cr.yaml"
+                cr.save(cr_path)
+            
+            # Step 7: Log operation (RULE 4)
+            log_status = "dry-run" if dry_run else "applied"
+            self._log_apply(cr.cr_id, log_status, commit_hash, touched_files)
+            
+            # Step 8: Return summary
+            return {
+                "cr_id": cr.cr_id,
+                "status": log_status,
+                "commit_hash": commit_hash,
+                "touched_files": [str(f) for f in touched_files]
+            }
+            
+        except Exception as e:
+            # Rollback: restore entity from backup
+            if backup_content and not dry_run:
+                with open(entity_path, "w", encoding="utf-8") as f:
+                    f.write(backup_content)
+            
+            # Mark CR as failed
+            if not dry_run:
+                cr.status = "failed"
+                cr.rejection_reason = f"Apply failed: {str(e)}"
+                cr_path = self.cr_dir / f"{cr.cr_id}.cr.yaml"
+                cr.save(cr_path)
+            
+            # Log failure
+            self._log_apply(cr.cr_id, "failed", None, None)
+            
+            raise
+
+    def _apply_git_head_drift(self, cr: ChangeRequest, entity_path: Path, dry_run: bool):
+        """
+        Apply git_head_drift CR: update last_commit in SYSTEM_STATE_COMPACT.json
+        """
+        if dry_run:
+            print(f"   [DRY-RUN] Would update {entity_path.name}")
+            print(f"   [DRY-RUN] {cr.proposed_changes['field']}: {cr.proposed_changes['current_value']} → {cr.proposed_changes['proposed_value']}")
+            return
+        
+        # Read JSON
+        with open(entity_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        
+        # Update field
+        field = cr.proposed_changes["field"]
+        new_value = cr.proposed_changes["proposed_value"]
+        
+        # Navigate to nested field if needed (e.g., "git_status.last_commit")
+        if "." in field:
+            parts = field.split(".")
+            obj = data
+            for part in parts[:-1]:
+                obj = obj[part]
+            obj[parts[-1]] = new_value
+        else:
+            data[field] = new_value
+        
+        # Write JSON
+        with open(entity_path, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2)
+            f.write("\n")  # Trailing newline
+
+    def _apply_stale_timestamp(self, cr: ChangeRequest, entity_path: Path, dry_run: bool):
+        """
+        Apply stale_timestamp CR: update updated_at in entity YAML frontmatter
+        """
+        if dry_run:
+            print(f"   [DRY-RUN] Would update {entity_path.name}")
+            print(f"   [DRY-RUN] {cr.proposed_changes['field']}: {cr.proposed_changes['current_value']} → {cr.proposed_changes['proposed_value']}")
+            return
+        
+        # Read file
+        with open(entity_path, "r", encoding="utf-8") as f:
+            content = f.read()
+        
+        # Parse YAML frontmatter
+        if content.startswith("---"):
+            parts = content.split("---", 2)
+            if len(parts) >= 3:
+                frontmatter_text = parts[1]
+                body = parts[2]
+                
+                # Parse YAML
+                frontmatter = yaml.safe_load(frontmatter_text)
+                
+                # Update field
+                field = cr.proposed_changes["field"]
+                new_value = cr.proposed_changes["proposed_value"]
+                frontmatter[field] = new_value
+                
+                # Serialize back
+                new_content = "---\n" + yaml.dump(frontmatter, default_flow_style=False, sort_keys=False) + "---" + body
+                
+                # Write file
+                with open(entity_path, "w", encoding="utf-8") as f:
+                    f.write(new_content)
+            else:
+                raise ValueError(f"Invalid YAML frontmatter in {entity_path}")
+        else:
+            raise ValueError(f"No YAML frontmatter found in {entity_path}")
+
     def reject_cr(self, cr_id: str, reason: str, reviewed_by: str = "user") -> bool:
         """
         Reject a CR by updating its status and recording the reason.
@@ -518,13 +797,77 @@ def cmd_reject(args):
     reconciler.reject_cr(args.cr_id, reason=args.reason, reviewed_by=args.reviewed_by)
 
 
+def cmd_apply(args):
+    """
+    Apply approved CRs with git safety rules.
+    
+    SAFETY RULE 5: --limit flag with conservative default (10).
+    """
+    reconciler = Reconciler()
+    
+    # Load approved CRs
+    approved_crs = reconciler.list_crs(status="approved")
+    
+    if not approved_crs:
+        print("ℹ️  No approved CRs to apply")
+        return
+    
+    # Apply limit (RULE 5)
+    original_count = len(approved_crs)
+    if len(approved_crs) > args.limit:
+        print(f"⚠️  Found {len(approved_crs)} approved CRs, limiting to {args.limit}")
+        print(f"   Run again with --limit {len(approved_crs)} to apply all")
+        approved_crs = approved_crs[:args.limit]
+    
+    # Dry-run or real apply
+    mode = "DRY-RUN" if args.dry_run else "APPLY"
+    print(f"\n{mode}: Processing {len(approved_crs)} CR(s)...")
+    if args.dry_run:
+        print("   (No changes will be made)\n")
+    else:
+        print("   (This will modify files and commit to git)\n")
+    
+    results = []
+    for i, cr in enumerate(approved_crs, 1):
+        print(f"[{i}/{len(approved_crs)}] {cr.cr_id} ({cr.drift_type})")
+        
+        try:
+            result = reconciler.apply_cr(cr, dry_run=args.dry_run)
+            results.append(result)
+            
+            status_icon = "🔍" if args.dry_run else "✅"
+            print(f"{status_icon} {result['status'].upper()}")
+            if not args.dry_run and result['commit_hash']:
+                print(f"   Commit: {result['commit_hash']}")
+            print(f"   Files: {', '.join(result['touched_files'])}")
+            print()
+            
+        except Exception as e:
+            print(f"❌ FAILED: {e}")
+            print()
+            if not args.continue_on_error:
+                print("\n⚠️  Stopping due to error (use --continue-on-error to keep going)")
+                break
+    
+    # Summary
+    print(f"{'='*70}")
+    if args.dry_run:
+        print(f"DRY-RUN complete: {len(results)}/{len(approved_crs)} CRs would succeed")
+        print("\nRun without --dry-run to apply changes")
+    else:
+        print(f"APPLY complete: {len(results)}/{len(approved_crs)} CRs applied successfully")
+        if len(results) < original_count:
+            remaining = original_count - len(results)
+            print(f"\n{remaining} approved CR(s) remaining (use --limit {original_count} to process all)")
+
+
 # ============================================================================
 # Main CLI
 # ============================================================================
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Reconciler - Change Request (CR) Management System (Slice 2.4b)",
+        description="Reconciler - Change Request (CR) Management System (Slice 2.4b-2.4c)",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
@@ -549,6 +892,26 @@ Examples:
 
   # Reject CR
   python tools/reconciler.py reject CR-20251201-001 --reason "Not needed"
+  
+  # Apply approved CRs (NEW - Slice 2.4c)
+  # ALWAYS run --dry-run first to preview changes
+  python tools/reconciler.py apply --dry-run
+  
+  # After reviewing dry-run output, apply for real
+  python tools/reconciler.py apply
+  
+  # Apply with custom limit (default is 10)
+  python tools/reconciler.py apply --limit 5
+  
+  # Apply all approved CRs (use with caution)
+  python tools/reconciler.py apply --limit 1000
+  
+Git Safety Rules (enforced in apply command):
+  1. NO git add -A (targeted staging only)
+  2. Working tree must be clean before apply
+  3. One commit per CR
+  4. apply.log tracks all operations
+  5. --limit flag prevents batch disasters (default: 10)
         """
     )
     
@@ -578,6 +941,25 @@ Examples:
     parser_reject.add_argument("--reason", required=True, help="Reason for rejection")
     parser_reject.add_argument("--reviewed-by", default="user", help="Reviewer name")
     
+    # Apply command (NEW - Slice 2.4c)
+    parser_apply = subparsers.add_parser("apply", help="Apply approved CRs (with git safety rules)")
+    parser_apply.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Simulate apply without making changes (RECOMMENDED: always run this first)"
+    )
+    parser_apply.add_argument(
+        "--limit",
+        type=int,
+        default=10,
+        help="Maximum number of CRs to apply in one run (default: 10, conservative)"
+    )
+    parser_apply.add_argument(
+        "--continue-on-error",
+        action="store_true",
+        help="Continue applying CRs even if one fails (default: stop on first error)"
+    )
+    
     args = parser.parse_args()
     
     if not args.command:
@@ -590,7 +972,8 @@ Examples:
         "list": cmd_list,
         "show": cmd_show,
         "approve": cmd_approve,
-        "reject": cmd_reject
+        "reject": cmd_reject,
+        "apply": cmd_apply
     }[args.command](args)
 
 

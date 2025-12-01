@@ -31,12 +31,12 @@ progress_pct: 30
 - 🎯 **Reduce Cognitive Load** – Decision fatigue is real with ADHD. The system handles orchestration, validation, and drift detection automatically.
 - ♻️ **Git as Infinite Undo** – ADHD brains hate irreversible mistakes. Git provides a safety net where every change is reversible.
 - 📊 **Life Graph > "Everything in My Head"** – Externalized state (Projects, Tasks, Contexts, Identity) replaces mental juggling and prevents burnout.
-- 🤖 **Coordinate Multiple AI Agents** – Use Claude Desktop as the kernel, external side-architect assistants (thinking partners), and automation layers (e.g. n8n) without losing control or creating split-brain scenarios.
+- 🧠 Use Claude Desktop as the Head (reasoning, orchestration), external side-architect assistants (thinking partners), and automation layers (Hands: n8n) without losing control or creating split-brain scenarios.
 
 ### Why This Bridge Exists & Who "You" Are
 
 **Two Layers:**
-1. **Claude Desktop (Kernel)** – Has tools (MCP servers, filesystem, git), executes changes, validates, commits. This is the "executor."
+1. **Claude Desktop (Head)** – Has tools (MCP servers, filesystem, git), executes changes, validates, commits. This is the "executor."
 2. **External Side-Architect Assistants (You)** – Thinking partners with NO tools. You read, think, propose specs, but never execute.
 
 **Why the Bridge Exists:**
@@ -46,13 +46,13 @@ progress_pct: 30
 
 **Who "You" Are (Side Architect):**
 - 🧠 Help user think through architecture and design questions
-- 📝 Write prompts and specs for kernel to execute
-- 🔍 Research mode when kernel needs external context
+- 📝 Write prompts and specs for Head (Claude Desktop) to execute
+- 🔍 Research mode when Head needs external context
 - ❌ **Never execute tools, modify files, or run git commands**
 
 **Collaboration Flow:**
 ```
-Side Architect (think/propose) → User (review/approve) → Kernel (execute)
+Side Architect (think/propose) → User (review/approve) → Head (Claude Desktop executes)
 ```
 
 ---
@@ -60,11 +60,11 @@ Side Architect (think/propose) → User (review/approve) → Kernel (execute)
 ## 1. State Overview (Quick Scan)
 
 **Core Invariants:**
-- INV-001: Git repo as single Core (no state fragmentation)
-- INV-002: All state changes via Ports or documented bridges
-- INV-003: Adapters are replaceable (Claude, ChatGPT, Gemini)
-- INV-004: Ports are stateless (MCP servers)
-- INV-005: Adapters REACTIVE, n8n autonomous
+- INV-001: Git repo as single Truth Layer (no state fragmentation)
+- INV-002: All state changes via Nerves (MCP) or documented bridges
+- INV-003: Heads are replaceable (Claude, ChatGPT, Gemini)
+- INV-004: Nerves are stateless (MCP servers)
+- INV-005: Heads are reactive, n8n (Hands) autonomous
 - INV-006: Git as infinite undo
 
 **Active Life Graph Entities:** 6/6 complete ✅
@@ -83,7 +83,7 @@ Side Architect (think/propose) → User (review/approve) → Kernel (execute)
 1. **`memory-bank/project-brief.md`** – Vision, TL;DR, Requirements (5 min)
 2. **`memory-bank/01-active-context.md`** – Current phase, recent work, next steps (3 min)
 3. **`memory-bank/02-progress.md`** – Chronological log (skim as needed)
-4. **`claude-project/system_mapping/CANONICAL_ARCHITECTURE.md`** – 6 invariants, Core/Ports/Adapters (10 min)
+4. **`docs/ARCHITECTURE_METAPHOR.md`** – Head/Hands/Truth/Nerves model (canonical architecture reference)
 5. **`memory-bank/docs/LIFE_GRAPH_SCHEMA.md`** – 6 entities, ADHD metadata (10 min)
 6. **`claude-project/system_mapping/migration_plan.md`** – Phases, slices, timeline (5 min)
 
@@ -166,11 +166,11 @@ Side Architect (think/propose) → User (review/approve) → Kernel (execute)
 
 **What Side Architects Don't Do:**
 - ❌ Execute changes (no file modifications, no git commits)
-- ❌ Direct MCP/tool access (kernel handles implementation)
+- ❌ Direct MCP/tool access (Head/Claude Desktop handles implementation)
 - ❌ Approve slices (only user approves via HITL)
 
 **Collaboration Pattern:**
-- Side architect proposes → User reviews → Kernel (Claude Desktop) executes
+- Side architect proposes → User reviews → Head (Claude Desktop) executes
 - Side architect has full read access to Memory Bank + research corpus
 - Use bridge + digest for quick context load (~10 min total)
 

@@ -625,7 +625,170 @@ class SystemObserver:
 
 ---
 
-### Slice 2.4: Circuit Breakers
+### Slice 2.4: Reconciler (CR Lifecycle Management)
+
+**Overview:** Automated drift remediation system with Change Requests (CRs), HITL approval, and safe git operations.
+
+**Slices:** 2.4a (design), 2.4b (CR management), 2.4c (apply logic), 2.4d-e (future)
+
+---
+
+#### Slice 2.4a: Reconciler Design & CR Format ✅ COMPLETE
+
+**Date:** 2025-12-01  
+**Duration:** ~45-60 min  
+**Type:** Design (no code)
+
+**Goal:** Define Change Request (CR) architecture for drift remediation.
+
+**Deliverables:**
+- `docs/schemas/change_request.schema.json` (JSON Schema, 17 required fields)
+- `memory-bank/TEMPLATES/change_request_template.yaml` (annotated examples)
+- `docs/RECONCILER_DESIGN.md` (15-page architecture document)
+- `.gitignore` rules for `change_requests/`
+
+**Key Design Decisions:**
+- CR lifecycle: proposed → approved/rejected → applied
+- Observer→CR mapping for 5 drift types
+- HITL approval workflow (manual in Phase 2)
+- 5 safety invariants (INV-CR-001 through INV-CR-005)
+- CRs are derived state [PROPOSAL] (may change in Phase 3)
+
+**Result:**
+- ✅ CR format defined with YAML schema
+- ✅ All 5 Observer drift types have CR generation rules
+- ✅ HITL workflow documented
+- ✅ Safety invariants prevent unsafe automatic changes
+- ✅ Foundation ready for implementation (Slice 2.4b)
+
+**Research:** Dual Truth Architecture (08.md), HITL (02.md), ADHD-aware workflows (18.md), git reversibility (03.md)
+
+---
+
+#### Slice 2.4b: Reconciler Implementation (CR Management) ✅ COMPLETE
+
+**Date:** 2025-12-01  
+**Duration:** ~1.5 hours  
+**Type:** Implementation (zero entity modifications)
+
+**Goal:** Implement CR lifecycle management (generate/list/approve/reject) with zero entity modifications.
+
+**Scope:**
+- Python script: `tools/reconciler.py` (680 lines)
+- Parse drift reports from Observer
+- Generate CRs from findings (git_head_drift, stale_timestamp only)
+- List/show CRs with status filtering
+- Approve/reject workflows (updates CR file only, no entity changes)
+- CLI with 5 commands: generate, list, show, approve, reject
+
+**Result:**
+- ✅ Drift report parsing (Markdown → DriftFinding objects)
+- ✅ CR generation with auto-ID (CR-YYYYMMDD-NNN)
+- ✅ JSON Schema validation for all CRs
+- ✅ List/show CRs with status filtering
+- ✅ Approve/reject workflows
+- ❌ NO apply command (deferred to Slice 2.4c)
+- ❌ NO entity modifications
+- ❌ NO git commits from reconciler
+
+**Safety:** Zero entity modifications, only CR file management (very low risk).
+
+**Research:** Safety/Governance/Drift (08.md), Deterministic Reliability (02.md), ADHD-aware (18.md)
+
+---
+
+#### Slice 2.4c: Reconciler Apply Logic 🔄 CURRENT SLICE
+
+**Date:** 2025-12-01 (in progress)  
+**Duration:** ~1-2 hours  
+**Type:** Implementation (git operations, entity modifications)
+
+**Goal:** Implement `apply_cr` logic to execute approved CRs safely.
+
+**Scope:**
+- `apply` command: processes approved CRs
+- Git wrapper: targeted staging (NO `git add -A`)
+- Working tree check: abort if not clean
+- Apply log: track operations
+- `--dry-run` + `--limit` flags (default limit: 10)
+
+**Git Safety Rules (NEW - added to RECONCILER_DESIGN.md):**
+1. ✅ NO `git add -A` – stage only touched_files (targeted staging)
+2. ✅ Working tree clean check – abort if uncommitted changes exist
+3. ✅ One commit per CR – clear audit trail, easy rollback
+4. ✅ apply.log – separate from git log (tracks dry-runs, failures)
+5. ✅ --limit flag – default 10 CRs per run (prevent batch disasters)
+
+**Apply Logic Implementation (see RECONCILER_DESIGN.md for details):**
+- Compute `touched_files` for each CR (entity file + CR file)
+- Pre-flight checks: working tree clean, CR schema valid, entity exists
+- Apply changes to entity file(s) (parse YAML, update field, serialize)
+- Stage only touched files: `git add <file1> <file2>` (NO `git add -A`)
+- Commit with CR reference in message (format: "Apply CR-YYYYMMDD-NNN: <drift_type>")
+- Update CR status: `applied` + `git_commit` hash + `applied_at` timestamp
+- Write to apply.log (pipe-delimited: timestamp | cr_id | status | commit_hash | files)
+
+**Safety:**
+- Atomic: all-or-nothing (entity + commit + CR update + log)
+- Rollback on failure: restore entity from backup, mark CR as failed
+- `--dry-run`: show what would happen, no actual changes
+- `--limit`: conservative default (10), user can override with caution
+
+**Deliverables:**
+- Updated `tools/reconciler.py` (add apply_cr, git wrapper, apply.log)
+- Updated `docs/RECONCILER_DESIGN.md` (add Git Safety Rules, Apply Logic, Apply Log Format)
+- Updated `migration_plan.md` (this file, reflect 2.4c scope)
+
+**Result (expected):**
+- ✅ `reconciler.py apply` command operational
+- ✅ Git safety rules enforced (no `git add -A`, clean tree check)
+- ✅ Apply log tracks all operations
+- ✅ --dry-run + --limit flags working
+- ✅ Atomic application with rollback on failure
+- ✅ One commit per CR with clear message format
+
+**Research:** INV-CR-003 (git-reversible), INV-CR-005 (atomic), Safety/Governance (08.md), Git-backed Truth Layer (01.md)
+
+---
+
+#### Slice 2.4d: Expand Drift Coverage ⏳ FUTURE
+
+**Duration:** ~1-2 hours
+
+**Goal:** Add orphaned entities and broken links resolution.
+
+**Scope:**
+- More sophisticated CR logic:
+  - Orphaned entities: suggest parent OR archive
+  - Broken links: suggest removal OR re-linking
+- Still requires HITL approval (MEDIUM risk)
+
+**Safety:**
+- Human must decide strategy
+- Reconciler proposes options, doesn't choose
+
+---
+
+#### Slice 2.4e: Observer+Reconciler Integration ⏳ FUTURE
+
+**Duration:** ~1 hour
+
+**Goal:** Observer can optionally generate CRs directly.
+
+**Scope:**
+- Observer flag: `--generate-crs` (optional)
+- Scheduled reconciliation runs (n8n or Task Scheduler)
+- Auto-apply LOW risk CRs (Phase 3 feature)
+
+**Safety:**
+- Default: manual approval for all CRs
+- Phase 3: opt-in auto-approval for LOW risk
+
+---
+
+### Slice 2.5: Circuit Breakers (Future)
+
+**Note:** Circuit Breakers deferred to later phase. Reconciler (Slice 2.4) took priority as it directly addresses drift detection + remediation loop.
 
 **Duration:** 6 hours
 
@@ -633,76 +796,6 @@ class SystemObserver:
 1. **Loop Detection** – Semantic hash of reasoning
 2. **Rate Limiting** – Max 50 ops/sec
 3. **Kill Switch** – Emergency stop
-
-**Implementation:**
-```python
-# services/os_core_mcp/circuit_breaker.py
-
-class LoopDetector:
-    """Detect repeated reasoning patterns"""
-    def __init__(self, window_size=10, threshold=3):
-        self.recent_hashes = deque(maxlen=window_size)
-    
-    def check(self, reasoning_text):
-        h = hashlib.sha256(reasoning_text.encode()).hexdigest()[:16]
-        self.recent_hashes.append(h)
-        count = sum(1 for x in self.recent_hashes if x == h)
-        return count >= self.threshold  # Loop if same hash 3x
-
-class RateLimiter:
-    """Limit operations per second"""
-    def __init__(self, max_ops=50, window_sec=1):
-        self.max_ops = max_ops
-        self.operations = deque()
-    
-    def check(self):
-        now = datetime.now()
-        # Remove operations older than window
-        while self.operations and (now - self.operations[0]).total_seconds() > 1:
-            self.operations.popleft()
-        # Check limit
-        if len(self.operations) >= self.max_ops:
-            return True  # TRIP
-        self.operations.append(now)
-        return False
-
-class CircuitBreaker:
-    """Main coordinator"""
-    CLOSED = "closed"
-    OPEN = "open"
-    HALF_OPEN = "half_open"
-    
-    def __init__(self):
-        self.state = self.CLOSED
-        self.loop_detector = LoopDetector()
-        self.rate_limiter = RateLimiter()
-    
-    def check(self, reasoning_text=None):
-        if self.state == self.OPEN:
-            return False, "Circuit breaker OPEN"
-        
-        # Check loop
-        if reasoning_text and self.loop_detector.check(reasoning_text):
-            self.trip("Loop detected")
-            return False, "Loop detected - circuit breaker TRIPPED"
-        
-        # Check rate
-        if self.rate_limiter.check():
-            self.trip("Rate limit exceeded")
-            return False, "Rate limit - circuit breaker TRIPPED"
-        
-        return True, "OK"
-    
-    def trip(self, reason):
-        self.state = self.OPEN
-        self.last_trip = datetime.now()
-        # Log to governance
-        with open('governance/EVT/circuit_breaker_trip.jsonl', 'a') as f:
-            f.write(json.dumps({
-                'timestamp': self.last_trip.isoformat(),
-                'reason': reason
-            }) + '\n')
-```
 
 **Success:**
 - Circuit breaker tests pass
@@ -713,7 +806,7 @@ class CircuitBreaker:
 
 ---
 
-### Slice 2.5: Vector Memory Planning
+### Slice 2.6: Vector Memory Planning
 
 **Duration:** 4 hours (planning only)
 

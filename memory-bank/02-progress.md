@@ -482,6 +482,56 @@
   - Risk Level: NONE (documentation only, fully reversible)
   - Research: ADHD-aware design (low friction onboarding), model-agnostic (INV-003), autonomous maintenance
 
+- **2025-12-01 – Slice 2.4c: Reconciler Apply Logic (Spec + Implementation)**
+  - Goal: Implement `reconciler.py apply` command with git safety rules and strict HITL protocol
+  - Problem: Reconciler could generate and approve CRs, but couldn't apply them safely to entities
+  - Solution: Implemented apply logic with 5 Git Safety Rules, 8-step apply flow, HITL protocol, dry-run mode
+  - Files modified:
+    - tools/reconciler.py (+280 lines): apply_cr(), git wrapper functions, CLI apply command
+    - docs/RECONCILER_DESIGN.md (+635 lines, v1.0 → v1.1): Git Safety Rules, Apply Logic Implementation, Apply Log Format
+    - claude-project/system_mapping/migration_plan.md: Restructured Slice 2.4 (added 2.4a/b/c/d/e breakdown)
+  - Changes:
+    - Git Safety Rules (5 rules enforced in code):
+      1. NO `git add -A` (targeted staging only via touched_files list)
+      2. Working tree MUST be clean before apply (pre-flight check, raises RuntimeError)
+      3. One commit per CR (with CR ID in commit message)
+      4. apply.log tracks ALL operations (dry-run, applied, failed)
+      5. --limit flag with conservative default (10 CRs per run)
+    - Apply Logic Implementation (8-step flow):
+      1. Pre-flight checks (working tree clean, CR schema, status=approved, entity exists)
+      2. Compute touched_files (entity file + CR file)
+      3. Backup original content (for rollback)
+      4. Apply changes to entity (update YAML frontmatter or JSON field)
+      5. Git operations (stage touched_files → commit with CR reference → get commit hash)
+      6. Update CR status (status=applied, applied_at=timestamp, git_commit=hash)
+      7. Log operation to apply.log (timestamp | cr_id | status | commit_hash | files)
+      8. Return summary (cr_id, status, commit_hash, touched_files)
+    - Helper functions: _run_git(), _check_working_tree_clean(), _compute_touched_files(), _format_commit_message(), _log_apply()
+    - Drift-specific apply handlers: _apply_git_head_drift(), _apply_stale_timestamp()
+    - CLI command: `reconciler.py apply [--dry-run] [--limit N] [--continue-on-error]`
+    - HITL Protocol: Plan → Wait for APPROVE → Execute → Report back (Claude executes, user approves)
+  - **BLOCKER DISCOVERED: TD-002 (Windows PowerShell MCP stdout/stderr capture failure)**
+    - Windows-MCP Powershell-Tool fails to capture Python subprocess output
+    - Commands execute (exit code 0) but NO stdout/stderr visible
+    - File redirects produce EMPTY files
+    - Breaks observability requirements for HITL safety protocol
+    - Cannot validate dry-run preview, progress indicators, or safety rule violations
+    - **Impact:** End-to-end validation BLOCKED until TD-002 fixed
+  - Result:
+    - ✅ Code implementation COMPLETE (280 lines, all 5 Safety Rules enforced)
+    - ✅ Spec documentation COMPLETE (Git Safety Rules, Apply Logic, Apply Log Format)
+    - ✅ HITL protocol defined (strict approval gates, Claude executes, user approves)
+    - ✅ apply.log audit trail format specified
+    - ✅ --dry-run mode implemented (preview without changes)
+    - ✅ --limit flag prevents batch disasters (default 10)
+    - ✅ Atomic application with rollback on failure
+    - ❌ End-to-end validation BLOCKED by TD-002 (MCP infra issue)
+    - ❌ Cannot safely run apply via MCP until TD-002 fixed
+  - Technical Debt: TD-002 filed (docs/technical_debt/TD-002-windows-mcp-stdout.md)
+  - Duration: ~3 hours (spec update ~1 hour, implementation ~1.5 hours, testing attempt ~30 min)
+  - Risk Level: NONE (code implemented but NOT executed due to TD-002 blocker)
+  - Research: Safety/Governance (08.md), Git-backed Truth Layer (01.md), HITL workflows (02.md), ADHD-aware (18.md)
+
 ---
 
 ## Phase 3: Governance & Metrics (Pending)
@@ -497,5 +547,65 @@
 ---
 
 **Last Updated:** 2025-12-01  
-**Slices Completed:** 26 (Phase 1: 9 slices + Phase 2: 17 slices)  
-**Current Phase:** Phase 2 (~30% complete)
+**Slices Completed:** 28 (Phase 1: 9 slices + Phase 2: 18 slices + Documentation: 1 cleanup)  
+**Current Phase:** Phase 2 (~32% complete)  
+**Active Blockers:** TD-002 (Windows MCP stdout capture) blocks apply flow validation
+
+---
+
+### 2025-12-01 - Architecture Cleanup: Single Metaphor Established
+
+**Type:** Documentation Cleanup (unplanned, triggered by user cognitive overload)  
+**Duration:** ~40 minutes  
+**Risk Level:** NONE (documentation only)
+
+**Problem:**
+- Multiple competing metaphors causing confusion: Head/Hands vs Hexagonal vs Agents as Family
+- Inconsistent naming: "Personal AI Life OS" vs "AI Life OS" vs "AI-OS"
+- No canonical reference for architecture
+- External critical review identified cognitive friction from competing metaphors
+
+**Solution:**
+- Chose **Head/Hands/Truth/Nerves** as single architectural metaphor
+- Created canonical reference: `docs/ARCHITECTURE_METAPHOR.md` (300 lines)
+- Updated 6 files for consistency:
+  1. memory-bank/project-brief.md - removed Microkernel/Kernel, added Head/Hands
+  2. memory-bank/01-active-context.md - removed "Migration" from status
+  3. docs/ARCHITECTURE_METAPHOR.md - NEW canonical reference
+  4. docs/CONSTITUTION.md - Principle 7 updated
+  5. claude-project/ai-life-os-claude-project-playbook.md - unified naming
+  6. README.md - updated architecture section, added reference
+- Standardized naming: "AI Life OS" everywhere
+- Documented 5 deprecated terms (Agentic Kernel, Semantic Microkernel, etc.)
+
+**Result:**
+- ✅ Single metaphor across all documentation
+- ✅ Canonical reference document created
+- ✅ Eliminated architectural confusion
+- ✅ Clear path for future documentation
+- ✅ Reduced cognitive load (ADHD-aware principle)
+
+**Changes:**
+- Created: docs/ARCHITECTURE_METAPHOR.md (~300 lines)
+- Modified: 11 documentation files (surgical edits per AP-001):
+  1. memory-bank/project-brief.md
+  2. memory-bank/01-active-context.md
+  3. memory-bank/02-progress.md
+  4. memory-bank/README.md
+  5. memory-bank/START_HERE.md
+  6. docs/CONSTITUTION.md
+  7. claude-project/ai-life-os-claude-project-playbook.md
+  8. README.md
+  9. memory-bank/docs/side-architect-bridge.md
+  10. memory-bank/docs/side-architect-onboarding.md
+  11. memory-bank/docs/side-architect-research-digest.md
+- Deprecated: 5 competing terms/metaphors
+
+**Research Alignment:**
+- ADHD-aware design (Cognition/ADHD family - 18.md)
+- Single source of truth (Architecture family - 01.md)
+- Documentation-first approach (Safety/Governance family - 08.md)
+
+**Commit Message:** "docs: Establish single architectural metaphor (Head/Hands/Truth/Nerves)"
+
+---

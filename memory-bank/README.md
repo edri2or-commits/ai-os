@@ -73,22 +73,22 @@ See templates in `TEMPLATES/` for examples.
 
 ## Integration with AI Life OS
 
-- **Core (Truth Layer):** All PARA files are git-tracked, single source of truth
-- **Ports (MCP):** Access via filesystem MCP server
-- **Adapters:** Any AI model (Claude, ChatGPT, Gemini) can read/write PARA files
+- **Truth Layer:** All PARA files are git-tracked, single source of truth
+- **Nerves (MCP):** Access via filesystem MCP server
+- **Heads:** Any AI model (Claude, ChatGPT, Gemini) can read/write PARA files
 
-See `claude-project/system_mapping/CANONICAL_ARCHITECTURE.md` for architectural details.
+See `docs/ARCHITECTURE_METAPHOR.md` for architectural details.
 
 ## Model-Agnostic Design
 
 This Memory Bank works with **any AI model or interface:**
-- **Claude Desktop** (current primary adapter)
+- **Claude Desktop** (current primary Head)
 - **ChatGPT** (future)
 - **Gemini** (future)
 - **Telegram bot** (future)
 - **CLI tools** (future)
 
-All adapters read/write the same PARA structure via filesystem access. The Memory Bank is adapter-agnostic by design.
+All Heads read/write the same PARA structure via filesystem access. The Memory Bank is Head-agnostic by design.
 
 ## For Side Architect Assistants
 

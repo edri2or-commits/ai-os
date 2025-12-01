@@ -11,10 +11,13 @@
 **What is this?**  
 A Personal AI Operating System where Claude Desktop orchestrates MCP servers against a git-backed Truth Layer, with ADHD-friendly workflows and proactive drift detection.
 
-**Core Model:** Hexagonal Architecture (Core/Ports/Adapters)
-- **Core** = Git-backed Truth Layer (single source of truth)
-- **Ports** = MCP servers (stateless standardized interfaces)
-- **Adapters** = Frontends/AI models (Claude Desktop, future ChatGPT/Gemini)
+**Core Model:** Head/Hands/Truth/Nerves Architecture
+- **Head** = Claude Desktop (reasoning, planning, orchestration)
+- **Hands** = n8n + tools (execution, automation)
+- **Truth** = Git-backed files (single source of truth)
+- **Nerves** = MCP servers (interfaces, connectors)
+
+**Reference:** See `docs/ARCHITECTURE_METAPHOR.md` for full details
 
 **Workflow:** Chat → Spec → Change (HITL at decision gates)
 
@@ -24,18 +27,18 @@ A Personal AI Operating System where Claude Desktop orchestrates MCP servers aga
 
 ## 1. Canonical Architecture
 
-**📄 Reference:** `claude-project/system_mapping/CANONICAL_ARCHITECTURE.md`
+**📄 Reference:** `docs/ARCHITECTURE_METAPHOR.md`
 
 **What Matters for Side Architect:**
-- **INV-001:** Git repo is the ONLY Core (no state fragmentation)
-- **INV-003:** Adapters are replaceable (Claude is not special, just current)
+- **INV-001:** Git repo is the ONLY Truth Layer (no state fragmentation)
+- **INV-003:** Heads are replaceable (Claude is not special, just current)
 - **INV-006:** Git as infinite undo (all changes reversible)
-- **Key Contradiction Resolved:** Claude = Adapter (not CPU), MCP = Ports (not Bus)
+- **Architecture:** Head/Hands/Truth/Nerves (NOT Hexagonal/Core/Ports/Adapters)
 
 **Pattern Classification:**
-- **Canonical (now):** Claude Desktop, MCP servers, Git-backed Truth Layer, Memory Bank
-- **Future:** ChatGPT/Gemini adapters, Vector Memory, LangGraph multi-day HITL
-- **Legacy:** "Claude = CPU" metaphor, undocumented PowerShell bridges
+- **Canonical (now):** Claude Desktop (Head), MCP servers (Nerves), Git-backed Truth Layer, Memory Bank
+- **Future:** ChatGPT/Gemini heads, Vector Memory, LangGraph multi-day HITL
+- **Deprecated:** Hexagonal terminology (Core/Ports/Adapters), "kernel" references
 
 ---
 

@@ -48,19 +48,19 @@ Before doing ANY work, tell the user in Hebrew:
 היי! קראתי את Memory Bank.
 
 📍 **איפה אנחנו:**
-- Phase 2: Core Infrastructure (~27% complete)
-- סיימנו לאחרונה: Reconciler Design (2.4a - CR schema, HITL workflow, 5 safety invariants)
-- הבא: Reconciler Implementation (2.4b) או Scheduled Observer (2.3b)
+- Phase 2: Core Infrastructure (~32% complete)
+- סיימנו לאחרונה: Architecture Cleanup (single metaphor established - Head/Hands/Truth/Nerves)
+- הבא: Fix TD-002 (Windows MCP stdout) או Reconciler Apply (2.4c) או Scheduled Observer (2.3b)
 
 🎯 **אפשרויות להמשך:**
-1. Reconciler Implementation (2.4b) - Minimal impl for safe drift types
-2. Scheduled Observer (2.3b) - n8n automation
-3. CR Approval CLI (2.4c) - After 2.4b
+1. Fix TD-002 - Investigate Windows MCP stdout issue (blocker for apply validation)
+2. Continue Reconciler - Apply Logic (2.4c) if willing to skip validation
+3. Scheduled Observer (2.3b) - n8n automation
 
 מה תרצה לעשות?
 ```
 
-**Note:** This is a real example from 2025-12-01. Always update with actual current state from `01-active-context.md`.
+**Note:** This is updated as of 2025-12-01. Always update with actual current state from `01-active-context.md`.
 
 ---
 

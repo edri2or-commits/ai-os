@@ -1,15 +1,17 @@
-﻿# AI-OS
+﻿# AI Life OS
 
 ## 🏗️ Architecture
 
-AI-OS operates through a structured pipeline:
+AI Life OS uses the **Head/Hands/Truth/Nerves** architecture:
 
-1. **Intent Router** - Entry point for user intents (natural language)
-2. **GPT Planner** - Converts intents into structured action plans
-3. **Action Executor** - Executes validated actions automatically
-4. **Git Integration** - Commits and pushes changes to GitHub
+- **Head** = Claude Desktop (reasoning, orchestration)
+- **Hands** = n8n + tools (execution, automation)
+- **Truth** = Git-backed files (single source of truth)
+- **Nerves** = MCP servers (interfaces, connectors)
 
-Every change flows through this pipeline, ensuring consistency and traceability.
+**Core Workflow**: Chat → Spec → Change (human-in-the-loop)
+
+See [`docs/ARCHITECTURE_METAPHOR.md`](docs/ARCHITECTURE_METAPHOR.md) for full architectural details.
 
 **Last Tested**: 2025-11-24 (GPT + Google Workspace Integration ✅) – מערכת ההפעלה האישית שלי ל-AI
 
@@ -20,9 +22,9 @@ Every change flows through this pipeline, ensuring consistency and traceability.
 
 ---
 
-## 🎯 מה זה AI-OS?
+## 🎯 מה זה AI Life OS?
 
-AI-OS היא מערכת שמאפשרת לי:
+AI Life OS היא מערכת שמאפשרת לי:
 - ✅ **לתכנן שינויים בצורה מבוקרת** (בלי לשבור דברים)
 - ✅ **לנהל מספר סוכני AI** עם תפקידים ברורים
 - ✅ **לשמור על תיעוד מדויק** של כל מה שקורה
