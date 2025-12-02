@@ -18,7 +18,7 @@ import argparse
 import json
 import subprocess
 import sys
-from datetime import datetime
+from datetime import datetime, UTC
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
@@ -211,14 +211,14 @@ class Observer:
         self.drift_dir.mkdir(parents=True, exist_ok=True)
         
         # Generate timestamp-based filename
-        timestamp = datetime.utcnow().strftime("%Y-%m-%d-%H%M%S")
+        timestamp = datetime.now(UTC).strftime("%Y-%m-%d-%H%M%S")
         report_filename = f"{timestamp}-drift.yaml"
         report_path = self.drift_dir / report_filename
         
         # Build report structure
         report_data = {
             "metadata": {
-                "detected_at": datetime.utcnow().isoformat() + "Z",
+                "detected_at": datetime.now(UTC).isoformat().replace('+00:00', 'Z'),
                 "observer_version": self.VERSION,
                 "files_scanned": files_scanned,
                 "files_with_drift": len(drift_list)
