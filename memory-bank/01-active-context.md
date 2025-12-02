@@ -29,11 +29,11 @@ Then:
 ?? **DO NOT SKIP THIS** - prevents drift, duplication, confusion!
 
 ---
-**QUICK STATUS:** AI Life OS | Phase 2: Core Infrastructure (~52% done)
-[OK] **Infrastructure Operational:** Desktop Commander | Observer | Validator | Reconciler (CR + Apply Logic) | MCP Logger | Panic Button | MCP Inspector
-**Just finished:** VAL-1b (MCP Inspector) - diagnostic tool for MCP servers
-**Blockers:** NONE! Validation infrastructure growing
-**Next:** VAL-6 (Input Validation) → VAL-1 (pytest foundation)
+**QUICK STATUS:** AI Life OS | Phase 2: Core Infrastructure (~54% done)
+[OK] **Infrastructure Operational:** Desktop Commander | Observer | Validator | Reconciler (CR + Apply Logic) | MCP Logger | Panic Button | MCP Inspector | Input Validation
+**Just finished:** VAL-6 (Input Validation) - security layer for injection prevention
+**Blockers:** NONE! Validation + security infrastructure complete
+**Next:** VAL-1 (pytest foundation) - automated testing infrastructure
 ---
 
 <!--
@@ -130,6 +130,34 @@ GROUNDING:
 ---
 
 # Recent Changes
+
+**2025-12-02 - Slice VAL-6: Input Validation** ✅ COMPLETE
+- Goal: Create security layer to prevent injection attacks and format violations
+- Problem: No input validation - vulnerable to path traversal, command injection, format violations
+- Solution: Created input_validation.py - comprehensive validation module
+- Files Created:
+  - tools/input_validation.py (~220 lines) - Validation functions with self-tests
+  - tools/README_input_validation.md - Documentation with usage examples
+- Implementation:
+  - validate_cr_id() - CR ID format (CR-YYYYMMDD-HHMMSS-xxxx)
+  - validate_file_path() - Path traversal prevention (blocks .., sensitive dirs)
+  - validate_commit_message() - Command injection prevention (blocks |, &, ;, $, `)
+  - validate_yaml_schema() - Required fields validation
+  - validate_entity_type() - Life Graph entity types
+  - validate_status() - Status validation per entity type
+  - validate_truth_layer_path() - Convenience for truth-layer paths
+- Testing:
+  - ✅ All 5 self-tests passed (CR ID, file path, commit message, entity type, status)
+  - ✅ Cross-platform (Windows + Linux)
+  - ✅ Zero dependencies (stdlib only)
+- Result:
+  - ✅ Security layer operational
+  - ✅ Protects Git Safety Rules from exploitation
+  - ✅ Foundation for safe reconciler operations
+  - ✅ "Immune system" for Truth Layer
+- Duration: ~45 min | Risk: NONE (validation only, no modifications)
+- Research: Safety/Governance (injection prevention), MCP/Tools (input validation patterns)
+- Next: VAL-1 (pytest foundation)
 
 **2025-12-02 - Slice VAL-1b: MCP Inspector** ✅ COMPLETE
 - Goal: Create diagnostic tool for checking connected MCP servers
