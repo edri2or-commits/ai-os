@@ -1,11 +1,36 @@
 # Validation Sprint - Handoff Document
 **Created:** 2025-12-02 03:15 UTC  
+**Last Updated:** 2025-12-02 18:00 UTC (post VAL-8)  
 **For:** Next Claude instance working on Validation Sprint  
-**Context:** Phase 2 (~50% complete) - Core Infrastructure operational
+**Context:** Phase 2 (~66% complete) - Core Infrastructure operational + Observer fully validated
 
 ---
 
-## ✅ COMPLETED TODAY (2025-12-02)
+## ✅ COMPLETED (2025-12-02)
+
+### **VAL-1: pytest Foundation (90 min total)** ✅ COMPLETE
+- **Created:** Complete testing infrastructure
+  - `requirements-dev.txt` - pytest 8.3.3, hypothesis 6.115.6, syrupy 4.7.2
+  - `tests/conftest.py` (~115 lines) - Shared fixtures
+  - `tests/test_sanity.py` (3 tests)
+  - `tests/test_observer_basic.py` (10 tests)
+  - `tests/test_properties.py` (13 tests) - Property-based with Hypothesis
+  - `tests/test_snapshots.py` (5 tests) - Snapshot testing with Syrupy
+  - `.github/workflows/test.yml` - GitHub Actions CI
+- **Result:** 31/31 tests passing (before VAL-8)
+- **Value:** Automated testing foundation, ~1,500 auto-generated edge cases
+
+### **VAL-8: Observer Integration Tests (55 min total)** ✅ COMPLETE
+- **Slice 1 (VAL-8a):** Integration tests (25 min)
+  - `tests/test_observer_integration.py` - TestObserverGitIntegration (3 tests)
+  - TestObserverReportGeneration (2 tests), TestObserverEdgeCases (1 test)
+  - 6/6 tests passing
+- **Slice 2 (VAL-8 Slice 2):** Error handling + performance (30 min)
+  - TestObserverErrorHandling (4 tests): corrupt YAML, missing dirs, non-git repo, mixed files
+  - TestObserverPerformance (3 tests): 100 files (<5s), large diffs, realistic benchmark
+  - 7/7 tests passing
+- **Result:** 37 → 44 total tests, Observer fully validated end-to-end
+- **Value:** Comprehensive Observer validation (basic, integration, error handling, performance)
 
 ### **VAL-7: Structured Logging (30 min)** ✅
 - **Created:** `tools/mcp_logger.py` (~139 lines)
@@ -35,7 +60,29 @@
 
 ### **HIGH PRIORITY:**
 
-#### **VAL-1b: MCP Inspector Self-Audit (30 min)** 🔴
+#### **VAL-9: Reconciler Integration Tests (45-60 min)** 🔴 **RECOMMENDED NEXT**
+**Goal:** Validate Reconciler CR lifecycle and apply logic  
+**Files to create:**
+- `tests/test_reconciler_integration.py` - Reconciler workflow tests
+  - TestReconcilerCRLifecycle (CR generation, approval, rejection)
+  - TestReconcilerApplyLogic (git operations, safety rules, HITL)
+  - TestReconcilerErrorHandling (corrupt CRs, git failures)
+
+**Key scenarios:**
+- Generate CR from drift → approve → apply → verify changes
+- Test all 5 Git Safety Rules (targeted staging, clean working tree, one commit per CR, audit log, batch limit)
+- Error handling (corrupt CR files, git failures, HITL cancellation)
+
+**Success criteria:**
+- 8-10 integration tests passing
+- Reconciler validated end-to-end (like Observer)
+- Git Safety Rules enforced correctly
+
+---
+
+### **MEDIUM PRIORITY:**
+
+#### **VAL-1b: MCP Inspector Self-Audit (30 min)** 🟡
 **Goal:** Test Desktop Commander + Google MCP servers using official Inspector  
 **How to run:**
 ```bash
@@ -58,39 +105,6 @@ npx @modelcontextprotocol/inspector C:\Users\edri2\.bun\bin\google-mcp.exe
 - List of any schema issues
 - Confirmation that MCP servers are protocol-compliant
 - Documentation of any quirks or limitations
-
-#### **VAL-1: pytest Foundation (90 min)** 🔴
-**Goal:** Set up testing infrastructure with pytest + Hypothesis + Syrupy  
-**Files to create:**
-- `tests/test_observer.py` - Test drift detection logic
-- `tests/test_reconciler.py` - Test CR generation
-- `tests/test_mcp_logger.py` - Test logging decorator
-- `requirements-dev.txt` - pytest, pytest-mcp, Hypothesis, Syrupy
-- `.github/workflows/test.yml` - GitHub Actions CI
-
-**Key tests:**
-```python
-# Property-based test example (Hypothesis)
-from hypothesis import given, strategies as st
-
-@given(st.text())
-def test_observer_handles_any_filename(filename):
-    # Observer should never crash regardless of filename
-    result = observer.parse_filename(filename)
-    assert result is not None or result is None  # Just don't crash!
-```
-
-**Snapshot test example (Syrupy):**
-```python
-def test_cr_format_stability(snapshot):
-    cr = generate_cr(mock_drift_data)
-    # Any format change will fail test → prevents accidental UI breaks
-    assert cr == snapshot
-```
-
----
-
-### **MEDIUM PRIORITY:**
 
 #### **VAL-6: ActivityWatch MCP Integration (45 min)** 🟡
 **Goal:** Install ActivityWatch MCP server for cognitive metrics  
