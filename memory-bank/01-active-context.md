@@ -29,11 +29,11 @@ Then:
 ?? **DO NOT SKIP THIS** - prevents drift, duplication, confusion!
 
 ---
-**QUICK STATUS:** AI Life OS | Phase 2: Core Infrastructure (~60% done)
-[OK] **Infrastructure Operational:** Desktop Commander | Observer | Validator | Reconciler (CR + Apply Logic) | MCP Logger | Panic Button | MCP Inspector | Input Validation | pytest + 26 tests
-**Just finished:** VAL-1c (property-based tests) - 13/13 Hypothesis tests passing (part 3/4)
-**Blockers:** NONE! Property-based testing operational (~1,500 edge cases auto-tested)
-**Next:** VAL-1d (snapshot tests + CI) - final part 4/4
+**QUICK STATUS:** AI Life OS | Phase 2: Core Infrastructure (~62% done)
+[OK] **Infrastructure Operational:** Desktop Commander | Observer | Validator | Reconciler (CR + Apply Logic) | MCP Logger | Panic Button | MCP Inspector | Input Validation | pytest (31 tests: 3 sanity + 10 observer + 13 property + 5 snapshot)
+**Just finished:** VAL-1 (pytest foundation) COMPLETE ✅ - All 4 parts done, GitHub Actions CI configured
+**Blockers:** NONE! Full testing infrastructure operational (unit + property + snapshot + CI)
+**Next:** VAL-8 (Observer integration tests) OR VAL-9 (Reconciler integration tests) OR continue Validation Sprint
 ---
 
 <!--
@@ -130,6 +130,43 @@ GROUNDING:
 ---
 
 # Recent Changes
+
+**2025-12-02 - Slice VAL-1d: Snapshot Tests + CI (Part 4/4)** ✅ COMPLETE
+- Goal: Add snapshot testing with Syrupy + GitHub Actions CI configuration
+- Problem: Need regression testing for structured output (reports, validation matrices)
+- Solution: Created snapshot tests + GitHub Actions workflow for automated testing
+- Files Created:
+  - tests/test_snapshots.py (~160 lines) - 5 snapshot tests
+  - tests/__snapshots__/test_snapshots.ambr - Auto-generated snapshots
+  - .github/workflows/test.yml (~33 lines) - GitHub Actions CI config
+- Tests Implemented:
+  - **TestObserverSnapshots (3 tests):**
+    - test_drift_report_structure - Drift report format consistency
+    - test_empty_drift_report - Clean state report structure
+    - test_multiple_files_drift - Multi-file drift detection structure
+  - **TestValidationSnapshots (2 tests):**
+    - test_cr_id_validation_messages - CR ID validation error patterns
+    - test_entity_status_validation_matrix - Entity/status validation matrix (6 entities × 7 statuses)
+- CI Configuration:
+  - ✅ Runs on Windows (matches dev environment)
+  - ✅ Python 3.14 setup
+  - ✅ Coverage reporting (--cov=tools --cov-report=term-missing)
+  - ✅ Snapshot change detection (--snapshot-warn-unused)
+  - ✅ Triggers: push to main, PRs
+- Testing Results:
+  - ✅ 31/31 tests passing (3 sanity + 10 observer + 13 property + 5 snapshot)
+  - ✅ Snapshots capture structured output for regression detection
+  - ✅ GitHub Actions ready for automated testing on every commit
+- Result:
+  - ✅ VAL-1 (pytest foundation) **FULLY COMPLETE** - All 4 parts done!
+  - ✅ Complete testing infrastructure: unit + property-based + snapshot + CI
+  - ✅ Automated edge case testing (~1,500 examples via Hypothesis)
+  - ✅ Regression detection via Syrupy snapshots
+  - ✅ CI pipeline for every commit/PR
+- Duration: ~20 min | Risk: NONE (tests + CI config only)
+- Research: MCP/Tools (snapshot testing, CI/CD), Testing (regression detection)
+- Commits: 1c23558 (snapshot tests + CI config)
+- Next: VAL-8 (Observer integration tests) OR VAL-9 (Reconciler integration tests)
 
 **2025-12-02 - Slice VAL-1c: Property-Based Tests (Part 3/4)** ✅ COMPLETE
 - Goal: Add property-based testing with Hypothesis for automated edge case discovery
