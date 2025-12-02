@@ -121,121 +121,143 @@ Checks ID follows naming convention:
 
 ## 👁️ Observer (Drift Detection)
 
-**Purpose:** Read-only drift detection system. Compares Truth Layer (files) with actual system state and reports discrepancies.
+**Purpose:** CLI tool for detecting drift in truth-layer YAML files by comparing working tree to last git commit.
 
-**Location:** `tools/observer.py`
+**Version:** 0.1.0 (Slice 2.6)  
+**Location:** `tools/observer.py`  
+**Status:** ✅ Operational
 
-### What Observer Checks
+### What Observer Does
 
-Observer detects **5 types of drift:**
+Observer detects drift in **truth-layer YAML files only**:
+- Compares current files to last git commit (HEAD)
+- Identifies: modified, added, or deleted YAML files
+- Generates structured drift reports
+- Exit codes: 0 (clean), 1 (drift), 2 (error)
 
-1. **Git Drift** - HEAD commit doesn't match `last_commit` in SYSTEM_STATE_COMPACT.json
-2. **Schema Violations** - Entity files that fail validator checks
-3. **Orphaned Entities** - Tasks/Projects without parent Area
-4. **Broken Links** - References to non-existent entities (e.g., `project: proj-does-not-exist`)
-5. **Stale Timestamps** - Future dates or old active entities (>6 months) without updates
+**Scope:**
+- ✅ Scans: `truth-layer/*.yaml` files only
+- ❌ Does NOT scan: `docs/`, `governance/`, `claude-project/`
+- ❌ Does NOT detect: schema violations, orphaned entities, broken links (future work)
 
 ### Usage
 
-**Run Observer:**
+**Basic usage:**
 ```bash
 python tools/observer.py
+
+# Output (if clean):
+# [OK] No drift detected (5 files scanned)
+
+# Output (if drift):
+# [!] Drift detected (2 files)
+# Report: truth-layer/drift/2025-12-02-143000-drift.yaml
 ```
 
-**Output:**
-```
-🔍 Running Observer...
+**Verbose mode:**
+```bash
+python tools/observer.py --verbose
 
-   [1/5] Checking Git drift...
-   [2/5] Validating entities (reusing validator)...
-   [3/5] Checking orphaned entities...
-   [4/5] Checking broken links...
-   [5/5] Checking stale timestamps...
-
-📝 Generating reports...
-
-============================================================
-🔍 Observer Report (2025-12-01 14:30:15)
-============================================================
-
-⚠️  3 issues found:
-
-   ❌ Git Drift: 1
-   ❌ Schema Violations: 1
-   ⚠️  Orphaned Entities: 1
-
-📊 Drift Score: 3 issues detected
-📝 Full report: docs/system_state/drift/DRIFT_REPORT.md
-📄 JSON report: docs/system_state/drift/DRIFT_LATEST.json
-============================================================
+# Output:
+# [Observer] Repository root: C:\Users\...\ai-os
+# [Observer] Found 5 YAML files in truth-layer
+# [Observer] Detecting drift...
+# [Observer]   MODIFIED: truth-layer/projects/PR-001.yaml
+# [Observer]   ADDED: truth-layer/tasks/T-042.yaml
+# [Observer] Report generated: truth-layer/drift/2025-12-02-143000-drift.yaml
+#
+# [!] Drift detected (2 files)
+# Report: truth-layer/drift/2025-12-02-143000-drift.yaml
 ```
 
-### Reports Generated
+### Drift Report Format
 
-**Markdown Report** (`docs/system_state/drift/DRIFT_REPORT.md`):
-- Human-readable summary
-- Detailed findings by drift type
-- Next steps & remediation guidance
-- ADHD-friendly formatting (headings, bullets, short sections)
+**Location:** `truth-layer/drift/YYYY-MM-DD-HHMMSS-drift.yaml` (git-ignored)
 
-**JSON Report** (`docs/system_state/drift/DRIFT_LATEST.json`):
-- Machine-readable format
-- Full drift_items array with details
-- Statistics by drift type
-- Timestamp of generation
+**Example report:**
+```yaml
+metadata:
+  detected_at: "2025-12-02T14:30:00Z"
+  observer_version: "0.1.0"
+  files_scanned: 5
+  files_with_drift: 2
 
-### Example Drift Types
-
-**Git Drift:**
-```
-❌ Git HEAD mismatch
-  - actual: 9f2bed6
-  - expected: 6473aa3
-```
-
-**Schema Violation:**
-```
-❌ Schema violation in memory-bank/10_Projects/proj-broken.md
-  - Missing required field: 'energy_profile'
-  - Deprecated field 'dopamine_reward' - use 'dopamine_level'
+drift:
+  - path: "truth-layer/projects/PR-001-ai-life-os.yaml"
+    type: "modified"
+    diff: |
+      diff --git a/truth-layer/projects/PR-001-ai-life-os.yaml ...
+      -status: active
+      +status: completed
+  
+  - path: "truth-layer/tasks/T-042-new-task.yaml"
+    type: "added"
+    diff: null  # New file, no previous version
 ```
 
-**Orphaned Entity:**
-```
-⚠️  Orphaned task: task-homepage-copy (no project or area)
-  - file: memory-bank/00_Inbox/task-homepage-copy.md
-```
+**Drift types:**
+- **modified** - File changed since last commit (includes full git diff)
+- **added** - New file not yet committed (diff: null)
+- **deleted** - File removed from working tree (diff: null)
 
-**Broken Link:**
-```
-❌ Broken link in task-review: project 'proj-website' not found
-  - file: memory-bank/10_Projects/task-review.md
-  - broken_ref: proj-website
-```
+### Integration with Reconciler
 
-**Stale Timestamp:**
-```
-ℹ️  Old active entity without updated field: proj-2024-old (created 2024-05-15)
-  - file: memory-bank/10_Projects/proj-2024-old.md
-  - status: active
+Observer generates drift reports → Reconciler consumes them → generates Change Requests:
+
+```bash
+# Step 1: Detect drift
+python tools/observer.py
+# Output: Report: truth-layer/drift/2025-12-02-143000-drift.yaml
+
+# Step 2: Generate CR from drift report (future - Reconciler integration)
+python tools/reconciler.py generate truth-layer/drift/2025-12-02-143000-drift.yaml
+# Output: CR-20251202-001 created
+
+# Step 3: Review and apply CR
+python tools/reconciler.py show CR-20251202-001
+python tools/reconciler.py approve CR-20251202-001
+python tools/reconciler.py apply --dry-run
+python tools/reconciler.py apply
 ```
 
 ### Key Features
 
 ✅ **Read-Only** - Never modifies files (safe to run anytime)  
-✅ **Reuses Validator** - Same schema logic as pre-commit hook  
-✅ **Dual Reports** - Markdown (human) + JSON (machine)  
-✅ **Clear Console** - ADHD-friendly progress indicators  
-✅ **Foundation** - Prepares for Reconciler (Slice 2.4)
+✅ **Git-Based** - Uses standard git diff (reliable, no custom logic)  
+✅ **Focused** - truth-layer only (simple, fast)  
+✅ **Exit Codes** - 0/1/2 for scripting/automation  
+✅ **Windows Compatible** - Text-only output (no Unicode symbols)
 
 ### When to Run Observer
 
-- **Before major work** - Check system health
-- **After manual edits** - Verify no drift introduced
-- **Weekly check** - Catch accumulated drift
-- **Before reconciliation** - Identify what needs fixing
+- **Before committing** - Check what you changed
+- **After manual edits** - Verify no uncommitted drift
+- **Before reconciliation** - Generate CRs for drift
+- **Daily/weekly** - Manual health check
 
-**Note:** Observer is **manual only** (run when you want). Scheduled/automated runs coming in future slice (2.3b).
+**Note:** Observer is **manual CLI only** (run when needed). Scheduled automation coming in Slice 2.6b (n8n integration).
+
+### Safety & Performance
+
+**Safety:**
+- Read-only operations only
+- No entity modifications
+- No git commits
+- Drift reports are transient (git-ignored)
+
+**Performance:**
+- Typical runtime: <1 second for 100 files
+- Uses efficient Path.rglob() for file discovery
+- Minimal subprocess calls (2 git commands)
+
+### Documentation
+
+- **Design Doc:** `docs/OBSERVER_DESIGN.md` (architecture, workflow, testing)
+- **Integration:** Observer → Reconciler workflow documented in RECONCILER_DESIGN.md
+
+### Dependencies
+
+**Standard library only** - no additional Python packages required.
 
 ---
 
@@ -442,5 +464,5 @@ Planned additions to this directory:
 
 ---
 
-**Last Updated:** 2025-12-01  
-**Version:** 1.1 (Slice 2.4a - Reconciler design complete)
+**Last Updated:** 2025-12-02  
+**Version:** 1.2 (Slice 2.6 - Observer System operational)
