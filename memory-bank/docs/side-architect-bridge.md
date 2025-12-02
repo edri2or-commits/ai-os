@@ -1,17 +1,17 @@
 ---
 type: side_architect_snapshot
 schema_version: 1.0
-last_updated: 2025-12-01T22:30:00Z
+last_updated: 2025-12-02T00:30:00Z
 bridge_purpose:
   - onboard_side_architect_assistants_quickly_and_safely
   - explain_current_state_and_priorities_of_ai_life_os
   - remind_assistants_they_never_execute_tools_or_edit_files
 current_phase: "Phase 2 – Core Infrastructure"
 current_slice:
-  id: "2.4b"
-  name: "Reconciler Implementation (CR Management)"
+  id: "2.6"
+  name: "Observer System (CLI drift detection)"
   status: "completed"
-progress_pct: 30
+progress_pct: 42
 ---
 
 # Side Architect Bridge – System Snapshot
@@ -95,6 +95,23 @@ Side Architect (think/propose) → User (review/approve) → Head (Claude Deskto
 
 ## 3. Recent Slices (Last 3)
 
+**2025-12-02 – Slice 2.6: Observer System (CLI drift detection)**
+- Python script: `tools/observer.py` (320 lines) with CLI interface
+- Git-based drift detection: compare working tree to HEAD for truth-layer YAML files
+- Generates structured drift reports in `truth-layer/drift/*.yaml` (git-ignored)
+- Exit codes: 0 (clean), 1 (drift detected), 2 (error)
+- Read-only operations, foundation for Observer→Reconciler integration
+- Documentation: `docs/OBSERVER_DESIGN.md` (300 lines)
+- Duration: ~2 hours
+
+**2025-12-01 – Slice 2.4c: Reconciler Apply Logic**
+- Apply command with 5 Git Safety Rules (targeted staging, working tree check, one commit per CR)
+- `--dry-run` and `--limit` flags for safe execution
+- Apply log tracking (timestamp | cr_id | status | commit_hash | files)
+- Atomic operations with rollback on failure
+- HITL protocol: Plan → Approve → Execute → Report
+- Duration: ~3 hours (includes TD-002 resolution)
+
 **2025-12-01 – Slice 2.4b: Reconciler Implementation (CR Management)**
 - CR lifecycle management: generate/list/show/approve/reject
 - LOW risk drift types only (git_head_drift, stale_timestamp)
@@ -102,12 +119,6 @@ Side Architect (think/propose) → User (review/approve) → Head (Claude Deskto
 - CLI with 5 commands, JSON Schema validation
 - Foundation for apply logic (Slice 2.4c)
 - Duration: ~1.5 hours
-
-**2025-12-01 – Slice 2.4a: Reconciler Design & CR Format**
-- CR architecture: YAML schema, Observer→CR mapping, HITL workflow
-- 5 safety invariants (INV-CR-001 to INV-CR-005)
-- Design only (no code yet), foundation for implementation in 2.4b
-- Duration: ~60 min
 
 **2025-12-01 – Slice 2.3a: Observer (Read-Only Drift Detection)**
 - Built drift detection system: 5 drift types (Git, schema, orphans, broken links, stale timestamps)
@@ -119,19 +130,28 @@ Side Architect (think/propose) → User (review/approve) → Head (Claude Deskto
 
 ## 4. Current Work by Claude
 
-**Current Slice:** Slice 2.4b (Reconciler CR Management) ✅ COMPLETE
+**Current Slice:** Slice 2.6 (Observer System) ✅ COMPLETE
 
 **What Claude just finished:**
-- Reconciler CR management system (tools/reconciler.py, 680 lines)
-- Drift parsing (Markdown → DriftFinding objects)
-- CR generation with auto-ID (CR-YYYYMMDD-NNN)
-- List/show/approve/reject workflows (CR file updates only)
-- Zero entity modifications (safe slice)
-- Tools documentation (README.md)
+- Observer CLI tool (tools/observer.py, 320 lines)
+- Git-based drift detection for truth-layer YAML files
+- Structured drift reports in `truth-layer/drift/*.yaml` (git-ignored)
+- Exit codes: 0 (clean), 1 (drift), 2 (error)
+- Read-only operations, foundation for Observer→Reconciler workflow
+- Documentation (docs/OBSERVER_DESIGN.md, 300 lines)
+
+**What's Operational Now:**
+- ✅ Desktop Commander MCP (subprocess management, file ops, surgical editing)
+- ✅ Observer CLI (drift detection, report generation)
+- ✅ Validator (pre-commit hook, JSON Schema validation)
+- ✅ Reconciler (CR management + apply logic with Git Safety Rules)
+- ✅ Life Graph schema (6/6 entities complete)
+- ✅ Narrative Layer (Manifesto + ADRs + Design Guide)
 
 **Next Options:**
-- Reconciler Apply Logic (2.4c) - Entity modifications + git commits (MEDIUM risk)
-- Scheduled Observer (2.3b) - n8n automation
+- Field Standardization (2.2b) - Clean up inconsistent field names in Life Graph
+- Scheduled Observer (2.6b) - n8n automation for continuous drift detection
+- Documentation Polish - Improve examples, add diagrams
 - Side-Architect Refinement Track (SA-1...SA-5) - Improve side architect experience
 
 ---
