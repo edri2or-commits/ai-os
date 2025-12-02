@@ -29,11 +29,11 @@ Then:
 ?? **DO NOT SKIP THIS** - prevents drift, duplication, confusion!
 
 ---
-**QUICK STATUS:** AI Life OS | Phase 2: Core Infrastructure (~56% done)
-[OK] **Infrastructure Operational:** Desktop Commander | Observer | Validator | Reconciler (CR + Apply Logic) | MCP Logger | Panic Button | MCP Inspector | Input Validation | pytest
-**Just finished:** VAL-1a (pytest setup) - testing infrastructure foundation (part 1/4)
-**Blockers:** NONE! Testing foundation ready
-**Next:** VAL-1b (first test) - test_observer_basic.py
+**QUICK STATUS:** AI Life OS | Phase 2: Core Infrastructure (~58% done)
+[OK] **Infrastructure Operational:** Desktop Commander | Observer | Validator | Reconciler (CR + Apply Logic) | MCP Logger | Panic Button | MCP Inspector | Input Validation | pytest + 13 tests
+**Just finished:** VAL-1b (Observer tests) - 10/10 tests passing (part 2/4)
+**Blockers:** NONE! Testing infrastructure growing
+**Next:** VAL-1c (property-based tests with Hypothesis) - part 3/4
 ---
 
 <!--
@@ -130,6 +130,38 @@ GROUNDING:
 ---
 
 # Recent Changes
+
+**2025-12-02 - Slice VAL-1b: Observer Basic Tests (Part 2/4)** ✅ COMPLETE
+- Goal: Write first real tests for Observer drift detection
+- Problem: Observer has no automated tests → can't verify it works
+- Solution: Created test_observer_basic.py with 10 comprehensive tests
+- File Created:
+  - tests/test_observer_basic.py (~170 lines) - 10 tests across 3 test classes
+- Tests Implemented:
+  - **TestObserverBasics (4 tests):**
+    - test_observer_initialization - Object creation
+    - test_observer_verbose_mode - Verbose flag
+    - test_check_git_available_in_repo - Git detection (True case)
+    - test_check_git_available_outside_repo - Git detection (False case)
+  - **TestYAMLFileDetection (3 tests):**
+    - test_get_yaml_files_empty_truth_layer - Empty directory
+    - test_get_yaml_files_with_yaml_files - Finds .yaml and .yml files
+    - test_get_yaml_files_ignores_non_yaml - Ignores .txt, .json, etc.
+  - **TestDriftDetection (3 tests):**
+    - test_detect_drift_clean_state - No changes detected
+    - test_detect_drift_with_modified_file - Modified file detection
+    - test_detect_drift_with_new_file - Added file detection (staged)
+- Testing Results:
+  - ✅ 10/10 tests passing
+  - ✅ All Observer core functionality covered
+  - ✅ Uses fixtures from conftest.py (temp_repo, truth_layer_dir)
+- Result:
+  - ✅ Observer is now testable and verified
+  - ✅ Regression protection for future changes
+  - ✅ Foundation for more complex Observer tests
+- Duration: ~20 min | Risk: NONE (tests only, no production changes)
+- Research: MCP/Tools (testing patterns), Safety (regression prevention)
+- Next: VAL-1c (property-based tests with Hypothesis)
 
 **2025-12-02 - Slice VAL-1a: pytest Foundation Setup (Part 1/4)** ✅ COMPLETE
 - Goal: Create testing infrastructure foundation - setup phase
