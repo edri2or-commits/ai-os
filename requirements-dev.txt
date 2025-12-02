@@ -1,0 +1,21 @@
+# Development dependencies for AI Life OS
+# Testing infrastructure (VAL-1)
+
+# Core testing framework
+pytest==8.3.3
+pytest-cov==5.0.0           # Coverage reports
+pytest-xdist==3.6.1         # Parallel test execution
+
+# Property-based testing
+hypothesis==6.115.6         # Generate test cases automatically
+
+# Snapshot testing
+syrupy==4.7.2               # Regression tests via snapshots
+
+# Mocking and utilities
+pytest-mock==3.14.0         # Better mocking support
+freezegun==1.5.1            # Time travel for tests
+
+# Code quality
+ruff==0.7.4                 # Fast linter (replaces flake8, black, isort)
+mypy==1.13.0                # Type checking
