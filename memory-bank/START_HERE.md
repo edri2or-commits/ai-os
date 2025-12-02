@@ -18,7 +18,7 @@ This is your **"North Star"** - it explains:
 
 **When to read it:**
 - First time in this project ? Read it
-- User says "àéáãúé ùìéèä" (lost control) ? Point them to Manifesto
+- User says "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½" (lost control) ? Point them to Manifesto
 - Confused about WHY a decision was made ? Check Manifesto principles
 - Need to explain the system to someone ? Start with Manifesto
 
@@ -62,24 +62,41 @@ Follow these steps in order:
 
 ---
 
+### Step 4: (Special Context) Active Work Handoffs
+?? **If working on specific subsystems, check for handoff docs:**
+
+**Validation Sprint:**
+- **File:** `memory-bank/docs/VALIDATION_SPRINT_HANDOFF.md`
+- **When to read:** If continuing validation work (VAL-* slices)
+- **Contains:** 
+  - Completed work (VAL-7, VAL-4) with test results
+  - Remaining items (VAL-1b, VAL-1, VAL-6, VAL-8, VAL-9)
+  - Tool setup instructions (MCP Inspector, pytest, etc.)
+  - 3 recommended approaches (Quick Win, Security-First, ADHD-Optimized)
+  - Success criteria (95% empirical confidence target)
+
+**Other handoff docs:** Check `memory-bank/docs/` for subsystem-specific handoffs.
+
+---
+
 ## After Reading - Summarize to User (Hebrew)
 
 Before doing ANY work, tell the user in Hebrew:
 
 ```
-äéé! ÷øàúé àú Memory Bank.
+ï¿½ï¿½ï¿½! ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ Memory Bank.
 
-?? **àéôä àğçğå:**
+?? **ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½:**
 - Phase 2: Core Infrastructure (~32% complete)
-- ñééîğå ìàçøåğä: Architecture Cleanup (single metaphor established - Head/Hands/Truth/Nerves)
-- äáà: Fix TD-002 (Windows MCP stdout) àå Reconciler Apply (2.4c) àå Scheduled Observer (2.3b)
+- ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: Architecture Cleanup (single metaphor established - Head/Hands/Truth/Nerves)
+- ï¿½ï¿½ï¿½: Fix TD-002 (Windows MCP stdout) ï¿½ï¿½ Reconciler Apply (2.4c) ï¿½ï¿½ Scheduled Observer (2.3b)
 
-?? **àôùøåéåú ìäîùê:**
+?? **ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½:**
 1. Fix TD-002 - Investigate Windows MCP stdout issue (blocker for apply validation)
 2. Continue Reconciler - Apply Logic (2.4c) if willing to skip validation
 3. Scheduled Observer (2.3b) - n8n automation
 
-îä úøöä ìòùåú?
+ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½?
 ```
 
 **Note:** This is updated as of 2025-12-01. Always update with actual current state from `01-active-context.md`.
