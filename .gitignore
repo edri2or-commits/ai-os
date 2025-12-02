@@ -153,3 +153,6 @@ docs/system_state/timeline/EVENT_TIMELINE.jsonl
 # 1. Verify it contains NO secrets
 # 2. Use `git add -f <file>` to force add (with caution!)
 # 3. Document why in commit message
+
+# Panic Button emergency saves (transient, not for version control)
+panic/

@@ -80,3 +80,6 @@ Observer System completes the drift detection loop:
 **Commit Message:** "feat(slice-2.6): Observer System - CLI drift detection for truth-layer"
 
 - 2025-12-02 | Slice 2.6: Observer System - CLI drift detection for truth-layer YAML files (292 lines, read-only, git-based, tested + validated)
+
+- 2025-12-02 | Slice VAL-7: Structured Logging - JSONL audit trail for MCP tool calls (mcp_logger.py, local-first, privacy-preserving, ~139 lines)
+- 2025-12-02 | Slice VAL-4: Panic Button - Emergency state preservation with Ctrl+Alt+P hotkey (ADHD safety net, git WIP + state dump, ~30 min)
