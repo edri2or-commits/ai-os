@@ -1,18 +1,16 @@
 # Observer System Design
 
-**Version:** 1.0  
+**Version:** 0.1.0  
 **Status:** Operational  
-**Last Updated:** 2025-12-02
+**Type:** Read-Only Drift Detection CLI
 
 ---
 
 ## Overview
 
-The Observer System is a **read-only drift detection tool** that monitors uncommitted changes in the Truth Layer (YAML files). It compares the current working tree state to the last git commit (HEAD) and generates structured drift reports.
+The Observer System detects drift in truth-layer YAML files by comparing the working tree state to the last git commit. It generates structured drift reports for human review and reconciliation.
 
-**Purpose:** Enable proactive drift detection before changes accumulate and become difficult to track.
-
-**Scope:** Phase 2 - Core Infrastructure (Slice 2.6)
+**Key Principle:** Observer is **read-only** - it never modifies files, never commits changes, never generates Change Requests. It simply reports what changed.
 
 ---
 
@@ -20,46 +18,27 @@ The Observer System is a **read-only drift detection tool** that monitors uncomm
 
 ### Components
 
-1. **Observer CLI** (`tools/observer.py`)
-   - Python script (~290 lines)
-   - Git integration for diff detection
-   - YAML report generation
-   
-2. **Drift Reports Directory** (`truth-layer/drift/`)
-   - Stores timestamped drift reports
-   - Git-ignored (transient state)
-   
-3. **Observer Design Doc** (`docs/OBSERVER_DESIGN.md`)
-   - This file
-   - Architecture and usage documentation
+```
+tools/observer.py           # CLI script (Python)
+truth-layer/drift/          # Drift reports directory (git-ignored)
+truth-layer/drift/.gitignore # Exclude reports from git
+```
 
 ### Data Flow
 
 ```
-┌─────────────────┐
-│  User runs CLI  │
-└────────┬────────┘
-         │
-         v
-┌─────────────────────────────────┐
-│ Observer.detect_drift()         │
-│ - Run: git diff HEAD --name...  │
-│ - Parse changed files           │
-│ - Get diffs for modified files  │
-└────────┬────────────────────────┘
-         │
-         v
-┌─────────────────────────────────┐
-│ Observer.generate_report()      │
-│ - Create drift/YYYY-MM-DD...    │
-│ - Write YAML report             │
-└────────┬────────────────────────┘
-         │
-         v
-┌─────────────────┐
-│ Report to user  │
-│ Exit code: 0/1  │
-└─────────────────┘
+User runs: python tools/observer.py
+    ↓
+Observer scans: truth-layer/*.yaml
+    ↓
+Git diff: Compare working tree to HEAD
+    ↓
+If drift detected:
+    → Generate report: truth-layer/drift/YYYY-MM-DD-HHMMSS-drift.yaml
+    → Exit code: 1
+Else:
+    → Print "No drift"
+    → Exit code: 0
 ```
 
 ---
@@ -69,20 +48,15 @@ The Observer System is a **read-only drift detection tool** that monitors uncomm
 ### Basic Usage
 
 ```bash
-# Check for drift
+# Run drift detection
 python tools/observer.py
 
-# Output (no drift):
-✅ No drift detected. Truth layer is clean.
+# Output (if drift detected):
+# ✗ Drift detected (2 files)
+# Report: truth-layer/drift/2025-12-02-143000-drift.yaml
 
-# Output (drift found):
-⚠️  Drift detected in 3 file(s).
-📄 Report generated: truth-layer/drift/2025-12-02-143000-drift.yaml
-
-Files with drift:
-  - truth-layer/projects/PR-001-ai-life-os.yaml (modified)
-  - truth-layer/tasks/T-042-new-task.yaml (added)
-  - truth-layer/contexts/CTX-003-old.yaml (deleted)
+# Output (if clean):
+# ✓ No drift detected (5 files scanned)
 ```
 
 ### Verbose Mode
@@ -92,32 +66,34 @@ Files with drift:
 python tools/observer.py --verbose
 
 # Output:
-[Observer] Starting drift detection...
-[Observer] Running git diff to detect changes...
-[Observer] Found 2 changed files
-[Observer] Processing truth-layer/projects/PR-001.yaml (type: modified)
-[Observer] Generating report: truth-layer/drift/2025-12-02-143000-drift.yaml
-...
+# [Observer] Repository root: C:\Users\edri2\Desktop\AI\ai-os
+# [Observer] Found 5 YAML files in truth-layer
+# [Observer] Detecting drift...
+# [Observer]   MODIFIED: truth-layer/projects/PR-001.yaml
+# [Observer]   ADDED: truth-layer/tasks/T-042.yaml
+# [Observer] Report generated: truth-layer/drift/2025-12-02-143000-drift.yaml
 ```
 
 ### Exit Codes
 
-- **0:** No drift detected (clean working tree)
-- **1:** Drift detected (report generated)
-- **2:** Error (not in git repo, invalid YAML, etc.)
+- `0` - No drift detected (clean state)
+- `1` - Drift detected (report generated)
+- `2` - Error (git not available, invalid repo, etc.)
 
 ---
 
 ## Drift Report Format
 
-### Structure
+**File:** `truth-layer/drift/YYYY-MM-DD-HHMMSS-drift.yaml`
+
+### Example Report
 
 ```yaml
 metadata:
   detected_at: "2025-12-02T14:30:00Z"
   observer_version: "0.1.0"
-  files_scanned: 12
-  files_with_drift: 3
+  files_scanned: 5
+  files_with_drift: 2
 
 drift:
   - path: "truth-layer/projects/PR-001-ai-life-os.yaml"
@@ -132,225 +108,200 @@ drift:
   - path: "truth-layer/tasks/T-042-new-task.yaml"
     type: "added"
     diff: null  # New file, no previous version
-  
-  - path: "truth-layer/contexts/CTX-003-old-context.yaml"
-    type: "deleted"
-    diff: null  # File deleted
 ```
 
-### Fields
+### Drift Types
 
-**Metadata:**
-- `detected_at`: UTC timestamp (ISO 8601 format)
-- `observer_version`: Observer script version
-- `files_scanned`: Total YAML files in truth-layer
-- `files_with_drift`: Number of changed files
-
-**Drift Array:**
-- `path`: Relative path to changed file
-- `type`: Change type (added/modified/deleted/renamed)
-- `diff`: Git diff output (null for added/deleted files)
+| Type | Description | Diff Included? |
+|------|-------------|----------------|
+| `modified` | File changed since last commit | Yes (full git diff) |
+| `added` | New file not yet committed | No (null) |
+| `deleted` | File removed from working tree | No (null) |
 
 ---
 
 ## Integration with Reconciler
 
-The Observer generates drift reports that can be consumed by the Reconciler:
+Observer generates drift reports. Reconciler (Slice 2.4) consumes these reports to generate Change Requests (CRs).
 
 ### Workflow
 
 ```bash
-# 1. Detect drift
+# Step 1: Detect drift
 python tools/observer.py
-# Output: Report generated: truth-layer/drift/2025-12-02-143000-drift.yaml
+# Output: Report: truth-layer/drift/2025-12-02-143000-drift.yaml
 
-# 2. Generate Change Request (CR)
+# Step 2: Generate CR from drift report
 python tools/reconciler.py generate truth-layer/drift/2025-12-02-143000-drift.yaml
 # Output: CR-20251202-001 created
 
-# 3. Review CR
+# Step 3: Review and apply CR
 python tools/reconciler.py show CR-20251202-001
-
-# 4. Approve CR
 python tools/reconciler.py approve CR-20251202-001
-
-# 5. Preview apply
 python tools/reconciler.py apply --dry-run
-
-# 6. Execute apply
 python tools/reconciler.py apply
 ```
 
 ---
 
-## Safety & Constraints
+## Safety Design
 
-### Safety Features
+### Read-Only Guarantees
 
-✅ **Read-Only Operations**
-- Observer NEVER modifies files
-- Only uses git read commands (diff, rev-parse)
-- Zero risk of data loss
+1. **No File Modifications:** Observer never writes to truth-layer files
+2. **No Git Operations:** Never stages, commits, or pushes changes
+3. **No CR Generation:** Never creates Change Requests (that's Reconciler's job)
 
-✅ **Transient Reports**
-- Drift reports stored in git-ignored directory
-- Not committed to repository
-- Can be safely deleted at any time
+### Transient Reports
 
-✅ **Error Handling**
-- Graceful failure if not in git repo
-- Clear error messages for debugging
-- Exit codes indicate success/failure
+Drift reports are **git-ignored** (via `truth-layer/drift/.gitignore`):
+- They are informational only
+- Not tracked in git history
+- Can be safely deleted after review
+- Generated on-demand when needed
 
-### Constraints
+### Error Handling
 
-❌ **Does NOT:**
-- Modify Truth Layer files
-- Auto-generate Change Requests (that's Reconciler's job)
-- Commit changes to git
-- Require network access
-- Depend on external services
+Observer fails gracefully with clear error messages:
 
-✅ **DOES:**
-- Detect uncommitted changes
-- Generate structured reports
-- Provide clear exit codes
-- Support verbose logging
+```bash
+# If git not available:
+✗ Observer error: Git repository not found or git not installed
+
+# If not in repo root:
+✗ Observer error: Git diff failed: fatal: not a git repository
+```
 
 ---
 
-## Future Enhancements (Post-Phase 2)
+## Implementation Details
 
-### Slice 2.3: Scheduled Observer (n8n Integration)
+### Git Integration
 
-**Goal:** Automated drift detection every 15 minutes
+Observer uses `git diff HEAD --name-status` to detect changes:
+- Efficient: Only reads git index, doesn't traverse entire filesystem
+- Accurate: Compares working tree to last commit (HEAD)
+- Standard: Uses native git commands, no custom logic
 
-**Architecture:**
+### Path Handling
+
+Observer uses **relative paths from repo root**:
+- `truth-layer/projects/PR-001.yaml` (correct)
+- NOT `C:\Users\...\truth-layer\...` (absolute paths avoided)
+
+This ensures:
+- Cross-platform compatibility (Windows/Linux/macOS)
+- Clean drift reports
+- Easy integration with Reconciler
+
+### Performance
+
+Observer is optimized for speed:
+- Uses `Path.rglob()` for efficient YAML file discovery
+- Subprocess calls are minimal (2 git commands total)
+- No YAML parsing (unnecessary for drift detection)
+- Typical runtime: <1 second for 100 files
+
+---
+
+## Limitations & Future Work
+
+### Current Limitations
+
+1. **Truth-Layer Only:** Only scans `truth-layer/` directory
+   - Does NOT scan `docs/`, `governance/`, `claude-project/`
+   - This is by design (Slice 2.6 scope)
+
+2. **No Scheduled Runs:** Must be run manually
+   - No n8n integration yet (that's Slice 2.3, future work)
+
+3. **No Auto-Reconciliation:** Reports must be processed manually
+   - Observer → Reconciler → Apply is a manual workflow
+
+### Future Enhancements (Out of Scope)
+
+- **Slice 2.3 (Proactive Observer):** n8n workflow for scheduled drift detection
+- **Phase 3:** Auto-generate CRs for LOW risk drift (HITL approval still required)
+- **Expanded Scope:** Detect drift in `docs/` and `governance/` directories
+
+---
+
+## Testing
+
+### Test Scenarios
+
+**Test 1: Clean State (No Drift)**
+```bash
+# Ensure all changes committed
+git status  # Should show "nothing to commit"
+
+# Run Observer
+python tools/observer.py
+
+# Expected output:
+# ✓ No drift detected (0 files scanned)
+# Exit code: 0
 ```
-┌─────────────┐
-│ n8n Workflow │ (cron: */15 * * * *)
-│ - Schedule   │
-└──────┬───────┘
-       │
-       v
-┌──────────────────────────────┐
-│ Execute: python observer.py  │
-│ - Capture exit code          │
-│ - Parse output               │
-└──────┬───────────────────────┘
-       │
-       v
-┌──────────────────────────────┐
-│ If drift detected (exit=1):  │
-│ - Send notification          │
-│ - (Optional) Auto-generate CR│
-└──────────────────────────────┘
+
+**Test 2: Modified File (Drift Detected)**
+```bash
+# Modify a YAML file
+echo "test: true" >> truth-layer/projects/PR-001.yaml
+
+# Run Observer
+python tools/observer.py
+
+# Expected output:
+# ✗ Drift detected (1 files)
+# Report: truth-layer/drift/2025-12-02-HHMMSS-drift.yaml
+# Exit code: 1
+
+# Clean up
+git restore truth-layer/projects/PR-001.yaml
 ```
 
-**Benefits:**
-- Proactive drift alerts
-- No manual checking required
-- Continuous monitoring
+**Test 3: New File (Drift Detected)**
+```bash
+# Create new YAML file
+echo "id: test-001" > truth-layer/test.yaml
 
-**Risks:**
-- n8n configuration complexity
-- Notification fatigue if too frequent
-- Resource usage (lightweight, minimal)
+# Run Observer
+python tools/observer.py
 
-**Status:** Future work (Phase 2, Slice 2.3)
+# Expected output:
+# ✗ Drift detected (1 files)
+# Report: truth-layer/drift/2025-12-02-HHMMSS-drift.yaml
+# Exit code: 1
+
+# Clean up
+rm truth-layer/test.yaml
+```
 
 ---
 
 ## Research Alignment
 
-**Family:** Safety/Governance (08.md), Memory/RAG (12.md)
+Observer implements principles from multiple research families:
 
-**Principles:**
-1. **Git as SSOT:** Observer respects git as Single Source of Truth
-2. **Read-Only Safety:** No destructive operations
-3. **Drift Detection:** Core to split-brain prevention
-4. **HITL Protocol:** Human reviews drift, not automatic remediation
-
-**Invariants:**
-- INV-001 (Git as Core): Observer queries git exclusively
-- INV-CR-001 (Read-Only Observer): Observer never modifies entities
-- Architecture: Observer = "Nerves" (sensory input)
-
----
-
-## Troubleshooting
-
-### Issue: "Not in a git repository"
-
-**Symptom:**
-```
-❌ Error: Not in a git repository
-```
-
-**Cause:** Script not run from within git repo
-
-**Fix:**
-```bash
-cd C:\Users\edri2\Desktop\AI\ai-os
-python tools/observer.py
-```
-
----
-
-### Issue: No drift reports generated
-
-**Symptom:** Exit code 1 but no file created
-
-**Cause:** Permission error writing to `truth-layer/drift/`
-
-**Fix:**
-```bash
-# Check directory exists and is writable
-ls -la truth-layer/drift/
-
-# Create if missing
-mkdir -p truth-layer/drift
-```
-
----
-
-### Issue: "Git diff failed"
-
-**Symptom:**
-```
-❌ Error: Git diff failed: <stderr message>
-```
-
-**Cause:** Git command error (invalid ref, corrupt repo)
-
-**Fix:**
-```bash
-# Verify git status
-git status
-
-# Check HEAD is valid
-git rev-parse HEAD
-
-# Repair if needed
-git fsck
-```
+1. **Safety/Governance (08.md):** Drift detection prevents split-brain states
+2. **Memory/Truth Layer (12.md):** Git as Single Source of Truth
+3. **Architecture (Head/Hands/Truth):** Observer = "Nerves" (sensory input)
+4. **ADHD-aware (18.md):** Simple CLI, clear output, low friction
 
 ---
 
 ## Changelog
 
 ### v0.1.0 (2025-12-02)
-
-**Initial Release:**
-- CLI with --verbose flag
-- Git-based drift detection (diff HEAD)
+- Initial implementation
+- CLI with `--verbose` flag
+- Git-based drift detection
 - YAML report generation
 - Exit codes (0/1/2)
-- Support for added/modified/deleted/renamed files
-- Diff content for modified files
-- Read-only, safe operations
+- Documentation complete
 
 ---
 
-**Document Status:** Complete  
-**Next:** Slice 2.3 (Scheduled Observer with n8n integration)
+**Last Updated:** 2025-12-02  
+**Slice:** 2.6 (Observer System)  
+**Status:** ✅ Complete

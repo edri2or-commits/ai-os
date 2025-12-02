@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-Observer System - Drift Detection for Truth Layer
+Observer System - Drift Detection CLI
 
-Detects uncommitted changes in truth-layer/*.yaml files by comparing
-working tree state to last git commit (HEAD).
+Detects drift in truth-layer YAML files by comparing working tree to last git commit.
+Generates structured drift reports for human review and reconciliation.
 
 Usage:
     python tools/observer.py [--verbose]
@@ -18,269 +18,302 @@ import argparse
 import json
 import subprocess
 import sys
-from datetime import datetime, timezone
+from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
 
+class ObserverError(Exception):
+    """Base exception for Observer errors."""
+    pass
+
+
+class GitNotFoundError(ObserverError):
+    """Raised when git is not available or repo is not initialized."""
+    pass
+
+
 class Observer:
-    """Drift detection system for Truth Layer YAML files."""
+    """Drift detection system for truth-layer YAML files."""
     
     VERSION = "0.1.0"
     TRUTH_LAYER_PATH = "truth-layer"
-    DRIFT_REPORTS_PATH = "truth-layer/drift"
+    DRIFT_REPORT_DIR = "truth-layer/drift"
     
-    def __init__(self, verbose: bool = False):
+    def __init__(self, repo_root: Path, verbose: bool = False):
+        """
+        Initialize Observer.
+        
+        Args:
+            repo_root: Path to git repository root
+            verbose: Enable verbose logging
+        """
+        self.repo_root = repo_root
         self.verbose = verbose
-        self.repo_root = self._find_repo_root()
-        if not self.repo_root:
-            raise RuntimeError("Not in a git repository")
-    
-    def _find_repo_root(self) -> Optional[Path]:
-        """Find git repository root directory."""
-        try:
-            result = subprocess.run(
-                ["git", "rev-parse", "--show-toplevel"],
-                capture_output=True,
-                text=True,
-                check=True
-            )
-            return Path(result.stdout.strip())
-        except subprocess.CalledProcessError:
-            return None
-    
-    def _log(self, message: str):
+        self.truth_layer = repo_root / self.TRUTH_LAYER_PATH
+        self.drift_dir = repo_root / self.DRIFT_REPORT_DIR
+        
+    def log(self, message: str, force: bool = False):
         """Log message if verbose mode enabled."""
-        if self.verbose:
+        if self.verbose or force:
             print(f"[Observer] {message}")
     
-    def _run_git_command(self, args: List[str]) -> Tuple[str, str, int]:
-        """Run git command and return (stdout, stderr, returncode)."""
+    def check_git_available(self) -> bool:
+        """Check if git is available and repo is initialized."""
         try:
             result = subprocess.run(
-                ["git"] + args,
+                ["git", "rev-parse", "--git-dir"],
                 cwd=self.repo_root,
                 capture_output=True,
                 text=True,
                 check=False
             )
-            return result.stdout, result.stderr, result.returncode
-        except Exception as e:
-            return "", str(e), 1
+            return result.returncode == 0
+        except FileNotFoundError:
+            return False
     
-    def detect_drift(self) -> Dict:
+    def get_yaml_files(self) -> List[str]:
+        """Get list of YAML files in truth-layer (relative to repo root)."""
+        if not self.truth_layer.exists():
+            self.log(f"Truth layer directory does not exist: {self.truth_layer}")
+            return []
+        
+        yaml_files = []
+        for pattern in ["*.yaml", "*.yml"]:
+            yaml_files.extend(self.truth_layer.rglob(pattern))
+        
+        # Convert to relative paths from repo root
+        relative_paths = [
+            str(f.relative_to(self.repo_root)).replace("\\", "/")
+            for f in yaml_files
+        ]
+        
+        self.log(f"Found {len(relative_paths)} YAML files in truth-layer")
+        return relative_paths
+    
+    def detect_drift(self) -> Tuple[List[Dict], int]:
         """
         Detect drift in truth-layer YAML files.
         
         Returns:
-            Dict with metadata and drift findings.
+            Tuple of (drift_list, files_scanned)
         """
-        self._log("Starting drift detection...")
+        self.log("Detecting drift...")
         
-        # Get changed files in truth-layer/
-        self._log("Running git diff to detect changes...")
-        stdout, stderr, returncode = self._run_git_command([
-            "diff", "HEAD", "--name-status", "--", "truth-layer/*.yaml"
-        ])
+        # Get all YAML files
+        yaml_files = self.get_yaml_files()
+        files_scanned = len(yaml_files)
         
-        if returncode != 0:
-            raise RuntimeError(f"Git diff failed: {stderr}")
+        if files_scanned == 0:
+            self.log("No YAML files found in truth-layer", force=True)
+            return [], 0
+        
+        # Run git diff to detect changes
+        result = subprocess.run(
+            ["git", "diff", "HEAD", "--name-status", "--", self.TRUTH_LAYER_PATH],
+            cwd=self.repo_root,
+            capture_output=True,
+            text=True,
+            check=False
+        )
+        
+        if result.returncode != 0:
+            raise GitNotFoundError(f"Git diff failed: {result.stderr}")
+        
+        drift_list = []
         
         # Parse git diff output
-        drift_findings = []
-        lines = stdout.strip().split("\n") if stdout.strip() else []
-        
-        self._log(f"Found {len(lines)} changed files")
-        
-        for line in lines:
-            if not line.strip():
+        for line in result.stdout.strip().split("\n"):
+            if not line:
                 continue
             
-            parts = line.split("\t", 1)
+            parts = line.split(maxsplit=1)
             if len(parts) != 2:
                 continue
             
-            status, filepath = parts[0], parts[1]
+            status_code, filepath = parts
             
-            # Map git status codes
-            change_type = self._map_status_code(status)
+            # Only process YAML files
+            if not (filepath.endswith(".yaml") or filepath.endswith(".yml")):
+                continue
             
-            self._log(f"Processing {filepath} (type: {change_type})")
+            # Map git status codes to drift types
+            drift_type = self._map_status_to_type(status_code)
+            
+            if drift_type is None:
+                continue
             
             # Get diff for modified files
             diff_content = None
-            if change_type == "modified":
+            if drift_type == "modified":
                 diff_content = self._get_file_diff(filepath)
             
-            drift_findings.append({
+            drift_entry = {
                 "path": filepath,
-                "type": change_type,
+                "type": drift_type,
                 "diff": diff_content
-            })
+            }
+            
+            drift_list.append(drift_entry)
+            self.log(f"  {drift_type.upper()}: {filepath}")
         
-        # Build report metadata
-        metadata = {
-            "detected_at": datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'),
-            "observer_version": self.VERSION,
-            "files_scanned": self._count_yaml_files(),
-            "files_with_drift": len(drift_findings)
-        }
-        
-        return {
-            "metadata": metadata,
-            "drift": drift_findings
-        }
+        return drift_list, files_scanned
     
-    def _map_status_code(self, status: str) -> str:
+    def _map_status_to_type(self, status_code: str) -> Optional[str]:
         """Map git status code to drift type."""
-        if status.startswith("M"):
+        mapping = {
+            "M": "modified",
+            "A": "added",
+            "D": "deleted",
+            "R": "renamed",  # Treat as modified
+            "C": "copied",   # Treat as added
+        }
+        
+        # Handle complex status codes (e.g., "R100")
+        first_char = status_code[0]
+        drift_type = mapping.get(first_char)
+        
+        # Map renamed/copied to simpler types
+        if drift_type == "renamed":
             return "modified"
-        elif status.startswith("A"):
+        elif drift_type == "copied":
             return "added"
-        elif status.startswith("D"):
-            return "deleted"
-        elif status.startswith("R"):
-            return "renamed"
-        else:
-            return "unknown"
+        
+        return drift_type
     
-    def _get_file_diff(self, filepath: str) -> Optional[str]:
-        """Get diff content for a file."""
-        stdout, stderr, returncode = self._run_git_command([
-            "diff", "HEAD", "--", filepath
-        ])
+    def _get_file_diff(self, filepath: str) -> str:
+        """Get git diff for a specific file."""
+        result = subprocess.run(
+            ["git", "diff", "HEAD", "--", filepath],
+            cwd=self.repo_root,
+            capture_output=True,
+            text=True,
+            check=False
+        )
         
-        if returncode != 0:
-            self._log(f"Warning: Could not get diff for {filepath}")
-            return None
+        if result.returncode != 0:
+            return f"Error getting diff: {result.stderr}"
         
-        return stdout if stdout.strip() else None
+        return result.stdout.strip()
     
-    def _count_yaml_files(self) -> int:
-        """Count total YAML files in truth-layer."""
-        truth_layer_dir = self.repo_root / self.TRUTH_LAYER_PATH
-        
-        if not truth_layer_dir.exists():
-            return 0
-        
-        # Count .yaml and .yml files
-        yaml_files = list(truth_layer_dir.rglob("*.yaml")) + list(truth_layer_dir.rglob("*.yml"))
-        return len(yaml_files)
-    
-    def generate_report(self, drift_data: Dict) -> Path:
+    def generate_report(self, drift_list: List[Dict], files_scanned: int) -> Path:
         """
         Generate drift report YAML file.
         
         Args:
-            drift_data: Drift detection results
-            
+            drift_list: List of drift entries
+            files_scanned: Total number of files scanned
+        
         Returns:
             Path to generated report file
         """
-        # Create drift reports directory
-        drift_dir = self.repo_root / self.DRIFT_REPORTS_PATH
-        drift_dir.mkdir(parents=True, exist_ok=True)
+        # Create drift directory if it doesn't exist
+        self.drift_dir.mkdir(parents=True, exist_ok=True)
         
         # Generate timestamp-based filename
-        timestamp = datetime.now().strftime("%Y-%m-%d-%H%M%S")
-        report_path = drift_dir / f"{timestamp}-drift.yaml"
+        timestamp = datetime.utcnow().strftime("%Y-%m-%d-%H%M%S")
+        report_filename = f"{timestamp}-drift.yaml"
+        report_path = self.drift_dir / report_filename
         
-        self._log(f"Generating report: {report_path}")
+        # Build report structure
+        report_data = {
+            "metadata": {
+                "detected_at": datetime.utcnow().isoformat() + "Z",
+                "observer_version": self.VERSION,
+                "files_scanned": files_scanned,
+                "files_with_drift": len(drift_list)
+            },
+            "drift": drift_list
+        }
         
-        # Convert to YAML format (manual, simple format)
-        yaml_content = self._dict_to_yaml(drift_data)
+        # Write YAML report (using manual formatting for cleaner output)
+        with open(report_path, "w", encoding="utf-8") as f:
+            f.write("metadata:\n")
+            f.write(f'  detected_at: "{report_data["metadata"]["detected_at"]}"\n')
+            f.write(f'  observer_version: "{report_data["metadata"]["observer_version"]}"\n')
+            f.write(f'  files_scanned: {report_data["metadata"]["files_scanned"]}\n')
+            f.write(f'  files_with_drift: {report_data["metadata"]["files_with_drift"]}\n')
+            f.write("\n")
+            f.write("drift:\n")
+            
+            for entry in drift_list:
+                f.write(f'  - path: "{entry["path"]}"\n')
+                f.write(f'    type: "{entry["type"]}"\n')
+                
+                if entry["diff"] is not None:
+                    # Write diff with proper YAML multiline string formatting
+                    f.write('    diff: |\n')
+                    for line in entry["diff"].split("\n"):
+                        f.write(f'      {line}\n')
+                else:
+                    f.write('    diff: null\n')
+                
+                f.write("\n")
         
-        # Write report
-        report_path.write_text(yaml_content, encoding="utf-8")
-        
+        self.log(f"Report generated: {report_path}", force=True)
         return report_path
     
-    def _dict_to_yaml(self, data: Dict, indent: int = 0) -> str:
-        """Convert dict to YAML format (simple implementation)."""
-        lines = []
-        prefix = "  " * indent
+    def run(self) -> int:
+        """
+        Run observer drift detection.
         
-        for key, value in data.items():
-            if isinstance(value, dict):
-                lines.append(f"{prefix}{key}:")
-                lines.append(self._dict_to_yaml(value, indent + 1))
-            elif isinstance(value, list):
-                lines.append(f"{prefix}{key}:")
-                for item in value:
-                    if isinstance(item, dict):
-                        lines.append(f"{prefix}  -")
-                        for k, v in item.items():
-                            if k == "diff" and v:
-                                lines.append(f"{prefix}    {k}: |")
-                                for diff_line in v.split("\n"):
-                                    lines.append(f"{prefix}      {diff_line}")
-                            elif v is None:
-                                lines.append(f"{prefix}    {k}: null")
-                            else:
-                                lines.append(f"{prefix}    {k}: \"{v}\"")
-                    else:
-                        lines.append(f"{prefix}  - {item}")
-            elif value is None:
-                lines.append(f"{prefix}{key}: null")
-            elif isinstance(value, str):
-                lines.append(f"{prefix}{key}: \"{value}\"")
+        Returns:
+            Exit code (0=clean, 1=drift, 2=error)
+        """
+        try:
+            # Check git availability
+            if not self.check_git_available():
+                raise GitNotFoundError("Git repository not found or git not installed")
+            
+            self.log(f"Repository root: {self.repo_root}", force=True)
+            
+            # Detect drift
+            drift_list, files_scanned = self.detect_drift()
+            
+            # Generate report if drift detected
+            if drift_list:
+                report_path = self.generate_report(drift_list, files_scanned)
+                print(f"\n[!] Drift detected ({len(drift_list)} files)")
+                print(f"Report: {report_path}")
+                return 1
             else:
-                lines.append(f"{prefix}{key}: {value}")
+                print(f"\n[OK] No drift detected ({files_scanned} files scanned)")
+                return 0
         
-        return "\n".join(lines)
-
+        except ObserverError as e:
+            print(f"\n[ERROR] Observer error: {e}", file=sys.stderr)
+            return 2
+        except Exception as e:
+            print(f"\n[ERROR] Unexpected error: {e}", file=sys.stderr)
+            if self.verbose:
+                import traceback
+                traceback.print_exc()
+            return 2
 
 
 def main():
-    """Main entry point for Observer CLI."""
+    """CLI entry point."""
     parser = argparse.ArgumentParser(
-        description="Observer System - Drift Detection for Truth Layer"
+        description="Observer - Drift detection for truth-layer YAML files"
     )
     parser.add_argument(
-        "--verbose",
+        "--verbose", "-v",
         action="store_true",
         help="Enable verbose logging"
     )
     
     args = parser.parse_args()
     
-    try:
-        # Initialize observer
-        observer = Observer(verbose=args.verbose)
-        
-        # Detect drift
-        drift_data = observer.detect_drift()
-        
-        # Check if drift detected
-        drift_count = drift_data["metadata"]["files_with_drift"]
-        
-        if drift_count == 0:
-            print("[OK] No drift detected. Truth layer is clean.")
-            return 0
-        
-        # Generate report
-        report_path = observer.generate_report(drift_data)
-        
-        # Display results
-        print(f"[DRIFT] Drift detected in {drift_count} file(s).")
-        print(f"[REPORT] Report generated: {report_path}")
-        print()
-        print("Files with drift:")
-        for finding in drift_data["drift"]:
-            print(f"  - {finding['path']} ({finding['type']})")
-        
-        return 1
-        
-    except RuntimeError as e:
-        print(f"[ERROR] {e}", file=sys.stderr)
-        return 2
-    except Exception as e:
-        print(f"[ERROR] Unexpected error: {e}", file=sys.stderr)
-        if args.verbose:
-            import traceback
-            traceback.print_exc()
-        return 2
+    # Detect repo root (assume script is in tools/ subdirectory)
+    script_path = Path(__file__).resolve()
+    repo_root = script_path.parent.parent
+    
+    # Run observer
+    observer = Observer(repo_root, verbose=args.verbose)
+    exit_code = observer.run()
+    
+    sys.exit(exit_code)
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    main()

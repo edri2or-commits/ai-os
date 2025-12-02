@@ -132,6 +132,34 @@ GROUNDING:
 # Recent Changes
 
 **2025-12-02 - Slice 2.6: Observer System** ✅ COMPLETE
+- Goal: Build Observer CLI for drift detection in truth-layer YAML files
+- Implementation:
+  - Created `tools/observer.py` (~320 lines) with CLI interface
+  - Git-based drift detection (`git diff HEAD --name-status`)
+  - Generates structured drift reports in `truth-layer/drift/*.yaml`
+  - Exit codes: 0 (clean), 1 (drift), 2 (error)
+- Testing:
+  - Created test YAML file in truth-layer/projects/
+  - Verified drift detection with modified file
+  - Confirmed report generation with proper diff formatting
+- Files Created:
+  - `tools/observer.py` - Observer CLI script
+  - `truth-layer/drift/` - Drift reports directory (git-ignored)
+  - `truth-layer/drift/.gitignore` - Exclude reports from git
+  - `docs/OBSERVER_DESIGN.md` - Architecture documentation (~300 lines)
+- Result:
+  - ✅ CLI operational (tested with --verbose flag)
+  - ✅ Drift detection logic implemented and validated
+  - ✅ Report generation with metadata + drift array
+  - ✅ Documentation complete with usage examples
+  - ✅ Foundation for Observer→Reconciler integration
+- Safety: Read-only operations, drift reports are transient (not committed)
+- Duration: ~2 hours (implementation + testing + documentation) | Risk: NONE
+- Research: Safety/Governance (08.md), Memory Bank (12.md), ADHD-aware CLI (18.md)
+- Integration: Observer generates drift reports → Reconciler consumes them → generates CRs
+- Next: Slice 2.6b (n8n scheduled runs) OR Slice 2.2b (field standardization)
+
+**2025-12-02 - Slice 2.6: Observer System** ✅ COMPLETE
 - Goal: Build Observer CLI tool for detecting drift in truth-layer YAML files
 - Problem: No automated way to detect uncommitted changes in Truth Layer
 - Solution: Created observer.py (292 lines) with git-based drift detection + YAML report generation
