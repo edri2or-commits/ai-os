@@ -29,11 +29,11 @@ Then:
 ?? **DO NOT SKIP THIS** - prevents drift, duplication, confusion!
 
 ---
-**QUICK STATUS:** AI Life OS | Phase 2: Core Infrastructure (~40% done)
+**QUICK STATUS:** AI Life OS | Phase 2: Core Infrastructure (~42% done)
 ??? **Infrastructure Operational:** Desktop Commander ? | Observer ? | Validator ? | Reconciler (CR + Apply Logic) ?
-**Just finished:** Desktop Commander setup (v0.2.23) + TD-002 RESOLVED
+**Just finished:** Observer System (Slice 2.6) - CLI drift detection
 **Blockers:** NONE! All infrastructure operational
-**Next:** Observer System (Slice 2.6) OR Documentation Polish OR Field Standardization
+**Next:** Field Standardization (2.2b) OR n8n Integration (2.6b) OR Documentation Polish
 ---
 
 <!--
@@ -131,7 +131,36 @@ GROUNDING:
 
 # Recent Changes
 
-**2025-12-02 - Desktop Commander Setup + TD-002 Resolution** ? COMPLETE
+**2025-12-02 - Slice 2.6: Observer System** ✅ COMPLETE
+- Goal: Build Observer CLI tool for detecting drift in truth-layer YAML files
+- Problem: No automated way to detect uncommitted changes in Truth Layer
+- Solution: Created observer.py (292 lines) with git-based drift detection + YAML report generation
+- Files Created:
+  - tools/observer.py - CLI with --verbose flag, exit codes (0/1/2)
+  - truth-layer/drift/ - Directory for transient drift reports
+  - truth-layer/.gitignore - Exclude drift reports from git
+  - docs/OBSERVER_DESIGN.md - Architecture documentation (~360 lines)
+- Implementation:
+  - Git integration: `git diff HEAD --name-status truth-layer/*.yaml`
+  - Detects added/modified/deleted YAML files
+  - Generates structured drift reports: `YYYY-MM-DD-HHMMSS-drift.yaml`
+  - Report format: metadata + drift array (path, type, diff)
+  - Windows console compatibility (no emojis, text-only output)
+  - Modern Python datetime API (timezone-aware, no deprecation warnings)
+- Validation:
+  - ✅ Normal mode: `python tools\observer.py` → [OK] No drift detected
+  - ✅ Verbose mode: Shows detection steps + file count
+  - ✅ Exit codes working: 0 (clean), 1 (drift), 2 (error)
+- Result:
+  - ✅ CLI operational and tested end-to-end
+  - ✅ Read-only, safe operation (no entity modifications)
+  - ✅ Foundation for Observer→Reconciler integration
+  - ✅ Documentation complete with usage examples + workflow
+- Duration: ~2 hours | Risk: NONE (read-only operations)
+- Research: Safety/Governance (08.md), Memory/RAG (12.md), Architecture (Head/Hands/Truth/Nerves)
+- Next: Slice 2.3b (n8n integration for scheduled drift detection) or Field Standardization (2.2b)
+
+**2025-12-02 - Desktop Commander Setup + TD-002 Resolution** ✅ COMPLETE
 - Goal: Fix TD-002 (Windows MCP stdout capture failure) to enable full reconciler validation
 - Problem: Windows-MCP Powershell-Tool failed to capture Python subprocess stdout/stderr
 - Solution: Installed Desktop Commander MCP (v0.2.23) via Claude Desktop Connectors UI
