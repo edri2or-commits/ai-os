@@ -29,11 +29,11 @@ Then:
 ?? **DO NOT SKIP THIS** - prevents drift, duplication, confusion!
 
 ---
-**QUICK STATUS:** AI Life OS | Phase 2: Core Infrastructure (~62% done)
-[OK] **Infrastructure Operational:** Desktop Commander | Observer | Validator | Reconciler (CR + Apply Logic) | MCP Logger | Panic Button | MCP Inspector | Input Validation | pytest (31 tests: 3 sanity + 10 observer + 13 property + 5 snapshot)
-**Just finished:** VAL-1 (pytest foundation) COMPLETE ✅ - All 4 parts done, GitHub Actions CI configured
-**Blockers:** NONE! Full testing infrastructure operational (unit + property + snapshot + CI)
-**Next:** VAL-8 (Observer integration tests) OR VAL-9 (Reconciler integration tests) OR continue Validation Sprint
+**QUICK STATUS:** AI Life OS | Phase 2: Core Infrastructure (~64% done)
+[OK] **Infrastructure Operational:** Desktop Commander | Observer | Validator | Reconciler (CR + Apply Logic) | MCP Logger | Panic Button | MCP Inspector | Input Validation | pytest (37 tests passing - zero warnings)
+**Just finished:** VAL-8.1 (datetime warnings fix) ✅ - Observer fully Python 3.14 compliant
+**Blockers:** NONE! Full testing infrastructure operational + clean test output
+**Next:** VAL-8 Slice 2 (Observer error handling + performance) OR VAL-9 (Reconciler integration tests)
 ---
 
 <!--
@@ -130,6 +130,58 @@ GROUNDING:
 ---
 
 # Recent Changes
+
+**2025-12-02 - Slice VAL-8.1: Fix datetime warnings + Memory Bank update** ✅ COMPLETE
+- Goal: Eliminate Python 3.14 deprecation warnings in Observer
+- Problem: Observer used deprecated datetime.utcnow() → 6 warnings in test output
+- Solution: Updated Observer to use datetime.now(UTC) (modern Python 3.14 API)
+- Changes:
+  - tools/observer.py (3 edits):
+    - Import: Added UTC to datetime imports
+    - Line 214: datetime.utcnow() → datetime.now(UTC)
+    - Line 221: datetime.utcnow() → datetime.now(UTC) with proper timezone handling
+- Testing:
+  - ✅ 37/37 tests passing (no regressions)
+  - ✅ Zero datetime warnings (eliminated all 6 warnings)
+  - ⏱️ 6.97s full test suite runtime
+- Result:
+  - ✅ Observer codebase fully Python 3.14 compliant
+  - ✅ No deprecation warnings in CI/CD pipeline
+  - ✅ Clean test output for better signal-to-noise
+- Duration: ~15 min | Risk: NONE (API update only, no logic changes)
+- Research: Python 3.14 datetime API changes, UTC handling best practices
+- Next: VAL-8 Slice 2 (Observer error handling + performance) OR VAL-9 (Reconciler integration tests)
+
+**2025-12-02 - Slice VAL-8a: Observer Integration Tests (Part 1/2)** ✅ COMPLETE
+- Goal: Create comprehensive integration tests for Observer with real Git operations
+- Problem: Observer only had unit tests - needed end-to-end workflow validation
+- Solution: Created test_observer_integration.py with 6 integration tests
+- File Created:
+  - tests/test_observer_integration.py (~370 lines) - 6 integration tests
+- Tests Implemented:
+  - **TestObserverGitIntegration (3 tests):**
+    - test_full_drift_detection_workflow - Complete commit → modify → detect → report flow
+    - test_observer_with_schema_validation - Observer + YAML parsing integration
+    - test_multiple_files_drift_detection - Multi-file drift scenarios (modified + added files)
+  - **TestObserverReportGeneration (2 tests):**
+    - test_drift_report_metadata - Report structure validation (metadata fields, timestamps)
+    - test_drift_report_yaml_format - YAML round-trip test (parse → dump → parse)
+  - **TestObserverEdgeCases (1 test):**
+    - test_observer_with_empty_truth_layer - Empty directory handling
+- Testing Results:
+  - ✅ 6/6 tests passing
+  - ⚠️ 6 warnings on datetime.utcnow() deprecated (Observer issue, not test issue)
+  - ⏱️ 2.75s runtime
+- Result:
+  - ✅ Observer fully validated end-to-end
+  - ✅ Git workflow integration confirmed
+  - ✅ Report generation structure verified
+  - ✅ Edge cases covered
+  - ✅ Total test count: 37 (31 previous + 6 new)
+- Duration: ~25 min | Risk: NONE (tests only)
+- Research: MCP/Tools (integration testing patterns), Safety (git workflow validation)
+- Commits: 1bd724b (Observer integration tests)
+- Next: VAL-8b (Observer error handling + performance tests)
 
 **2025-12-02 - Slice VAL-1d: Snapshot Tests + CI (Part 4/4)** ✅ COMPLETE
 - Goal: Add snapshot testing with Syrupy + GitHub Actions CI configuration
