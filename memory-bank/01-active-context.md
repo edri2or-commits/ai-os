@@ -29,11 +29,11 @@ Then:
 ?? **DO NOT SKIP THIS** - prevents drift, duplication, confusion!
 
 ---
-**QUICK STATUS:** AI Life OS | Phase 2: Core Infrastructure (~50% done)
-[OK] **Infrastructure Operational:** Desktop Commander | Observer | Validator | Reconciler (CR + Apply Logic) | MCP Logger | Panic Button
-**Just finished:** VAL-7 (Structured Logging) + VAL-4 (Panic Button) - ADHD safety nets
+**QUICK STATUS:** AI Life OS | Phase 2: Core Infrastructure (~52% done)
+[OK] **Infrastructure Operational:** Desktop Commander | Observer | Validator | Reconciler (CR + Apply Logic) | MCP Logger | Panic Button | MCP Inspector
+**Just finished:** VAL-1b (MCP Inspector) - diagnostic tool for MCP servers
 **Blockers:** NONE! Validation infrastructure growing
-**Next:** VAL-1 (pytest foundation) OR VAL-1b (MCP Inspector) OR Complete validation sprint
+**Next:** VAL-6 (Input Validation) → VAL-1 (pytest foundation)
 ---
 
 <!--
@@ -130,6 +130,31 @@ GROUNDING:
 ---
 
 # Recent Changes
+
+**2025-12-02 - Slice VAL-1b: MCP Inspector** ✅ COMPLETE
+- Goal: Create diagnostic tool for checking connected MCP servers
+- Problem: No visibility into which MCP servers are configured in Claude Desktop
+- Solution: Created mcp_inspector.py - reads claude_desktop_config.json and reports status
+- Files Created:
+  - tools/mcp_inspector.py (~139 lines) - CLI tool with --verbose flag
+  - tools/README_mcp_inspector.md - Documentation
+- Implementation:
+  - Finds config at %APPDATA%\Claude\claude_desktop_config.json
+  - Parses mcpServers section
+  - Validates command paths (warns if not found)
+  - Shows command, args, env variables
+  - Exit codes: 0 (success), 1 (error), 130 (cancelled)
+- Testing:
+  - ✅ Successfully detected google-mcp server
+  - ✅ Verbose mode shows full details
+  - ✅ Read-only operation (never modifies config)
+- Result:
+  - ✅ Quick diagnostic tool operational
+  - ✅ Foundation for MCP troubleshooting
+  - ✅ Zero dependencies (stdlib only)
+- Duration: ~20 min | Risk: NONE (read-only)
+- Research: MCP/Tools (infrastructure observability)
+- Next: VAL-6 (Input Validation)
 
 **2025-12-02 - Slice VAL-4: Panic Button (ADHD Safety Net)** [OK] COMPLETE
 - Goal: Create emergency state preservation system with Ctrl+Alt+P hotkey
