@@ -79,6 +79,61 @@ Follow these steps in order:
 
 ---
 
+### Step 5: ?? Research Corpus (13 Reports - FOR DEEP DIVES ONLY)
+?? **Location:** `claude-project/revolution-research/`
+
+**IMPORTANT: You don't need to read all 350 pages to start working!**
+
+**When to reference:**
+- Building Layer 0-4 features
+- Validating architectural decisions
+- Understanding WHY a pattern was chosen
+- Resolving technical questions with empirical evidence
+
+**Quick Navigation:**
+1. **File:** `RESEARCH_INDEX.md` - Overview of all 13 reports (Quick Reference Table)
+2. **File:** `REVOLUTION_INTEGRATION.md` ? **MOST IMPORTANT** - Maps research to 5 Layers + 7 Critical Gaps
+
+**The 13 Research Reports:**
+1. Human-AI Collaboration Theory (LOA Framework)
+2. Reinforcement Learning for Self-Improvement
+3. Multi-Agent Orchestration Patterns
+4. Vector Memory & Context Management
+5. Production AI Reliability & Monitoring
+6. ADHD-Optimized Design Patterns (THE BIBLE)
+7. Security in Agentic AI Systems
+8. n8n Enterprise Production Patterns
+9. Claude Desktop + MCP + Windows Integration
+10. Git-Based Autonomous AI Operating Systems
+11. Production Operations & Maintenance
+12. Local LLM Optimization
+13. Layer 4 Observability & Trust Calibration
+
+**Coverage:**
+- **Layer 0 (Substrate):** Research 4, 8, 10, 11
+- **Layer 1 (Router):** Research 5, 11
+- **Layer 2 (Assistant):** Research 9, 12
+- **Layer 3 (Architect):** Research 1, 1.5, 3, 13
+- **Layer 4 (Strategist):** Research 2, 13
+- **Cross-Cutting:** Research 6 (ADHD), Research 7 (Security)
+
+**How to use:**
+1. Check `REVOLUTION_INTEGRATION.md` first (maps research to your current work)
+2. Read specific research report sections as needed (not entire reports!)
+3. Every architectural decision should reference research for 95% confidence
+
+**DON'T:**
+- Read all 13 reports upfront (cognitive overload!)
+- Try to memorize everything (use as reference)
+- Ignore research when making architectural decisions
+
+**DO:**
+- Reference research when user asks "why this pattern?"
+- Cite research numbers when validating decisions (e.g., "Research #9 shows...")
+- Use REVOLUTION_INTEGRATION.md as your navigation map
+
+---
+
 ## After Reading - Summarize to User (Hebrew)
 
 Before doing ANY work, tell the user in Hebrew:
