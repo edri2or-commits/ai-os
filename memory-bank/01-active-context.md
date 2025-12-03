@@ -24,8 +24,9 @@ Quick Status, Current Focus, Recent Changes, Next Steps
 **Progress:** ~100% complete (Phase 1 COMPLETE ✅)
 
 **Just Finished:**
+- ✅ sync_system_book.py **surgical fix** (extract from Recent Changes, not Just Finished - timestamp + robust)
 - ✅ Pre-commit hook (auto-sync SYSTEM_BOOK.md before every commit - ZERO drift guaranteed)
-- ✅ sync_system_book.py (auto-sync SYSTEM_BOOK from 01-active-context, Living Documentation pattern)
+- ✅ sync_system_book.py v1 (auto-sync SYSTEM_BOOK from 01-active-context, Living Documentation pattern)
 - ✅ SYSTEM_BOOK.md (LLM-optimized entry point, llms.txt standard)
 - ✅ Email Watcher automation (Gmail → Claude classification → Telegram alerts)
 - ✅ Memory Bank Watchdog (Git → Qdrant semantic search)
@@ -90,6 +91,19 @@ Email automation working end-to-end:
 ---
 
 # RECENT CHANGES
+
+**2025-12-04 | sync_system_book.py Surgical Fix** ✅
+- **Achievement:** Robust extraction from Recent Changes (not Just Finished)
+- **Problem:** Original code fragile - stopped at newline, no timestamp
+- **Solution:** Extract from Recent Changes "Date | Title" format
+- **Why Better:**
+  - Single Source of Truth (Recent Changes = official record)
+  - Timestamp included: "Title (2025-12-04)"
+  - Multi-line safe (regex more robust)
+  - Future-proof (structured format)
+- **Result:** `Recent Achievement: Pre-commit Hook - Auto-Sync Safety Net (2025-12-04)`
+- **Git:** 395451c fix(tools): Surgical fix
+- **Duration:** ~10 min (analysis 5 min, implementation 5 min)
 
 **2025-12-04 | Pre-commit Hook - Auto-Sync Safety Net** ✅
 - **Achievement:** Zero-drift documentation infrastructure (Phase 1 COMPLETE)

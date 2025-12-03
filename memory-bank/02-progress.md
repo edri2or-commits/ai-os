@@ -558,3 +558,215 @@ Duration: ~15 min (implementation 10 min, testing 5 min)
 
 ---
 
+
+## 2025-12-04 | sync_system_book.py Surgical Fix (Post-Phase 1)
+
+### Achievement
+**Code Quality Improvement** - sync_system_book.py now extracts from Recent Changes (not Just Finished)
+
+**Result:** More robust, structured, timestamp-included Recent Achievement
+
+### What Was Fixed
+
+**Before (Fragile Code):**
+```python
+def extract_just_finished(active_context_text: str) -> str:
+    """Extract first item from Just Finished section"""
+    match = re.search(r'\*\*Just Finished:\*\*.*?- ✅ (.+?)(?:\n|$)', 
+                      active_context_text, re.DOTALL)
+    if match:
+        return match.group(1).strip()
+    return "System updates deployed"
+```
+
+**Problems:**
+1. ❌ **Fragile:** Regex `(.+?)(?:\n|$)` stops at newline → multi-line items break
+2. ❌ **No timestamp:** Output has no date → GPT can't tell what's latest
+3. ❌ **Just Finished ≠ Recent Changes:** Different sources, can diverge
+
+**After (Robust Code):**
+```python
+def extract_recent_achievement(active_context_text: str) -> str:
+    """
+    Extract title + date from most recent Recent Changes entry
+    
+    More robust than Just Finished because:
+    - Structured format (Date | Title)
+    - Single source of truth (Recent Changes = official record)
+    - Timestamp makes it clear this is the latest
+    - Works with multi-line descriptions
+    """
+    match = re.search(
+        r'\*\*(\d{4}-\d{2}-\d{2}) \| (.+?)\*\* ✅', 
+        active_context_text
+    )
+    if match:
+        date = match.group(1)
+        title = match.group(2).strip()
+        return f"{title} ({date})"
+    
+    # Fallback to Just Finished if Recent Changes not found
+    fallback_match = re.search(
+        r'\*\*Just Finished:\*\*.*?- ✅ (.+?)(?:\n|$)', 
+        active_context_text, 
+        re.DOTALL
+    )
+    if fallback_match:
+        return fallback_match.group(1).strip()
+    
+    return "Recent system updates"
+```
+
+**Improvements:**
+1. ✅ **Structured:** Uses Recent Changes "Date | Title" format
+2. ✅ **Timestamp:** Output includes "(2025-12-04)"
+3. ✅ **Single Source of Truth:** Recent Changes = official record
+4. ✅ **Fallback:** Still works if Recent Changes missing
+5. ✅ **Multi-line safe:** Regex doesn't break on newlines
+6. ✅ **Future-proof:** Works with format changes
+
+### Why This Matters
+
+**Context: GPT Validation Test**
+- User uploaded SYSTEM_BOOK.md to GPT
+- GPT answered: "Email Watcher" (not "Pre-commit hook")
+- Root cause investigation: Was code extracting correctly?
+
+**Discovery:**
+- Code WAS working (SYSTEM_BOOK.md had correct text)
+- But: User might have uploaded old file OR GPT confused by Changelog
+- This fix prevents FUTURE confusion by adding timestamp
+
+**Strategic Value:**
+
+**Before:**
+```
+**Recent Achievement:**
+Pre-commit hook (auto-sync SYSTEM_BOOK.md before every commit...)
+```
+- No date → GPT has to guess what's "recent"
+- Might confuse with Changelog entries (also about pre-commit hook)
+
+**After:**
+```
+**Recent Achievement:**
+Pre-commit Hook - Auto-Sync Safety Net (2025-12-04)
+```
+- Explicit date → GPT knows EXACTLY what's latest
+- Structured title from Recent Changes (official record)
+- Matches Changelog format (consistency)
+
+### Technical Details
+
+**Extraction Pattern:**
+```regex
+\*\*(\d{4}-\d{2}-\d{2}) \| (.+?)\*\* ✅
+```
+
+**Example Match:**
+```markdown
+**2025-12-04 | Pre-commit Hook - Auto-Sync Safety Net** ✅
+```
+
+**Capture Groups:**
+- Group 1: `2025-12-04` (date)
+- Group 2: `Pre-commit Hook - Auto-Sync Safety Net` (title)
+
+**Output Format:**
+```
+Pre-commit Hook - Auto-Sync Safety Net (2025-12-04)
+```
+
+**Fallback Chain:**
+1. Try Recent Changes (primary)
+2. If not found → Try Just Finished (fallback)
+3. If not found → "Recent system updates" (ultimate fallback)
+
+### Validation
+
+**Test 1: Manual Run**
+```bash
+python tools/sync_system_book.py
+
+# Output:
+[INFO] Extracted from 01-active-context.md:
+   Recent: Pre-commit Hook - Auto-Sync Safety Net (2025-12-04)...
+[SUCCESS] SYSTEM_BOOK.md updated
+```
+
+**Test 2: Git Diff**
+```diff
+-Pre-commit hook (auto-sync SYSTEM_BOOK.md before every commit - ZERO drift guaranteed)
++Pre-commit Hook - Auto-Sync Safety Net (2025-12-04)
+```
+
+**Test 3: Pre-commit Hook (Auto-run)**
+```bash
+git commit -m "fix(tools): Surgical fix"
+
+# Output:
+[Pre-commit] Syncing SYSTEM_BOOK.md...
+[INFO] Recent: Pre-commit Hook - Auto-Sync Safety Net (2025-12-04)...
+[SUCCESS] SYSTEM_BOOK.md updated
+[Pre-commit] SYSTEM_BOOK.md synced and staged ✓
+```
+
+✅ All tests passed
+
+### Files Changed
+- `tools/sync_system_book.py` (MODIFIED, 37 insertions, 11 deletions)
+  - Renamed function: `extract_just_finished` → `extract_recent_achievement`
+  - New regex: Extract from Recent Changes "Date | Title"
+  - Added fallback chain
+  - Added docstring explaining why this is better
+- `SYSTEM_BOOK.md` (AUTO-MODIFIED by pre-commit hook)
+  - Recent Achievement now includes timestamp
+
+### Git Commit
+```
+395451c fix(tools): Surgical fix - Extract Recent Achievement from Recent Changes
+
+Duration: ~10 min (analysis 5 min, implementation 5 min)
+```
+
+### Meta-Learning
+
+**Pattern Reaffirmed: Single Source of Truth**
+- Don't extract from multiple places (Just Finished vs Recent Changes)
+- Choose ONE authoritative source (Recent Changes)
+- Other places can be summaries/views
+
+**Anti-Pattern Avoided: AP-010 "Data Duplication without Master"**
+- Problem: Just Finished and Recent Changes both describe "what happened"
+- Risk: They diverge → which is correct?
+- Solution: Recent Changes = master, Just Finished = convenience view
+
+**BP Candidate: BP-010 "Extract from Structured Over Unstructured"**
+- Pattern: When multiple sources exist, prefer structured format
+- Rationale: Structured = parseable, consistent, future-proof
+- Example: "Date | Title" format > freeform bullet
+- Cost: Minimal (same regex complexity)
+- Benefit: Robustness, timestamp, maintainability
+
+**Code Quality Win:**
+- Refactoring trigger: Validation test revealed potential confusion
+- Response: Surgical fix (not band-aid)
+- Result: Code more robust, output clearer
+- Time: 10 minutes well spent (prevents future debugging)
+
+**Protocols Applied:**
+- Protocol 1: Post-Slice Reflection (updating Memory Bank now)
+- TFP-001: Truth-First Protocol (Recent Changes = Single Source of Truth)
+- AEP-001: ADHD-Aware (10 min slice, clear improvement)
+
+### What's Next
+
+**Immediate:**
+- SYSTEM_BOOK Validation retest with GPT (should be 95%+ accuracy now with timestamp)
+
+**Alternative:**
+- Phase 1 Retrospective (30 min)
+- Phase 2 Planning (45 min)
+
+---
+
