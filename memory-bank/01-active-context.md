@@ -21,9 +21,10 @@ Quick Status, Current Focus, Recent Changes, Next Steps
 
 **AI Life OS | Phase 1: Infrastructure Deployment** 🚀
 
-**Progress:** ~90% complete (8/8 core slices)
+**Progress:** ~95% complete (8/8 core slices + auto-sync)
 
 **Just Finished:**
+- ✅ sync_system_book.py (auto-sync SYSTEM_BOOK from 01-active-context, Living Documentation pattern)
 - ✅ SYSTEM_BOOK.md (LLM-optimized entry point, llms.txt standard)
 - ✅ Email Watcher automation (Gmail → Claude classification → Telegram alerts)
 - ✅ Memory Bank Watchdog (Git → Qdrant semantic search)
@@ -87,6 +88,18 @@ Email automation working end-to-end:
 
 # RECENT CHANGES
 
+**2025-12-04 | sync_system_book.py - Auto-Sync Infrastructure** ✅
+- **Achievement:** Living Documentation automation complete
+- **What:** Created `sync_system_book.py` to auto-update SYSTEM_BOOK.md from 01-active-context.md
+- **Why:** Prevent drift, reduce maintenance burden (Docs as Code + Living Documentation best practices)
+- **How:** Python script reads 01-active-context (Progress/Phase/Recent) → updates SYSTEM_BOOK sections (Quick Context + System State)
+- **Research Support:**
+  - Living Documentation (Martraire 2024): "Low effort" = automation
+  - Docs as Code (DevOps 2024): CI/CD auto-deployment standard
+  - Anthropic + Mintlify (2025): Auto-generation (not manual updates)
+- **Files:** tools/sync_system_book.py (114 lines), tools/sync_system_book_README.md (usage guide)
+- **Duration:** ~20 min (research 10 min, implementation 10 min)
+
 **2025-12-03 | SYSTEM_BOOK.md - LLM Interoperability** ✅
 - **Achievement:** Context Engineering Infrastructure complete
 - **What:** Created SYSTEM_BOOK.md following llms.txt standard (Jeremy Howard, 2024)
@@ -144,13 +157,19 @@ Email automation working end-to-end:
 
 **Choose one:**
 
-**Option A: SYSTEM_BOOK Validation (15 min)** ⭐ RECOMMENDED
+**Option A: Pre-commit Hook for sync_system_book (10 min)** ⭐ RECOMMENDED NEXT
+- Add `.git/hooks/pre-commit` to auto-run sync script
+- Every commit = SYSTEM_BOOK auto-updated
+- Safety net: Never out of sync
+- Research: xcubelabs (2024), GitHub (2025)
+
+**Option B: SYSTEM_BOOK Validation (15 min)**
 - Test with GPT: Upload SYSTEM_BOOK.md only, ask "What's the current state?"
 - Measure: Time to context, question rate, accuracy
 - Success: GPT answers correctly within 30 seconds
 - Close Phase 1 with validation proof
 
-**Option B: Gmail Cleanup (15 min)**
+**Option C: Gmail Cleanup (15 min)**
 - Archive 50 processed emails
 - Mark Email Watcher as fully deployed
 - Alternative Phase 1 close
