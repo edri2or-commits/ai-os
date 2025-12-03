@@ -34,10 +34,10 @@ Then:
 
 ---
 **QUICK STATUS:** AI Life OS | Phase 1: Infrastructure Deployment IN PROGRESS 🚀
-[ACTIVE] **Slice 1.5 COMPLETE:** Memory Bank Watchdog with Qdrant ingestion ✅
-**Just finished:** Watchdog automation - Git detection, Markdown parsing, embeddings (all-MiniLM-L6-v2), Qdrant storage, Windows Task Scheduler (every 15 min)
-**Blockers:** NONE! All infrastructure operational + Observer + Watchdog automation active
-**Next:** Slice 1.6 (Integration Testing) - end-to-end validation of Observer → Validator → Reconciler flow
+[ACTIVE] **Slice 1.7 COMPLETE:** Email Watcher - Production Grade Gmail Automation ✅
+**Just finished:** Email Watcher with Google OAuth reuse, Claude Sonnet 4.5 classification (bureaucracy/personal/work), YAML drift reports, JSONL logging, pytest tests, Task Scheduler config (every 15 min)
+**Blockers:** NONE! All infrastructure operational + Observer + Watchdog + Email Watcher automation active
+**Next:** Slice 1.8 (Task Scheduler Deployment) - deploy all 3 automations to Windows Task Scheduler for production use
 ---
 
 <!--
@@ -171,6 +171,39 @@ GROUNDING:
 ---
 
 # Recent Changes
+
+**2025-12-03 - Slice 1.7: Email Watcher (Gmail Automation)** ✅ COMPLETE
+- Goal: Automate Gmail monitoring and classification for drift detection
+- Problem: Unread emails accumulate without prioritization or action tracking
+- Solution: Production-grade Email Watcher with Claude classification, drift reports, and Task Scheduler integration
+- Implementation:
+  - Created `tools/email_watcher.py` (312 lines)
+  - Google OAuth: Reuses MCP tokens (~/.google-mcp-tokens.json) - no re-authentication needed
+  - Gmail API: Search up to 50 unread emails
+  - Claude Sonnet 4.5: Classify emails (bureaucracy/personal/work) with priority and suggested actions
+  - YAML drift reports: Compatible with Observer/Reconciler pipeline
+  - JSONL logging: Structured logs in `logs/email_watcher.jsonl`
+  - Error handling: Graceful failures with detailed error messages
+  - Testing: `tests/test_email_watcher.py` (pytest-compatible, 55 lines)
+  - Task Scheduler: `tools/email_watcher_task.xml` (runs every 15 minutes)
+  - Documentation: `docs/email-watcher-README.md` (229 lines, complete guide)
+- Validation:
+  - ✅ Manual test: 50 unread emails detected
+  - ✅ Classification: 10 emails classified successfully
+  - ✅ Drift report: Saved to memory-bank/drift/email-drift-*.yaml
+  - ✅ JSONL logs: Structured events logged
+  - ✅ Exit code: 0 (success)
+  - ✅ Runtime: ~21 seconds per run
+  - ✅ Windows console: Hebrew text handling fixed
+- Result:
+  - ✅ Production-ready email automation
+  - ✅ Git tracked + testable + observable
+  - ✅ Consistent with Observer/Watchdog architecture
+  - ✅ Ready for Task Scheduler deployment
+- Architecture Decision: Python + Task Scheduler (not n8n)
+  - Reason: Git version control, pytest testing, consistent with existing tools
+  - n8n: Better for visual workflows, but worse for code review and testing
+  - Result: Maintainable, professional, production-grade solution
 
 **2025-12-03 - Slice 1.5: Memory Bank Watchdog (Qdrant Ingestion)** ✅ COMPLETE
 - Goal: Automate Memory Bank ingestion to Qdrant for semantic search
