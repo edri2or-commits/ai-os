@@ -86,6 +86,15 @@ Email automation working end-to-end:
 
 # RECENT CHANGES
 
+**2025-12-03 | Docker Desktop WSL2 Crash → Fixed** ⚠️
+- **Issue:** Docker Desktop crashed with "eth0 link not found" (WSL2 network interface lost)
+- **Impact:** n8n + Qdrant down ~5 min, Watchdog failed (Exit 0x00041301)
+- **Fix:** Stop Docker processes → wsl --shutdown → Restart Docker Desktop
+- **Result:** ALL SYSTEMS OPERATIONAL (verified with dashboard.ps1)
+- **Duration:** ~5 min troubleshooting + fix
+- **Root Cause:** Known Docker+WSL2 issue (network interface can be lost after Sleep/VPN/Updates)
+- **Prevention:** Dashboard will catch this early (Docker DOWN alert)
+
 **2025-12-03 | Slice 1.8: Task Scheduler Dashboard** ✅
 - **Goal:** Single-pane-of-glass monitoring for 3 tasks + Docker
 - **Created:** dashboard.ps1 (264 lines) + README_dashboard.md (176 lines)
