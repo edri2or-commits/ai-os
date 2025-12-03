@@ -1,6 +1,32 @@
-# START HERE - New Claude Instance Onboarding
+# START HERE - AI Life OS Entry Point
 
-**If you are a new Claude instance in this project, this is your entry point.**
+**If you are a new AI instance, this is your navigation hub.**
+
+---
+
+## 🤖 For External LLMs (GPT, Gemini, Perplexity, etc.)
+
+**🎯 START HERE:** Read [`/SYSTEM_BOOK.md`](../SYSTEM_BOOK.md) first.
+
+**What it contains:**
+- Quick Context Injection (< 500 tokens) - Get productive in 30 seconds
+- Progressive disclosure - Links to everything you need
+- How to use guide - Tailored for external LLMs
+- Live system state - What's operational right now
+
+**Why SYSTEM_BOOK.md and not this file?**
+- SYSTEM_BOOK = LLM-optimized (llms.txt standard, token-efficient)
+- START_HERE = Deep navigation within Memory Bank (for context loading)
+
+**After reading SYSTEM_BOOK, come back here if you need deep dives.**
+
+---
+
+## 📍 For Claude (This Project Session)
+
+**You already have full context via Project Knowledge.**
+
+Follow the standard onboarding below to load current state:
 
 ---
 
