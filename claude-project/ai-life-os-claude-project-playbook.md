@@ -707,7 +707,31 @@ This section documents **positive patterns** we've discovered that work well. Op
 
 ### 10.2 Current Best Practices
 
-*[To be populated as we discover effective patterns]*
+#### BP-006: Windows Native Scheduling > Docker for Local Tasks
+
+**Context:** When scheduling local system tasks (file operations, scripts, system-level automation) in a Windows environment where Docker containers are running automation platforms (n8n, etc.)
+
+**Pattern:** 
+- Use **Windows Task Scheduler** for Windows-native tasks (file system operations, local scripts, system commands)
+- Use **n8n/Docker** for cloud APIs, webhooks, HTTP endpoints, and platform-agnostic workflows
+- Do NOT attempt to execute Windows processes from inside Docker containers
+
+**Benefit:** 
+- Docker containers run Linux internally → cannot execute Windows paths/processes directly
+- Windows Task Scheduler is native, reliable, persistent, and handles reboots
+- Eliminates path escaping issues and shell compatibility problems
+- Clear separation of concerns: native OS tasks vs. cloud/API orchestration
+
+**Example:** 
+- **Observer scheduling (Slice 1.4):** Initially attempted n8n (in Docker) → failed because container uses Linux shell
+- **Solution:** Windows Task Scheduler with batch wrapper (`run-observer.bat`) → works perfectly
+- **n8n still valuable for:** webhooks, cloud API integrations, cross-service workflows
+
+**Related:** 
+- Research: Infrastructure family (Task Scheduling, Windows Automation)
+- Solves: Attempted use of n8n for Windows-native file system tasks
+- Trade-off: Multiple scheduling systems (Task Scheduler + n8n) instead of unified platform
+- ADHD consideration: Two systems = context switching, but reliability > unified-but-broken
 
 **Structure for each:**
 ```markdown
