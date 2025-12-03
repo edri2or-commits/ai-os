@@ -40,8 +40,10 @@ load_dotenv(PROJECT_ROOT / ".env")
 
 # Configuration
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "5786217215")  # Default to your chat ID
 GOOGLE_TOKEN_PATH = Path.home() / ".google-mcp-tokens.json"
-DRIFT_DIR = PROJECT_ROOT / "memory-bank" / "drift"
+DRIFT_DIR = PROJECT_ROOT / "truth-layer" / "drift"
 LOG_DIR = PROJECT_ROOT / "logs"
 
 # Ensure directories exist
@@ -229,6 +231,75 @@ Emails to classify:
         
         return report
     
+    def send_telegram_alert(self, report: Dict) -> bool:
+        """Send Telegram notification for high-priority emails"""
+        if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
+            self.log("warning", "Telegram not configured, skipping alert")
+            return False
+        
+        # Filter high-priority emails
+        urgent_emails = [
+            email for email in report["classified_emails"]
+            if email.get("priority") == "high" or
+               (email.get("priority") == "medium" and email.get("action_needed"))
+        ]
+        
+        if not urgent_emails:
+            self.log("info", "No urgent emails, skipping Telegram alert")
+            return True
+        
+        # Build alert message
+        alert_lines = ["🔴 *Urgent Email Alert*\n"]
+        
+        for email in urgent_emails[:5]:  # Limit to 5
+            category_emoji = {
+                "work": "💼",
+                "personal": "👤", 
+                "bureaucracy": "📋"
+            }.get(email.get("category", ""), "📧")
+            
+            priority_text = email.get("priority", "medium").upper()
+            subject = email.get("subject", "No subject")[:60]
+            from_addr = email.get("from", "Unknown")
+            
+            alert_lines.append(
+                f"{category_emoji} *{priority_text}* | {subject}\n"
+                f"From: {from_addr}\n"
+            )
+            
+            if email.get("suggested_action"):
+                alert_lines.append(f"→ {email['suggested_action']}\n")
+            
+            alert_lines.append("")
+        
+        if len(urgent_emails) > 5:
+            alert_lines.append(f"... and {len(urgent_emails) - 5} more urgent emails")
+        
+        message = "\n".join(alert_lines)
+        
+        # Send to Telegram
+        try:
+            url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
+            payload = {
+                "chat_id": TELEGRAM_CHAT_ID,
+                "text": message,
+                "parse_mode": "Markdown"
+            }
+            
+            response = requests.post(url, json=payload, timeout=10)
+            
+            if response.status_code == 200:
+                self.log("info", f"Telegram alert sent: {len(urgent_emails)} urgent emails")
+                return True
+            else:
+                self.log("error", f"Telegram send failed: {response.status_code}",
+                        {"response": response.text[:200]})
+                return False
+                
+        except Exception as e:
+            self.log("error", f"Telegram alert failed: {e}")
+            return False
+    
     def save_drift_report(self, report: Dict) -> Path:
         """Save drift report to YAML file"""
         timestamp = datetime.now().strftime("%Y-%m-%d-%H%M%S")
@@ -275,7 +346,10 @@ Emails to classify:
         # Step 5: Generate drift report
         report = self.generate_drift_report(email_summaries, classifications)
         
-        # Step 6: Save report
+        # Step 6: Send Telegram alert (high-priority only)
+        self.send_telegram_alert(report)
+        
+        # Step 7: Save report
         self.save_drift_report(report)
         
         self.log("complete", "Email Watcher completed successfully",

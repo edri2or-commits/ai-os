@@ -30,7 +30,7 @@ import yaml
 
 # Paths (relative to repo root)
 REPO_ROOT = Path(__file__).parent.parent
-DRIFT_REPORTS_DIR = REPO_ROOT / "docs" / "system_state" / "drift"
+DRIFT_REPORTS_DIR = REPO_ROOT / "truth-layer" / "drift"
 CHANGE_REQUESTS_DIR = REPO_ROOT / "docs" / "system_state" / "change_requests"
 CR_SCHEMA_PATH = REPO_ROOT / "docs" / "schemas" / "change_request.schema.json"
 APPLY_LOG_PATH = CHANGE_REQUESTS_DIR / "apply.log"
