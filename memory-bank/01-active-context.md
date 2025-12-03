@@ -187,6 +187,7 @@ GROUNDING:
 - Risk: NONE
 - Research: Infrastructure (Task Scheduling, Windows Automation)
 - Lessons Learned: n8n in Docker container cannot execute Windows processes (Linux shell inside container)
+- Meta-Learning: **Trigger B detected** (Workaround Used) → documented **BP-006: Windows Native Scheduling > Docker for Local Tasks**
 - Next: Slice 1.5 (Memory Bank Watchdog)
 
 **2025-12-03 - Slice 1.3: Docker Desktop Auto-Start Configuration** ✅ COMPLETE
