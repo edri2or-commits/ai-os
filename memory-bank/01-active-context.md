@@ -34,10 +34,10 @@ Then:
 
 ---
 **QUICK STATUS:** AI Life OS | Phase 1: Infrastructure Deployment IN PROGRESS 🚀
-[ACTIVE] **Slice 1.4 COMPLETE:** Observer scheduled with Windows Task Scheduler ✅
-**Just finished:** Windows Task Scheduler configured for automated Observer execution every 15 minutes (Critical Gap #1 CLOSED!)
-**Blockers:** NONE! All infrastructure operational + Observer automation active
-**Next:** Slice 1.5 (Memory Bank Watchdog) - auto-ingestion of truth-layer changes
+[ACTIVE] **Slice 1.5 COMPLETE:** Memory Bank Watchdog with Qdrant ingestion ✅
+**Just finished:** Watchdog automation - Git detection, Markdown parsing, embeddings (all-MiniLM-L6-v2), Qdrant storage, Windows Task Scheduler (every 15 min)
+**Blockers:** NONE! All infrastructure operational + Observer + Watchdog automation active
+**Next:** Slice 1.6 (Integration Testing) - end-to-end validation of Observer → Validator → Reconciler flow
 ---
 
 <!--
@@ -108,8 +108,8 @@ GROUNDING:
 # Current Focus
 
 **Phase:** Phase 1 – Infrastructure Deployment 🚀
-**Status:** Slices 1.1 + 1.1b + 1.2 + 1.3 + 1.4 COMPLETE (5/~8 slices)  
-**Active Work:** Observer automation via Windows Task Scheduler (Critical Gap #1 CLOSED!)
+**Status:** Slices 1.1 + 1.1b + 1.2 + 1.3 + 1.4 + 1.5 COMPLETE (6/~8 slices)  
+**Active Work:** Memory Bank Watchdog with automated Qdrant ingestion
 
 **What we've accomplished (today):**
 - n8n production container deployed ✅
@@ -134,6 +134,15 @@ GROUNDING:
   - Batch wrapper: run-observer.bat
   - Tested successfully (exit code 0)
   - **Critical Gap #1 CLOSED:** Observer now scheduled!
+- Memory Bank Watchdog complete ✅
+  - Git detection (files changed in last 15 min)
+  - Markdown parser (split by ## and ### headers)
+  - Embedding generation (all-MiniLM-L6-v2, 384 dims)
+  - Qdrant storage (collection: memory-bank)
+  - Windows Task Scheduler (runs every 15 min, offset 7 min from Observer)
+  - Batch wrapper: run-watchdog.bat
+  - Tested successfully (exit code 0)
+  - **Memory Bank now auto-ingests to Qdrant!**
 
 **Infrastructure Now Operational:**
 - Desktop Commander MCP ✅
@@ -147,21 +156,52 @@ GROUNDING:
 - **n8n (automation platform)** ✅ NEW!
 - **Qdrant (vector database)** ✅ NEW!
 
-**Blockers:** NONE! All infrastructure operational + Observer automation running.
+**Blockers:** NONE! All infrastructure operational + Observer + Watchdog automation running.
 
 **Next Decision Point:**
-1. **Slice 1.5: Memory Bank Watchdog** (auto-ingestion of truth-layer changes)
-2. **Slice 1.6: Integration Testing** (end-to-end validation of Observer → Validator → Reconciler flow)
-3. **Slice 1.7: Qdrant Embeddings** (semantic search for Memory Bank + Life Graph)
+1. **Slice 1.6: Integration Testing** (end-to-end validation of Observer → Validator → Reconciler flow)
+2. **Slice 1.7: Semantic Search API** (query interface for Memory Bank via Qdrant)
+3. **Slice 1.8: Life Graph Integration** (extend Watchdog to ingest Life Graph entities)
 
 **Pattern:**
-- Infrastructure deployment ~60% complete ✅
-- Core automation active (Observer scheduled) ✅
-- Ready for advanced workflows (watchdog + embeddings) ✅
+- Infrastructure deployment ~75% complete ✅
+- Core automation active (Observer + Watchdog scheduled) ✅
+- Ready for integration testing and semantic search ✅
 
 ---
 
 # Recent Changes
+
+**2025-12-03 - Slice 1.5: Memory Bank Watchdog (Qdrant Ingestion)** ✅ COMPLETE
+- Goal: Automate Memory Bank ingestion to Qdrant for semantic search
+- Problem: Memory Bank changes not automatically indexed for search
+- Solution: Git-triggered watchdog with Markdown parsing, embeddings, and Qdrant storage
+- Implementation:
+  - Created `tools/watchdog.py` (383 lines)
+  - Git detection: Files changed in last N minutes (default: 15)
+  - Markdown parser: Split by ## and ### headers into chunks
+  - Embedding model: sentence-transformers/all-MiniLM-L6-v2 (384 dimensions)
+  - Qdrant collection: "memory-bank" (created automatically)
+  - Batch wrapper: `tools/run-watchdog.bat`
+  - Windows Task: "Watchdog-Memory-Bank-Ingestion"
+  - Schedule: Every 15 minutes (offset 7 min from Observer)
+  - Dry-run mode: `--dry-run` for testing
+- Validation:
+  - ✅ Git detection: 2 files found (01-active-context.md, 02-progress.md)
+  - ✅ Parser: 6 chunks extracted (1 + 5)
+  - ✅ Embeddings: 384 dimensions generated
+  - ✅ Qdrant: Collection created, 6 chunks stored
+  - ✅ Task Status: Ready, runs every 15 min
+  - ✅ Manual test: Exit code 0 (success)
+- Result:
+  - ✅ Memory Bank auto-ingests to Qdrant every 15 minutes
+  - ✅ Semantic search infrastructure ready
+  - ✅ Windows console compatible (emoji → ASCII)
+  - ✅ No manual intervention required
+- Duration: ~75 min (implementation + Qdrant integration + scheduling + testing)
+- Risk: LOW (read-only operations, idempotent storage)
+- Research: Infrastructure (Vector Databases, Semantic Search, Memory Bank)
+- Next: Slice 1.6 (Integration Testing)
 
 **2025-12-03 - Slice 1.4: Observer Scheduling (Windows Task Scheduler)** ✅ COMPLETE
 - Goal: Automate Observer execution every 15 minutes (close Critical Gap #1)
