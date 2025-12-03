@@ -46,7 +46,7 @@
   </Settings>
   <Actions Context="Author">
     <Exec>
-      <Command>C:\Users\edri2\AppData\Local\Programs\Python\Python313\python.exe</Command>
+      <Command>C:\Program Files\Python314\python.exe</Command>
       <Arguments>C:\Users\edri2\Desktop\AI\ai-os\tools\email_watcher.py --verbose</Arguments>
       <WorkingDirectory>C:\Users\edri2\Desktop\AI\ai-os</WorkingDirectory>
     </Exec>
