@@ -86,6 +86,15 @@ Email automation working end-to-end:
 
 # RECENT CHANGES
 
+**2025-12-03 | INCIDENT: Docker AutoStart Failure** 🔴
+- **Problem:** Docker not auto-starting after reboot (n8n + Qdrant down ~20 hours)
+- **Root Cause:** AutoStart=false in settings-store.json (Slice 1.3 claimed true but was false)
+- **Fix:** Set AutoStart=true + started Docker Desktop manually
+- **5 Whys:** Validation Theater → SVP-001 gap → TFP-001 violation (claimed before verifying)
+- **Actions:** AP-007 (Validation Theater anti-pattern), TD-003 (Docker monitoring gap), SVP-001 v2.1 (add "verify in reality")
+- **Duration:** ~15 min investigation + fix
+- **Lesson:** Memory Bank drift is real - Observer writes drift reports BUT Memory Bank not auto-updated
+
 **2025-12-03 | Context Emergency Diet** 🚨
 - **Problem:** Claude compacting after 2-3 messages (Context Window 95% full at startup)
 - **Root Cause:** 01-active-context.md = 1,254 lines (68KB), Project Knowledge = 719KB
