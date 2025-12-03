@@ -34,10 +34,10 @@ Then:
 
 ---
 **QUICK STATUS:** AI Life OS | Phase 1: Infrastructure Deployment IN PROGRESS 🚀
-[ACTIVE] **Slice 1.7 COMPLETE:** Email Watcher - Production Grade Gmail Automation ✅
-**Just finished:** Email Watcher with Google OAuth reuse, Claude Sonnet 4.5 classification (bureaucracy/personal/work), YAML drift reports, JSONL logging, pytest tests, Task Scheduler config (every 15 min)
-**Blockers:** NONE! All infrastructure operational + Observer + Watchdog + Email Watcher automation active
-**Next:** Slice 1.8 (Task Scheduler Deployment) - deploy all 3 automations to Windows Task Scheduler for production use
+[ACTIVE] **Slice 1.7.2 COMPLETE:** Integration Testing + Telegram Alerts ✅
+**Just finished:** Email Watcher + Telegram integration (5 urgent email alerts), Reconciler fixed (truth-layer/drift/ path), end-to-end integration test successful (Email Watcher → drift reports → Reconciler can read)
+**Blockers:** NONE! All infrastructure operational + Observer + Watchdog + Email Watcher with Telegram alerts
+**Next:** Slice 1.8 (Task Scheduler Deployment) - deploy Email Watcher to Task Scheduler for 24/7 automation
 ---
 
 <!--
@@ -386,6 +386,116 @@ GROUNDING:
 - Success Criteria: ✅ Complete plan documented, user approved, ready to execute
 - Duration: ~4 hours (deep research + documentation) | Risk: NONE (planning only)
 - Next: BEGIN Phase 1 Slice 1.1 (n8n Production Deployment) - 24/7 automation starts!
+
+**2025-12-03 - Slice 1.7.2: Integration Testing + Telegram Alerts** ✅ COMPLETE
+- Goal: End-to-end integration test (Email Watcher → Observer → Reconciler) + Telegram notifications
+- Problem: Email Watcher and Reconciler used different drift directories (not connected)
+- Solution: Unified drift directory (truth-layer/drift/) + added Telegram alert system
+- Architecture Decision: Information + Alerts pattern (not full automation)
+  - Email drift reports = documentation (YAML files)
+  - High-priority emails → Telegram alerts (immediate notification)
+  - User decides manually (open Gmail, take action)
+  - Deferred: Reconciler CRs with Gmail API automation (Phase 2)
+- Changes Made:
+  - Email Watcher: Changed DRIFT_DIR from memory-bank/drift/ to truth-layer/drift/
+  - Reconciler: Changed DRIFT_REPORTS_DIR from docs/system_state/drift/ to truth-layer/drift/
+  - Telegram Integration:
+    - Added send_telegram_alert() method (78 lines)
+    - Filter logic: high priority OR (medium + action_needed)
+    - Alert format: category emoji 💼📋👤, priority, subject (60 chars), from, suggested_action
+    - Limit: 5 emails per alert (prevents spam)
+    - Configuration: TELEGRAM_CHAT_ID=5786217215 in .env
+  - OAuth Fix: Resolved 401 error with google_oauth_refresh_tokens MCP tool
+- Integration Testing Results:
+  - ✅ Email Watcher saves to truth-layer/drift/ (email-drift-*.yaml)
+  - ✅ Reconciler reads from truth-layer/drift/ (path fixed)
+  - ✅ Observer detects drift in truth-layer/ (Life Graph changes)
+  - ✅ End-to-end flow validated: Email Watcher → drift reports → Reconciler can read
+  - ✅ Telegram alert sent: 5 urgent emails (4 MEDIUM + 1 HIGH)
+    - HIGH: Gmail storage full (28 days warning) 🚨
+    - MEDIUM: Link verification, n8n license, Google Play payment, Base44 invitation
+- Files Modified:
+  - tools/email_watcher.py (+75 lines: Telegram integration)
+  - tools/reconciler.py (+1 line: DRIFT_REPORTS_DIR path fix)
+  - .env (+1 line: TELEGRAM_CHAT_ID)
+- Result:
+  - ✅ Integration testing complete - all 3 systems connected
+  - ✅ Telegram alerts working (5 urgent emails notified)
+  - ✅ Email Watcher production-ready with alerts
+  - ✅ Information + Alerts pattern validated
+  - ⚠️ Discovery: 1 HIGH priority email (Gmail storage full in 28 days)
+- Duration: ~45 min | Risk: LOW (integration testing + Telegram API)
+- Research: MCP/Tools (integration patterns), n8n (Telegram vs Python decision)
+- Commits: b6176a4 (Integration Testing + Telegram)
+- Next: Slice 1.8 (Task Scheduler Deployment) - deploy Email Watcher automation
+
+**2025-12-03 - Slice 1.7.1: Email Watcher Task Scheduler Deployment** ✅ COMPLETE
+- Goal: Deploy Email Watcher to Windows Task Scheduler for 24/7 automation
+- Problem: Python path mismatch (Task pointed to Python313, actual is Python314)
+- Solution: Fixed email_watcher_task.xml Python path + successful Task Scheduler deployment
+- Changes Made:
+  - Fixed: C:\Users\edri2\AppData\Local\Programs\Python\Python313\python.exe → C:\Program Files\Python314\python.exe
+  - Created Task: "AI-OS\Email Watcher" in Windows Task Scheduler
+  - Schedule: Every 15 minutes (PT15M)
+  - Trigger: Daily at 00:00, repeat every 15 min indefinitely
+  - Action: python.exe email_watcher.py --verbose
+  - Settings: RunOnlyIfNetworkAvailable=true, ExecutionTimeLimit=PT10M
+- Testing Results:
+  - ✅ Manual test run: schtasks /Run successful (Last Result: 0)
+  - ✅ Drift report generated: email-drift-2025-12-03-041250.yaml (7 KB)
+  - ✅ JSONL logs: 50 emails found, 10 classified, complete successfully
+  - ✅ Next scheduled run: 04:15:00 (automatic)
+- Result:
+  - ✅ Email Watcher now runs automatically every 15 minutes
+  - ✅ 3 automations active: Observer (every 15 min), Watchdog (every 15 min), Email Watcher (every 15 min)
+  - ✅ Phase 1 progress: ~80% complete
+- Duration: ~5 min | Risk: NONE (Task Scheduler config)
+- Commits: 13216d7 (Python path fix)
+- Next: Slice 1.7.2 (Integration Testing) - validate Observer → Reconciler flow
+
+**2025-12-03 - Slice 1.7: Email Watcher (Gmail Automation)** ✅ COMPLETE
+- Goal: Automate Gmail monitoring and classification with drift reports
+- Problem: Unread emails accumulate without prioritization or action
+- Solution: Production-grade Email Watcher with Claude Sonnet 4.5 classification
+- Architecture Decision: Python + Task Scheduler (NOT n8n)
+  - Rationale: Git version control, pytest testing, JSONL logging, consistency with Observer/Watchdog
+  - Trade-off: More code vs better maintainability/observability
+  - Comparison table: Python wins on 11/11 criteria (testability, debugging, observability, IaC, etc.)
+- Implementation:
+  - **email_watcher.py (312 lines):**
+    - EmailWatcher class with verbose/dry-run modes
+    - Google OAuth token reuse (~/.google-mcp-tokens.json)
+    - Gmail API: search 50 unread emails
+    - Claude Sonnet 4.5 classification (bureaucracy/personal/work, priority, action_needed, suggested_action)
+    - YAML drift reports (memory-bank/drift/email-drift-*.yaml)
+    - JSONL structured logging (logs/email_watcher.jsonl)
+  - **test_email_watcher.py (55 lines):**
+    - pytest tests: TestEmailExtraction, TestClaudeClassification
+    - Mock patterns for API responses
+  - **email_watcher_task.xml (55 lines):**
+    - Windows Task Scheduler config (every 15 min)
+  - **email-watcher-README.md (229 lines):**
+    - Complete documentation (architecture, installation, testing, troubleshooting)
+- Testing Results:
+  - ✅ Dry-run test: 50 emails found, 10 classified, exit code 0
+  - ✅ Production run: Drift report saved successfully (131 lines YAML)
+  - ✅ Claude classification accuracy: Excellent (correct categories, priorities, actions)
+  - ✅ Runtime: ~21 seconds
+  - ⚠️ Charmap encoding issue fixed (Windows console + Hebrew emails)
+- Sample Classifications:
+  - Anthropic Receipt: personal, low, no action
+  - Link Email Verify: personal, medium, action needed ("Verify email address")
+  - n8n License: work, medium, action needed ("Activate license key")
+  - Google Play Payment: bureaucracy, medium, action needed ("Add payment method")
+- Result:
+  - ✅ Production-grade Email Watcher (782 lines total)
+  - ✅ Git tracked, testable, observable, maintainable
+  - ✅ Consistent with Observer/Watchdog architecture
+  - ✅ Ready for Task Scheduler deployment
+- Duration: ~90 min | Risk: LOW (well-tested, no critical dependencies)
+- Research: MCP/Tools (Gmail API, Desktop Commander), n8n (comparison analysis)
+- Commits: 7665856 (Email Watcher implementation), 60935dd (Memory Bank update)
+- Next: Slice 1.7.1 (Task Scheduler Deployment) - enable 24/7 automation
 
 **2025-12-02 - Phase 3: Research Complete (13/13 Reports)** ✅ COMPLETE
 - Goal: Complete research discovery + create integration map between research and 5-Layer Architecture
