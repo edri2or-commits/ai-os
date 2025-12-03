@@ -21,13 +21,13 @@ Quick Status, Current Focus, Recent Changes, Next Steps
 
 **AI Life OS | Phase 1: Infrastructure Deployment** 🚀
 
-**Progress:** ~85% complete (7/8 core slices)
+**Progress:** ~90% complete (8/8 core slices)
 
 **Just Finished:**
+- ✅ Task Scheduler Dashboard (PowerShell monitoring for all automated processes)
+- ✅ Docker AutoStart incident investigation + resolution
 - ✅ Email Watcher automation (Gmail → Claude classification → Telegram alerts)
 - ✅ Memory Bank Watchdog (Git → Qdrant semantic search)
-- ✅ Observer scheduling (Windows Task Scheduler, every 15 min)
-- ✅ All protocols upgraded to v2.0 (research-backed, cited)
 
 **Currently Operational:**
 - Desktop Commander MCP ✅
@@ -45,8 +45,8 @@ Quick Status, Current Focus, Recent Changes, Next Steps
 
 **Next Decision Point:**
 1. **Gmail cleanup** (archive 50 processed emails)
-2. **Slice 1.8: Task Scheduler Dashboard** (monitoring/logging)
-3. **Slice 1.9: Life Graph Integration** (extend Watchdog)
+2. **Slice 1.9: Life Graph Integration** (extend Watchdog to full Life Graph entities)
+3. **Phase 2 Planning** (Phase 1 infrastructure complete → expand to more domains)
 
 ---
 
@@ -85,6 +85,14 @@ Email automation working end-to-end:
 ---
 
 # RECENT CHANGES
+
+**2025-12-03 | Slice 1.8: Task Scheduler Dashboard** ✅
+- **Goal:** Single-pane-of-glass monitoring for 3 tasks + Docker
+- **Created:** dashboard.ps1 (264 lines) + README_dashboard.md (176 lines)
+- **Features:** Color-coded status, Last/Next run times, Exit codes, Drift report count
+- **Result:** ALL SYSTEMS OPERATIONAL (3 tasks OK + n8n/Qdrant OK)
+- **Duration:** ~45 min
+- **Lesson:** Full task paths needed (e.g., "\AI-OS\Email Watcher" not just "Email Watcher")
 
 **2025-12-03 | INCIDENT: Docker AutoStart Failure** 🔴
 - **Problem:** Docker not auto-starting after reboot (n8n + Qdrant down ~20 hours)
