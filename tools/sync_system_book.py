@@ -42,13 +42,39 @@ def extract_phase(active_context_text: str) -> str:
         return match.group(1).strip()
     return "Phase 1 - Infrastructure Deployment"  # Fallback
 
-def extract_just_finished(active_context_text: str) -> str:
-    """Extract first item from Just Finished section"""
-    # Match: "**Just Finished:**" then first "- ✅ ..."
-    match = re.search(r'\*\*Just Finished:\*\*.*?- ✅ (.+?)(?:\n|$)', active_context_text, re.DOTALL)
+def extract_recent_achievement(active_context_text: str) -> str:
+    """
+    Extract title + date from most recent Recent Changes entry
+    
+    More robust than Just Finished because:
+    - Structured format (Date | Title)
+    - Single source of truth (Recent Changes = official record)
+    - Timestamp makes it clear this is the latest
+    - Works with multi-line descriptions
+    
+    Pattern: "**2025-12-04 | Pre-commit Hook - Zero-Drift Safety Net** ✅"
+    Returns: "Pre-commit Hook - Zero-Drift Safety Net (2025-12-04)"
+    """
+    # Match most recent entry in Recent Changes
+    match = re.search(
+        r'\*\*(\d{4}-\d{2}-\d{2}) \| (.+?)\*\* ✅', 
+        active_context_text
+    )
     if match:
-        return match.group(1).strip()
-    return "System updates deployed"  # Fallback
+        date = match.group(1)
+        title = match.group(2).strip()
+        return f"{title} ({date})"
+    
+    # Fallback to Just Finished if Recent Changes not found
+    fallback_match = re.search(
+        r'\*\*Just Finished:\*\*.*?- ✅ (.+?)(?:\n|$)', 
+        active_context_text, 
+        re.DOTALL
+    )
+    if fallback_match:
+        return fallback_match.group(1).strip()
+    
+    return "Recent system updates"  # Ultimate fallback
 
 def update_system_book():
     """Main sync function"""
@@ -59,12 +85,12 @@ def update_system_book():
     
     progress = extract_progress(active_text)
     phase_name = extract_phase(active_text)
-    just_finished = extract_just_finished(active_text)
+    recent_achievement = extract_recent_achievement(active_text)
     
     print(f"[INFO] Extracted from 01-active-context.md:")
     print(f"   Progress: {progress}%")
     print(f"   Phase: {phase_name}")
-    print(f"   Recent: {just_finished[:60]}...")
+    print(f"   Recent: {recent_achievement[:60]}...")
     
     # 2. Update Section 1: Quick Context Injection -> Current State
     # Pattern: "- **Phase:** 1 - Infrastructure Deployment (85% complete)"
@@ -86,7 +112,7 @@ def update_system_book():
     # Pattern: "**Recent Achievement:**" followed by description
     # Replace entire section until next "---"
     achievement_block = f"""**Recent Achievement:**
-{just_finished}
+{recent_achievement}
 
 (Auto-synced from 01-active-context.md via sync_system_book.py)"""
     
@@ -103,7 +129,7 @@ def update_system_book():
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M")
     print(f"[SUCCESS] SYSTEM_BOOK.md updated ({timestamp})")
     print(f"   Phase: {phase_name} ({progress}%)")
-    print(f"   Recent: {just_finished[:50]}...")
+    print(f"   Recent: {recent_achievement[:50]}...")
 
 if __name__ == "__main__":
     try:
