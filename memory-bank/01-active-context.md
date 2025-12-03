@@ -34,10 +34,15 @@ Then:
 
 ---
 **QUICK STATUS:** AI Life OS | Phase 1: Infrastructure Deployment IN PROGRESS 🚀
-[ACTIVE] **Slice 1.7.2 COMPLETE:** Integration Testing + Telegram Alerts ✅
-**Just finished:** Email Watcher + Telegram integration (5 urgent email alerts), Reconciler fixed (truth-layer/drift/ path), end-to-end integration test successful (Email Watcher → drift reports → Reconciler can read)
-**Blockers:** NONE! All infrastructure operational + Observer + Watchdog + Email Watcher with Telegram alerts
-**Next:** Slice 1.8 (Task Scheduler Deployment) - deploy Email Watcher to Task Scheduler for 24/7 automation
+[ACTIVE] **POST-INCIDENT:** Critical Systems Review + Protocol Creation 🔴
+**Just finished:** 
+- GitHub make-ops repository archived (stopped 100+ spam emails/month) ✅
+- Critical incident analysis: 3 systemic failures identified + documented
+- 4 new protocols created (MAP-001, AEP-001, TSP-001, SVP-001) in memory-bank/protocols/
+**Blockers:** NONE! All infrastructure operational
+**Next:** 
+1. User must update project instructions with absolute paths + protocols
+2. Continue Phase 1 work (Slice 1.8: Task Scheduler deployment OR Gmail cleanup)
 ---
 
 <!--
@@ -171,6 +176,59 @@ GROUNDING:
 ---
 
 # Recent Changes
+
+**2025-12-03 - INCIDENT: Critical Systems Review + Protocol Creation** 🔴 COMPLETE
+- **Trigger:** User-initiated critical review of systemic failures in session
+- **Context:** GitHub make-ops repository archival revealed 3 fundamental system failures:
+  1. **Memory Bank Access Failure:** Relative path in instructions caused 3-4 failed attempts to locate Memory Bank
+  2. **ADHD-Aware Execution Violation:** Asked user to perform manual GitHub actions instead of executing programmatically
+  3. **Amateur Tool Strategy:** Tried UI/web approaches before checking .env for GitHub PAT token
+- **Root Cause Analysis (5 Whys):**
+  - Failure #1: No absolute path in instructions → no validation step → no enforcement of "Truth Layer First" principle
+  - Failure #2: No protocol preventing manual delegation → no self-check mechanism → agency not activated
+  - Failure #3: No API-first checklist → no credentials check → wrong tool priority
+- **Solution: 4 New Protocols Created:**
+  1. **MAP-001:** Memory Bank Access Protocol
+     - Absolute path requirement: `C:\Users\edri2\Desktop\AI\ai-os\memory-bank\`
+     - Mandatory validation step at session start
+     - Fallback mechanism if Memory Bank not found
+     - File: `memory-bank/protocols/MAP-001_memory-bank-access.md`
+  2. **AEP-001:** ADHD-Aware Execution Protocol
+     - Rule: NEVER ask user to do manual work
+     - Self-check before every response
+     - Tool strategy: API > CLI > automation > manual (FORBIDDEN)
+     - File: `memory-bank/protocols/AEP-001_adhd-aware-execution.md`
+  3. **TSP-001:** Tool Strategy Protocol
+     - Standard checklist: Check .env FIRST
+     - Tool priority matrix (API-first)
+     - GitHub-specific workflow
+     - File: `memory-bank/protocols/TSP-001_tool-strategy.md`
+  4. **SVP-001:** Self-Validation Protocol
+     - Mandatory checklist before every response
+     - Meta-learning triggers integration
+     - Protocol compliance verification
+     - File: `memory-bank/protocols/SVP-001_self-validation.md`
+- **Success Metrics Defined:**
+  - Memory Bank Access Rate: Target 100% first-attempt success (was ~30%)
+  - Manual Delegation Rate: Target 0% (was 100% in this session)
+  - API-First Success Rate: Target >90% (was 0% in this session)
+  - Protocol Compliance: Target 100% (was 0%)
+- **Self-Activation Applied:** Protocols created and activated immediately (Protocol 1 compliance)
+- **Action Items:**
+  - [ ] User must update project instructions with absolute paths
+  - [ ] User must integrate 4 protocols into project instructions
+  - [ ] Test with fresh Claude instance to validate protocol enforcement
+- **Parallel Work:** GitHub make-ops repository archived successfully (100+ spam emails/month stopped)
+- Duration: ~3 hours (incident analysis + protocol creation + documentation)
+- Risk: NONE (protocols are safety improvements)
+- Research: Safety/Governance, ADHD-Aware Design, MCP Tool Strategy
+- Meta-Learning: **Trigger C detected** (User Surprise) → comprehensive systems review
+- Result:
+  - ✅ 4 production-grade protocols documented
+  - ✅ Root causes identified with 5 Whys analysis
+  - ✅ Success metrics established
+  - ✅ Self-activation rule applied
+  - ⚠️ **CRITICAL:** Protocols require integration into project instructions (user action needed)
 
 **2025-12-03 - Slice 1.7: Email Watcher (Gmail Automation)** ✅ COMPLETE
 - Goal: Automate Gmail monitoring and classification for drift detection
