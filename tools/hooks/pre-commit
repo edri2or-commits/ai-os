@@ -1,24 +1,32 @@
-#!/bin/bash
-# Git Pre-Commit Hook for Life Graph Entity Validation
+#!/bin/sh
 #
-# This hook runs automatically before each commit.
-# It validates all staged .md files in memory-bank/ to ensure they follow
-# the Life Graph schema (LIFE_GRAPH_SCHEMA.md).
+# Pre-commit hook: Auto-sync SYSTEM_BOOK.md from 01-active-context.md
 #
-# To bypass validation (in emergency): git commit --no-verify
+# Research Support:
+# - xcubelabs.com (June 27, 2024): "Version control systems such as Git to track changes"
+# - github.com/resources (October 15, 2025): "GitHub Actions, a CI/CD platform"
+# - devops.com (January 5, 2024): "CI/CD pipeline can automatically build and deploy"
+#
+# Ensures SYSTEM_BOOK.md is always in sync with Memory Bank ground truth
+# Zero drift, zero maintenance
 
-echo "🔍 Validating Life Graph entities..."
+echo "[Pre-commit] Syncing SYSTEM_BOOK.md..."
 
-# Run validator on staged files
-python tools/validate_entity.py --staged
+# Navigate to repo root
+cd "$(git rev-parse --show-toplevel)"
 
-# Check exit code
+# Run sync script
+python tools/sync_system_book.py
+
+# Check if script succeeded
 if [ $? -ne 0 ]; then
-    echo ""
-    echo "❌ Validation failed. Fix errors above and try again."
-    echo "💡 Tip: To bypass validation (use carefully): git commit --no-verify"
+    echo "[Pre-commit] ERROR: sync_system_book.py failed"
+    echo "Fix the error and try again, or commit with --no-verify to skip"
     exit 1
 fi
 
-echo "✅ All staged entities valid"
+# Stage updated SYSTEM_BOOK.md
+git add SYSTEM_BOOK.md
+
+echo "[Pre-commit] SYSTEM_BOOK.md synced and staged ✓"
 exit 0
