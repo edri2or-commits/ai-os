@@ -30,7 +30,7 @@ Automation (n8n + Qdrant) → Email classification, Memory indexing, Drift detec
 **Chat → Spec → Change** | Human-in-the-loop at decision points | All changes reversible (Git safety net)
 
 ### Current State
-- **Phase:** 1 - Infrastructure Deployment (85% complete)
+- **Phase:** Phase 1 – Infrastructure Deployment (90% complete)
 - **Operational:** Observer (drift detection), Validator (schema checks), Reconciler (CR management), Email Watcher (Gmail → Claude → Telegram), Memory Bank Watchdog (Git → Qdrant)
 - **Running 24/7:** 3 automated processes via Windows Task Scheduler (every 15 min)
 - **Testing:** 44 pytest tests passing
@@ -296,7 +296,7 @@ Tracked in `memory-bank/technical-debt/` with priority/impact/resolution
 ### Current Phase Status
 
 **Phase 1: Infrastructure Deployment**
-- Progress: ~85% complete (7/8 slices done)
+- Progress: ~90% complete (7/8 slices done)
 - Blockers: NONE
 - Next: Gmail cleanup (15 min) → Close Phase 1
 
@@ -313,11 +313,9 @@ Tracked in `memory-bank/technical-debt/` with priority/impact/resolution
 - Documentation: Memory Bank (10 protocols v2.0), Research (18 files)
 
 **Recent Achievement:**
-End-to-end email automation deployed:
-- 50 emails processed
-- 10 classified by Claude Sonnet 4.5
-- 5 urgent alerts sent to Telegram
-- 100% success rate
+SYSTEM_BOOK.md (LLM-optimized entry point, llms.txt standard)
+
+(Auto-synced from 01-active-context.md via sync_system_book.py)
 
 ---
 
