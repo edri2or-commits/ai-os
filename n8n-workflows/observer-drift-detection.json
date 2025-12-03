@@ -1,0 +1,118 @@
+{
+  "name": "Observer - Drift Detection (Every 15 min)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 15
+            }
+          ]
+        }
+      },
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [250, 300],
+      "id": "schedule-trigger-1"
+    },
+    {
+      "parameters": {
+        "command": "python C:\\Users\\edri2\\Desktop\\AI\\ai-os\\tools\\observer.py",
+        "cwd": "C:\\Users\\edri2\\Desktop\\AI\\ai-os"
+      },
+      "name": "Run Observer",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [450, 300],
+      "id": "execute-command-1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json.exitCode}}",
+              "operation": "equals",
+              "value2": "1"
+            }
+          ]
+        }
+      },
+      "name": "Check for Drift",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [650, 300],
+      "id": "if-node-1"
+    },
+    {
+      "parameters": {
+        "message": "=🔴 DRIFT DETECTED!\n\nObserver found uncommitted changes in truth-layer.\n\nTimestamp: {{$now}}\n\nPlease review drift report in:\nC:\\Users\\edri2\\Desktop\\AI\\ai-os\\truth-layer\\drift\\"
+      },
+      "name": "Log Drift Alert",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [850, 250],
+      "id": "noop-drift-1"
+    },
+    {
+      "parameters": {
+        "message": "=✅ No drift detected\n\nTimestamp: {{$now}}"
+      },
+      "name": "Log Clean State",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [850, 350],
+      "id": "noop-clean-1"
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Run Observer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run Observer": {
+      "main": [
+        [
+          {
+            "node": "Check for Drift",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check for Drift": {
+      "main": [
+        [
+          {
+            "node": "Log Drift Alert",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log Clean State",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": []
+}

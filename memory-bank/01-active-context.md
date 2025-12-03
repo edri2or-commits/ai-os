@@ -34,10 +34,10 @@ Then:
 
 ---
 **QUICK STATUS:** AI Life OS | Phase 1: Infrastructure Deployment IN PROGRESS 🚀
-[ACTIVE] **Slice 1.3 COMPLETE:** Docker Desktop auto-start configured ✅
-**Just finished:** Windows + Docker configured for 24/7 reliability (AutoStart enabled, Registry verified, validation script created)
-**Blockers:** NONE! Infrastructure operational, ready for automation workflows
-**Next:** Slice 1.4 (Observer Scheduling via n8n) - automated drift detection every 15 minutes
+[ACTIVE] **Slice 1.4 COMPLETE:** Observer scheduled with Windows Task Scheduler ✅
+**Just finished:** Windows Task Scheduler configured for automated Observer execution every 15 minutes (Critical Gap #1 CLOSED!)
+**Blockers:** NONE! All infrastructure operational + Observer automation active
+**Next:** Slice 1.5 (Memory Bank Watchdog) - auto-ingestion of truth-layer changes
 ---
 
 <!--
@@ -108,8 +108,8 @@ GROUNDING:
 # Current Focus
 
 **Phase:** Phase 1 – Infrastructure Deployment 🚀
-**Status:** Slices 1.1 + 1.1b + 1.2 COMPLETE (3/~8 slices)  
-**Active Work:** Just completed n8n production hardening + Qdrant deployment
+**Status:** Slices 1.1 + 1.1b + 1.2 + 1.3 + 1.4 COMPLETE (5/~8 slices)  
+**Active Work:** Observer automation via Windows Task Scheduler (Critical Gap #1 CLOSED!)
 
 **What we've accomplished (today):**
 - n8n production container deployed ✅
@@ -122,6 +122,18 @@ GROUNDING:
   - Persistent storage: qdrant_storage volume
   - Web UI: http://localhost:6333/dashboard
   - End-to-end validated (CRUD operations working)
+- Docker Desktop auto-start configured ✅
+  - AutoStart setting enabled in Docker Desktop
+  - Windows Registry entry verified
+  - Container restart policies: always (n8n + Qdrant)
+  - Validation script: check_docker_autostart.ps1
+  - System survives Windows reboots (24/7 reliability)
+- Observer automation complete ✅
+  - Windows Task Scheduler task created
+  - Runs every 15 minutes automatically
+  - Batch wrapper: run-observer.bat
+  - Tested successfully (exit code 0)
+  - **Critical Gap #1 CLOSED:** Observer now scheduled!
 
 **Infrastructure Now Operational:**
 - Desktop Commander MCP ✅
@@ -135,21 +147,47 @@ GROUNDING:
 - **n8n (automation platform)** ✅ NEW!
 - **Qdrant (vector database)** ✅ NEW!
 
-**Blockers:** NONE! Infrastructure deployed, ready for automation workflows.
+**Blockers:** NONE! All infrastructure operational + Observer automation running.
 
 **Next Decision Point:**
-1. **Slice 1.3: Docker Desktop Auto-Start** (ensure containers restart after Windows reboot)
-2. **Slice 1.4: Observer Scheduling** (n8n workflow for automated drift detection)
-3. **Slice 1.5: Memory Bank Watchdog** (auto-ingestion of truth-layer changes)
+1. **Slice 1.5: Memory Bank Watchdog** (auto-ingestion of truth-layer changes)
+2. **Slice 1.6: Integration Testing** (end-to-end validation of Observer → Validator → Reconciler flow)
+3. **Slice 1.7: Qdrant Embeddings** (semantic search for Memory Bank + Life Graph)
 
 **Pattern:**
-- Infrastructure deployment in progress ✅
-- Production-hardened containers (n8n + Qdrant) ✅
-- Ready for automation workflows ✅
+- Infrastructure deployment ~60% complete ✅
+- Core automation active (Observer scheduled) ✅
+- Ready for advanced workflows (watchdog + embeddings) ✅
 
 ---
 
 # Recent Changes
+
+**2025-12-03 - Slice 1.4: Observer Scheduling (Windows Task Scheduler)** ✅ COMPLETE
+- Goal: Automate Observer execution every 15 minutes (close Critical Gap #1)
+- Problem: Observer requires manual execution, no automation
+- Solution: Windows Task Scheduler (not n8n - Docker container can't execute Windows processes)
+- Implementation:
+  - Created batch wrapper: `tools/run-observer.bat` (eliminates path escaping issues)
+  - Windows Task: `Observer-Drift-Detection`
+  - Schedule: Every 15 minutes, forever
+  - Command: `C:\Users\edri2\Desktop\AI\ai-os\tools\run-observer.bat`
+  - Working directory: `C:\Users\edri2\Desktop\AI\ai-os`
+- Validation:
+  - ✅ Task Status: Ready
+  - ✅ Repeat: Every 15 minutes
+  - ✅ Manual test: Exit code 0 (success)
+  - ✅ Next Run Time: Auto-scheduled
+- Result:
+  - ✅ **Critical Gap #1 CLOSED!** Observer now runs automatically
+  - ✅ Drift detection every 15 minutes
+  - ✅ No manual intervention required
+  - ✅ Survives system reboots (task persists)
+- Duration: ~45 min (troubleshooting n8n limitations + Windows Task implementation)
+- Risk: NONE
+- Research: Infrastructure (Task Scheduling, Windows Automation)
+- Lessons Learned: n8n in Docker container cannot execute Windows processes (Linux shell inside container)
+- Next: Slice 1.5 (Memory Bank Watchdog)
 
 **2025-12-03 - Slice 1.3: Docker Desktop Auto-Start Configuration** ✅ COMPLETE
 - Goal: Ensure Docker Desktop + containers start automatically after Windows reboot
