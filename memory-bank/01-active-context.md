@@ -24,14 +24,13 @@ Quick Status, Current Focus, Recent Changes, Next Steps
 **Progress:** ~100% complete (Phase 1 COMPLETE ✅)
 
 **Just Finished:**
-- ✅ **SYSTEM_BOOK.md validation** (GPT o1 test: 95% accuracy, 27 sec, SUCCESS ✅)
-- ✅ sync_system_book.py **surgical fix** (extract from Recent Changes, not Just Finished - timestamp + robust)
-- ✅ Pre-commit hook (auto-sync SYSTEM_BOOK.md before every commit - ZERO drift guaranteed)
-- ✅ SYSTEM_BOOK.md (LLM-optimized entry point, llms.txt standard)
+- ✅ **get_datetime tool** (Python script, accurate date/time for Claude - solves date calculation errors)
+- ✅ SYSTEM_BOOK.md validation (GPT o1 test: 95% accuracy, 27 sec, SUCCESS ✅)
+- ✅ sync_system_book.py surgical fix (extract from Recent Changes, timestamp + robust)
+- ✅ Pre-commit hook (auto-sync SYSTEM_BOOK.md before every commit - ZERO drift)
 - ✅ Email Watcher automation (Gmail → Claude classification → Telegram alerts)
 - ✅ Memory Bank Watchdog (Git → Qdrant semantic search)
 - ✅ Observer scheduling (Windows Task Scheduler, every 15 min)
-- ✅ All protocols upgraded to v2.0 (research-backed, cited)
 
 **Currently Operational:**
 - Desktop Commander MCP ✅
@@ -107,6 +106,21 @@ Email automation working end-to-end:
 ---
 
 # RECENT CHANGES
+
+**2025-12-04 | DateTime Tool for Accurate Calculations** ✅
+- **Achievement:** Solved date calculation errors (October 2023 was "13 months" → actually 26 months!)
+- **Root Cause:** Claude lacks native system clock access → guessed dates
+- **Solution:** Python script (`get_datetime.py`) returns current datetime via Desktop Commander
+- **Output:** JSON with date, time, day_of_week, unix timestamp, year/month/day/hour/minute/second
+- **Protocol:** ALWAYS call get_datetime() before date math
+- **Test:**
+  - Current: 2025-12-04 (from tool ✅)
+  - Research: 2023-10-01
+  - Calculation: 26 months (2 years + 2 months) ✅
+  - Before: "13 months" ❌ (2x error!)
+- **Files:** tools/get_datetime.py (55 lines), tools/README_get_datetime.md (151 lines)
+- **Git:** 38fef48 feat(tools): Add get_datetime tool
+- **Duration:** ~15 min (Slice 0)
 
 **2025-12-04 | SYSTEM_BOOK.md Validation Complete** ✅
 - **Achievement:** Phase 1 Goal - Context Engineering Infrastructure validated
@@ -223,35 +237,34 @@ Email automation working end-to-end:
 
 # NEXT STEPS
 
+**Status:** Phase 1 Complete ✅ + DateTime Tool Ready ✅
+
 **Choose one:**
 
-**Option A: Pre-commit Hook for sync_system_book (10 min)** ⭐ RECOMMENDED NEXT
-- Add `.git/hooks/pre-commit` to auto-run sync script
-- Every commit = SYSTEM_BOOK auto-updated
-- Safety net: Never out of sync
-- Research: xcubelabs (2024), GitHub (2025)
+**Option A: Real-Time Knowledge Alignment** 🚀 (Phase 2, 7 slices)
+- **Goal:** System knows when research is stale, auto-updates knowledge
+- **Plan:** memory-bank/docs/REAL_TIME_ALIGNMENT_PLAN.md (403 lines, documented)
+- **Architecture:** Observer → Research Freshness → Vector DB Updates
+- **Duration:** ~6 hours (7 slices × 30-60 min each)
+- **Benefit:** Never repeat date calculation errors, always current knowledge
+- **Next:** Slice 1.1 - Observer n8n Workflow (45 min)
 
-**Option B: SYSTEM_BOOK Validation (15 min)**
-- Test with GPT: Upload SYSTEM_BOOK.md only, ask "What's the current state?"
-- Measure: Time to context, question rate, accuracy
-- Success: GPT answers correctly within 30 seconds
-- Close Phase 1 with validation proof
+**Option B: Phase 1 Retrospective** 🎓 (30 min)
+- What worked well? (automation, research-backed, small slices)
+- What was challenging? (MCP research, surgical fixes, date errors!)
+- Lessons learned? (Living Documentation, Git hooks, DateTime tool)
+- Document: Pattern library, best practices (BP-XXX), anti-patterns (AP-XXX)
+- Prepare: Phase 2 kickoff materials
 
-**Option C: Gmail Cleanup (15 min)**
-- Archive 50 processed emails
-- Mark Email Watcher as fully deployed
-- Alternative Phase 1 close
+**Option C: Take a Break** 😊
+- Phase 1 = major milestone (8 weeks → infrastructure production-ready)
+- DateTime Tool = critical foundation fix
+- Come back fresh: Retrospective tomorrow, Phase 2 next week
 
-**Option C: Task Scheduler Dashboard (45 min)**
-- Monitoring script (reads Task Scheduler logs)
-- PowerShell: Get-ScheduledTask + log parsing
-- Email Watcher health checks
-- Alerts if tasks fail
-
-**Option D: Life Graph Integration (60 min)**
-- Extend Watchdog to index Life Graph entities
-- Areas, Projects, Tasks → Qdrant
-- Semantic search across entire system
+**Option D: Continue Previous Next Steps** 
+- Task Scheduler Dashboard (45 min) - monitoring
+- Life Graph Integration (60 min) - semantic search
+- Gmail Cleanup (15 min) - maintenance
 
 ---
 
