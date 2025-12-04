@@ -21,11 +21,17 @@ Quick Status, Current Focus, Recent Changes, Next Steps
 
 **AI Life OS | Phase 2: Architectural Alignment & Governance** 📐
 
-**Progress:** ~15% complete (Foundation docs created)
+**Progress:** ~25% complete (Foundation docs + Integration plan ready)
 
 **Just Finished (2025-12-04):**
-- ✅ **Architectural Drift Diagnosis** (Research: Hexagonal vs Microkernel vs Cognitive metaphors)
-- ✅ **Dual Research** (GPT Deep Research + Claude web research on canonical patterns)
+- ✅ **Slice 2.5: CLP-001 Integration Plan** (412-line roadmap for self-learning architecture)
+- ✅ **Research Analysis:** 3 papers (Cognitive Self, CLP-001 Spec, CIP) mapped to AI Life OS
+- ✅ **Gap Analysis:** Identified missing components (Judge/Teacher/Librarian, LHO database)
+- ✅ **Phase Decision:** Recommend Phase 2.5 (Self-Learning) NOW vs complete Phase 2 first
+- ✅ **Roadmap:** 7 slices defined (Langfuse, LHO Schema, Judge/Teacher/Librarian, Context Manager)
+
+**Previously (Earlier 2025-12-04):**
+- ✅ **Slice 2.1: Apply Canonical Terms** (Updated 6 files to use ADR-001 terms)
 - ✅ **ADR-001** (Architectural Alignment decision - Hexagonal + MAPE-K as canonical)
 - ✅ **CANONICAL_TERMINOLOGY.md** (Official terms dictionary, 135 lines)
 - ✅ **ARCHITECTURE_REFERENCE.md** (Detailed technical guide with diagrams)
@@ -47,52 +53,71 @@ Quick Status, Current Focus, Recent Changes, Next Steps
 **Blockers:** NONE
 
 **Next Decision Point:**
-Apply architectural governance to existing codebase - update docs/code to use canonical terms
+**CRITICAL CHOICE:** Phase 2 (governance) vs Phase 2.5 (self-learning) - see CLP_001_INTEGRATION_PLAN.md
 
 **Achievement Unlocked:**
 - ✅ Phase 1: Infrastructure Complete (8 weeks, production-ready)
-- ✅ Architectural Drift Identified & Researched (Dual research approach)
 - ✅ Canonical Architecture Established (Hexagonal + MAPE-K + 3 metaphors)
 - ✅ Foundation Docs Created (ADR-001, Terminology, Reference, Metaphor Guide)
+- ✅ **NEW:** Self-Learning Integration Plan (CLP-001 roadmap, 7 slices mapped)
 
 ---
 
 # 🎯 NEXT STEPS (Choose One)
 
-**Context:** Phase 1 complete. Architecture drift identified and foundation docs created.  
-**Decision:** How to apply canonical architecture to existing codebase.
+**Context:** CLP-001 Integration Plan complete (412 lines).  
+**Decision:** Start Phase 2.5 (Self-Learning) NOW or complete Phase 2 (governance) first?
 
-**Option A: Apply Architecture to Codebase (60-90 min)** 📐
-- **Goal:** Update existing docs/code to use canonical terms
+**Option A: Slice 2.5.2 - LHO Database Schema (45 min)** 🚀 ⭐ RECOMMENDED
+- **Goal:** Foundation for self-learning - structured storage for learned rules
+- **Why Now:** 
+  - Infrastructure ready (Qdrant operational ✅)
+  - Quick win (visible progress in < 1 hour)
+  - High ROI (enables Judge/Teacher/Librarian pipeline)
 - **Tasks:**
-  1. Scan all .md files for forbidden terms (`"Semantic Microkernel"`, `"The Brain"`, `"The Hands"`)
-  2. Create migration script (old term → new canonical term)
-  3. Update key docs: project-brief.md, research files, protocols
-  4. Add ARCHITECTURAL_IRON_LAW section to Project Instructions
-  5. Update Protocol 1 with Anti-Drift Checks
-- **Output:** Consistent terminology across entire codebase
-- **Risk:** Medium time investment, but critical for preventing future drift
+  1. Create Qdrant collection `lhos` (vector_size=1536)
+  2. Define LHO JSON schema (id, title, trigger, strategy, priority)
+  3. Test: Manual insert LHO-001 ("Always use Python for CSVs")
+  4. Test: Query by keyword "CSV" → Retrieve LHO-001 ✅
+- **Output:** `life-graph/schemas/lho_schema.json` + Qdrant collection ready
+- **Next:** Slice 2.5.3 (Judge Agent) - automated error detection
 
-**Option B: Add Architectural Enforcement (45 min)** 🔒
-- **Goal:** Prevent future drift automatically
+**Option B: Slice 2.5.3 - Judge Agent Workflow (60 min)** ⚖️
+- **Goal:** Automated error detection (Faux Pas scanner)
+- **Prerequisite:** Requires LHO schema (Option A)
 - **Tasks:**
-  1. Create .vale/ directory with terminology rules
-  2. Add vale pre-commit hook (blocks forbidden terms)
-  3. Update Project Instructions with enforcement protocol
-  4. Test: Try to commit doc with "Semantic Microkernel" → should block
-- **Output:** Automated enforcement, self-documenting violations
-- **Risk:** Low (Vale may need config tweaking)
+  1. n8n workflow: Cron trigger (every 6 hours)
+  2. Read EVENT_TIMELINE.jsonl (last 6 hours)
+  3. HTTP Request → GPT-4o (Judge prompt)
+  4. Write FauxPas_Report.json
+  5. Test: Force error → Verify detection ✅
+- **Output:** Automated error reports in `truth-layer/drift/faux_pas/`
+- **Next:** Slice 2.5.4 (Teacher Agent) - convert errors to lessons
 
-**Option C: Quick Wins First - Update High-Impact Docs (30 min)** ⚡
-- **Goal:** Fix most visible drift points without full migration
+**Option C: Complete Phase 2 First - Vale Enforcement (45 min)** 🔒
+- **Goal:** Automated terminology drift prevention
 - **Tasks:**
-  1. Update project-brief.md (user-facing, uses forbidden terms)
-  2. Update START_HERE.md (first thing new Claude sees)
-  3. Update Project Instructions header (add ARCHITECTURAL_IRON_LAW)
-- **Output:** Core docs aligned, rest can wait
-- **Risk:** Low, leaves some drift in research files (acceptable for now)
+  1. Install Vale CLI (chocolatey)
+  2. Create .vale/ rules (forbidden terms from ADR-001)
+  3. Add pre-commit hook
+  4. Test: Commit with "Semantic Microkernel" → blocked ✅
+- **Output:** Drift prevention on autopilot
+- **Trade-off:** Delays high-value self-learning work
 
-**Recommendation:** Start with **Option C** (quick wins), then **Option B** (enforcement), defer **Option A** (full migration) to future slice.
+**Option D: Read Full Integration Plan** 📖 (15 min)
+- **File:** `memory-bank/docs/CLP_001_INTEGRATION_PLAN.md` (412 lines)
+- **Sections:**
+  - Current State Mapping (what we have)
+  - Gap Analysis (what's missing)
+  - Integration Architecture (how it fits)
+  - Phasing Decision (why Phase 2.5 now)
+  - 7-Slice Roadmap (detailed implementation)
+- **Benefit:** Full context before deciding
+
+**Recommendation:** **Option A** (LHO Schema) - foundation for all learning, quick win, ADHD-friendly.
+
+**Strategic Note (from Integration Plan):**
+> "Self-learning has compounding returns - every LHO makes system smarter forever. Vale enforcement is 'nice to have', self-learning is transformative. Infrastructure is ready (n8n + Qdrant operational). Start Phase 2.5 now."
 
 ---
 
@@ -126,6 +151,52 @@ Email automation working end-to-end:
 ---
 
 # RECENT CHANGES
+
+**2025-12-04 | Slice 2.5: CLP-001 Integration Plan** ✅
+- **Achievement:** Self-learning architecture roadmap complete (Phase 2.5)
+- **Research Analysis:**
+  - 3 papers synthesized: Cognitive Self (LHOs, Frustration Index), CLP-001 Spec (Judge/Teacher/Librarian), CIP (Langfuse, DSPy)
+  - Mapped to AI Life OS: Fast Loop (existing MAPE-K) + Slow Loop (new learning agents)
+- **Gap Analysis:**
+  - Missing: Judge/Teacher/Librarian agents, LHO database, Context Manager (JIT injection)
+  - Ready: n8n + Qdrant + EVENT_TIMELINE.jsonl (all prerequisites operational)
+- **Integration Architecture:**
+  - CLP-001 fits naturally into MAPE-K (Meta-MAPE-K for learning)
+  - Hexagonal pattern preserved (Application Core + Adapters)
+  - n8n workflows: Slow Loop orchestration (Judge → Teacher → Librarian)
+  - Qdrant: LHO storage with vector search
+- **Phasing Decision:** **Recommend Phase 2.5 NOW** (vs complete Phase 2 first)
+  - Rationale: Infrastructure ready, high ROI (compounding learning), ADHD-friendly (exciting > tedious)
+- **7-Slice Roadmap:**
+  1. Slice 2.5.1: Langfuse (optional - structured telemetry)
+  2. Slice 2.5.2: LHO Database Schema (Qdrant collection + JSON schema) ⭐
+  3. Slice 2.5.3: Judge Agent (n8n workflow, automated error detection)
+  4. Slice 2.5.4: Teacher Agent (error → LHO synthesis)
+  5. Slice 2.5.5: Librarian Agent (LHO indexing + deduplication)
+  6. Slice 2.5.6: Context Manager (JIT LHO injection)
+  7. Slice 2.5.7: End-to-End Test (prove system learns)
+- **Success Metrics:** Error recurrence rate < 10%, LHO database ≥ 5 rules, user reports "stopped repeating errors"
+- **Files:** memory-bank/docs/CLP_001_INTEGRATION_PLAN.md (412 lines)
+- **Duration:** ~90 min (analysis 45 min, documentation 45 min)
+- **Next:** Slice 2.5.2 (LHO Schema) - foundation for self-learning
+
+**2025-12-04 | Slice 2.1: Apply Canonical Terms to Codebase** ✅
+- **Achievement:** Zero forbidden terms in production docs
+- **Updated Files:** (6 total)
+  - project-brief.md: Backticks for deprecated term warnings
+  - START_HERE.md: Reordered examples (good → bad, not bad → good)
+  - LIFE_GRAPH_SCHEMA.md: "human brain" (biological) not "The Brain" (architectural)
+  - METAPHOR_GUIDE.md: "you're still in control" not "you're still the brain"
+  - 01-active-context.md: Backticks for forbidden term citations
+  - Project Instructions: Prominent canonical terminology warning at top
+- **Scan Results:**
+  - "Semantic Microkernel": 17 instances (most in "DO NOT USE" tables ✅)
+  - "The Brain": 7 instances (most in tables ✅)
+  - "The Hands": 5 instances (most in tables ✅)
+- **Research files**: Intentionally left unchanged (deprecated terms documented as historical)
+- **Git:** f49aac0 refactor(terminology): Apply canonical terms from ADR-001
+- **Duration:** ~45 min (Slice 2.1)
+- **Next:** Slice 2.2 - Vale enforcement (automated drift prevention)
 
 **2025-12-04 | DateTime Tool for Accurate Calculations** ✅
 - **Achievement:** Solved date calculation errors (October 2023 was "13 months" → actually 26 months!)
