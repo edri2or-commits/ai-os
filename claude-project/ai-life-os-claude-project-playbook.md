@@ -348,6 +348,70 @@ Claude should flag this risk when:
 **Action:**  
 Propose: "This file is large. I'll use surgical edits (str_replace) instead of full rewrite to avoid context overflow. OK?"
 
+#### AP-003: Requesting Manual Technical Steps from User
+
+**Incident:** 2025-12-04, Judge Agent GPT-5.1 Upgrade  
+**Symptom:** Claude asked user to manually import workflow to n8n, configure API key, test execution, and activate workflow
+
+**User Feedback:**  
+"מה אני עובד אצלך?" - User correctly identified this as a regression to asking them to perform technical work that the system should automate.
+
+**Root Cause:**  
+- Claude reverted to old pattern of listing manual steps for user
+- Forgot that AI Life OS philosophy is: system does ALL work, user only approves
+- Did not explore CLI automation options before falling back to manual instructions
+
+**Systemic Pattern:**  
+Asking user to perform technical steps (UI clicks, file operations, configuration) that can be automated via CLI, scripts, or Docker operations.
+
+**Solution Strategy: "Automation Until Security Boundary"**
+
+**Never:**  
+- Ask user to: open UI, click buttons, copy-paste, drag files
+- Provide step-by-step manual instructions for technical tasks
+- Assume "manual is easier" without trying automation first
+
+**Always:**  
+1. **CLI First:** Try Docker exec, PowerShell scripts, API calls before UI
+2. **Security Boundary:** ONLY ask for manual input when it involves passwords/API keys
+3. **Automation Scripts:** Create reusable scripts (e.g., setup_*.ps1) for future use
+4. **Zero Manual Work:** Default mindset is "I will do this automatically"
+
+**Example (Good Practice):**
+```markdown
+# Instead of:
+"אנא:
+1. פתח n8n: http://localhost:5678
+2. לחץ על Import workflow
+3. בחר את הקובץ judge_agent.json
+4. הגדר API key..."
+→ USER FRUSTRATED
+
+# Do this:
+docker cp judge_agent.json n8n-production:/tmp/
+docker exec n8n-production n8n import:workflow --input=/tmp/judge_agent.json
+# Open browser
+[automatic browser open]
+"הכל מוכן! רק צריך הגדרה חד-פעמית של API key (2 דקות, סיבת אבטחה)"
+→ USER HAPPY
+```
+
+**Detection Trigger:**  
+Claude should detect this anti-pattern when:
+- About to write numbered steps for user to perform
+- Steps involve: "open", "click", "navigate to", "copy", "paste"
+- Task is technical (not creative/approval/decision-making)
+
+**Action:**  
+1. Stop and ask: "Can I automate this via CLI/Docker/PowerShell?"
+2. If yes → implement automation
+3. If no → verify it truly requires human judgment (not just technical execution)
+4. If security boundary (passwords) → explain why manual step is needed
+
+**Related:**
+- BP-003: Docker CLI Over UI Automation
+- Research: Automation philosophy, ADHD friction reduction
+
 ---
 
 ## 8. Incident Response Protocol
@@ -732,6 +796,53 @@ This section documents **positive patterns** we've discovered that work well. Op
 - Solves: Attempted use of n8n for Windows-native file system tasks
 - Trade-off: Multiple scheduling systems (Task Scheduler + n8n) instead of unified platform
 - ADHD consideration: Two systems = context switching, but reliability > unified-but-broken
+
+#### BP-003: Docker CLI Automation Over UI Automation
+
+**Context:** When deploying workflows or configuring systems in Docker containers (n8n, databases, automation platforms)
+
+**Pattern:**
+- **First Choice:** CLI commands via Docker exec (e.g., `docker exec container command`)
+- **Second Choice:** API calls (if available)
+- **Last Resort:** UI automation (Windows-MCP clicks) - only if no other option exists
+
+**Benefit:**
+- **Speed:** CLI commands execute in <1 second vs. UI automation taking 10-30 seconds
+- **Reliability:** CLI is deterministic, UI automation is brittle (breaks on UI changes)
+- **Repeatability:** Scripts can be reused, UI automation requires screen recording/debugging
+- **Windows Native:** No encoding issues (emojis, special chars) that plague PowerShell scripts
+
+**Example:**
+```powershell
+# GOOD: CLI Automation (Judge Agent deployment)
+docker cp judge_agent.json n8n-production:/tmp/
+docker exec n8n-production n8n import:workflow --input=/tmp/judge_agent.json
+# Output: "Successfully imported 1 workflow." ✅
+# Time: 2 seconds
+
+# BAD: UI Automation
+Windows-MCP:State-Tool  # 5 seconds
+Windows-MCP:Click-Tool [coordinates]  # 3 seconds
+Windows-MCP:Type-Tool "workflow name"  # 5 seconds
+Windows-MCP:Click-Tool [upload button]  # 3 seconds
+# Total: 16+ seconds, breaks if UI changes
+```
+
+**When CLI is Available:**
+- n8n: `n8n import:workflow`, `n8n export:workflow`, `n8n execute:workflow`
+- Docker: `docker cp`, `docker exec`, `docker logs`
+- Git: `git commit`, `git push` (via subprocess, not UI)
+- Databases: `psql -c`, `mongo --eval` (direct SQL/commands)
+
+**When UI is Justified:**
+- ONE-TIME password/API key entry (security boundary)
+- Visual configuration that lacks CLI equivalent
+- Testing UI functionality itself
+
+**Related:**
+- AP-003: Requesting Manual Technical Steps
+- Research: Automation philosophy, Windows Docker integration
+- ADHD consideration: Fast, reliable automation = low activation energy
 
 **Structure for each:**
 ```markdown

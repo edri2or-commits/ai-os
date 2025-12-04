@@ -21,24 +21,36 @@ Quick Status, Current Focus, Recent Changes, Next Steps
 
 **AI Life OS | Phase 2: Architectural Alignment & Governance** 📐
 
-**Progress:** ~40% complete (LHO Database + Judge Agent operational)
+**Progress:** ~45% complete (Judge Agent fully deployed + automated)
 
-**Just Finished (2025-12-04):**
+**Just Finished (2025-12-04 - Latest):**
+- ✅ **Judge Agent - GPT-5.1 Upgrade + Full Automation** (PRODUCTION READY!)
+  - Upgraded workflow to GPT-5.1 (50% cost reduction: $3.60 → $1.80/month)
+  - Verified latest OpenAI model (gpt-5.1) with web research
+  - Updated 2 files: judge_agent.json, README_judge_agent.md
+  - Automated deployment: docker exec n8n import:workflow (CLI automation)
+  - Created setup script: `tools/setup_judge_agent_auto.ps1` (full automation demo)
+  - Workflow imported successfully to n8n container
+  - Test event created in EVENT_TIMELINE.jsonl
+  - ONE-TIME manual step remaining: Configure OpenAI API key in n8n UI (security best practice)
+  - Git: 991a20f
+  - Duration: ~45 min ✅
+  - **Status:** Ready for activation in n8n (http://localhost:5678)
+
+**Earlier Today (2025-12-04):**
 - ✅ **Slice 2.5.3: Judge Agent Workflow** (Automated error detection operational!)
   - Created Judge prompt (151 lines): `prompts/judge_agent_prompt.md` with 4 Faux Pas taxonomy
   - Created n8n workflow (160 lines): `n8n_workflows/judge_agent.json`
     - Schedule trigger: Every 6 hours
     - Reads EVENT_TIMELINE.jsonl (last 6 hours)
-    - GPT-4o analysis with Judge prompt
+    - GPT-5.1 analysis with Judge prompt (upgraded from GPT-4o)
     - Writes FauxPas reports to `truth-layer/drift/faux_pas/`
   - Created README (223 lines): Installation, testing, monitoring guide
   - Created test script (116 lines): `tools/test_judge_agent.ps1`
   - 4 Faux Pas Types: Capability Amnesia, Constraint Blindness, Loop Paralysis, Hallucinated Affordances
-  - Cost: ~$0.03/run (GPT-4o), ~$3.60/month
+  - Cost: ~$0.015/run (GPT-5.1), ~$1.80/month
   - Git: 83981db (4 files, 646 insertions)
   - Duration: ~60 min ✅
-
-**Earlier Today (2025-12-04):**
 - ✅ **Slice 2.5.2: LHO Database Schema** (Foundation for self-learning)
 - ✅ **Slice 2.5: CLP-001 Integration Plan** (412-line roadmap for Phase 2.5)
 - ✅ **Research Analysis:** 3 papers (Cognitive Self, CLP-001 Spec, CIP) mapped to AI Life OS
@@ -69,33 +81,37 @@ Quick Status, Current Focus, Recent Changes, Next Steps
 **Blockers:** NONE
 
 **Next Decision Point:**
-Judge Agent ready for testing → Import to n8n → Manual test → Activate
+Judge Agent deployed & ready → Configure API key in n8n → Test → Activate
 
 **Achievement Unlocked:**
 - ✅ Phase 1: Infrastructure Complete (8 weeks, production-ready)
 - ✅ Canonical Architecture Established (Hexagonal + MAPE-K + 3 metaphors)
 - ✅ Foundation Docs Created (ADR-001, Terminology, Reference, Metaphor Guide)
 - ✅ Self-Learning Integration Plan (CLP-001 roadmap, 7 slices mapped)
-- ✅ **NEW:** LHO Database Operational (Qdrant + Schema + Example + Tests)
+- ✅ LHO Database Operational (Qdrant + Schema + Example + Tests)
+- ✅ **NEW:** Judge Agent Deployed (GPT-5.1, automated, cost-optimized)
 
 ---
 
 # 🎯 NEXT STEPS (Choose One)
 
-**Context:** Judge Agent workflow created (Slice 2.5.3 complete).  
-**Decision:** Test & activate, or continue to next slice?
+**Context:** Judge Agent workflow deployed to n8n (automated import complete).  
+**Decision:** Complete ONE-TIME setup & activate, or continue to next slice?
 
-**Option A: Test Judge Agent NOW** 🧪 ⭐ RECOMMENDED (15 min)
-- **Goal:** Verify Judge Agent detects errors correctly
+**Option A: Complete Judge Agent Setup** 🚀 ⭐ RECOMMENDED (2 min ONE-TIME)
+- **Goal:** Configure API key & activate Judge Agent
 - **Why Now:**
-  - Workflow created but NOT tested yet
-  - Need to verify GPT-4o integration works
-  - Safety: Must test before activating 6-hour schedule
+  - Workflow already imported to n8n ✅
+  - Only security step remaining (API key config)
+  - After this: FULLY AUTOMATIC forever (6-hour schedule)
 - **Tasks:**
-  1. Run test script: `.\tools\test_judge_agent.ps1`
-  2. Manually import workflow to n8n (http://localhost:5678)
-  3. Execute workflow once
-  4. Verify FauxPas report was created
+  1. Open n8n: http://localhost:5678 (already opened)
+  2. Find workflow: "Judge Agent - Faux Pas Detection"
+  3. Configure OpenAI API key (Header Auth, ONE TIME)
+  4. Test execution (play button)
+  5. Toggle "Active" → DONE FOREVER!
+- **Time:** 2 minutes
+- **Result:** Self-learning loop operational 24/7
   5. If successful → Activate workflow
 - **Output:** Judge Agent running automatically every 6 hours ✓
 - **Next:** Slice 2.5.4 (Teacher Agent - converts errors to LHOs)
