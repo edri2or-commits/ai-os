@@ -151,7 +151,7 @@ GOOD: "The system keeps your goals and logic separate from specific tools, so yo
 → Use **Hexagonal**: "Yes! n8n is just an Adapter. We can swap it without touching the Core logic."
 
 **"Why do I need to approve changes?"**
-→ Use **Cognitive Prosthetic**: "Think of it like a prosthetic limb - you're still the brain. The prosthetic extends your reach but you decide where to reach."
+→ Use **Cognitive Prosthetic**: "Think of it like a prosthetic limb - you're still in control. The prosthetic extends your reach but you decide where to reach."
 
 ---
 

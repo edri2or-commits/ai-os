@@ -7,13 +7,15 @@ Most slices do NOT require updating this file.
 ---
 ## TL;DR (20-second version)
 
-**What:** Building AI Life OS - a **Prosthetic Executive Cortex** for ADHD. Claude Desktop orchestrates MCP servers (file/git/Google/state) against a git-backed Truth Layer, with proactive drift detection and ADHD-friendly workflows.
+**What:** Building AI Life OS - a **Cognitive Prosthetic** for ADHD. Claude Desktop (Application Core) orchestrates MCP Adapters (filesystem/git/Google/n8n) against a git-backed Truth Layer, with MAPE-K autonomic loop (Observer/Reconciler/Executor) and ADHD-friendly workflows.
 
-**Platform:** Windows 11 + Claude Desktop + 4 MCP servers + n8n automation
+**Architecture:** Hexagonal (Ports & Adapters) + MAPE-K Control Loop (per ADR-001)
 
-**Duration:** 8-12 weeks, 4 phases, 16 small slices (~30-60 min each)
+**Platform:** Windows 11 + Claude Desktop + MCP servers + n8n automation + Docker
 
-**Current Status:** Phase 2 Core Infrastructure (~38% done) - Life Graph complete, Observer/Reconciler operational, Narrative Layer established
+**Duration:** 8-12 weeks, 4 phases, small slices (~30-60 min each)
+
+**Current Status:** Phase 2 Architectural Alignment (~15% done) - Foundation docs complete (ADR-001, Canonical Terminology, Architecture Reference, Metaphor Guide)
 
 **Your Role:** Mostly approve/review; Claude does planning, execution, documentation
 
@@ -32,20 +34,28 @@ Most slices do NOT require updating this file.
 
 ## Vision
 
-Build **AI Life OS** - a **Prosthetic Executive Cortex** for ADHD where:
+Build **AI Life OS** - a **Cognitive Prosthetic** for ADHD where:
 
-- **Claude Desktop** = "Head" (reasoning + orchestration)
-- **MCP servers** = "Hands" (file ops, git, Google Workspace, system state)
-- **Local Truth Layer** (git-backed files) = stable memory of the system
-- **Proactive Observer** (n8n) = continuous drift detection + reconciliation
+- **Application Core** (Claude Desktop) = reasoning + orchestration layer
+- **MCP Adapters** = Secondary Adapters implementing Ports (filesystem, git, Google Workspace, n8n)
+- **Truth Layer** (git-backed files) = persistent state + version control
+- **MAPE-K Control Loop** = autonomic behavior (Monitor/Analyze/Plan/Execute/Knowledge)
+  - Observer (Monitor) = drift detection
+  - Reconciler (Plan) = change request generation  
+  - Executor (Execute) = approved change application
 - **Memory Bank** (PARA + Life Graph) = structured personal knowledge
+- **n8n** = Dual-role Adapter (both Driving and Driven, per architecture)
 
 **Core Philosophy:**
 - User (with ADHD) mostly approves/reviews/answers questions
 - Claude does heavy lifting: planning, execution, documentation
 - System mostly builds and maintains itself
 
-?? **For WHY this system exists and core principles:** Read `memory-bank/00_The_Sovereign_AI_Manifesto.md`
+**Architecture:** Hexagonal (Ports & Adapters) as canonical pattern - see ADR-001
+
+📐 **For canonical architecture:** Read `memory-bank/docs/decisions/ADR-001-architectural-alignment.md`
+🔤 **For official terminology:** Read `memory-bank/docs/CANONICAL_TERMINOLOGY.md`
+❤️ **For WHY this system exists:** Read `memory-bank/00_The_Sovereign_AI_Manifesto.md`
 
 ---
 
@@ -69,24 +79,36 @@ Answers: "Why does this system exist?"
 
 **When to read:**
 - New to the project
-- Feeling lost ("������ �����")
+- Feeling lost ("������ �����")
 - Need to explain system to others
 - Questioning architectural decisions
 
 ### Layer 2: ADRs (WHY Technical Choices)
-?? **Directory:** `memory-bank/docs/decisions/`
+📐 **Directory:** `memory-bank/docs/decisions/`
 
 Answers: "Why did we choose technology X?"
 
 **Content:**
 - Architecture Decision Records (ADRs)
-- Format: Context ? Options ? Decision ? Justification ? Consequences
-- Each includes **ADHD Relevance** section
+- Format: Context → Options → Decision → Justification → Consequences
+- Each includes **ADHD Relevance** section where applicable
 - Energy State tracking (meta-cognition for decisions)
 
-**Example:** ADR-001 explains Git Truth Layer choice:
-- Why Git over Notion/PostgreSQL
-- ADHD benefits: safety net (impulsivity), visibility (object permanence), version history (externalized memory)
+**Key ADR:** ADR-001 (Architectural Alignment)
+- **Decision:** Hexagonal Architecture (Ports & Adapters) as PRIMARY pattern
+- **Secondary:** MAPE-K Control Loop for autonomic behavior  
+- **Rejects:** "Semantic Microkernel" (not canonical), "QAL Machine" (no reference)
+- **Authority:** Alistair Cockburn (Hexagonal), IBM (MAPE-K), Michael Nygard (ADR format)
+- **Companions:** 
+  - `CANONICAL_TERMINOLOGY.md` - Official terms dictionary (ONLY authoritative source)
+  - `ARCHITECTURE_REFERENCE.md` - Detailed technical guide (300+ lines)
+  - `METAPHOR_GUIDE.md` - When to use which metaphor
+
+**Why this matters:**
+- Prevents architectural drift (multiple competing metaphors)
+- Enables technology swapping (change n8n without rewriting Core)
+- Provides professional vocabulary (industry-standard patterns)
+- Enforces consistency (all decisions reference ADR-001)
 
 ### Layer 3: Design Guide (HOW to Build)
 ?? **File:** `docs/ATTENTION_CENTRIC_DESIGN.md`
@@ -188,40 +210,51 @@ These 3 layers connect:
 
 ### Research Families (Truth Sources)
 
-1. **Architecture:** Head/Hands/Truth/Nerves model, Chat→Spec→Change workflow
-2. **Claude/MCP/Tools:** How Claude Desktop interacts with tools, safety, limits
-3. **Cognition/ADHD:** Executive function, working memory, friction reduction
+1. **Architecture:** Hexagonal (Ports & Adapters), MAPE-K Loop, Chat→Spec→Change workflow
+2. **Claude/MCP/Tools:** How Application Core interacts with MCP Adapters, safety, limits
+3. **Cognition/ADHD:** Executive function, working memory, friction reduction, Cognitive Prosthetic
 4. **Infrastructure:** Windows + WSL2 + Docker + n8n stability
-5. **Safety/Governance:** Drift prevention, circuit breakers, HITL
-6. **Memory/RAG:** Truth Layer, Memory Bank, vector search
+5. **Safety/Governance:** Drift prevention, circuit breakers, HITL, ADRs
+6. **Memory/Life Graph:** Truth Layer, Memory Bank (PARA), Life Graph entities
 
 **Research Location:** `C:\Users\edri2\Desktop\AI\ai-os\claude-project\research_claude\`
+
+**⚠️ CRITICAL TERMINOLOGY NOTE:**
+All research docs were written BEFORE ADR-001 (Architectural Alignment). They may use old terms like:
+- "The Brain" / "The Head" → Use "Application Core" instead
+- "The Hands" → Use "Automation Engine (n8n)" or "MCP Adapters" instead
+- "Semantic Microkernel" → Use "Application Core" (ADR-001 rejects this term)
+
+**When reading research:** Mentally translate old terms to canonical terms from `CANONICAL_TERMINOLOGY.md`
 
 ---
 
 ## Success Criteria
 
-**Phase 1 (Investigation & Cleanup):** ✅ 3/10 slices complete
-- Zero unclear components in active code path
-- Zero duplicates, zero drift
-- Legacy components safely archived
+**Phase 1 (Infrastructure Deployment):** ✅ COMPLETE
+- Observer operational (drift detection every 15 min)
+- Memory Bank Watchdog (Git → Qdrant)
+- Email Watcher (Gmail → Claude → Telegram)
+- Pre-commit hooks + validation (44 tests passing)
 
-**Phase 2 (Core Infrastructure):**
-- Memory Bank operational (PARA structure)
-- Proactive Observer running (drift detection every 15 min)
-- Circuit Breakers protecting system
+**Phase 2 (Architectural Alignment):** 🔄 IN PROGRESS (~15%)
+- ✅ Foundation docs complete (ADR-001, Terminology, Architecture, Metaphor)
+- 🔄 Apply canonical terms to codebase
+- 🔄 Add automated enforcement (Vale linter)
 
-**Phase 3 (Governance & Metrics):**
-- All 3 fitness metrics operational
-- Governance Dashboard functional
-- Zero drift for 7 consecutive days
+**Phase 3 (Real-World Automation):**
+- Choose 1-2 life flows for AI OS ownership
+- Email automation complete (already started in Phase 1)
+- Calendar management automation
+- Task integration with Life Graph
 
-**Phase 4 (Final Cleanup):**
-- All legacy components archived or documented
-- System self-maintains with minimal human intervention
+**Phase 4 (Autonomy & Self-Improvement):**
+- Meta-learning loops operational
+- System autonomously improves based on patterns
+- Minimal human intervention required
 
 ---
 
-**Last Updated:** 2025-12-01  
-**Current Phase:** Phase 2 (Core Infrastructure)  
-**Active Slice:** Just completed NAR-2 (Attention-Centric Design Guide)
+**Last Updated:** 2025-12-04  
+**Current Phase:** Phase 2 (Architectural Alignment)  
+**Active Slice:** Just completed Slice 2.0 (Foundation docs - ADR-001, Canonical Terminology, Architecture Reference, Metaphor Guide)

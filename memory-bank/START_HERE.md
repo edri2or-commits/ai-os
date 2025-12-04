@@ -77,7 +77,44 @@ Follow these steps in order:
 
 ---
 
-### Step 3: (Optional) Read Full History
+### Step 3: 🏛️ Understand the Architecture (NEW - CRITICAL)
+📐 **Files:** `memory-bank/docs/` (Architecture Foundation)
+
+**MANDATORY FOR ALL AI INSTANCES:**
+
+**Read FIRST (in order):**
+1. **`docs/decisions/ADR-001-architectural-alignment.md`**
+   - THE canonical architecture decision
+   - Hexagonal (primary) + MAPE-K (secondary)
+   - What we rejected and why ("Semantic Microkernel", "QAL Machine")
+
+2. **`docs/CANONICAL_TERMINOLOGY.md`**
+   - ONLY authoritative source for system terms
+   - Use ONLY these terms in all communication
+   - Forbidden terms list (violations = ADR breach)
+
+3. **`docs/METAPHOR_GUIDE.md`**
+   - When to use which metaphor (Hexagonal/Cognitive/LLM-OS)
+   - Decision matrix for technical vs human communication
+
+**Read when needed:**
+4. **`docs/ARCHITECTURE_REFERENCE.md`**
+   - Detailed technical guide (300+ lines)
+   - Component mapping, data flow examples
+   - Anti-patterns
+
+**Why this matters:**
+- Without reading these, you'll use wrong terms ("The Brain" instead of "Application Core")
+- All architectural decisions MUST reference ADR-001
+- This prevents drift back to inconsistent terminology
+
+**Time:** 10 minutes (ADR-001 + Terminology) = mandatory  
+**Time:** 5 minutes (Metaphor Guide) = recommended  
+**Time:** 15 minutes (Architecture Reference) = as-needed
+
+---
+
+### Step 4: (Optional) Read Full History
 ?? **File:** `memory-bank/02-progress.md`
 
 **Only if you need:**
@@ -88,7 +125,7 @@ Follow these steps in order:
 
 ---
 
-### Step 4: (Special Context) Active Work Handoffs
+### Step 5: (Special Context) Active Work Handoffs
 ?? **If working on specific subsystems, check for handoff docs:**
 
 **Validation Sprint:**
@@ -105,7 +142,7 @@ Follow these steps in order:
 
 ---
 
-### Step 5: ?? Research Corpus (13 Reports - FOR DEEP DIVES ONLY)
+### Step 6: 📖 Research Corpus (13 Reports - FOR DEEP DIVES ONLY)
 ?? **Location:** `claude-project/revolution-research/`
 
 **IMPORTANT: You don't need to read all 350 pages to start working!**
@@ -244,8 +281,11 @@ Once you're working, you can reference:
 - **Life Graph Schema:** `memory-bank/docs/LIFE_GRAPH_SCHEMA.md`
   - 6 entities, relationships, ADHD metadata
   
-- **Architecture:** `docs/ARCHITECTURE_METAPHOR.md`
-  - Head/Hands/Truth/Nerves metaphor (canonical)
+- **Architecture:** `docs/` (Foundation Documents)
+  - ADR-001: Canonical architecture decision (Hexagonal + MAPE-K)
+  - CANONICAL_TERMINOLOGY.md: Official terms (MANDATORY)
+  - ARCHITECTURE_REFERENCE.md: Technical guide
+  - METAPHOR_GUIDE.md: Communication guide
   
 - **Research Corpus:** `claude-project/research_claude/`
   - 18 research files organized in 7 families

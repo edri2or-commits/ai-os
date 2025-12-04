@@ -530,7 +530,7 @@ ADHD brains have **variable executive function** – the same person may have va
 
 **Why This Matters:**
 
-ADHD is neurochemically linked to **dopamine dysregulation**. Tasks with low subjective reward are **physiologically difficult to initiate**, not just "boring." The brain literally doesn't produce enough dopamine to sustain motivation.
+ADHD is neurochemically linked to **dopamine dysregulation**. Tasks with low subjective reward are **physiologically difficult to initiate**, not just "boring." The human brain literally doesn't produce enough dopamine to sustain motivation.
 
 **Dopamine Levels:**
 

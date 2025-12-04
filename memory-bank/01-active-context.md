@@ -65,7 +65,7 @@ Apply architectural governance to existing codebase - update docs/code to use ca
 **Option A: Apply Architecture to Codebase (60-90 min)** 📐
 - **Goal:** Update existing docs/code to use canonical terms
 - **Tasks:**
-  1. Scan all .md files for forbidden terms ("Semantic Microkernel", "The Brain", "The Hands")
+  1. Scan all .md files for forbidden terms (`"Semantic Microkernel"`, `"The Brain"`, `"The Hands"`)
   2. Create migration script (old term → new canonical term)
   3. Update key docs: project-brief.md, research files, protocols
   4. Add ARCHITECTURAL_IRON_LAW section to Project Instructions
