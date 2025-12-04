@@ -64,7 +64,7 @@
           "parameters": [
             {
               "name": "model",
-              "value": "gpt-4o"
+              "value": "gpt-5.1"
             },
             {
               "name": "messages",
@@ -82,11 +82,11 @@
         },
         "options": {}
       },
-      "name": "Call GPT-4o Judge",
+      "name": "Call GPT-5.1 Judge",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4,
       "position": [850, 300],
-      "id": "http-gpt4o"
+      "id": "http-gpt51"
     },
     {
       "parameters": {

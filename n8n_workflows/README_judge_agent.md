@@ -10,7 +10,7 @@ The Judge Agent is part of the Continuous Learning Protocol (CLP-001) Slow Loop.
 
 ## Prerequisites
 1. **n8n running** - `docker ps` should show `n8n-production` container
-2. **OpenAI API Key** - Required for GPT-4o Judge calls
+2. **OpenAI API Key** - Required for GPT-5.1 Judge calls
 3. **EVENT_TIMELINE.jsonl exists** - Created by Observer (runs every 15 min)
 
 ## Installation Steps
@@ -32,7 +32,7 @@ The Judge Agent is part of the Continuous Learning Protocol (CLP-001) Slow Loop.
    - Schedule Trigger (every 6 hours)
    - Read Timeline Events (last 6 hours)
    - Prepare Judge Prompt (load prompt template)
-   - Call GPT-4o Judge (analyze events)
+   - Call GPT-5.1 Judge (analyze events)
    - Write FauxPas Report (save to truth-layer/)
 
 ### Step 3: Test Manually (Before Activating)
@@ -120,13 +120,13 @@ The Judge Agent is part of the Continuous Learning Protocol (CLP-001) Slow Loop.
 ### 3. Prepare Judge Prompt
 - Loads: `prompts/judge_agent_prompt.md`
 - Appends: Events JSON
-- Output: Full prompt for GPT-4o
+- Output: Full prompt for GPT-5.1
 
-### 4. Call GPT-4o Judge
-- Model: `gpt-4o` (reasoning model, not completion)
+### 4. Call GPT-5.1 Judge
+- Model: `gpt-5.1` (adaptive reasoning model)
 - Temperature: 0.2 (low for consistency)
 - Response Format: JSON object (structured output)
-- Cost: ~$0.02-0.05 per analysis (depending on event count)
+- Cost: ~$0.01-0.02 per analysis (cheaper than GPT-4o)
 
 ### 5. Write FauxPas Report
 - Filename: `FP-YYYY-MM-DDTHH-MM-SS.json`
@@ -191,7 +191,7 @@ New-Item -ItemType File -Path "C:\Users\edri2\Desktop\AI\ai-os\truth-layer\timel
 **Normal:** If Observer hasn't detected drift, timeline might be empty
 **Solution:** Force an error (see Step 3) or wait for Observer to run
 
-### Issue: "GPT-4o returns empty faux_pas_detected"
+### Issue: "GPT-5.1 returns empty faux_pas_detected"
 **Normal:** Judge didn't find any learnable patterns (good!)
 **Expected:** Most runs should be empty (system is learning over time)
 
@@ -205,9 +205,9 @@ After Judge Agent is operational:
 The Judge Agent is the **observer** of the Slow Loop. It detects, but doesn't fix. That's Teacher's job!
 
 ## Cost Estimate
-- **Per Run:** ~$0.02-0.05 (GPT-4o analysis)
-- **Per Day:** 4 runs × $0.03 = ~$0.12/day
-- **Per Month:** ~$3.60/month
+- **Per Run:** ~$0.01-0.02 (GPT-5.1 analysis, 50% cheaper than GPT-4o)
+- **Per Day:** 4 runs × $0.015 = ~$0.06/day
+- **Per Month:** ~$1.80/month
 - **Note:** Only charges when events exist (empty timeline = free run)
 
 ## Files Modified
