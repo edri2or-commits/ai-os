@@ -21,18 +21,25 @@ Quick Status, Current Focus, Recent Changes, Next Steps
 
 **AI Life OS | Phase 2: Architectural Alignment & Governance** 📐
 
-**Progress:** ~30% complete (Foundation + LHO Database operational)
+**Progress:** ~40% complete (LHO Database + Judge Agent operational)
 
 **Just Finished (2025-12-04):**
-- ✅ **Slice 2.5.2: LHO Database Schema** (Foundation for self-learning complete!)
-  - Created JSON schema (62 lines): `life-graph/schemas/lho_schema.json`
-  - Created Qdrant collection `lhos` (1536-dim vectors, COSINE distance)
-  - Inserted LHO-001 (example: "Always use Python tool for CSV parsing")
-  - Tested retrieval (payload filtering by tags works ✓)
-  - Documentation: `truth-layer/lhos/README.md` (146 lines)
-  - Tools: create_lho_collection.py, insert_lho_001.py, test_lho_retrieval.py
+- ✅ **Slice 2.5.3: Judge Agent Workflow** (Automated error detection operational!)
+  - Created Judge prompt (151 lines): `prompts/judge_agent_prompt.md` with 4 Faux Pas taxonomy
+  - Created n8n workflow (160 lines): `n8n_workflows/judge_agent.json`
+    - Schedule trigger: Every 6 hours
+    - Reads EVENT_TIMELINE.jsonl (last 6 hours)
+    - GPT-4o analysis with Judge prompt
+    - Writes FauxPas reports to `truth-layer/drift/faux_pas/`
+  - Created README (223 lines): Installation, testing, monitoring guide
+  - Created test script (116 lines): `tools/test_judge_agent.ps1`
+  - 4 Faux Pas Types: Capability Amnesia, Constraint Blindness, Loop Paralysis, Hallucinated Affordances
+  - Cost: ~$0.03/run (GPT-4o), ~$3.60/month
+  - Git: 83981db (4 files, 646 insertions)
+  - Duration: ~60 min ✅
 
 **Earlier Today (2025-12-04):**
+- ✅ **Slice 2.5.2: LHO Database Schema** (Foundation for self-learning)
 - ✅ **Slice 2.5: CLP-001 Integration Plan** (412-line roadmap for Phase 2.5)
 - ✅ **Research Analysis:** 3 papers (Cognitive Self, CLP-001 Spec, CIP) mapped to AI Life OS
 - ✅ **Gap Analysis:** Identified missing components (Judge/Teacher/Librarian, LHO database)
@@ -62,7 +69,7 @@ Quick Status, Current Focus, Recent Changes, Next Steps
 **Blockers:** NONE
 
 **Next Decision Point:**
-LHO Database ready → Start Slow Loop (Judge Agent)
+Judge Agent ready for testing → Import to n8n → Manual test → Activate
 
 **Achievement Unlocked:**
 - ✅ Phase 1: Infrastructure Complete (8 weeks, production-ready)
@@ -75,85 +82,48 @@ LHO Database ready → Start Slow Loop (Judge Agent)
 
 # 🎯 NEXT STEPS (Choose One)
 
-**Context:** LHO Database operational (Slice 2.5.2 complete).  
-**Decision:** Continue Phase 2.5 Slow Loop or pause?
+**Context:** Judge Agent workflow created (Slice 2.5.3 complete).  
+**Decision:** Test & activate, or continue to next slice?
 
-**Option A: Slice 2.5.3 - Judge Agent Workflow (60 min)** ⚖️ ⭐ MOMENTUM
-- **Goal:** Automated error detection (scan EVENT_TIMELINE.jsonl for Faux Pas)
+**Option A: Test Judge Agent NOW** 🧪 ⭐ RECOMMENDED (15 min)
+- **Goal:** Verify Judge Agent detects errors correctly
 - **Why Now:**
-  - LHO Database ready ✓
-  - Momentum: Just completed foundation in 45 min
-  - Next logical step: Feed the database with real errors
+  - Workflow created but NOT tested yet
+  - Need to verify GPT-4o integration works
+  - Safety: Must test before activating 6-hour schedule
 - **Tasks:**
-  1. n8n workflow: Cron trigger (every 6 hours)
-  2. Read EVENT_TIMELINE.jsonl (last 6 hours with jq filter)
-  3. HTTP Request → GPT-4o (Judge prompt with Faux Pas taxonomy)
-  4. Write FauxPas_Report to `truth-layer/drift/faux_pas/YYYY-MM-DD-HH.json`
-  5. Test: Force error (modify forbidden file) → Wait 6 hours OR manually trigger → Verify detection ✓
-- **Output:** Automated FauxPas_Reports (foundation for Teacher Agent)
-- **Next:** Slice 2.5.4 (Teacher Agent - convert errors to LHOs)
+  1. Run test script: `.\tools\test_judge_agent.ps1`
+  2. Manually import workflow to n8n (http://localhost:5678)
+  3. Execute workflow once
+  4. Verify FauxPas report was created
+  5. If successful → Activate workflow
+- **Output:** Judge Agent running automatically every 6 hours ✓
+- **Next:** Slice 2.5.4 (Teacher Agent - converts errors to LHOs)
 
-**Option B: Quick Break** ☕ (5-10 min)
-- Slice 2.5.2 = 45 min focused work
-- Stretch, water, reset
-- Come back fresh for Judge Agent
-
-**Option C: Retrospective** 📊 (15 min)
-- What worked: Quick win strategy (foundation first), no questions (direct action)
-- What's next: Judge Agent will make LHO database useful
-- Document pattern: "Schema → Insert → Test → Use"
-
-**Recommendation:** **Option B** (quick break), then **Option A** (Judge Agent).  
-**Rationale:** Maintain momentum, but avoid burnout. Judge Agent is natural next step.
-- **Goal:** Foundation for self-learning - structured storage for learned rules
-- **Why Now:** 
-  - Infrastructure ready (Qdrant operational ✅)
-  - Quick win (visible progress in < 1 hour)
-  - High ROI (enables Judge/Teacher/Librarian pipeline)
+**Option B: Slice 2.5.4 - Teacher Agent Workflow (60 min)** 👨‍🏫
+- **Goal:** Automated LHO generation from FauxPas reports
+- **Prerequisites:** Requires working Judge Agent (Option A first)
 - **Tasks:**
-  1. Create Qdrant collection `lhos` (vector_size=1536)
-  2. Define LHO JSON schema (id, title, trigger, strategy, priority)
-  3. Test: Manual insert LHO-001 ("Always use Python for CSVs")
-  4. Test: Query by keyword "CSV" → Retrieve LHO-001 ✅
-- **Output:** `life-graph/schemas/lho_schema.json` + Qdrant collection ready
-- **Next:** Slice 2.5.3 (Judge Agent) - automated error detection
+  1. Extend Judge workflow: IF errors found → trigger Teacher
+  2. Node: HTTP Request → Anthropic API (Claude 3.5 Sonnet)
+  3. Teacher Prompt: "Create LHO from this error report (JSON schema)"
+  4. Write LHO to `truth-layer/lhos/LHO-{timestamp}.json`
+  5. Test: Force error → Judge detects → Teacher creates LHO ✅
+- **Output:** Automated lesson generation
+- **Next:** Slice 2.5.5 (Librarian - index LHOs in Qdrant)
 
-**Option B: Slice 2.5.3 - Judge Agent Workflow (60 min)** ⚖️
-- **Goal:** Automated error detection (Faux Pas scanner)
-- **Prerequisite:** Requires LHO schema (Option A)
-- **Tasks:**
-  1. n8n workflow: Cron trigger (every 6 hours)
-  2. Read EVENT_TIMELINE.jsonl (last 6 hours)
-  3. HTTP Request → GPT-4o (Judge prompt)
-  4. Write FauxPas_Report.json
-  5. Test: Force error → Verify detection ✅
-- **Output:** Automated error reports in `truth-layer/drift/faux_pas/`
-- **Next:** Slice 2.5.4 (Teacher Agent) - convert errors to lessons
+**Option C: Quick Break** ☕ (5-10 min)
+- Slice 2.5.3 = 60 min focused work
+- 3 slices today (2.5, 2.5.2, 2.5.3) = ~3 hours total
+- Strong momentum, but rest prevents burnout
 
-**Option C: Complete Phase 2 First - Vale Enforcement (45 min)** 🔒
-- **Goal:** Automated terminology drift prevention
-- **Tasks:**
-  1. Install Vale CLI (chocolatey)
-  2. Create .vale/ rules (forbidden terms from ADR-001)
-  3. Add pre-commit hook
-  4. Test: Commit with "Semantic Microkernel" → blocked ✅
-- **Output:** Drift prevention on autopilot
-- **Trade-off:** Delays high-value self-learning work
+**Option D: Continue Previous Context** 
+- Real-Time Knowledge Alignment plan exists (Phase 2, memory-bank/docs/)
+- Vale enforcement (Phase 2 completion)
+- Task Scheduler Dashboard (monitoring)
 
-**Option D: Read Full Integration Plan** 📖 (15 min)
-- **File:** `memory-bank/docs/CLP_001_INTEGRATION_PLAN.md` (412 lines)
-- **Sections:**
-  - Current State Mapping (what we have)
-  - Gap Analysis (what's missing)
-  - Integration Architecture (how it fits)
-  - Phasing Decision (why Phase 2.5 now)
-  - 7-Slice Roadmap (detailed implementation)
-- **Benefit:** Full context before deciding
-
-**Recommendation:** **Option A** (LHO Schema) - foundation for all learning, quick win, ADHD-friendly.
-
-**Strategic Note (from Integration Plan):**
-> "Self-learning has compounding returns - every LHO makes system smarter forever. Vale enforcement is 'nice to have', self-learning is transformative. Infrastructure is ready (n8n + Qdrant operational). Start Phase 2.5 now."
+**Recommendation:** **Option A** (Test Judge Agent NOW).  
+**Rationale:** Always test before activate. 15 min investment prevents 6-hour loop of broken workflow. Safety first!
 
 ---
 
