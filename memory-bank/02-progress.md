@@ -988,3 +988,101 @@ All infrastructure goals met:
 
 ---
 
+
+
+---
+
+## Slice 2.0: Architectural Alignment Foundation (2025-12-04)
+
+**Duration:** 90 minutes  
+**Phase:** Phase 2 - Architectural Alignment & Governance  
+**Status:** ✅ COMPLETE
+
+### Context
+After completing Phase 1 infrastructure, discovered architectural drift: multiple competing metaphors ("Semantic Microkernel", "Cognitive Prosthetic", "Hexagonal") and inconsistent terminology across research docs. Risk of "Big Ball of Mud" without canonical reference.
+
+### Problem Statement
+- **Drift:** Same concepts called different names in different docs
+- **Competing Metaphors:** 3+ architectural models mixed together
+- **No Enforcement:** Nothing prevents inventing new terms
+- **Solo Developer Risk:** No team consensus to maintain consistency
+
+### Approach
+**Dual Research Strategy:**
+1. GPT Deep Research: Professional patterns (Hexagonal, MAPE-K, ADR standards)
+2. Claude Web Research: Canonical sources (Wikipedia, academic papers, industry blogs)
+3. Comparative Analysis: Reconcile findings
+4. Decision: ADR-001 with canonical architecture
+
+### Deliverables
+1. **ADR-001-architectural-alignment.md** (128 lines)
+   - Decision: Hexagonal (primary) + MAPE-K (secondary)
+   - Rejects: "Semantic Microkernel", "QAL Machine"
+   - Authority: Alistair Cockburn + IBM Autonomic Computing
+
+2. **CANONICAL_TERMINOLOGY.md** (135 lines)
+   - Official terms dictionary (ONLY authoritative source)
+   - Migration map (old → new terms)
+   - Forbidden terms list (ADR violation triggers)
+   - Enforcement rules
+
+3. **ARCHITECTURE_REFERENCE.md** (300+ lines)
+   - Detailed technical guide
+   - Hexagonal layers with diagrams
+   - Component mapping (Core, Ports, Adapters)
+   - MAPE-K integration
+   - Data flow examples
+   - Anti-patterns
+
+4. **METAPHOR_GUIDE.md** (207 lines)
+   - When to use which metaphor
+   - Hexagonal (technical), Cognitive (human), LLM-OS (resource)
+   - Decision matrix
+   - Common mistakes
+   - Forbidden hybrid terms
+
+### Key Insights
+1. **Hexagonal Perfect Fit:** Technology-agnostic Core + swappable Adapters = exactly what we need
+2. **MCP = Universal Adapter:** JSON-RPC standard implements Port pattern naturally
+3. **MAPE-K for Autonomy:** IBM's Monitor-Analyze-Plan-Execute-Knowledge = Observer/Reconciler/Executor
+4. **"Semantic Microkernel" Not Canonical:** No academic/industry reference found
+5. **Three Metaphors Coexist:** Technical (Hexagonal) + Human (Cognitive) + Resource (LLM-OS)
+
+### Research Sources
+- GPT Deep Research Report (2025-12-04)
+- Alistair Cockburn (2005) - Hexagonal Architecture
+- IBM (2001) - MAPE-K / Autonomic Computing
+- Michael Nygard (2011) - ADR standard
+- Wikipedia: Microkernel, Cognitive Architectures
+- Industry: Netflix, AWS Prescriptive Guidance
+
+### Decisions Made
+1. ✅ Hexagonal = PRIMARY architecture
+2. ✅ MAPE-K = SECONDARY pattern (for autonomic behavior)
+3. ✅ Three metaphors = COMMUNICATION tools (not architecture)
+4. ❌ Reject "Semantic Microkernel" (not canonical)
+5. ❌ Reject "QAL Machine" (no established reference)
+
+### Meta-Learning Triggers
+- **Trigger D (Research Gap):** Multiple "not sure" moments → research slice successful
+- **Trigger F (Protocol Created):** Anti-Drift Protocol established
+- **Trigger C (User Surprise):** Drift discovered → proactive diagnosis
+
+### Technical Debt
+- **TD-001:** Existing docs still use old terms (migration needed)
+- **TD-002:** No automated enforcement yet (Vale linter pending)
+
+### Next Steps (from 01-active-context.md)
+**Option A:** Apply architecture to codebase (migrate all docs) - 60-90 min  
+**Option B:** Add automated enforcement (Vale pre-commit) - 45 min  
+**Option C:** Quick wins (update high-impact docs only) - 30 min
+
+**Recommendation:** Option C → B → A (quick wins, then enforce, defer full migration)
+
+### Success Metrics
+✅ Single source of truth (ADR-001)  
+✅ Professional terminology (Hexagonal, MAPE-K)  
+✅ Clear metaphor boundaries (3 guides)  
+✅ Enforcement rules defined (ready for automation)
+
+---
