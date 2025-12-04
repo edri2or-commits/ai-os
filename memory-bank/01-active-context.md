@@ -93,6 +93,47 @@ Judge Agent deployed & ready → Configure API key in n8n → Test → Activate
 
 ---
 
+# 📚 THE BIG PICTURE: Research → Implementation
+
+## Three Foundation Papers (Project Documents)
+
+**1. Dual Truth & Observer** (`08_ai_os_current_state_snapshot.md`)
+- **Core Idea:** System needs 2 truth layers - Static (what should be) + Observed (what actually is)
+- **Implementation:** ✅ Observer (runs every 15min, writes OBSERVED_STATE.json)
+
+**2. Agentic Kernel** (`09_agentic_kernel_claude_desktop_mcp.md`)
+- **Core Idea:** Claude Desktop = OS (CPU + Bus + Peripherals + Storage)
+- **Implementation:** ✅ Architecture established (Hexagonal + MAPE-K)
+
+**3. Windows Playbook** (`10_claude_desktop_agentic_kernel_playbook_windows.md`)
+- **Core Idea:** How to build on Windows (Docker + n8n + Truth Layer + Security)
+- **Implementation:** ✅ Docker services, n8n automation, pre-commit hooks
+
+## The Self-Learning Loop (Current Focus)
+
+**What's Built:**
+```
+Observer (15min) → EVENT_TIMELINE.jsonl → Judge Agent (6hr) → FauxPas Reports
+                                              ↓
+                                         [NEXT: Teacher Agent]
+                                              ↓
+                                         LHO Database (Qdrant)
+                                              ↓
+                                         [FUTURE: Claude reads LHOs before tasks]
+```
+
+**Status:**
+- ✅ Observer: Running (Windows Task Scheduler)
+- ✅ EVENT_TIMELINE: Recording events
+- ⏳ Judge Agent: Created, awaiting OpenAI API key to activate
+- ✅ LHO Database: Qdrant running
+- ❌ Teacher Agent: Not created yet (next slice)
+- ❌ Librarian: Not created yet (future)
+
+**When Complete:** System learns from mistakes automatically, Claude reads lessons before tasks = fewer repeated errors.
+
+---
+
 # 🎯 NEXT STEPS (Choose One)
 
 **Context:** Judge Agent workflow deployed to n8n (automated import complete).  
