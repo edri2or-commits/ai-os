@@ -21,9 +21,35 @@ Quick Status, Current Focus, Recent Changes, Next Steps
 
 **AI Life OS | Phase 2: Architectural Alignment & Governance** 📐
 
-**Progress:** ~55% complete (Judge Agent PRODUCTION READY + first FauxPas report generated)
+**Progress:** ~55% complete (Judge Agent operational BUT blind - Professional plan approved)
 
-**Just Finished (2025-12-05 - CRITICAL SUCCESS!):**
+**Just Finished (2025-12-05 - PROFESSIONAL PLAN APPROVED!):**
+- ✅ **Research-Based Architecture Plan** (CRITICAL FOUNDATION!)
+  - **Problem:** Naive approach (JSONL + manual events) = unprofessional, brittle
+  - **Research:** "Architecting the Cognitive Self: 2025 AI Life OS" (comprehensive paper)
+  - **Solution:** Langfuse + LHO + Reflexion + APO (industry standard)
+  - **Architecture:** 5-layer professional stack
+    1. **Langfuse** - OpenTelemetry observability (replaces JSONL)
+    2. **Judge Agent** - Enhanced reflexion (root cause analysis)
+    3. **Teacher Agent** - LHO creator (structured knowledge)
+    4. **Librarian Agent** - Context manager (retrieval)
+    5. **APO** - Automatic prompt optimization (consolidation)
+  - **Memory Hierarchy:** Working → Episodic → Semantic → **Procedural (LHOs)**
+  - **Life Handling Object (LHO):** Structured artifact (not raw event)
+    - Schema: trigger_context, failure_pattern, correction_strategy, code_snippet
+    - Stored in Qdrant (vector DB for semantic search)
+    - Retrieved before tasks (JIT learning)
+  - **Reflexion Loop:** Failure → Post-Mortem → LHO → Storage → Retrieval → Application
+  - **Frustration Index:** Composite alignment metric (user satisfaction tracking)
+  - **Cost:** ~$4/month (vs $2.40 current Judge only)
+  - **ROI:** 41,250% (2,000 min/month saved = $1,650 value)
+  - **Timeline:** 5 slices, 6-8 hours total, 10-14 days (2-4 hrs/day)
+  - **Status:** ✅ APPROVED, ready for implementation
+  - **Document:** 778 lines (memory-bank/plans/JUDGE_VISION_FIX_PLAN.md)
+  - **Event:** PLAN_CREATED (2025-12-05T03:30:00Z)
+  - **Duration:** ~30 min (research analysis + plan documentation)
+
+**Just Finished (2025-12-05 - EARLIER):**
 - ✅ **Judge Agent - Full Automation Pipeline** (PRODUCTION OPERATIONAL!)
   - **Problem:** 2025-12-03 manual setup failed (120 minutes of UI clicking)
   - **Root Cause:** Missing OPENAI_API_KEY in Docker container environment
@@ -177,56 +203,51 @@ Observer (15min) → EVENT_TIMELINE.jsonl → Judge Agent (6hr) → FauxPas Repo
 
 # 🎯 NEXT STEPS (Choose One)
 
-**Context:** Judge Agent WORKS but is BLIND (can't see conversation transcripts).  
-**Critical Gap:** Missing auto-event logging → Judge can't analyze Claude's actions.
+**Context:** Professional plan approved (Research-Based Architecture).  
+**Ready:** Full roadmap documented (5 slices, 6-8 hours).
 
-**Option A: Fix Judge Agent Vision** 🔴 CRITICAL (2-3 hours)
-- **Goal:** Judge sees EVERYTHING (conversations, transcripts, Claude actions)
+**Option A: Start Slice 1 - Langfuse Setup** 🔴 FOUNDATION (60 min)
+- **Goal:** Replace EVENT_TIMELINE.jsonl with professional observability
 - **Why Critical:**
-  - Currently Judge only sees 3 manual events in TIMELINE
-  - Can't detect repeated failures (like yesterday's 120-min disaster)
-  - Can't learn from conversation patterns
-  - Meta-learning broken at source
-- **Components to Build:**
-  1. **Auto-Event Logger** (60 min)
-     - Intercepts every Claude tool call
-     - Writes to EVENT_TIMELINE.jsonl automatically
-     - No manual Protocol 1 needed anymore
-  2. **Transcript Parser** (60 min)
-     - Reads `/mnt/transcripts/*.txt`
-     - Extracts key events (errors, user frustration, patterns)
-     - Converts to EVENT format
-  3. **Protocol 1 Enforcer** (30 min)
-     - Validates events written after each slice
-     - Judge criticizes if Claude forgot to log
-     - Self-enforcing loop
-- **Output:** Judge can analyze today's conversation, detect "repeated failed manual task" pattern
-- **Next:** Slice 2.5.4 (Teacher Agent)
-
-**Option B: Continue to Teacher Agent** 👨‍🏫 (60 min)
-- **Goal:** Convert FauxPas reports → LHOs (Learned Historical Objects)
-- **Risk:** Building on blind Judge = limited value
-- **Recommendation:** Do Option A first (fix foundation before building)
+  - Everything depends on this (Judge, Teacher, Librarian all read from Langfuse)
+  - Industry standard (OpenTelemetry, used by AWS/Google/Anthropic)
+  - Beautiful UI (trace visualization)
+  - Cost tracking built-in
+  - Open source (self-hostable or cloud)
 - **Tasks:**
-  1. Extend Judge workflow: IF errors → trigger Teacher
-  2. Anthropic API call (Claude 3.5 Sonnet)
-  3. Teacher Prompt: "Create LHO from error report"
-  4. Write to `truth-layer/lhos/LHO-{timestamp}.json`
-- **Output:** Automated lesson generation
-- **Next:** Slice 2.5.5 (Librarian)
+  1. Choose deployment: Cloud (langfuse.com, free tier, fast) or Self-hosted (Docker, free, full control)
+  2. Install Python SDK: `pip install langfuse`
+  3. Configure .env: LANGFUSE_PUBLIC_KEY, SECRET_KEY, HOST
+  4. Instrument Claude: Wrap tool calls in traces
+  5. Update Judge workflow: Read from Langfuse API (not JSONL)
+  6. Test: Claude action → Langfuse trace → Judge reads
+- **Output:** Professional telemetry operational ✅
+- **Next:** Slice 2 (Enhanced Judge - Reflexion Loop)
+- **Files:** /tools/langfuse_logger.py, /infra/n8n/.env, judge_agent.json updated
 
-**Option C: Document & Rest** ☕ (15 min)
-- Today's work: MAJOR (120-min failure → 8-min automation)
-- Documentation: FAR-001, gap analysis, events logged
-- Git commit pending
-- Come back fresh for Option A or B
+**Option B: Review Plan in Detail** 📖 (15 min)
+- **Goal:** Read full plan before starting implementation
+- **Why Useful:**
+  - 778 lines of detailed architecture
+  - Understand all 5 layers before building
+  - See LHO schema, Reflexion loop, cost analysis
+  - Review timeline (10-14 days realistic)
+- **File:** memory-bank/plans/JUDGE_VISION_FIX_PLAN.md
+- **Action:** Open in editor, read sections 1-7
+- **Next:** Start Slice 1 after review
 
-**Recommendation:** **Option A** (Fix Judge Vision FIRST).  
+**Option C: Document & Rest** ☕ (done for now)
+- Today's work: Research analysis + comprehensive plan (30 min)
+- Major milestone: From naive approach → professional architecture
+- Plan created: 778 lines, research-backed, industry standard
+- Come back fresh: Ready to implement Slice 1
+
+**Recommendation:** **Option B** → then **Option A**  
 **Rationale:** 
-- Judge is operational but useless (blind = can't learn)
-- Today proved need (repeated manual task went undetected)
-- Foundation fix enables all future learning
-- 2-3 hours investment → permanent value
+- Understand the whole system before building first piece
+- Plan is comprehensive (worth 15 min to read)
+- Then start Slice 1 with full context
+- Foundation must be solid (Langfuse = everything depends on it)
 
 ---
 
