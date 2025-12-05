@@ -1,13 +1,37 @@
+"""
+Check workflow status and optionally activate it
+Usage: python check_workflow.py <workflow_id>
+"""
 import requests
 import json
+import sys
+from pathlib import Path
 
-API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzYWQwNDlhYi0xNDIxLTRlY2YtYTdkOC0zZGVjMzAwMjI5MGMiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzY0NzI2NDI3LCJleHAiOjE3NjcyNDM2MDB9.sX8wz2BiqnCYHExCjsLqUmXB8d-ZAdioOXEjvY5E2io"
-WORKFLOW_ID = "aGrqrbb8DIP6kwUt"
+if len(sys.argv) < 2:
+    print("Usage: python check_workflow.py <workflow_id>")
+    sys.exit(1)
 
-print("[+] Checking workflow status...")
+WORKFLOW_ID = sys.argv[1]
+
+# Read API key from .env
+env_path = Path(__file__).parent.parent / "infra" / "n8n" / ".env"
+api_key = None
+
+if env_path.exists():
+    with open(env_path, 'r', encoding='utf-8') as f:
+        for line in f:
+            if line.startswith('N8N_API_KEY='):
+                api_key = line.split('=', 1)[1].strip()
+                break
+
+if not api_key:
+    print("ERROR: N8N_API_KEY not found in .env")
+    sys.exit(1)
+
+print(f"[+] Checking workflow {WORKFLOW_ID}...")
 r = requests.get(
     f"http://localhost:5678/api/v1/workflows/{WORKFLOW_ID}",
-    headers={"X-N8N-API-KEY": API_KEY}
+    headers={"X-N8N-API-KEY": api_key}
 )
 
 if r.status_code == 200:
@@ -15,21 +39,24 @@ if r.status_code == 200:
     print(f"[+] Workflow found: {data.get('name')}")
     print(f"[+] Active: {data.get('active')}")
     print(f"[+] ID: {data.get('id')}")
+    print(f"[+] Created: {data.get('createdAt', 'N/A')[:19]}")
+    print(f"[+] Updated: {data.get('updatedAt', 'N/A')[:19]}")
+    
+    # Check for credentials
+    nodes = data.get('nodes', [])
+    creds_found = []
+    for node in nodes:
+        if 'credentials' in node:
+            creds_found.append(node.get('credentials'))
+    
+    if creds_found:
+        print(f"[+] Credentials found: {len(creds_found)} nodes with credentials")
     
     if not data.get('active'):
-        print("[!] Workflow is INACTIVE. Activating...")
-        activate = requests.patch(
-            f"http://localhost:5678/api/v1/workflows/{WORKFLOW_ID}",
-            headers={"X-N8N-API-KEY": API_KEY, "Content-Type": "application/json"},
-            json={"active": True}
-        )
-        if activate.status_code == 200:
-            print("[+] Activation SUCCESS")
-        else:
-            print(f"[-] Activation FAILED: {activate.status_code}")
-            print(activate.text)
+        print("[!] Workflow is INACTIVE")
     else:
-        print("[+] Workflow already ACTIVE")
+        print("[+] Workflow is ACTIVE")
 else:
     print(f"[-] Workflow NOT FOUND: {r.status_code}")
     print(r.text)
+    sys.exit(1)

@@ -1,0 +1,146 @@
+openapi: 3.1.0
+info:
+  title: Google Workspace API (Gmail) - H1 POC
+  version: 1.0.0
+  description: |
+    REST API wrapper for Google Workspace Gmail operations.
+    Part of Headless Migration - Slice H1.
+    
+    **Authentication**: OAuth 2.0 (token.json must be valid)
+    **Base URL**: http://localhost:8082
+    
+servers:
+  - url: http://localhost:8082
+    description: Local development server
+
+paths:
+  /google/gmail/send:
+    post:
+      operationId: sendGmail
+      summary: Send email via Gmail
+      description: |
+        Send an email using the authenticated Gmail account.
+        Supports plain text and HTML emails.
+        
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - to
+                - subject
+                - body
+              properties:
+                to:
+                  type: array
+                  items:
+                    type: string
+                    format: email
+                  description: Recipient email addresses
+                  example: ["recipient@example.com"]
+                subject:
+                  type: string
+                  description: Email subject line
+                  example: "Test Email"
+                body:
+                  type: string
+                  description: Email body content
+                  example: "This is a test email sent via API"
+                cc:
+                  type: array
+                  items:
+                    type: string
+                    format: email
+                  description: CC recipients (optional)
+                bcc:
+                  type: array
+                  items:
+                    type: string
+                    format: email
+                  description: BCC recipients (optional)
+                is_html:
+                  type: boolean
+                  default: false
+                  description: Whether body contains HTML
+                  
+      responses:
+        '200':
+          description: Success response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Email sent successfully"
+                  error_type:
+                    type: string
+                    nullable: true
+                    example: null
+                  message_id:
+                    type: string
+                    example: "19af0adb379c1d54"
+                    
+        '401':
+          description: Authentication error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Google authentication required"
+                  error_type:
+                    type: string
+                    example: "not_authenticated"
+
+components:
+  schemas:
+    SendEmailRequest:
+      type: object
+      required:
+        - to
+        - subject
+        - body
+      properties:
+        to:
+          type: array
+          items:
+            type: string
+        subject:
+          type: string
+        body:
+          type: string
+        cc:
+          type: array
+          items:
+            type: string
+        bcc:
+          type: array
+          items:
+            type: string
+        is_html:
+          type: boolean
+          
+    SendEmailResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        message:
+          type: string
+        error_type:
+          type: string
+          nullable: true
+        message_id:
+          type: string
