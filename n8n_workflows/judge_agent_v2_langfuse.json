@@ -1,5 +1,6 @@
 {
   "name": "Judge Agent V2 - Langfuse Integration",
+  "active": true,
   "nodes": [
     {
       "parameters": {
