@@ -1,0 +1,203 @@
+{
+  "name": "Judge Agent V2 - Langfuse Integration",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 6
+            }
+          ]
+        }
+      },
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "id": "schedule-trigger-1"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "http://host.docker.internal:3000/api/public/traces",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$env.LANGFUSE_SECRET_KEY}}"
+            }
+          ]
+        },
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "page",
+              "value": "1"
+            },
+            {
+              "name": "limit",
+              "value": "100"
+            },
+            {
+              "name": "fromTimestamp",
+              "value": "={{new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString()}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Fetch Langfuse Traces (Last 6hr)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [450, 300],
+      "id": "http-langfuse-traces"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Parse Langfuse traces into events for Judge\nconst traces = $input.first().json.data || [];\n\nconst events = traces.map(trace => {\n  return {\n    trace_id: trace.id,\n    name: trace.name,\n    timestamp: trace.timestamp,\n    user_id: trace.userId,\n    tags: trace.tags || [],\n    metadata: trace.metadata || {},\n    status: trace.status || 'success',\n    // Extract input/output if available\n    input: trace.input,\n    output: trace.output,\n    // Metrics\n    duration_ms: trace.duration,\n    cost_usd: trace.cost\n  };\n});\n\nreturn [\n  {\n    json: {\n      events: events,\n      events_count: events.length,\n      time_window: {\n        start: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),\n        end: new Date().toISOString()\n      }\n    }\n  }\n];"
+      },
+      "name": "Parse Traces to Events",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [650, 300],
+      "id": "code-parse-traces"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Load Judge prompt\nconst fs = require('fs');\nconst path = require('path');\n\nconst promptFile = '/workspace/prompts/judge_agent_prompt.md';\nconst judgePrompt = fs.readFileSync(promptFile, 'utf-8');\n\nconst events = $input.first().json.events;\nconst timeWindow = $input.first().json.time_window;\n\n// Build the full prompt\nconst fullPrompt = judgePrompt + '\\n\\n---\\n\\n## Events to Analyze (from Langfuse)\\n\\n```json\\n' + JSON.stringify(events, null, 2) + '\\n```\\n\\nPlease analyze these ' + events.length + ' events and return your FauxPas_Report in JSON format.';\n\nreturn [\n  {\n    json: {\n      prompt: fullPrompt,\n      events_count: events.length,\n      time_window: timeWindow\n    }\n  }\n];"
+      },
+      "name": "Prepare Judge Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [850, 300],
+      "id": "code-prepare-prompt"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$env.OPENAI_API_KEY}}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "gpt-4o"
+            },
+            {
+              "name": "messages",
+              "value": "=[{\"role\": \"user\", \"content\": $json.prompt}]"
+            },
+            {
+              "name": "temperature",
+              "value": 0.2
+            },
+            {
+              "name": "response_format",
+              "value": "{\"type\": \"json_object\"}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Call GPT-4o Judge",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1050, 300],
+      "id": "http-gpt4o"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Parse GPT-4o response and write FauxPas_Report\nconst fs = require('fs');\nconst path = require('path');\n\nconst gptResponse = $input.first().json.choices[0].message.content;\nconst report = JSON.parse(gptResponse);\n\n// Generate report filename\nconst now = new Date();\nconst timestamp = now.toISOString().replace(/:/g, '-').split('.')[0];\nconst reportFile = `/workspace/truth-layer/drift/faux_pas/FP-${timestamp}.json`;\n\n// Write report\nfs.writeFileSync(reportFile, JSON.stringify(report, null, 2), 'utf-8');\n\n// Also write to Langfuse as score/feedback\n// (Optional: send back to Langfuse for trace scoring)\n\n// Log to console for monitoring\nconsole.log('FauxPas Report:', reportFile);\nconsole.log('Summary:', report.summary);\n\nreturn [\n  {\n    json: {\n      report_file: reportFile,\n      report: report,\n      has_errors: report.faux_pas_detected && report.faux_pas_detected.length > 0\n    }\n  }\n];"
+      },
+      "name": "Write FauxPas Report",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1250, 300],
+      "id": "code-write-report"
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Fetch Langfuse Traces (Last 6hr)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Langfuse Traces (Last 6hr)": {
+      "main": [
+        [
+          {
+            "node": "Parse Traces to Events",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Traces to Events": {
+      "main": [
+        [
+          {
+            "node": "Prepare Judge Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Judge Prompt": {
+      "main": [
+        [
+          {
+            "node": "Call GPT-4o Judge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call GPT-4o Judge": {
+      "main": [
+        [
+          {
+            "node": "Write FauxPas Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
