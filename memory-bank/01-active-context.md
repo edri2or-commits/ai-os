@@ -21,7 +21,38 @@ Quick Status, Current Focus, Recent Changes, Next Steps
 
 **AI Life OS | Phase 2: Architectural Alignment & Governance** 📐
 
-**Progress:** ~55% complete (Judge Agent operational BUT blind - Professional plan approved)
+**Progress:** ~55% complete (Judge Agent operational BUT blind - Langfuse setup BLOCKED)
+
+**Current Work (2025-12-05 - LANGFUSE V3 BLOCKED!):**
+- ⚠️ **Slice 2.5.4: Langfuse Setup** (BLOCKED after 40 min troubleshooting)
+  - **Goal:** Professional observability (replace naive JSONL logging)
+  - **Approach Attempted:** Self-hosted Langfuse V3 with Docker Compose
+  - **Troubleshooting:** 40 minutes, 6 configuration attempts
+    - Error 1: ClickHouse auth failure (default user)
+    - Error 2: Missing CLICKHOUSE_USER env var
+    - Error 3: Empty password removed by Docker
+    - Error 4: Wrong protocol (HTTP vs native on port 9000)
+    - Error 5: ClickHouse requires users.xml config file
+    - Error 6: Researched official docs - found missing components
+  - **Root Cause Discovery:** 
+    - Attempted incremental config fixes (whack-a-mole pattern)
+    - Langfuse V3 requires **6 services** (PostgreSQL, ClickHouse, Redis, MinIO, Web, Worker)
+    - Current setup only has **3** (PostgreSQL, ClickHouse, Web)
+    - Missing: **Redis** (queue/cache), **MinIO** (S3 storage), **Worker** (async jobs)
+    - ClickHouse itself requires complex setup (environment vars alone insufficient)
+  - **Files Modified:** 
+    - `docker-compose.yml` (multiple iterations, partial config)
+  - **Current State:** 
+    - PostgreSQL: ✅ Running
+    - ClickHouse: ⚠️ Container up but config incomplete
+    - Langfuse-web: ❌ Restart loop (missing Redis/MinIO)
+  - **Decision Point:** 3 options to proceed:
+    - **Option A (Recommended):** Download official docker-compose.yml from GitHub (15 min, clean setup)
+    - **Option B:** Downgrade to Langfuse V2 (no ClickHouse, simpler, 5 min, temporary until Q1 2025)
+    - **Option C:** Continue V3 troubleshooting (~20-30 min more, complex)
+  - **Meta-Learning Trigger:** AP-XXX candidate (incremental fixes vs starting from reference implementation)
+  - **Status:** ⚠️ BLOCKED - waiting for decision
+  - **Duration:** 40 min (troubleshooting only, no productive outcome yet)
 
 **Just Finished (2025-12-05 - PROFESSIONAL PLAN APPROVED!):**
 - ✅ **Research-Based Architecture Plan** (CRITICAL FOUNDATION!)
@@ -144,10 +175,19 @@ Quick Status, Current Focus, Recent Changes, Next Steps
 - 3 Automated Processes (Task Scheduler) ✅
 - **NEW:** Canonical architecture docs ✅
 
-**Blockers:** NONE
+**Blockers:** 
+- ⚠️ **Langfuse V3 Setup BLOCKED** (40 min troubleshooting, incomplete config)
+  - Missing services: Redis, MinIO, Worker
+  - ClickHouse config complex (needs users.xml)
+  - Current docker-compose.yml partial/broken
 
 **Next Decision Point:**
-Judge Agent operational BUT blind (can't see conversations) → Fix critical gap OR continue to Teacher Agent?
+**CRITICAL:** Langfuse V3 setup blocked - choose path forward:
+- **Option A (Pro):** Use official docker-compose.yml (15 min, proper setup, recommended)
+- **Option B (Quick):** Downgrade to V2 (5 min, simpler, temporary until Q1 2025)
+- **Option C (Deep):** Continue V3 debugging (20-30 min more, complex)
+
+**Recommendation:** Option A - "do it like professionals" (user's words)
 
 **Achievement Unlocked:**
 - ✅ Phase 1: Infrastructure Complete (8 weeks, production-ready)

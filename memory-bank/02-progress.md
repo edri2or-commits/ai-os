@@ -1873,3 +1873,174 @@ pip install langfuse qdrant-client openai sentence-transformers
 **Confidence:** HIGH (research-backed, industry standard, proven patterns)
 
 ---
+
+## Slice 2.5.4: Langfuse V3 Setup (BLOCKED)
+
+**Date:** 2025-12-05  
+**Duration:** 40 minutes (troubleshooting only)  
+**Status:** ⚠️ BLOCKED - Decision required
+
+### Context
+
+Following approved professional architecture plan (778 lines), started implementation with Slice 1: Langfuse setup as observability foundation.
+
+**Goal:** Replace naive JSONL logging with professional OpenTelemetry-compatible observability platform.
+
+**Approach:** Self-hosted Langfuse V3 with Docker Compose (data sovereignty + full control).
+
+### What Happened
+
+**Attempt:** Incremental configuration of Langfuse V3 in existing `docker-compose.yml`
+
+**Timeline (40 minutes):**
+1. **00:00 - Initial config:** Added ClickHouse + Langfuse services
+2. **00:05 - Error 1:** ClickHouse auth failure (default user)
+   - Fix attempt: Add CLICKHOUSE_USER environment variables
+3. **00:10 - Error 2:** CLICKHOUSE_USER not set in Langfuse
+   - Fix attempt: Add CLICKHOUSE_USER=default
+4. **00:15 - Error 3:** Empty password removed by Docker Compose
+   - Fix attempt: CLICKHOUSE_PASSWORD=" " (space character)
+5. **00:20 - Error 4:** Wrong protocol (HTTP on port 9000)
+   - Fix attempt: Split URLs (8123 for HTTP, 9000 for native protocol)
+6. **00:25 - Error 5:** ClickHouse authentication still failing
+   - Discovery: ClickHouse needs users.xml config file (env vars insufficient)
+7. **00:30 - User feedback:** "יא חלש. תעשה כמו מקצוענים"
+8. **00:30-00:40 - Web research:** Official Langfuse documentation search
+   - Found: Langfuse V3 requires **6 services** (not 3)
+   - Current: PostgreSQL, ClickHouse, Langfuse-web
+   - Missing: Redis (queue/cache), MinIO (S3 storage), Worker (async jobs)
+   - Issue #4600 (Dec 2024): Cluster mode issues, Zookeeper requirements
+
+### Root Cause Analysis
+
+**Anti-Pattern Detected:** "Whack-a-mole debugging" (fix error A → reveals error B → reveals error C...)
+
+**Architectural Gap:**
+- Attempted **incremental** modification of existing docker-compose.yml
+- Should have used **reference implementation** (official docker-compose.yml from GitHub)
+- Langfuse V3 is complex system (6 interconnected services)
+- Partial setup = guaranteed failure
+
+**ClickHouse Complexity:**
+- Not configurable via env vars alone (like PostgreSQL)
+- Requires XML config files for users/authentication
+- May require Keeper/Zookeeper for cluster mode
+- Much more complex than initially expected
+
+### Files Modified
+
+**Changed:**
+- `docker-compose.yml` (multiple iterations)
+  - Added langfuse-clickhouse service (incomplete config)
+  - Added langfuse service (missing dependencies)
+  - Modified multiple times (6 attempts)
+
+**Current State:**
+- PostgreSQL: ✅ Running
+- ClickHouse: ⚠️ Container running, auth broken
+- Langfuse-web: ❌ Restart loop (missing Redis/MinIO)
+- Redis: ❌ Not created
+- MinIO: ❌ Not created
+- Worker: ❌ Not created
+
+### Decision Point
+
+**3 Options to proceed:**
+
+**Option A: Official Reference (RECOMMENDED)**
+- Download complete docker-compose.yml from https://github.com/langfuse/langfuse/blob/main/docker-compose.yml
+- Replace current partial config with working reference
+- All 6 services included, tested, maintained by Langfuse team
+- Time: ~15 minutes (clean setup)
+- Risk: Low (official, proven)
+- Pro: "Do it like professionals" (user's requirement)
+
+**Option B: Downgrade to V2**
+- Change image to `langfuse/langfuse:2`
+- Remove ClickHouse (V2 uses PostgreSQL only)
+- Simpler setup (3 services: PostgreSQL, Langfuse, Redis minimal)
+- Time: ~5 minutes
+- Risk: Low
+- Con: V2 support ends Q1 2025 (temporary solution)
+- Con: "Mediocrity" (user's criticism)
+
+**Option C: Continue V3 Debugging**
+- Create users.xml for ClickHouse
+- Add Redis, MinIO, Worker services manually
+- Debug cluster mode / Keeper requirements
+- Time: ~20-30 minutes more
+- Risk: Medium (complex, unknown issues may remain)
+- Con: More whack-a-mole potential
+
+### Meta-Learning Triggers
+
+**Trigger A (Repetition):**
+- Pattern: Incremental fixes without understanding system architecture
+- Occurred: 6 configuration attempts in 40 minutes
+- Proposed: **AP-004** "Whack-a-Mole Configuration"
+  - Anti-pattern: Fix error A without understanding full system requirements
+  - Symptom: Each fix reveals new missing component
+  - Prevention: Research complete architecture BEFORE first edit
+  - Fix: Start from reference implementation (official docker-compose.yml)
+
+**Trigger C (User Surprise):**
+- User expectation: "Do it like professionals"
+- Claude action: Incremental debugging (unprofessional)
+- Gap: Should have researched reference implementation first
+- Learning: For complex systems (>3 services), ALWAYS find official example first
+
+**Trigger E (Friction Point):**
+- High cognitive load: 6 attempts, 40 minutes, zero progress
+- User frustration: "יא חלש" (literally: "weakling")
+- Proposed automation: Pre-flight check before modifying docker-compose.yml
+  - Tool: `validate_docker_compose_completeness.py`
+  - Check: Compare required services (from docs) vs current services
+  - Alert: "Missing X services - consider using reference implementation"
+
+### Outcome
+
+**Status:** BLOCKED - waiting for user decision (A/B/C)
+
+**No Git Commit Yet:**
+- docker-compose.yml in broken state
+- Should not commit broken config
+- Will commit after decision + successful setup
+
+**Documentation Value:**
+- 40 minutes = expensive lesson
+- Pattern recognized: Whack-a-mole anti-pattern
+- Learning captured for future prevention
+- Memory Bank updated for next Claude instance
+
+**User Feedback Acknowledged:**
+- "אל תפחד" (don't be afraid)
+- "אני לא אוהב את הבינוניות הזאת" (I don't like mediocrity)
+- Message received: Professional approach required, not quick fixes
+
+### Next Steps
+
+**Immediate:**
+1. ✅ Memory Bank updated (01-active-context.md)
+2. ✅ Progress documented (this entry)
+3. ✅ Anti-pattern identified (AP-004 candidate)
+4. 🎯 User decision: Choose Option A/B/C
+5. 🎯 Execute chosen option
+6. 🎯 Git commit after successful setup
+
+**Recommendation:**
+- **Option A** strongly recommended
+- Aligns with "professional" requirement
+- Clean slate approach (less risk than continuing debug)
+- V3 = future-proof (Q1 2025+)
+
+### Time Investment
+
+**Sunk Cost:** 40 minutes (0 productive outcome)  
+**Remaining Investment:**
+- Option A: ~15 minutes (total: 55 min)
+- Option B: ~5 minutes (total: 45 min, but temporary)
+- Option C: ~20-30 minutes (total: 60-70 min, high risk)
+
+**Learning Value:** High (anti-pattern documented, $0 cost vs production incident)
+
+---
