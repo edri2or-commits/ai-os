@@ -21,7 +21,47 @@ Quick Status, Current Focus, Recent Changes, Next Steps
 
 **AI Life OS | Phase 2: Architectural Alignment & Governance** 📐
 
-**Progress:** ~45% complete (Judge Agent fully deployed + automated)
+**Progress:** ~55% complete (Judge Agent PRODUCTION READY + first FauxPas report generated)
+
+**Just Finished (2025-12-05 - CRITICAL SUCCESS!):**
+- ✅ **Judge Agent - Full Automation Pipeline** (PRODUCTION OPERATIONAL!)
+  - **Problem:** 2025-12-03 manual setup failed (120 minutes of UI clicking)
+  - **Root Cause:** Missing OPENAI_API_KEY in Docker container environment
+  - **Solution (8 minutes, zero UI):**
+    1. Created `.env` file with API keys (from existing secrets)
+    2. Updated `docker-compose.yml` with environment variables
+    3. Fixed volume mount (removed `:ro` - was blocking writes)
+    4. Restarted n8n container with new config
+    5. Executed test script - FULL SUCCESS
+  - **Files Changed:**
+    - `/infra/n8n/.env` (new - API keys)
+    - `/infra/n8n/docker-compose.yml` (added env vars)
+    - `/docker-compose.yml` (volume mount fix)
+    - `/test_judge_agent.js` (test script)
+  - **Test Results:** ✅ ALL PASSED
+    - GPT-4o API connection: SUCCESS
+    - Judge prompt loaded: 5,970 chars
+    - Event analysis: 1 event processed
+    - FauxPas report written: `FP-2025-12-05T01-06-25.json`
+    - Report summary: 0 errors detected (test passed)
+  - **Documentation:**
+    - Created `FAR-001` (Failed Attempt Registry) - 147 lines
+    - Documents 2025-12-03 120-minute failure
+    - Includes prevention protocols (MTD-002)
+    - Root cause analysis + correct solution
+  - **Critical Gap Discovered:**
+    - Judge Agent CANNOT see conversation transcripts yet
+    - Missing: Auto-event logging after each Claude action
+    - Missing: Transcript parser (conversation → events)
+    - Impact: Judge blind to most patterns
+    - Fix Required: 3 components (auto-logging, transcript parser, Protocol 1 enforcement)
+  - **Events Logged:**
+    - `JUDGE_AGENT_SETUP_COMPLETED` (2025-12-05T01:10)
+    - `CRITICAL_GAP_IDENTIFIED` (2025-12-05T01:15)
+  - **Cost:** ~$0.02/run (GPT-4o), ~$2.40/month (4 runs/day)
+  - **Status:** ✅ FULLY OPERATIONAL (next run: 09:35 UTC)
+  - **Git:** [pending commit]
+  - **Duration:** ~90 min total (8 min automation + 82 min documentation + gap analysis)
 
 **Just Finished (2025-12-04 - Latest):**
 - ✅ **Judge Agent - GPT-5.1 Upgrade + Full Automation** (PRODUCTION READY!)
@@ -81,7 +121,7 @@ Quick Status, Current Focus, Recent Changes, Next Steps
 **Blockers:** NONE
 
 **Next Decision Point:**
-Judge Agent deployed & ready → Configure API key in n8n → Test → Activate
+Judge Agent operational BUT blind (can't see conversations) → Fix critical gap OR continue to Teacher Agent?
 
 **Achievement Unlocked:**
 - ✅ Phase 1: Infrastructure Complete (8 weeks, production-ready)
@@ -89,7 +129,8 @@ Judge Agent deployed & ready → Configure API key in n8n → Test → Activate
 - ✅ Foundation Docs Created (ADR-001, Terminology, Reference, Metaphor Guide)
 - ✅ Self-Learning Integration Plan (CLP-001 roadmap, 7 slices mapped)
 - ✅ LHO Database Operational (Qdrant + Schema + Example + Tests)
-- ✅ **NEW:** Judge Agent Deployed (GPT-5.1, automated, cost-optimized)
+- ✅ **Judge Agent PRODUCTION** (GPT-4o, automated, tested, E2E working)
+- 🚨 **Critical Gap:** Judge can't see conversation transcripts (auto-logging missing)
 
 ---
 
@@ -136,51 +177,56 @@ Observer (15min) → EVENT_TIMELINE.jsonl → Judge Agent (6hr) → FauxPas Repo
 
 # 🎯 NEXT STEPS (Choose One)
 
-**Context:** Judge Agent workflow deployed to n8n (automated import complete).  
-**Decision:** Complete ONE-TIME setup & activate, or continue to next slice?
+**Context:** Judge Agent WORKS but is BLIND (can't see conversation transcripts).  
+**Critical Gap:** Missing auto-event logging → Judge can't analyze Claude's actions.
 
-**Option A: Complete Judge Agent Setup** 🚀 ⭐ RECOMMENDED (2 min ONE-TIME)
-- **Goal:** Configure API key & activate Judge Agent
-- **Why Now:**
-  - Workflow already imported to n8n ✅
-  - Only security step remaining (API key config)
-  - After this: FULLY AUTOMATIC forever (6-hour schedule)
-- **Tasks:**
-  1. Open n8n: http://localhost:5678 (already opened)
-  2. Find workflow: "Judge Agent - Faux Pas Detection"
-  3. Configure OpenAI API key (Header Auth, ONE TIME)
-  4. Test execution (play button)
-  5. Toggle "Active" → DONE FOREVER!
-- **Time:** 2 minutes
-- **Result:** Self-learning loop operational 24/7
-  5. If successful → Activate workflow
-- **Output:** Judge Agent running automatically every 6 hours ✓
-- **Next:** Slice 2.5.4 (Teacher Agent - converts errors to LHOs)
+**Option A: Fix Judge Agent Vision** 🔴 CRITICAL (2-3 hours)
+- **Goal:** Judge sees EVERYTHING (conversations, transcripts, Claude actions)
+- **Why Critical:**
+  - Currently Judge only sees 3 manual events in TIMELINE
+  - Can't detect repeated failures (like yesterday's 120-min disaster)
+  - Can't learn from conversation patterns
+  - Meta-learning broken at source
+- **Components to Build:**
+  1. **Auto-Event Logger** (60 min)
+     - Intercepts every Claude tool call
+     - Writes to EVENT_TIMELINE.jsonl automatically
+     - No manual Protocol 1 needed anymore
+  2. **Transcript Parser** (60 min)
+     - Reads `/mnt/transcripts/*.txt`
+     - Extracts key events (errors, user frustration, patterns)
+     - Converts to EVENT format
+  3. **Protocol 1 Enforcer** (30 min)
+     - Validates events written after each slice
+     - Judge criticizes if Claude forgot to log
+     - Self-enforcing loop
+- **Output:** Judge can analyze today's conversation, detect "repeated failed manual task" pattern
+- **Next:** Slice 2.5.4 (Teacher Agent)
 
-**Option B: Slice 2.5.4 - Teacher Agent Workflow (60 min)** 👨‍🏫
-- **Goal:** Automated LHO generation from FauxPas reports
-- **Prerequisites:** Requires working Judge Agent (Option A first)
+**Option B: Continue to Teacher Agent** 👨‍🏫 (60 min)
+- **Goal:** Convert FauxPas reports → LHOs (Learned Historical Objects)
+- **Risk:** Building on blind Judge = limited value
+- **Recommendation:** Do Option A first (fix foundation before building)
 - **Tasks:**
-  1. Extend Judge workflow: IF errors found → trigger Teacher
-  2. Node: HTTP Request → Anthropic API (Claude 3.5 Sonnet)
-  3. Teacher Prompt: "Create LHO from this error report (JSON schema)"
-  4. Write LHO to `truth-layer/lhos/LHO-{timestamp}.json`
-  5. Test: Force error → Judge detects → Teacher creates LHO ✅
+  1. Extend Judge workflow: IF errors → trigger Teacher
+  2. Anthropic API call (Claude 3.5 Sonnet)
+  3. Teacher Prompt: "Create LHO from error report"
+  4. Write to `truth-layer/lhos/LHO-{timestamp}.json`
 - **Output:** Automated lesson generation
-- **Next:** Slice 2.5.5 (Librarian - index LHOs in Qdrant)
+- **Next:** Slice 2.5.5 (Librarian)
 
-**Option C: Quick Break** ☕ (5-10 min)
-- Slice 2.5.3 = 60 min focused work
-- 3 slices today (2.5, 2.5.2, 2.5.3) = ~3 hours total
-- Strong momentum, but rest prevents burnout
+**Option C: Document & Rest** ☕ (15 min)
+- Today's work: MAJOR (120-min failure → 8-min automation)
+- Documentation: FAR-001, gap analysis, events logged
+- Git commit pending
+- Come back fresh for Option A or B
 
-**Option D: Continue Previous Context** 
-- Real-Time Knowledge Alignment plan exists (Phase 2, memory-bank/docs/)
-- Vale enforcement (Phase 2 completion)
-- Task Scheduler Dashboard (monitoring)
-
-**Recommendation:** **Option A** (Test Judge Agent NOW).  
-**Rationale:** Always test before activate. 15 min investment prevents 6-hour loop of broken workflow. Safety first!
+**Recommendation:** **Option A** (Fix Judge Vision FIRST).  
+**Rationale:** 
+- Judge is operational but useless (blind = can't learn)
+- Today proved need (repeated manual task went undetected)
+- Foundation fix enables all future learning
+- 2-3 hours investment → permanent value
 
 ---
 

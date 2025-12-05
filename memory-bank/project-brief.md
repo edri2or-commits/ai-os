@@ -220,10 +220,10 @@ These 3 layers connect:
 **Research Location:** `C:\Users\edri2\Desktop\AI\ai-os\claude-project\research_claude\`
 
 **⚠️ CRITICAL TERMINOLOGY NOTE:**
-All research docs were written BEFORE ADR-001 (Architectural Alignment). They may use old terms like:
-- "The Brain" / "The Head" → Use "Application Core" instead
-- "The Hands" → Use "Automation Engine (n8n)" or "MCP Adapters" instead
-- "Semantic Microkernel" → Use "Application Core" (ADR-001 rejects this term)
+All research docs were written BEFORE ADR-001 (Architectural Alignment). They may use **deprecated terms**:
+- `"The Brain"` / `"The Head"` → Use **"Application Core"** instead
+- `"The Hands"` → Use **"Automation Engine (n8n)"** or **"MCP Adapters"** instead
+- `"Semantic Microkernel"` → Use **"Application Core"** (ADR-001 rejects this term)
 
 **When reading research:** Mentally translate old terms to canonical terms from `CANONICAL_TERMINOLOGY.md`
 

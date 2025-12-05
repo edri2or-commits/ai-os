@@ -104,7 +104,7 @@ Follow these steps in order:
    - Anti-patterns
 
 **Why this matters:**
-- Without reading these, you'll use wrong terms ("The Brain" instead of "Application Core")
+- Without reading these, you'll use **deprecated terms** (e.g., `"The Brain"` instead of **"Application Core"**)
 - All architectural decisions MUST reference ADR-001
 - This prevents drift back to inconsistent terminology
 

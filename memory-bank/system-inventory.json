@@ -1,0 +1,77 @@
+{
+  "timestamp": "2025-12-04T21:13:10.785178+00:00",
+  "n8n": {
+    "workflows": [
+      {
+        "id": "3CBsD70avEmYwuA3",
+        "name": "Email Watcher - Gmail to Drift Report",
+        "active": false,
+        "nodes": 4,
+        "updatedAt": "2025-12-03T01:49:48.484Z"
+      },
+      {
+        "id": "judge-agent-v1",
+        "name": "Judge Agent - Faux Pas Detection",
+        "active": true,
+        "nodes": 5,
+        "updatedAt": "2025-12-04T16:38:17.000Z"
+      },
+      {
+        "id": "wYIM8Rd0o0O02BEc",
+        "name": "Observer - Drift Detection (Every 15 min)",
+        "active": false,
+        "nodes": 2,
+        "updatedAt": "2025-12-02T23:52:10.492Z"
+      }
+    ],
+    "credentials": {
+      "error": "HTTP Error 405: Method Not Allowed"
+    }
+  },
+  "docker": {
+    "containers": [
+      {
+        "name": "qdrant-production",
+        "status": "Up 6 hours",
+        "ports": "0.0.0.0:6333-6334->6333-6334/tcp, [::]:6333-6334->6333-6334/tcp"
+      },
+      {
+        "name": "n8n-production",
+        "status": "Up 6 hours",
+        "ports": "0.0.0.0:5678->5678/tcp, [::]:5678->5678/tcp"
+      }
+    ]
+  },
+  "git": {
+    "branch": "unknown",
+    "commit": "unknown",
+    "clean": true,
+    "uncommitted_changes": 0
+  },
+  "files": {
+    "truth-layer/timeline/EVENT_TIMELINE.jsonl": {
+      "exists": true,
+      "size": 391
+    },
+    "prompts/judge_agent_prompt.md": {
+      "exists": true,
+      "size": 5970
+    },
+    "n8n_workflows/judge_agent.json": {
+      "exists": true,
+      "size": 6129
+    },
+    "tools/observer.py": {
+      "exists": true,
+      "size": 10382
+    },
+    "tools/watchdog.py": {
+      "exists": true,
+      "size": 12596
+    },
+    ".env": {
+      "exists": true,
+      "size": 1123
+    }
+  }
+}

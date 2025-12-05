@@ -181,12 +181,10 @@ Test-Path "docs\system_state\timeline\EVENT_TIMELINE.jsonl"  # True (unchanged)
 - `claude-project/Knowl/` (30 files):
   - 01-18.md: EXACT duplicates of research_claude/ (byte-for-byte identical)
   - ai-life-os-claude-project-playbook.md: duplicate of claude-project/ root file
-  - Architecting_Personal_AI_Life_OS.md, msg_019-027.md: duplicates (also in מחסן מחקרים/)
   - Canonical location: research_claude/ (01-18.md)
 
 - `claude-project/מחסן מחקרים/` (13 files):
   - playbook: duplicate of claude-project/ai-life-os-claude-project-playbook.md
-  - msg_019-027, Architecting: duplicates (also in Knowl/)
   - איך עובדים עם קלוד/ subfolder: working notes (2 files)
   - Canonical locations: claude-project/ (playbook)
 
@@ -621,7 +619,7 @@ class SystemObserver:
 - CRs generated for drift
 - n8n workflow deployed (not activated yet)
 
-**Research:** 08, 13, msg_020
+**Research:** 08, 13
 
 ---
 
@@ -802,7 +800,7 @@ class SystemObserver:
 - Integration with os_core_mcp
 - Documented in `docs/CIRCUIT_BREAKER_SPEC.md`
 
-**Research:** 13, msg_020
+**Research:** 13
 
 ---
 
@@ -1202,7 +1200,6 @@ Week 9-12: Phase 4 (Cleanup)
 **Research References:**
 - 01_architectural-blueprint_phase-3-ai-os.md (Table 1: MCP Scope Configuration)
 - 09_agentic_kernel_claude_desktop_mcp.md (Git Integration section)
-- msg_027.md (MCP configuration management)
 
 ---
 
@@ -1215,7 +1212,7 @@ Week 9-12: Phase 4 (Cleanup)
 
 **Phase 2:**
 - 01, 04, 12 (Memory Bank, Life Graph)
-- 08, 13, msg_020 (Observer, Circuit Breakers)
+- 08, 13 (Observer, Circuit Breakers)
 - 18 (ADHD metadata)
 
 **Phase 3:**

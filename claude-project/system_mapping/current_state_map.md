@@ -325,8 +325,7 @@ claude-project/
 │   ├── ... (01 through 18)
 │   ├── ai-life-os-agentic-claude-project-kernel-instructions.md
 │   ├── ai-life-os-claude-project-playbook.md
-│   ├── Architecting_Personal_AI_Life_OS.md
-│   └── msg_019.md through msg_027.md
+│   └── Architecting_Personal_AI_Life_OS.md
 ├── system_mapping/            # [JUST CREATED] Phase 0 mapping outputs
 │   └── current_state_map.md  # (this file)
 ├── Knowl/                     # (duplicate of research_claude?)

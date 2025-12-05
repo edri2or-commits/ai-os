@@ -1,0 +1,215 @@
+{
+  "name": "Email Watcher - Gmail to Drift Report",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 15
+            }
+          ]
+        }
+      },
+      "id": "node-1-schedule",
+      "name": "Schedule Every 15min",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        250,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "q": "is:unread",
+        "maxResults": 50
+      },
+      "id": "node-2-gmail-search",
+      "name": "Search Unread Emails",
+      "type": "@n8n_io/n8n-nodes-gmail.Gmail",
+      "typeVersion": 1,
+      "position": [
+        450,
+        300
+      ],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "gmail-oauth",
+          "name": "Gmail OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "email-data",
+              "name": "email_batch",
+              "value": "={{ $json }}",
+              "type": "object"
+            }
+          ]
+        }
+      },
+      "id": "node-3-batch",
+      "name": "Batch Emails (10 max)",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [
+        650,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "={{ $credentials.anthropicApiKey }}"
+            },
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "claude-sonnet-4-20250514"
+            },
+            {
+              "name": "max_tokens",
+              "value": "1024"
+            },
+            {
+              "name": "messages",
+              "value": "={{ [{\"role\": \"user\", \"content\": `Classify these emails into: bureaucracy, personal, work. Return JSON array.\\n\\nEmails:\\n${JSON.stringify($json.email_batch)}`}] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "node-4-claude-classify",
+      "name": "Claude Classification",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        850,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "jsonToBinary",
+        "options": {
+          "fileName": "=email-drift-{{ $now.format('YYYY-MM-DD-HHmmss') }}.yaml",
+          "mimeType": "application/x-yaml"
+        }
+      },
+      "id": "node-5-yaml-convert",
+      "name": "Convert to YAML",
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1050,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "command": "cd C:\\Users\\edri2\\Desktop\\AI\\ai-os && git add memory-bank/drift/*.yaml && git commit -m \"Email Watcher: {{ $now.format('YYYY-MM-DD HH:mm') }}\" && git push",
+        "cwd": "C:\\Users\\edri2\\Desktop\\AI\\ai-os"
+      },
+      "id": "node-6-git-commit",
+      "name": "Git Commit Drift Report",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        1250,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Schedule Every 15min": {
+      "main": [
+        [
+          {
+            "node": "Search Unread Emails",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Unread Emails": {
+      "main": [
+        [
+          {
+            "node": "Batch Emails (10 max)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Batch Emails (10 max)": {
+      "main": [
+        [
+          {
+            "node": "Claude Classification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claude Classification": {
+      "main": [
+        [
+          {
+            "node": "Convert to YAML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to YAML": {
+      "main": [
+        [
+          {
+            "node": "Git Commit Drift Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2025-12-03T16:00:00.000Z",
+  "versionId": "1"
+}

@@ -355,12 +355,12 @@ This canonical model is grounded in:
 - **Architecture/Kernel research family**
   - Semantic Microkernel pattern (01, 06, 09)
   - Chat→Spec→Change workflow (10, 11, playbook)
-  - Supervisor-Worker architecture (09, msg_020)
+  - Supervisor-Worker architecture (09)
 
 - **Safety/Drift research family**
   - Dual Truth Architecture (Policy + Observed State) (08, 13)
   - Drift detection and reconciliation (08, 13)
-  - Circuit Breakers and HITL gates (13, msg_020)
+  - Circuit Breakers and HITL gates (13)
 
 - **Memory/Truth Layer research family**
   - Git-backed Markdown + Memory Bank (01, 04, 06)

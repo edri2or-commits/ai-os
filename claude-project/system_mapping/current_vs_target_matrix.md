@@ -93,7 +93,7 @@
 | `services/mcp_github_client/` | dir | Tools/MCP (GitHub) | ✅ keep/as-is | Operational GitHub MCP server (port 8081). Well-documented. Matches target. **Sources:** 09, 10 |
 | `services/google_workspace_client/` | dir | Tools/MCP (Google) | ✅ keep/as-is | Operational Google MCP server (port 8082). READ operations. **Sources:** 09, 10 |
 | `services/os_core_mcp/` | dir | Tools/MCP (State Gateway) | ✅ keep/as-is | Operational OS Core MCP (port 8083). Includes reconciler_v1. **Sources:** 08, 13 |
-| `services/agent_kernel/` | dir | Kernel (LangGraph) | ✅ keep/as-is | LangGraph-based Agent Kernel (port 8084). Daily Context Sync. **Sources:** DEC-009, msg_020 |
+| `services/agent_kernel/` | dir | Kernel (LangGraph) | ✅ keep/as-is | LangGraph-based Agent Kernel (port 8084). Daily Context Sync. **Sources:** DEC-009 |
 
 **Key Decision:**
 - All 4 MCP servers operational and correctly architected → keep as-is
@@ -348,7 +348,7 @@
 
 | Current Path | Type | Target Role | Action | Notes / Sources |
 |--------------|------|-------------|--------|-----------------|
-| **NOT FOUND** | file/module | Safety (Circuit Breakers) | 🆕 missing | Loop detection, rate limiting, kill switch. **Sources:** 13, msg_020 |
+| **NOT FOUND** | file/module | Safety (Circuit Breakers) | 🆕 missing | Loop detection, rate limiting, kill switch. **Sources:** 13 |
 
 **Key Decision:**
 - Circuit breakers defined in research but not implemented
@@ -365,7 +365,7 @@
 | Current Path | Type | Target Role | Action | Notes / Sources |
 |--------------|------|-------------|--------|-----------------|
 | `services/os_core_mcp/reconciler.py` | file | Observability (Partial Observer) | ⚙️ refactor | reconciler_v1 exists but runs on-demand. Target suggests proactive Observer. **Sources:** 08, 13 |
-| **NOT FOUND** | file | Observability (Full Observer) | 🆕 missing | Proactive drift detection (read-only probing every 10-30 min). **Sources:** 08, msg_020 |
+| **NOT FOUND** | file | Observability (Full Observer) | 🆕 missing | Proactive drift detection (read-only probing every 10-30 min). **Sources:** 08 |
 
 **Key Decision:**
 - reconciler_v1 is reactive (on-demand)

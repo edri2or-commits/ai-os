@@ -187,7 +187,6 @@ These 7 principles apply across all families:
 
 **Sources:**
 - 09_agentic_kernel_claude_desktop_mcp.md
-- msg_020.md (LangGraph discussion)
 - ai-life-os-claude-project-playbook.md
 
 ---
@@ -495,7 +494,6 @@ docker run -v /home/user/wsl-data:/app/data
 
 **Sources:**
 - 10_claude_desktop_agentic_kernel_playbook_windows.md
-- msg_020.md (Windows infra deep dive)
 
 ---
 
@@ -675,7 +673,6 @@ healthcheck:
 
 **Sources:**
 - 13.md (Circuit Breaker spec)
-- msg_020.md
 
 ---
 
