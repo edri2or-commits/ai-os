@@ -24,16 +24,7 @@
         "method": "GET",
         "url": "http://host.docker.internal:3000/api/public/traces",
         "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Authorization",
-              "value": "=Bearer {{$env.LANGFUSE_SECRET_KEY}}"
-            }
-          ]
-        },
+        "genericAuthType": "httpBasicAuth",
         "sendQuery": true,
         "queryParameters": {
           "parameters": [
