@@ -1,7 +1,8 @@
 # Headless Migration Roadmap - TL;DR
 
-**תאריך:** 2025-12-05  
-**מסמך מלא:** [HEADLESS_MIGRATION_ROADMAP.md](./HEADLESS_MIGRATION_ROADMAP.md)
+**תאריך:** 2025-12-05 (עודכן 2025-12-06)  
+**מסמך מלא:** [HEADLESS_MIGRATION_ROADMAP.md](./HEADLESS_MIGRATION_ROADMAP.md)  
+**סטטוס:** ✅ **3/4 Complete** - H4 VPS Deployment Next
 
 ---
 
@@ -10,8 +11,8 @@
 **המעבר:** Claude Desktop/GPT/Gemini מ-"מערכת" ל-**clients** של core headless.
 
 ```
-VPS (24/7) ← n8n + Qdrant + Git
-    ↑ APIs ↑
+VPS (24/7) ← n8n + Qdrant + Git + APIs
+    ↑ HTTP APIs ↑
 Claude Desktop | GPT-4o | o1 | Gemini
 ```
 
@@ -21,10 +22,12 @@ Claude Desktop | GPT-4o | o1 | Gemini
 
 | # | שם | זמן | מה זה עושה | סטטוס |
 |---|----|----|-----------|--------|
-| **H1** | MCP→REST Gateway | 2-3h | GPT שולח Gmail בלי Claude Desktop | ⏳ הבא |
-| **H2** | Memory Bank API | 2h | GPT טוען context < 30s | ⏳ תור |
-| **H3** | Telegram Bot | 3-4h | אישורים async (בלי chat UI) | ⏳ תור |
-| **H4** | VPS Deploy | 4-6h | 24/7 uptime, PC-independent | 🟢 עתיד |
+| **H1** | MCP→REST Gateway | 2-3h | GPT שולח Gmail בלי Claude Desktop | ✅ **COMPLETE** |
+| **H2** | Memory Bank API | 2h | GPT טוען context < 30s | ✅ **COMPLETE** |
+| **H3** | Telegram Bot | 3-4h | אישורים async (בלי chat UI) | ✅ **TESTED** |
+| **H4** | VPS Deploy | 4-6h | 24/7 uptime, PC-independent | ⏳ **NEXT** |
+
+**Progress:** 75% (3/4 slices done) 🎉
 
 ---
 

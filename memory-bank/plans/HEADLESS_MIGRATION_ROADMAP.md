@@ -1,10 +1,10 @@
 # AI Life OS: Headless Migration Roadmap
 
-**תאריך:** 2025-12-05  
+**תאריך:** 2025-12-05 (עודכן 2025-12-06)  
 **Lead טכני:** Claude (Technical Implementation Lead)  
 **יועץ אסטרטגי:** GPT Deep Research (Strategic Advisory)  
 **משתמש:** Or Edri (Product Owner + Approver)  
-**סטטוס:** Roadmap Ready for Approval
+**סטטוס:** ✅ 3/4 Slices Complete - H4 VPS Deployment Next
 
 ---
 
@@ -109,13 +109,52 @@ AI Life OS עובר שינוי אסטרטגי: מעבר מ-**Desktop-Dependent A
 
 ### Overview
 
-| Slice | Duration | Complexity | Priority | Dependencies |
-|-------|----------|------------|----------|--------------|
-| **H1: MCP→REST Gateway** | 2-3 hours | Low | 🔴 Critical | None |
-| **H2: Memory Bank API** | 2 hours | Low | 🟡 Medium | None |
-| **H3: Telegram Approval Bot** | 3-4 hours | Medium | 🟠 High | None |
-| **H4: VPS Deployment** | 4-6 hours | Medium | 🟢 Future | H1+H2+H3 |
-| **Total Effort** | **11-15 hours** | - | - | Spread 7-10 days |
+| Slice | Duration | Complexity | Priority | Status |
+|-------|----------|------------|----------|--------|
+| **H1: MCP→REST Gateway** | 2-3 hours | Low | 🔴 Critical | ✅ **COMPLETE** (2025-12-06) |
+| **H2: Memory Bank API** | 2 hours | Low | 🟡 Medium | ✅ **COMPLETE** (2025-12-06) |
+| **H3: Telegram Approval Bot** | 3-4 hours | Medium | 🟠 High | ✅ **COMPLETE + TESTED** (2025-12-06) |
+| **H4: VPS Deployment** | 4-6 hours | Medium | 🟢 Next | ⏳ **PENDING** |
+| **Total Effort** | **11-15 hours** | - | **Progress: 75%** | **3/4 Complete** |
+
+---
+
+### 🎯 Progress Update (2025-12-06)
+
+#### ✅ H1: MCP→REST Gateway - COMPLETE
+- **Implementation:** Google Workspace Client (existing service discovered, reused)
+- **Outcome:** Gmail API accessible via REST (localhost:8082)
+- **Test:** Email sent successfully via Python/curl ✅
+- **Git:** Commit e0f8f17 (OAuth refresh, encoding fixes)
+- **Duration:** ~2.5 hours (discovery + OAuth + testing)
+- **Status:** PRODUCTION - GPT can send Gmail without Claude Desktop
+
+#### ✅ H2: Memory Bank API - COMPLETE  
+- **Implementation:** FastAPI service (localhost:8081)
+- **Endpoints:** /current-state, /project-brief, /protocols, /research/{family}
+- **Test:** GPT loaded context < 30s, answered 4 questions correctly ✅
+- **Git:** Commit 1eaf4fd
+- **Duration:** ~2 hours (implementation + testing + docs)
+- **Status:** PRODUCTION - Multi-model onboarding operational
+
+#### ✅ H3: Telegram Approval Bot - COMPLETE + TESTED
+- **Implementation:** FastAPI backend (services/approval-bot/)
+- **Features:** File watcher, SQLite queue, Telegram inline keyboards
+- **Test:** End-to-end verification successful ✅
+  - CR detected within 5 seconds
+  - Telegram notification sent
+  - User approved via inline button
+  - Database updated (status=APPROVED)
+- **Git:** Commit e0f8f17 (implementation), dc6f16b (testing complete)
+- **Duration:** ~90 min total (implementation 45 min + testing 45 min)
+- **Status:** PRODUCTION VERIFIED - Headless HITL operational
+
+#### ⏳ H4: VPS Deployment - NEXT
+- **Prerequisites:** ✅ All dependencies ready (H1+H2+H3)
+- **Target:** Hetzner Cloud CPX31 ($16/mo)
+- **Scope:** n8n + Qdrant + Langfuse + APIs (24/7 uptime)
+- **Estimated Duration:** 4-6 hours
+- **Risk:** Medium (migration requires downtime planning)
 
 ---
 
@@ -1420,6 +1459,14 @@ git checkout -b feature/h1-mcp-rest-gateway
 
 ## 📝 Change Log
 
+**Version 2.0 (2025-12-06):**
+- ✅ H1 COMPLETE: MCP→REST Gateway operational (Gmail API)
+- ✅ H2 COMPLETE: Memory Bank API operational (multi-model context)
+- ✅ H3 COMPLETE: Telegram Approval Bot tested and verified
+- Progress: 3/4 slices done (75% complete)
+- Next: H4 VPS Deployment ($16/mo, 4-6 hours)
+- Update: Roadmap status changed from "Ready for Approval" to "3/4 Complete"
+
 **Version 1.0 (2025-12-05):**
 - Initial roadmap created
 - 4 slices defined (H1-H4)
@@ -1432,6 +1479,6 @@ git checkout -b feature/h1-mcp-rest-gateway
 
 **End of Document**
 
-**Status:** Ready for Or's approval  
-**Next Action:** Or reviews + approves → Claude starts H1  
+**Status:** 3/4 Slices Complete - H4 VPS Deployment Next  
+**Next Action:** Or approves H4 → Claude starts VPS deployment  
 **Contact:** Or Edri (Product Owner), Claude (Technical Lead), GPT (Strategic Advisor)
