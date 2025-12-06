@@ -23,7 +23,21 @@ Quick Status, Current Focus, Recent Changes, Next Steps
 
 **Progress:** ~78% complete (H3 Telegram Approval Bot TESTED & OPERATIONAL! 🎉)
 
-**Current Work (2025-12-06 - 19:05):**
+**Current Work (2025-12-06 - 19:25):**
+- ✅ **Context Files UTF-8 Fix** (2 min)
+  - **Problem:** PowerShell `curl | Out-File` created UTF-16 encoded files → Hebrew text corrupted (????????)
+  - **Discovery:** User opened roadmap.txt and found garbled Hebrew text
+  - **Root Cause:** Windows PowerShell defaults to UTF-16LE for Out-File (not UTF-8)
+  - **Solution:** Created Python script with explicit UTF-8 encoding
+    - Script: `create_context_files.py` (requests library + pathlib)
+    - Files: story.txt (11.6KB), roadmap.txt (3.8KB), summary.txt (4.8KB)
+    - Verified: Hebrew text displays correctly ✅
+  - **Impact:** GPT/Gemini can now read Hebrew context properly
+  - **Reusable:** Script can refresh files anytime (`python create_context_files.py`)
+  - **Meta-Learning:** PowerShell text encoding is unreliable for non-ASCII → use Python with explicit encoding
+  - **Status:** ✅ COMPLETE
+
+**Previous Work (2025-12-06 - 19:05):**
 - ✅ **H2 API: /story Endpoint Added** (2 min)
   - **Context:** User preparing GPT consultation, discovered /story endpoint missing (404)
   - **Solution:** Added GET /api/context/story endpoint
