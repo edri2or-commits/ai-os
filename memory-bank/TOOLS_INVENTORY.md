@@ -4,6 +4,17 @@
 **Source:** Verified from configuration files, README docs, and active services  
 **Update Rule:** Add entries when new tool/API/service deployed
 
+### Status Levels
+
+| Icon | Level | Meaning |
+|------|-------|---------|
+| 📝 | **EXISTS** | Code written, not tested |
+| ✅ | **TESTED** | Works when started manually |
+| 🟡 | **STAGED** | Ready for production deployment (awaiting VPS) |
+| 🟢 | **TESTING** | Running locally (Task Scheduler/manual), not yet 24/7 |
+| 🔵 | **PRODUCTION** | Auto-start on VPS, 24/7 uptime, always available |
+| ❌ | **BROKEN** | Exists but doesn't work, needs fix |
+
 ---
 
 ## MCP Servers (Claude Desktop)
@@ -66,7 +77,7 @@
 **Service:** FastAPI wrapper for Google APIs  
 **Port:** 8082  
 **URL:** http://localhost:8082  
-**Status:** ✅ OPERATIONAL (H1 complete)
+**Status:** 🟡 STAGED (code ready, awaits H4 VPS deployment for 24/7 auto-start)
 
 **Endpoints:**
 - `POST /google/gmail/send` - Send email
@@ -91,7 +102,7 @@
 **Service:** FastAPI server for external LLMs  
 **Port:** 8081  
 **URL:** http://localhost:8081  
-**Status:** ✅ OPERATIONAL (H2 complete)
+**Status:** 🟡 STAGED (code ready, manual start works, awaits H4 VPS deployment for 24/7 auto-start)
 
 **Endpoints:**
 - `GET /health` - Service health check
@@ -121,7 +132,7 @@
 **Service:** FastAPI + Telegram Bot  
 **Port:** N/A (Telegram WebSocket)  
 **Bot:** @SALAMTAKBOT  
-**Status:** ✅ TESTED & OPERATIONAL (2025-12-06)
+**Status:** 🟢 TESTING (running locally via Task Scheduler, ready for H4 VPS migration)
 
 **Capabilities:**
 - Async Human-in-the-Loop approvals
