@@ -272,6 +272,37 @@ async def get_context_summary():
         )
 
 
+@app.get("/api/context/story")
+async def get_story():
+    """
+    Get the complete AI Life OS story from AI_LIFE_OS_STORY.md
+    
+    Returns:
+        - content: Full AI_LIFE_OS_STORY.md markdown
+        - metadata: File stats + Git SHA
+    """
+    try:
+        filepath = MEMORY_BANK / "AI_LIFE_OS_STORY.md"
+        content = filepath.read_text(encoding="utf-8")
+        metadata = get_file_metadata(filepath)
+        
+        return {
+            "content": content,
+            "metadata": metadata
+        }
+    
+    except FileNotFoundError as e:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Story file not found. ({str(e)})"
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error reading story: {str(e)}"
+        )
+
+
 @app.get("/api/context/roadmap")
 async def get_roadmap():
     """
