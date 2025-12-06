@@ -114,6 +114,9 @@
 - `GET /api/context/roadmap` - HEADLESS_MIGRATION_ROADMAP_TLDR.md (4.6KB) ⭐ **NEW**
   - H1→H2→H3→H4 VPS migration plan
   - Progress tracking (3/4 complete)
+- `GET /api/context/story` - AI_LIFE_OS_STORY.md (12.5KB, 292 lines) ⭐ **NEW**
+  - Complete project narrative with progressive disclosure
+  - Elevator pitch → What/Why/How → Current state → Architecture → Vision
 - `GET /api/context/protocols` - PROTOCOLS section extraction
 - `GET /api/context/research/{family}` - Research files by family
   - Note: Only 2 files currently (08_ai_os_current_state_snapshot.md, 09_agentic_kernel_claude_desktop_mcp.md)
