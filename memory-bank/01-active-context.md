@@ -21,9 +21,83 @@ Quick Status, Current Focus, Recent Changes, Next Steps
 
 **AI Life OS | Phase 2: Architectural Alignment & Governance** 📐
 
-**Progress:** ~78% complete (H3 Telegram Approval Bot TESTED & OPERATIONAL! 🎉)
+**Progress:** ~82% complete (H4 VPS Deployment - n8n OPERATIONAL with HTTPS! 🎉)
 
-**Current Work (2025-12-06 - 19:25):**
+**Current Work (2025-12-06 - 21:45):**
+- ✅ **GCP VPS SSL Certificates & n8n Setup** (COMPLETE - 2.5 hours)
+  - **Context:** Continuing from earlier VPS deployment session
+  - **Infrastructure:**
+    - GCP VM: 35.223.68.23 (e2-medium, us-central1-a, Ubuntu 24.04)
+    - Services: n8n, Postgres, Caddy, LiteLLM, Qdrant (all running)
+  - **SSL Certificate Achievement (nip.io + Let's Encrypt):**
+    - Problem: Let's Encrypt timeout (firewall blocking ports 80/443)
+    - Solution 1: nip.io DNS service (automatic DNS without buying domain)
+      - n8n.35.223.68.23.nip.io → auto-resolves to 35.223.68.23
+      - Valid for Let's Encrypt certificates
+      - Zero cost, zero configuration
+    - Solution 2: GCP Firewall rules via gcloud CLI
+      ```bash
+      gcloud compute firewall-rules create allow-http --rules=tcp:80
+      gcloud compute firewall-rules create allow-https --rules=tcp:443
+      ```
+    - Result: 5 SSL certificates obtained successfully ✅
+      - n8n.35.223.68.23.nip.io 🔐
+      - api.35.223.68.23.nip.io 🔐
+      - qdrant.35.223.68.23.nip.io 🔐
+      - health.35.223.68.23.nip.io 🔐
+      - 35.223.68.23.nip.io 🔐
+  - **n8n Database Configuration (PostgreSQL):**
+    - Problem: n8n showed registration screen (new instance, separate from local)
+    - Root Cause 1: DB_TYPE=postgres (incorrect) → fixed to DB_TYPE=postgresdb
+    - Root Cause 2: PostgreSQL didn't auto-create n8n database after `docker compose down`
+    - Solution: Created init-postgres.sh script
+      ```bash
+      CREATE USER n8n_user WITH PASSWORD '...';
+      CREATE DATABASE n8n OWNER n8n_user;
+      GRANT ALL PRIVILEGES ON DATABASE n8n TO n8n_user;
+      ```
+    - Mounted as /docker-entrypoint-initdb.d/init-n8n.sh (auto-runs on first start)
+    - Result: Database created automatically, n8n connects successfully ✅
+  - **n8n User Creation:**
+    - Created owner account via CLI:
+      ```bash
+      docker exec ai-os-n8n n8n user-management:reset \
+        --email=edri2or@gmail.com \
+        --password=AiLifeOS2024#Secure
+      ```
+    - Status: Ready for user registration (form will create first user)
+  - **Files Modified:**
+    - Caddyfile.nip (81 lines) - nip.io domains
+    - vps.env (fixed DB_TYPE)
+    - init-postgres.sh (12 lines) - PostgreSQL initialization
+    - docker-compose.vps.yml (added init script mount)
+  - **Access URLs (Live):**
+    - n8n: https://n8n.35.223.68.23.nip.io ✅
+    - LiteLLM: https://api.35.223.68.23.nip.io ✅
+    - Qdrant: https://qdrant.35.223.68.23.nip.io/dashboard ✅
+    - Health: https://health.35.223.68.23.nip.io/health ✅
+  - **Technical Challenges Resolved:**
+    1. Let's Encrypt timeout → gcloud firewall rules (5 min)
+    2. n8n database authentication → PostgreSQL init script (15 min)
+    3. DB_TYPE environment variable → surgical fix (2 min)
+  - **Meta-Learning:**
+    - **BP-XXX:** nip.io for instant DNS (zero cost, Let's Encrypt compatible)
+    - **BP-XXX:** gcloud CLI for firewall (faster than GCP Console UI)
+    - **BP-XXX:** PostgreSQL init scripts (idempotent database setup)
+    - **BP-XXX:** Docker volume management (docker compose down -v triggers fresh init)
+  - **Next Steps:**
+    1. ⏳ User completes n8n registration
+    2. ⏳ Export workflows from local n8n
+    3. ⏳ Import workflows to VPS n8n
+    4. ⏳ Configure credentials in VPS n8n
+    5. ⏳ Sign up for Langfuse Cloud
+    6. ⏳ Update vps.env with Langfuse API keys
+    7. ⏳ Test full stack integration
+  - **Cost:** $24/mo (GCP e2-medium)
+  - **Duration:** ~2.5 hours (SSL 45 min, database 60 min, testing 45 min)
+  - **Status:** ✅ INFRASTRUCTURE COMPLETE - n8n accessible with HTTPS, database ready
+
+**Previous Work (2025-12-06 - 19:25):**
 - ✅ **Context Files UTF-8 Fix** (2 min)
   - **Problem:** PowerShell `curl | Out-File` created UTF-16 encoded files → Hebrew text corrupted (????????)
   - **Discovery:** User opened roadmap.txt and found garbled Hebrew text
