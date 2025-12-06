@@ -231,6 +231,78 @@ async def get_protocols():
         )
 
 
+@app.get("/api/context/summary")
+async def get_context_summary():
+    """
+    Get quick summary (first 100 lines) of current state
+    
+    Returns:
+        - content: First 100 lines of 01-active-context.md
+        - metadata: File stats + Phase info + Git SHA
+    """
+    try:
+        filepath = MEMORY_BANK / "01-active-context.md"
+        full_content = filepath.read_text(encoding="utf-8")
+        
+        # Get first 100 lines
+        lines = full_content.split('\n')
+        summary_content = '\n'.join(lines[:100])
+        
+        # Extract metadata
+        metadata = get_file_metadata(filepath)
+        phase_info = extract_phase_info(full_content)
+        metadata.update(phase_info)
+        metadata["lines_returned"] = min(100, len(lines))
+        metadata["total_lines"] = len(lines)
+        
+        return {
+            "content": summary_content,
+            "metadata": metadata
+        }
+    
+    except FileNotFoundError as e:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Current state file not found. ({str(e)})"
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error reading summary: {str(e)}"
+        )
+
+
+@app.get("/api/context/roadmap")
+async def get_roadmap():
+    """
+    Get Headless Migration Roadmap (VPS deployment plan)
+    
+    Returns:
+        - content: HEADLESS_MIGRATION_ROADMAP_TLDR.md content
+        - metadata: File stats + Git SHA
+    """
+    try:
+        filepath = MEMORY_BANK / "plans" / "HEADLESS_MIGRATION_ROADMAP_TLDR.md"
+        content = filepath.read_text(encoding="utf-8")
+        metadata = get_file_metadata(filepath)
+        
+        return {
+            "content": content,
+            "metadata": metadata
+        }
+    
+    except FileNotFoundError as e:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Roadmap file not found. ({str(e)})"
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error reading roadmap: {str(e)}"
+        )
+
+
 @app.get("/api/context/research/{family}")
 async def get_research_by_family(family: str):
     """
