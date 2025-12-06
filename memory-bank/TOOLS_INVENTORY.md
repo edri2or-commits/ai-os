@@ -105,11 +105,18 @@
 **Status:** 🟡 STAGED (code ready, manual start works, awaits H4 VPS deployment for 24/7 auto-start)
 
 **Endpoints:**
-- `GET /health` - Service health check
-- `GET /api/context/current-state` - Get 01-active-context.md
-- `GET /api/context/project-brief` - Get project-brief.md
-- `GET /api/context/protocols` - Get PROTOCOLS section
-- `GET /api/context/research/{family}` - Get research files by family
+- `GET /health` - Service health check (returns status, version, Git SHA)
+- `GET /api/context/summary` - First 100 lines of 01-active-context.md (5.7KB) ⭐ **NEW**
+  - Quick Status, Current Work, Recent Changes, Next Steps
+  - Optimized for external LLM consumption (minimal tokens)
+- `GET /api/context/current-state` - Full 01-active-context.md (101KB, 1,894 lines)
+  - Complete project state with all history
+- `GET /api/context/roadmap` - HEADLESS_MIGRATION_ROADMAP_TLDR.md (4.6KB) ⭐ **NEW**
+  - H1→H2→H3→H4 VPS migration plan
+  - Progress tracking (3/4 complete)
+- `GET /api/context/protocols` - PROTOCOLS section extraction
+- `GET /api/context/research/{family}` - Research files by family
+  - Note: Only 2 files currently (08_ai_os_current_state_snapshot.md, 09_agentic_kernel_claude_desktop_mcp.md)
 
 **Research Families:**
 - `architecture` - Hexagonal, MAPE-K, Agentic Kernel
