@@ -1,73 +1,30 @@
 # START HERE - AI Life OS Entry Point
 
+**🔴 NEW CLAUDE INSTANCE? READ THIS FIRST! 🔴**
+
 **If you are a new AI instance, this is your navigation hub.**
 
 ---
 
-## 🤖 For External LLMs (GPT, Gemini, Perplexity, etc.)
+## 🎯 Quick Start (< 5 minutes)
 
-**🎯 START HERE:** Read [`/SYSTEM_BOOK.md`](../SYSTEM_BOOK.md) first.
+Follow these 4 steps IN ORDER:
 
-**What it contains:**
-- Quick Context Injection (< 500 tokens) - Get productive in 30 seconds
-- Progressive disclosure - Links to everything you need
-- How to use guide - Tailored for external LLMs
-- Live system state - What's operational right now
+### Step 1: Get the Story (2 min)
+📖 **File:** `memory-bank/AI_LIFE_OS_STORY.md`
 
-**Why SYSTEM_BOOK.md and not this file?**
-- SYSTEM_BOOK = LLM-optimized (llms.txt standard, token-efficient)
-- START_HERE = Deep navigation within Memory Bank (for context loading)
-
-**After reading SYSTEM_BOOK, come back here if you need deep dives.**
-
----
-
-## 📍 For Claude (This Project Session)
-
-**You already have full context via Project Knowledge.**
-
-Follow the standard onboarding below to load current state:
-
----
-
-## ?? If You're Lost: Start Here
-
-**Feeling confused about WHY this system exists? Lost in technical details?**
-
-?? **Read FIRST:** `memory-bank/00_The_Sovereign_AI_Manifesto.md`
-
-This is your **"North Star"** - it explains:
-- WHY AI Life OS exists (it's a Prosthetic Executive Cortex for ADHD)
-- 4 Core Principles (Cognitive Sovereignty, Attention Defense, Executive Prosthesis, The Gardener)
-- Journey Map connecting to all other documentation
-- ADHD-specific justifications for every architectural choice
-
-**When to read it:**
-- First time in this project ? Read it
-- User says "������ �����" (lost control) ? Point them to Manifesto
-- Confused about WHY a decision was made ? Check Manifesto principles
-- Need to explain the system to someone ? Start with Manifesto
-
-**Then proceed with normal onboarding:**
-
----
-
-## Quick Context Load (< 2 minutes)
-
-Follow these steps in order:
-
-### Step 1: Read Project Brief
-?? **File:** `memory-bank/project-brief.md`
+**Read:** Section "📖 2 Minutes (What/Why/How)"
 
 **What you'll learn:**
-- Vision: What is AI Life OS?
-- Why does it exist?
-- TL;DR summary (20 seconds)
+- What is AI Life OS? (Personal AI OS for ADHD)
+- Why does it exist? (Prosthetic Executive Cortex)
+- 4 Core Principles (Sovereignty, Attention, Prosthesis, Gardener)
+- Current state (Phase 2, 78%)
 
 ---
 
-### Step 2: Read Current Active Context ? MOST IMPORTANT
-?? **File:** `memory-bank/01-active-context.md`
+### Step 2: Get Current State (2 min) ⭐ MOST IMPORTANT
+📊 **File:** `memory-bank/01-active-context.md`
 
 **What you'll learn:**
 - Current Phase and % completion
@@ -77,249 +34,195 @@ Follow these steps in order:
 
 ---
 
-### Step 3: 🏛️ Understand the Architecture (NEW - CRITICAL)
-📐 **Files:** `memory-bank/docs/` (Architecture Foundation)
+### Step 3: Know Your Tools (1 min)
+🛠️ **File:** `memory-bank/TOOLS_INVENTORY.md`
 
-**MANDATORY FOR ALL AI INSTANCES:**
+**Read:** Quick Reference table ("Can I...?")
 
-**Read FIRST (in order):**
-1. **`docs/decisions/ADR-001-architectural-alignment.md`**
-   - THE canonical architecture decision
-   - Hexagonal (primary) + MAPE-K (secondary)
-   - What we rejected and why ("Semantic Microkernel", "QAL Machine")
-
-2. **`docs/CANONICAL_TERMINOLOGY.md`**
-   - ONLY authoritative source for system terms
-   - Use ONLY these terms in all communication
-   - Forbidden terms list (violations = ADR breach)
-
-3. **`docs/METAPHOR_GUIDE.md`**
-   - When to use which metaphor (Hexagonal/Cognitive/LLM-OS)
-   - Decision matrix for technical vs human communication
-
-**Read when needed:**
-4. **`docs/ARCHITECTURE_REFERENCE.md`**
-   - Detailed technical guide (300+ lines)
-   - Component mapping, data flow examples
-   - Anti-patterns
-
-**Why this matters:**
-- Without reading these, you'll use **deprecated terms** (e.g., `"The Brain"` instead of **"Application Core"**)
-- All architectural decisions MUST reference ADR-001
-- This prevents drift back to inconsistent terminology
-
-**Time:** 10 minutes (ADR-001 + Terminology) = mandatory  
-**Time:** 5 minutes (Metaphor Guide) = recommended  
-**Time:** 15 minutes (Architecture Reference) = as-needed
+**What you'll learn:**
+- MCP servers (Google, n8n, Desktop Commander)
+- REST APIs (H1 Gmail, H2 Memory Bank, H3 Telegram)
+- Docker services (n8n, Qdrant, Langfuse)
+- Windows automations (Observer, Email Watcher)
+- What you CAN do vs CANNOT do
 
 ---
 
-### Step 4: (Optional) Read Full History
-?? **File:** `memory-bank/02-progress.md`
+### Step 4: Know Where to Write (< 1 min)
+📝 **File:** `memory-bank/WRITE_LOCATIONS.md`
 
-**Only if you need:**
-- Full chronological history of all slices
-- Detailed context from previous work
+**Read:** Quick Reference table ("Event → Files to Update")
 
-**Most of the time, Steps 1-2 are enough to start working!**
-
----
-
-### Step 5: (Special Context) Active Work Handoffs
-?? **If working on specific subsystems, check for handoff docs:**
-
-**Validation Sprint:**
-- **File:** `memory-bank/docs/VALIDATION_SPRINT_HANDOFF.md`
-- **When to read:** If continuing validation work (VAL-* slices)
-- **Contains:** 
-  - Completed work (VAL-7, VAL-4) with test results
-  - Remaining items (VAL-1b, VAL-1, VAL-6, VAL-8, VAL-9)
-  - Tool setup instructions (MCP Inspector, pytest, etc.)
-  - 3 recommended approaches (Quick Win, Security-First, ADHD-Optimized)
-  - Success criteria (95% empirical confidence target)
-
-**Other handoff docs:** Check `memory-bank/docs/` for subsystem-specific handoffs.
+**What you'll learn:**
+- After slice: Update 01-active-context + 02-progress (ALWAYS)
+- After tool deployed: Update TOOLS_INVENTORY
+- After pattern: Create AP-XXX or BP-XXX
+- Git commit rules
 
 ---
 
-### Step 6: 📖 Research Corpus (13 Reports - FOR DEEP DIVES ONLY)
-?? **Location:** `claude-project/revolution-research/`
-
-**IMPORTANT: You don't need to read all 350 pages to start working!**
-
-**When to reference:**
-- Building Layer 0-4 features
-- Validating architectural decisions
-- Understanding WHY a pattern was chosen
-- Resolving technical questions with empirical evidence
-
-**Quick Navigation:**
-1. **File:** `RESEARCH_INDEX.md` - Overview of all 13 reports (Quick Reference Table)
-2. **File:** `REVOLUTION_INTEGRATION.md` ? **MOST IMPORTANT** - Maps research to 5 Layers + 7 Critical Gaps
-
-**The 13 Research Reports:**
-1. Human-AI Collaboration Theory (LOA Framework)
-2. Reinforcement Learning for Self-Improvement
-3. Multi-Agent Orchestration Patterns
-4. Vector Memory & Context Management
-5. Production AI Reliability & Monitoring
-6. ADHD-Optimized Design Patterns (THE BIBLE)
-7. Security in Agentic AI Systems
-8. n8n Enterprise Production Patterns
-9. Claude Desktop + MCP + Windows Integration
-10. Git-Based Autonomous AI Operating Systems
-11. Production Operations & Maintenance
-12. Local LLM Optimization
-13. Layer 4 Observability & Trust Calibration
-
-**Coverage:**
-- **Layer 0 (Substrate):** Research 4, 8, 10, 11
-- **Layer 1 (Router):** Research 5, 11
-- **Layer 2 (Assistant):** Research 9, 12
-- **Layer 3 (Architect):** Research 1, 1.5, 3, 13
-- **Layer 4 (Strategist):** Research 2, 13
-- **Cross-Cutting:** Research 6 (ADHD), Research 7 (Security)
-
-**How to use:**
-1. Check `REVOLUTION_INTEGRATION.md` first (maps research to your current work)
-2. Read specific research report sections as needed (not entire reports!)
-3. Every architectural decision should reference research for 95% confidence
-
-**DON'T:**
-- Read all 13 reports upfront (cognitive overload!)
-- Try to memorize everything (use as reference)
-- Ignore research when making architectural decisions
-
-**DO:**
-- Reference research when user asks "why this pattern?"
-- Cite research numbers when validating decisions (e.g., "Research #9 shows...")
-- Use REVOLUTION_INTEGRATION.md as your navigation map
-
----
-
-## After Reading - Summarize to User (Hebrew)
+## ✅ After Reading - Summarize to User (Hebrew)
 
 Before doing ANY work, tell the user in Hebrew:
 
 ```
-���! ����� �� Memory Bank.
+היי! קראתי את Memory Bank.
 
-?? **���� �����:**
-- Phase 2: Core Infrastructure (~32% complete)
-- ������ �������: Architecture Cleanup (single metaphor established - Head/Hands/Truth/Nerves)
-- ���: Fix TD-002 (Windows MCP stdout) �� Reconciler Apply (2.4c) �� Scheduled Observer (2.3b)
+📍 **איפה אנחנו:**
+- Phase X: [name] (~Y% complete)
+- סיימנו לאחרונה: [from Recent Changes]
+- הבא: [from Next Steps]
 
-?? **�������� �����:**
-1. Fix TD-002 - Investigate Windows MCP stdout issue (blocker for apply validation)
-2. Continue Reconciler - Apply Logic (2.4c) if willing to skip validation
-3. Scheduled Observer (2.3b) - n8n automation
+🛠️ **כלים זמינים:**
+- [top 3-4 tools from TOOLS_INVENTORY]
 
-�� ���� �����?
+🎯 **אפשרויות להמשך:**
+1. [Option A from 01-active-context]
+2. [Option B from 01-active-context]
+3. [Option C from 01-active-context]
+
+מה תרצה לעשות?
 ```
 
-**Note:** This is updated as of 2025-12-01. Always update with actual current state from `01-active-context.md`.
+**Then WAIT for user to choose direction!**
 
 ---
 
-## Critical Rules
+## 🤖 For External LLMs (GPT, Gemini, o1, etc.)
 
-### ? DO:
-- Read these 2 files FIRST: project-brief.md + 01-active-context.md
+**You have 2 options:**
+
+### Option A: Fast (30 seconds) - API
+```bash
+curl http://localhost:8081/api/context/current-state
+```
+
+Returns JSON with:
+- Phase, progress %
+- Recent work
+- Next steps
+- Architecture summary
+
+### Option B: Complete (5 minutes) - File
+Read: `memory-bank/AI_LIFE_OS_STORY.md`
+
+**Sections:**
+- 30 seconds: Elevator pitch
+- 2 minutes: What/Why/How ⭐ START HERE
+- 5 minutes: Current state + wins
+- 10 minutes: Architecture + vision
+- 30+ minutes: Complete deep dive
+
+---
+
+## 📚 Deep Dives (Optional - Read as Needed)
+
+### If You Need Philosophy/WHY:
+📖 **File:** `memory-bank/00_The_Sovereign_AI_Manifesto_v2.md`
+
+- 4 Core Principles with ADHD justifications
+- Historical context (written before ADR-001)
+- Journey Map to all documentation
+- ⚠️ Note: Uses deprecated terms (updated since)
+
+### If You Need Architecture/HOW:
+🏛️ **Files:** `memory-bank/docs/`
+
+1. **ADR-001-architectural-alignment.md** - Canonical architecture decision
+2. **CANONICAL_TERMINOLOGY.md** - Official terms (MANDATORY)
+3. **ARCHITECTURE_REFERENCE.md** - Technical deep dive
+4. **METAPHOR_GUIDE.md** - Communication guide
+
+### If You Need Full History:
+📜 **File:** `memory-bank/02-progress.md`
+
+- Chronological log of all slices
+- Detailed outcomes and lessons
+
+### If You Need Protocols/Patterns:
+📋 **Files:**
+- `claude-project/ai-life-os-claude-project-playbook.md` - Phases, protocols
+- `memory-bank/patterns/` - AP-XXX (anti-patterns), BP-XXX (best practices)
+- `memory-bank/incidents/` - Post-mortems with 5 Whys
+
+### If You Need Research:
+🔬 **Files:** `claude-project/research_claude/`
+
+- 18 research documents (350 pages)
+- 7 families: architecture, MCP, ADHD, safety, infra, memory, meta
+- 95% empirical confidence backing all decisions
+
+---
+
+## ⚠️ Critical Rules
+
+### ✅ DO:
+- Read these 4 files FIRST: STORY (2 min) + 01-active-context + TOOLS_INVENTORY + WRITE_LOCATIONS
 - Summarize current state to user in Hebrew
 - Wait for user to choose direction before starting work
-- Follow the Chat?Spec?Change pattern
+- Follow Chat→Spec→Change pattern
 - Auto-update Memory Bank after every slice (Protocol 1)
 
-### ? DON'T:
+### ❌ DON'T:
 - Start working without reading Memory Bank
 - Skip the summary step
 - Read all files randomly - follow the order above
-- Guess the current state - check 01-active-context.md
-- Ask "should I update Memory Bank?" - just do it automatically
+- Guess current state - check 01-active-context.md
+- Ask "should I update Memory Bank?" - just do it automatically (Protocol 1)
+- Use deprecated terms - check CANONICAL_TERMINOLOGY.md
 
 ---
 
-## Self-Check Before Starting Work
+## 🔍 Self-Check Before Starting Work
 
 **Ask yourself:**
-- ? Did I read project-brief.md?
-- ? Did I read 01-active-context.md completely?
-- ? Did I summarize to user: Phase, %, recent work, 2-3 next options?
-- ? Did I wait for user to choose direction?
-- ? User confirmed before I started executing?
+- ✅ Did I read AI_LIFE_OS_STORY.md (2 min section)?
+- ✅ Did I read 01-active-context.md completely?
+- ✅ Did I check TOOLS_INVENTORY.md (what tools I have)?
+- ✅ Did I check WRITE_LOCATIONS.md (where to update)?
+- ✅ Did I summarize to user: Phase, %, recent work, tools, 2-3 options?
+- ✅ Did I wait for user to choose direction?
 
-**If any answer is NO ? STOP and complete that step first!**
-
----
-
-## Additional Resources (for later)
-
-Once you're working, you can reference:
-
-### Narrative Layer (WHY & HOW)
-
-- **Manifesto:** `memory-bank/00_The_Sovereign_AI_Manifesto.md` ?
-  - WHY this system exists (Prosthetic Executive Cortex for ADHD)
-  - 4 Core Principles with ADHD justifications
-  - Journey Map to all other docs
-  
-- **ADRs (Architecture Decision Records):** `memory-bank/docs/decisions/`
-  - WHY specific technical choices were made
-  - Example: ADR-001 explains Git Truth Layer decision
-  - Each ADR includes ADHD Relevance section
-  
-- **Design Guide:** `docs/ATTENTION_CENTRIC_DESIGN.md`
-  - HOW to build ADHD-friendly interfaces
-  - 5 Core Patterns (North Star, Time Materialization, Bouncer, Scaffolding, Panic Button)
-  - Visual Grammar rules + Implementation Checklist
-
-### Technical Layer
-
-- **Playbook:** `claude-project/ai-life-os-claude-project-playbook.md`
-  - Phases, slices, protocols, anti-patterns, best practices
-  
-- **Life Graph Schema:** `memory-bank/docs/LIFE_GRAPH_SCHEMA.md`
-  - 6 entities, relationships, ADHD metadata
-  
-- **Architecture:** `docs/` (Foundation Documents)
-  - ADR-001: Canonical architecture decision (Hexagonal + MAPE-K)
-  - CANONICAL_TERMINOLOGY.md: Official terms (MANDATORY)
-  - ARCHITECTURE_REFERENCE.md: Technical guide
-  - METAPHOR_GUIDE.md: Communication guide
-  
-- **Research Corpus:** `claude-project/research_claude/`
-  - 18 research files organized in 7 families
-  
-- **Incidents:** `memory-bank/incidents/`
-  - Past incidents with 5 Whys analysis
-  
-- **Best Practices:** `memory-bank/best-practices/`
-  - BP-XXX files with validated patterns
-
-**Navigation Tips:**
-- Confused about WHY? ? Read Manifesto or ADRs
-- Building UI? ? Read ATTENTION_CENTRIC_DESIGN.md
-- Technical question? ? Read Playbook or Architecture
-- Historical context? ? Read 02-progress.md
-
-**But don't read these until you need them!** Start with project-brief + 01-active-context.
+**If any answer is NO → STOP and complete that step first!**
 
 ---
 
-## Why This Matters
+## 🎯 Why This Matters
 
 **Without this context load:**
-- ? You might redo work that's already done
-- ? You might miss important architectural decisions
-- ? You might ignore technical debt (TD-XXX)
-- ? You might create drift between documentation and reality
+- ❌ You might redo work that's already done
+- ❌ You might use wrong/missing tools (capability amnesia)
+- ❌ You might update wrong files (drift)
+- ❌ You might use deprecated terms (ADR violations)
 
 **With this context load:**
-- ? You continue smoothly from where we left off
-- ? You respect the existing architecture and decisions
-- ? You maintain system integrity
-- ? You work efficiently with ADHD-aware workflows
+- ✅ You continue smoothly from where we left off
+- ✅ You know exactly what tools are available
+- ✅ You update Memory Bank in the right places
+- ✅ You use canonical terminology
+- ✅ You work efficiently with ADHD-aware workflows
 
 ---
 
-**Now go read project-brief.md and 01-active-context.md!** ??
+## 📖 File Reference Summary
+
+| Purpose | File | Read When |
+|---------|------|-----------|
+| **Quick story** | AI_LIFE_OS_STORY.md (2 min) | ALWAYS FIRST |
+| **Current state** | 01-active-context.md | ALWAYS |
+| **Available tools** | TOOLS_INVENTORY.md | ALWAYS |
+| **Where to write** | WRITE_LOCATIONS.md | ALWAYS |
+| **Philosophy** | Manifesto_v2.md | If confused about WHY |
+| **Architecture** | docs/ARCHITECTURE_REFERENCE.md | If technical work |
+| **Terms** | docs/CANONICAL_TERMINOLOGY.md | If writing docs |
+| **Full history** | 02-progress.md | If need context |
+| **Protocols** | Playbook | If process question |
+| **Research** | research_claude/ | If need sources |
+
+---
+
+**Now go read the 4 essential files (< 5 min total):** 🚀
+1. AI_LIFE_OS_STORY.md (2 min section)
+2. 01-active-context.md
+3. TOOLS_INVENTORY.md (quick ref table)
+4. WRITE_LOCATIONS.md (quick ref table)

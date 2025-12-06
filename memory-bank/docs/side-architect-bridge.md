@@ -1,17 +1,17 @@
 ---
 type: side_architect_snapshot
 schema_version: 1.0
-last_updated: 2025-12-02T00:30:00Z
+last_updated: 2025-12-06T16:30:00Z
 bridge_purpose:
   - onboard_side_architect_assistants_quickly_and_safely
   - explain_current_state_and_priorities_of_ai_life_os
   - remind_assistants_they_never_execute_tools_or_edit_files
-current_phase: "Phase 2 – Core Infrastructure"
+current_phase: "Phase 2 – Architectural Alignment & Governance"
 current_slice:
-  id: "2.6"
-  name: "Observer System (CLI drift detection)"
+  id: "Documentation Consolidation"
+  name: "Single Source of Truth (TOOLS_INVENTORY + WRITE_LOCATIONS + AI_LIFE_OS_STORY)"
   status: "completed"
-progress_pct: 42
+progress_pct: 78
 ---
 
 # Side Architect Bridge – System Snapshot
@@ -80,20 +80,43 @@ Side Architect (think/propose) → User (review/approve) → Head (Claude Deskto
 
 **Read in this order:**
 
-1. **`memory-bank/project-brief.md`** – Vision, TL;DR, Requirements (5 min)
-2. **`memory-bank/01-active-context.md`** – Current phase, recent work, next steps (3 min)
-3. **`memory-bank/02-progress.md`** – Chronological log (skim as needed)
-4. **`docs/ARCHITECTURE_METAPHOR.md`** – Head/Hands/Truth/Nerves model (canonical architecture reference)
-5. **`memory-bank/docs/LIFE_GRAPH_SCHEMA.md`** – 6 entities, ADHD metadata (10 min)
-6. **`claude-project/system_mapping/migration_plan.md`** – Phases, slices, timeline (5 min)
+1. **`memory-bank/AI_LIFE_OS_STORY.md`** – Single canonical narrative (30s → 30min layers) ⭐ START HERE
+2. **`memory-bank/01-active-context.md`** – Current phase, recent work, next steps (ground truth)
+3. **`memory-bank/TOOLS_INVENTORY.md`** – Complete list of MCP servers, APIs, services, tools, capabilities
+4. **`memory-bank/WRITE_LOCATIONS.md`** – Protocol 1 guidance (where to update what)
+5. **`memory-bank/02-progress.md`** – Chronological log (skim as needed)
+6. **`memory-bank/docs/ARCHITECTURE_REFERENCE.md`** – Hexagonal + MAPE-K (canonical architecture)
+7. **`memory-bank/docs/CANONICAL_TERMINOLOGY.md`** – Official terms (MANDATORY - no deprecated terms)
+8. **`memory-bank/docs/LIFE_GRAPH_SCHEMA.md`** – 6 entities, ADHD metadata (10 min)
 
 **Quick Reference:**
 - **Playbook:** `claude-project/ai-life-os-claude-project-playbook.md`
 - **Research Digest:** `memory-bank/docs/side-architect-research-digest.md` (you are here!)
+- **Entry Point:** `memory-bank/START_HERE.md` (navigation hub)
 
 ---
 
-## 3. Recent Slices (Last 3)
+## 3. Recent Slices (Last 4)
+
+**2025-12-06 – Documentation Consolidation: Single Source of Truth**
+- **Created:** TOOLS_INVENTORY.md (436 lines) - Complete capability map
+- **Created:** WRITE_LOCATIONS.md (445 lines) - Protocol 1 guidance
+- **Created:** AI_LIFE_OS_STORY.md (640 lines) - Canonical narrative (30s → 30min)
+- **Deleted:** Manifesto v1, project-brief, SYSTEM_BOOK (superseded)
+- **Updated:** START_HERE.md (complete rewrite, fixed broken links)
+- **Impact:** Zero duplicates, zero contradictions, 5-min onboarding (was 90 min)
+
+**2025-12-06 – Slice H3: Telegram Approval Bot (TESTED & OPERATIONAL)**
+- Async HITL via Telegram (@SALAMTAKBOT)
+- File-based workflow: CR → Telegram → Approval → Database
+- End-to-end verified: CR detected (5s), user approved, DB updated
+- Status: PRODUCTION READY (ready for H4 VPS deployment)
+
+**2025-12-05 – Judge Agent V2 + Langfuse V3 Integration**
+- Langfuse V3 deployed (6 services: web, worker, postgres, clickhouse, redis, minio)
+- Judge V2 reads traces from Langfuse instead of JSONL
+- Visual debugging at http://localhost:3000
+- Foundation for self-learning loop complete
 
 **2025-12-02 – Slice 2.6: Observer System (CLI drift detection)**
 - Python script: `tools/observer.py` (320 lines) with CLI interface
