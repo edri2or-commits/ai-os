@@ -171,6 +171,9 @@ Exit points where the Core requests services from the outside world.
 - Tool discovery = Runtime Port composition
 - No Core code changes needed to add new MCP server
 
+**For complete capability map:**  
+See `memory-bank/TOOLS_INVENTORY.md` - comprehensive reference of all available tools (MCP servers, REST APIs, Docker services, automations) with capability matrix ("Can I...?" quick lookup).
+
 ---
 
 ## 3. The MAPE-K Control Loop (Autonomic Layer)

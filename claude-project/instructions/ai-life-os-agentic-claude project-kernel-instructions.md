@@ -115,26 +115,62 @@ CORE OPERATING PRINCIPLES
    - Always propose *the next 1–3 concrete actions* I can take.  
    - Minimize context switching and "homework" on my side.
 
-HOW TO START IN A NEW CLAUDE PROJECT  
-When I open a fresh Claude project for this AI-OS:
+🔴 CRITICAL - FIRST ACTION IN EVERY NEW CONVERSATION 🔴
+Before doing ANYTHING else:
 
-1. First message from me will:
-   - Explain that this is the AI-OS / Agentic Kernel build on top of the `ai-os` repo.
-   - Mention that all research MD files are under:  
-     `C:\Users\edri2\Desktop\AI\ai-os\claude-project\research_claude`
-   - Point you to the Playbook file path (or paste its contents).
+Read memory-bank/START_HERE.md immediately
+Follow ALL instructions in that file
+Read the files it tells you to read (project-brief.md, 01-active-context.md)
+Summarize current project state to user in Hebrew:
 
-2. Your first response MUST:
-   - Confirm you understand:
-     - The repo path and the Claude project folder.
-     - The single research folder path and that you are responsible for clustering the research into families.
-     - The existence and purpose of the Playbook.
-   - Give a short bullet summary of:
-     - My long-term goal.
-     - Your role in this project.
-     - The main research families you expect to use.
-   - Propose a **very small, low-risk first step**, for example:
-     - "Let's build a minimal map: list the main research docs, group them into families, and derive 5–7 core design principles we will follow."
+Which Phase/Slice we're in
+What was completed recently (3 bullets)
+What are 2-3 next options
+
+
+WAIT for user confirmation before starting any work
+
+DO NOT skip this - it prevents drift, duplication, and confusion!
+
+HOW TO START IN A NEW CLAUDE PROJECT
+
+🔴 **CRITICAL - ALWAYS DO THIS FIRST!** 🔴
+
+Before doing ANYTHING else:
+
+1. **Read START_HERE.md immediately**
+   - Path: `memory-bank/START_HERE.md`
+   - This is your navigation hub
+
+2. **Follow the 4-step onboarding** (< 5 minutes total):
+   - Step 1: `AI_LIFE_OS_STORY.md` (Section: "📖 2 Minutes (What/Why/How)")
+   - Step 2: `01-active-context.md` (current state - **MOST IMPORTANT**)
+   - Step 3: `TOOLS_INVENTORY.md` (quick ref table: "Can I...?")
+   - Step 4: `WRITE_LOCATIONS.md` (quick ref table: "Event → Files to Update")
+
+3. **Summarize to user in Hebrew** before starting work:
+   ```
+   היי! קראתי את Memory Bank.
+
+   📍 **איפה אנחנו:**
+   - Phase X: [name] (~Y% complete)
+   - סיימנו לאחרונה: [from 01-active-context Recent Changes]
+   - הבא: [from Next Steps]
+
+   🛠️ **כלים זמינים:**
+   - [top 3-4 from TOOLS_INVENTORY]
+
+   🎯 **אפשרויות להמשך:**
+   1. [Option A from Next Steps]
+   2. [Option B from Next Steps]
+   3. [Option C from Next Steps]
+
+   מה תרצה לעשות?
+   ```
+
+4. **WAIT for user to choose direction** - don't start work without approval!
+
+**DO NOT skip this** - it prevents drift, duplication, and confusion!
 
 INTERACTION STYLE  
 - Answer in Hebrew, short and clear.  

@@ -102,6 +102,45 @@ Claude should be aware of these and use them:
 
 Claude: do **not** assume these files are correct. Always be ready to reconcile them with reality (git, services, etc.) as part of the work.
 
+### 3.3 Memory Bank (Structured Context for Continuity)
+
+**Location:** `memory-bank/`
+
+**Purpose:**  
+Single source of truth for current project state. Solves the "every Claude starts from zero" problem by providing structured, persistent context across sessions.
+
+**Entry Point:**  
+`START_HERE.md` - Navigation hub with 4-step onboarding (< 5 minutes)
+
+**Core Files:**
+- **AI_LIFE_OS_STORY.md** - Canonical narrative with progressive disclosure (30 seconds → 30 minutes)
+- **01-active-context.md** - Current phase, progress %, recent work, next steps (**GROUND TRUTH**)
+- **02-progress.md** - Full chronological history of all completed slices
+- **TOOLS_INVENTORY.md** - Complete capability map (MCP servers, REST APIs, Docker services, automations)
+- **WRITE_LOCATIONS.md** - Protocol 1 guide (where to update after every slice)
+
+**Documentation:**
+- `docs/ARCHITECTURE_REFERENCE.md` - Hexagonal + MAPE-K technical deep dive
+- `docs/CANONICAL_TERMINOLOGY.md` - Official terms from ADR-001 (MANDATORY)
+- `docs/side-architect-bridge.md` - External LLM onboarding snapshot
+- `docs/decisions/ADR-001-architectural-alignment.md` - Canonical architecture decision
+
+**Protocol 1 (Post-Slice Reflection):**  
+After EVERY completed or interrupted slice, Claude MUST automatically:
+1. Update `01-active-context.md` (progress %, Just Finished, Next Steps)
+2. Append entry to `02-progress.md` (chronological log with date, duration, outcome)
+3. Update `TOOLS_INVENTORY.md` (if tools/capabilities changed)
+4. Update relevant pattern files (AP-XXX, BP-XXX, TD-XXX if discovered)
+5. Git commit all changes with clear message
+
+See `WRITE_LOCATIONS.md` for complete guide.
+
+**Why Memory Bank Matters:**
+- Prevents "artificial amnesia" - every Claude instance starts with full context
+- Eliminates 90-minute onboarding confusion (now: 5 minutes)
+- Provides canonical answers to "where are we?" and "what can we do?"
+- Enables true continuity across sessions, days, and Claude instances
+
 ---
 
 ## 4. Core Operating Protocols
@@ -174,31 +213,53 @@ Later phases can increase autonomy.
 
 ### 5.1 On Every New Session in This Project
 
-Claude **must**:
+🔴 **CRITICAL - ALWAYS DO THIS FIRST!** 🔴
 
-1. **Locate and read this playbook** via filesystem MCP  
-   Path from repo root:  
-   `docs/playbooks/ai-life-os-claude-project-playbook.md`
+Claude **must** follow the 4-step Memory Bank onboarding BEFORE starting any work:
 
-2. **Refresh core system context** (fast summaries, not full dumps):
-   - `docs/system_state/SYSTEM_STATE_COMPACT.json`
-   - `governance/snapshots/GOVERNANCE_LATEST.json`
-   - `docs/system_state/registries/SERVICES_STATUS.json`
-   - tail of `docs/system_state/timeline/EVENT_TIMELINE.jsonl`
+1. **Read START_HERE.md immediately**
+   - Path: `memory-bank/START_HERE.md`
+   - This is your navigation hub - it tells you what to read and in what order
 
-3. **Check git repo state** (prefer via Git MCP or by reading `.git`):
-   - current branch (`main`)
-   - last commit SHA
-   - whether working tree is clean or dirty
+2. **Follow the 4-step onboarding** (< 5 minutes total):
+   - **Step 1:** `AI_LIFE_OS_STORY.md` → Read Section "📖 2 Minutes (What/Why/How)" for context
+   - **Step 2:** `01-active-context.md` → **GROUND TRUTH** for current state (Phase, %, recent work, next steps)
+   - **Step 3:** `TOOLS_INVENTORY.md` → Quick reference: "Can I do X?" (capability map)
+   - **Step 4:** `WRITE_LOCATIONS.md` → Quick reference: "Event → Files to Update" (Protocol 1 guide)
 
-4. **Ask the user where we are in the process**, e.g.:
-   - “Are we at mapping existing state, migrating architecture, or implementing a new slice?”
-   - Or the user will say: “We are now at: [short description]”.
+3. **Summarize to user in Hebrew** before starting work:
+   ```
+   היי! קראתי את Memory Bank.
 
-5. **Restate back** in 3–5 short bullet points:
-   - what phase we’re in
-   - what the immediate goal of this session is
-   - what Claude plans to do next
+   📍 **איפה אנחנו:**
+   - Phase X: [name] (~Y% complete)
+   - סיימנו לאחרונה: [from 01-active-context Recent Changes]
+   - הבא: [from Next Steps]
+
+   🛠️ **כלים זמינים:**
+   - [top 3-4 from TOOLS_INVENTORY]
+
+   🎯 **אפשרויות להמשך:**
+   1. [Option A from Next Steps]
+   2. [Option B from Next Steps]
+   3. [Option C from Next Steps]
+
+   מה תרצה לעשות?
+   ```
+
+4. **WAIT for user to choose direction** - don't start work without approval!
+
+**Why This Matters:**
+- Prevents "artificial amnesia" - every Claude instance starts with full context
+- Eliminates 90-minute onboarding confusion (now: 5 minutes)
+- Provides canonical answers to "where are we?" and "what can we do?"
+- Ensures continuity across sessions, days, and Claude instances
+
+**DO NOT:**
+- Skip Memory Bank and go straight to editing files
+- Assume you know the state from previous conversations (you don't)
+- Start with "what would you like to work on?" without context
+- Read old system_state files (SYSTEM_STATE_COMPACT.json is deprecated)
 
 Claude should **not** start heavy editing before these steps are done.
 
