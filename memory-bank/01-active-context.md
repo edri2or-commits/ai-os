@@ -24,6 +24,30 @@ Quick Status, Current Focus, Recent Changes, Next Steps
 **Progress:** ~90% complete (Protocol 1 ✅, NAES v1.0 ✅, H4 VPS Deployment Remaining ⏳)
 
 **Just Finished (2025-12-07):**
+- ✅ **Language Layer - Jargon-Free Implementation** (COMPLETE - 1.5 hours)
+  - **Purpose:** Embedded prompt-level language policy for professional Hebrew + technical English
+  - **Problem:** Dual conflicting policies (CANONICAL_TERMINOLOGY vs ADHD "clear language")
+  - **Solution:** Unified Language Layer embedded in prompts (VPS-portable, no external tooling)
+  - **Research Basis:**
+    - Plain Language Act principles (BLUF, action-oriented, scannable)
+    - Heblish/Diglossia patterns (technical Hebrew = hybrid, not pure translation)
+    - ADHD cognitive load reduction (max 3 sentences/paragraph, visual markers)
+    - Markdown Table efficiency (30-50% fewer tokens vs JSON)
+  - **Components Created:**
+    - ✅ `memory-bank/docs/LANGUAGE_LAYER.md` (249 lines)
+    - ✅ Glossary: 15 core terms (Git, n8n, DevOps, Code)
+    - ✅ 3 Jargon Detection Rules (Hard Nouns, Translatable Concepts, Complex Terms)
+    - ✅ 3 Before/After Examples (Git detached HEAD, n8n errors, DevOps)
+    - ✅ 4 ADHD Mode Integration (CRISIS/PARALYSIS/BODY_DOUBLE/FLOW)
+    - ✅ Response Structure (BLUF + Bullets + 3-sentence paragraphs)
+  - **Decision Rules:**
+    1. Command names → Keep English (`git status`, not "סטטוס גיט")
+    2. Concepts → Translate + explain (`race condition` → "מרוץ תהליכים")
+    3. Complex terms → Translate + 1-sentence explanation
+  - **Expected Impact:** Reduced jargon friction, consistent cross-model language, ADHD-friendly clarity
+  - **Status:** ✅ OPERATIONAL - tested on "detached HEAD" explanation, working as designed
+  - **Next:** Optional expansion to 50 terms, A/B testing on different models (Claude/GPT/Gemini)
+
 - ✅ **NAES v1.0: ADHD State Management Layer** (COMPLETE - 5 hours)
   - **Purpose:** Neuro-Adaptive Executive Scaffold - state-aware ADHD support
   - **Problem:** System labeled "ADHD-aware" but behaved generically (60% real, 40% cosmetic)
