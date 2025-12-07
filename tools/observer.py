@@ -22,6 +22,9 @@ from datetime import datetime, UTC
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
+# Import ADHD State Monitor
+from adhd_state_monitor import ADHDStateMonitor
+
 
 class ObserverError(Exception):
     """Base exception for Observer errors."""
@@ -270,14 +273,37 @@ class Observer:
             # Detect drift
             drift_list, files_scanned = self.detect_drift()
             
+            # Check ADHD state (new: v1.0 NAES integration)
+            adhd_monitor = ADHDStateMonitor(self.repo_root, verbose=self.verbose)
+            adhd_result = adhd_monitor.check_state()
+            
             # Generate report if drift detected
             if drift_list:
                 report_path = self.generate_report(drift_list, files_scanned)
                 print(f"\n[!] Drift detected ({len(drift_list)} files)")
                 print(f"Report: {report_path}")
+                
+                # Also print ADHD state issues if any
+                if adhd_result.get("issues"):
+                    print(f"\n[!] ADHD State Issues:")
+                    for issue in adhd_result["issues"]:
+                        print(f"    - {issue['message']}")
+                
                 return 1
             else:
                 print(f"\n[OK] No drift detected ({files_scanned} files scanned)")
+                
+                # Print ADHD state summary
+                if adhd_result.get("initialized"):
+                    print(f"[ADHD] State: {adhd_result.get('current_mode')}, "
+                          f"Energy: {adhd_result.get('energy_spoons')}/10, "
+                          f"Break: {adhd_result.get('minutes_since_break')}min ago")
+                    
+                    if adhd_result.get("issues"):
+                        print(f"[!] ADHD State Issues:")
+                        for issue in adhd_result["issues"]:
+                            print(f"    - {issue['message']}")
+                
                 return 0
         
         except ObserverError as e:

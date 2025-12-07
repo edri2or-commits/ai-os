@@ -34,6 +34,34 @@ Follow these 4 steps IN ORDER:
 
 ---
 
+### Step 2.5: Check ADHD State (< 1 min) 🧠 NEW!
+🎯 **File:** `memory-bank/20_Areas/adhd-support/adhd_state.json`
+
+**Read:** Current state signals (energy, clarity, mode)
+
+**What you'll learn:**
+- Energy level (spoons): 1-10 scale (affects response style)
+- Current mode: CRISIS_RECOVERY | PARALYSIS_BREAKER | BODY_DOUBLE | FLOW_SUPPORT
+- Hyperfocus risk: Boolean (>90 min without break)
+
+**How to use:**
+1. Read state at session start
+2. Select mode based on signals (see Protocol AEP-002)
+3. Load mode prompt: `memory-bank/20_Areas/adhd-support/mode_prompts/{mode}.md`
+4. Follow mode rules for this interaction
+
+**Example:**
+```python
+state = read_json("memory-bank/20_Areas/adhd-support/adhd_state.json")
+# If energy_spoons <= 3:
+#   Load: mode_prompts/crisis_recovery.md
+#   Response: "Let's stop here. Rest is work."
+```
+
+**Learn more:** `memory-bank/protocols/AEP-002_state-management.md`
+
+---
+
 ### Step 3: Know Your Tools (1 min)
 🛠️ **File:** `memory-bank/TOOLS_INVENTORY.md`
 
@@ -92,6 +120,11 @@ Before doing ANY work, tell the user in Hebrew:
 - סיימנו לאחרונה: [from Recent Changes]
 - הבא: [from Next Steps]
 
+🧠 **מצב ADHD:**
+- אנרגיה: [X] ספונים ([אדום/צהוב/ירוק])
+- מצב נוכחי: [CRISIS/PARALYSIS/BODY_DOUBLE/FLOW]
+- [אם hyperfocus_risk: ⚠️ סיכון hyperfocus - 90+ דקות בלי הפסקה]
+
 🛠️ **כלים זמינים:**
 - [top 3-4 tools from TOOLS_INVENTORY]
 
@@ -102,6 +135,12 @@ Before doing ANY work, tell the user in Hebrew:
 
 מה תרצה לעשות?
 ```
+
+**Important:** Adjust response style based on ADHD mode:
+- **CRISIS_RECOVERY** → Keep summary ultra-brief (2-3 bullets max)
+- **PARALYSIS_BREAKER** → Keep summary brief, focus on ONE next micro-step
+- **BODY_DOUBLE** → Add validation ("That makes sense...") before options
+- **FLOW_SUPPORT** → Standard summary (as shown above)
 
 **Then WAIT for user to choose direction!**
 

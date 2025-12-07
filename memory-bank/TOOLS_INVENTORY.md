@@ -390,6 +390,117 @@ git push --no-verify  # Emergency only
 
 ---
 
+## State Management & ADHD Support
+
+### NAES v1.0 (Neuro-Adaptive Executive Scaffold)
+
+**Implementation Date:** 2025-12-07  
+**Status:** 🟢 OPERATIONAL  
+**Purpose:** State-aware ADHD support through behavioral differentiation
+
+**Location:** `memory-bank/20_Areas/adhd-support/`
+
+**Components:**
+
+**1. State File** (`adhd_state.json`)
+- **6 Core Signals:**
+  1. Energy (Spoons): 1-10 scale (Red: ≤3, Yellow: 4-6, Green: 7-10)
+  2. Cognitive Clarity: clear / foggy / mud
+  3. Emotional Valence: negative / neutral / positive (RSD meter)
+  4. Sensory Load: low / medium / high
+  5. Task Urgency: low / medium / high / critical
+  6. Time Since Break: Minutes (hyperfocus risk >90 min)
+
+**2. System Modes** (`mode_prompts/`)
+- **CRISIS_RECOVERY** (Priority 1, energy ≤3)
+  - Rules: Stop work, validate rest, 1-2 sentences max, no choices
+  - Pattern: "Let's stop here. Rest is work."
+  
+- **PARALYSIS_BREAKER** (Priority 2, stuck/foggy)
+  - Rules: Micro-steps only, 3 sentences max, binary requests (👍)
+  - Pattern: "Step 1: Open file. 👍 when done."
+  
+- **BODY_DOUBLE** (Priority 3, anxious + energy >5)
+  - Rules: Validate emotion first, 2-minute commitments, stay present
+  - Pattern: "That makes sense. X feels big. 2 minutes. I'm here. Ready?"
+  
+- **FLOW_SUPPORT** (Priority 4, default)
+  - Rules: Standard helpful assistance, 2-3 options max, structured
+  - Pattern: TL;DR + Details, clear next steps
+
+**3. State Monitor** (`tools/adhd_state_monitor.py`)
+- Checks state staleness (>24h → warning)
+- Detects hyperfocus risk (>90 min since break → sets flag)
+- Auto-updates `hyperfocus_risk` in state file
+- Appends events to `state_history.jsonl`
+- **Integration:** Called by Observer every 15 min
+
+**4. State History Log** (`state_history.jsonl`)
+- Append-only event log (JSONL format)
+- Events: state changes, mode transitions, hyperfocus alerts
+- **Future:** Watchdog indexes to Qdrant for pattern analysis
+
+**5. Protocol AEP-002** (`protocols/AEP-002_state-management.md`)
+- How Claude reads state at session start
+- Decision tree for mode selection
+- State update workflow
+- Mode transition rules
+- Integration with existing protocols
+
+**Decision Tree (Priority Order):**
+```python
+if energy_spoons <= 3:
+    return "CRISIS_RECOVERY"
+elif clarity == "mud" or stuck:
+    return "PARALYSIS_BREAKER"
+elif valence == "negative" and energy_spoons > 5:
+    return "BODY_DOUBLE"
+else:
+    return "FLOW_SUPPORT"
+```
+
+**Observer Integration:**
+```python
+# tools/observer.py (every 15 min)
+from adhd_state_monitor import ADHDStateMonitor
+
+monitor = ADHDStateMonitor()
+report = monitor.check_state()  # Returns: mode, energy, minutes_since_break
+# Logs: ADHD state summary + warnings (stale state, hyperfocus risk)
+```
+
+**Research Basis:**
+- Spoon Theory (energy as computational variable)
+- Dopamine Economy (task initiation deficits)
+- Executive Function Domains (BRIEF-A → digital scaffolding)
+- Ecological Momentary Assessment (real-time state capture)
+- Rejection Sensitive Dysphoria (RSD) support
+
+**Expected Impact:**
+- Before: 60% cosmetic ADHD support (generic responses)
+- After: 90%+ genuine support through behavioral differentiation
+
+**Usage (Claude):**
+```python
+# Session start
+state = read_json("memory-bank/20_Areas/adhd-support/adhd_state.json")
+mode = select_mode(state)  # Returns: CRISIS_RECOVERY | PARALYSIS_BREAKER | BODY_DOUBLE | FLOW_SUPPORT
+prompt = read_file(f"memory-bank/20_Areas/adhd-support/mode_prompts/{mode}.md")
+# Follow prompt rules for this interaction
+```
+
+**Next Steps (H4 VPS):**
+- n8n workflows:
+  - Morning check-in (7 AM): "How many spoons today?"
+  - Hyperfocus break (90 min): "Crash risk. Permission to stop?"
+  - Evening wind-down (8 PM): "State update + tomorrow prep"
+
+**Documentation:** 
+- `memory-bank/20_Areas/adhd-support/README.md`
+- `memory-bank/protocols/AEP-002_state-management.md`
+
+---
+
 ## Capabilities Quick Reference
 
 ### "Can I...?" Table
