@@ -1,0 +1,177 @@
+version: '3.8'
+
+# ============================================
+# AI Life OS - VPS Production Stack
+# ============================================
+# Stack: n8n + Qdrant + LiteLLM + Postgres + Caddy
+# Langfuse: Cloud (https://cloud.langfuse.com)
+# ============================================
+
+services:
+  # ==========================================
+  # 1. Caddy - Reverse Proxy with Auto-HTTPS
+  # ==========================================
+  caddy:
+    image: caddy:2-alpine
+    container_name: ai-os-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - ai-os-network
+    environment:
+      - ACME_EMAIL=${ACME_EMAIL}
+      - DOMAIN=${DOMAIN}
+
+  # ==========================================
+  # 2. Postgres - Shared Database
+  # ==========================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: ai-os-postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - TZ=${TZ}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-postgres.sh:/docker-entrypoint-initdb.d/init-n8n.sh:ro
+    networks:
+      - ai-os-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ==========================================
+  # 3. n8n - Workflow Automation
+  # ==========================================
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: ai-os-n8n
+    restart: unless-stopped
+    environment:
+      - N8N_HOST=${N8N_HOST}
+      - N8N_PORT=${N8N_PORT}
+      - N8N_PROTOCOL=${N8N_PROTOCOL}
+      - N8N_EDITOR_BASE_URL=${N8N_EDITOR_BASE_URL}
+      - WEBHOOK_URL=${WEBHOOK_URL}
+      - N8N_BASIC_AUTH_ACTIVE=${N8N_BASIC_AUTH_ACTIVE}
+      - N8N_BASIC_AUTH_USER=${N8N_BASIC_AUTH_USER}
+      - N8N_BASIC_AUTH_PASSWORD=${N8N_BASIC_AUTH_PASSWORD}
+      - N8N_BLOCK_ENV_ACCESS_IN_NODE=${N8N_BLOCK_ENV_ACCESS_IN_NODE}
+      - N8N_LOG_LEVEL=${N8N_LOG_LEVEL}
+      - DB_TYPE=${DB_TYPE}
+      - DB_POSTGRESDB_HOST=${DB_POSTGRESDB_HOST}
+      - DB_POSTGRESDB_PORT=${DB_POSTGRESDB_PORT}
+      - DB_POSTGRESDB_DATABASE=${DB_POSTGRESDB_DATABASE}
+      - DB_POSTGRESDB_USER=${DB_POSTGRESDB_USER}
+      - DB_POSTGRESDB_PASSWORD=${DB_POSTGRESDB_PASSWORD}
+      - GENERIC_TIMEZONE=${GENERIC_TIMEZONE}
+      - TZ=${TZ}
+      # API Keys for workflows
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - GITHUB_PAT=${GITHUB_PAT}
+      - LANGFUSE_HOST=${LANGFUSE_HOST}
+      - LANGFUSE_PUBLIC_KEY=${LANGFUSE_PUBLIC_KEY}
+      - LANGFUSE_SECRET_KEY=${LANGFUSE_SECRET_KEY}
+    volumes:
+      - n8n_data:/home/node/.n8n
+      - ./ai-os:/home/node/ai-os:ro
+    networks:
+      - ai-os-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:5678/healthz || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ==========================================
+  # 4. Qdrant - Vector Database
+  # ==========================================
+  qdrant:
+    image: qdrant/qdrant:v1.16.1
+    container_name: ai-os-qdrant
+    restart: unless-stopped
+    environment:
+      - QDRANT__SERVICE__API_KEY=${QDRANT__SERVICE__API_KEY}
+      - QDRANT__SERVICE__GRPC_PORT=${QDRANT__SERVICE__GRPC_PORT}
+      - QDRANT__SERVICE__HTTP_PORT=${QDRANT__SERVICE__HTTP_PORT}
+    volumes:
+      - qdrant_data:/qdrant/storage
+    networks:
+      - ai-os-network
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:6333/healthz || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ==========================================
+  # 5. LiteLLM - Multi-Model Gateway
+  # ==========================================
+  litellm:
+    image: ghcr.io/berriai/litellm:main-latest
+    container_name: ai-os-litellm
+    restart: unless-stopped
+    environment:
+      - LITELLM_MASTER_KEY=${LITELLM_MASTER_KEY}
+      - LITELLM_LOG_LEVEL=${LITELLM_LOG_LEVEL}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+    volumes:
+      - ./litellm-config.yaml:/app/config.yaml:ro
+    networks:
+      - ai-os-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:4000/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    command: --config /app/config.yaml
+
+# ==========================================
+# Volumes
+# ==========================================
+volumes:
+  caddy_data:
+  caddy_config:
+  postgres_data:
+  n8n_data:
+  qdrant_data:
+
+# ==========================================
+# Networks
+# ==========================================
+networks:
+  ai-os-network:
+    driver: bridge
+
+# ==========================================
+# Notes:
+# ==========================================
+# 1. All services use internal network (ai-os-network)
+# 2. Only Caddy exposes ports 80/443 to public
+# 3. Langfuse is external (Cloud) - no container here
+# 4. To deploy:
+#    - Copy vps.env to VPS as .env
+#    - Copy docker-compose.vps.yml to VPS as docker-compose.yml
+#    - Run: docker-compose up -d
+# 5. Health checks ensure services restart if unhealthy
+# ==========================================

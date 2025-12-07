@@ -61,6 +61,25 @@ Follow these 4 steps IN ORDER:
 
 ---
 
+## ⚠️ CRITICAL: Pre-Push Reflection Hook is ACTIVE
+
+**✅ Since 2025-12-07:** Protocol 1 LEVEL 1 is enforced via Git hook.
+
+**What this means:**
+- Every `git push` will BLOCK until you fill reflection in `REFLECTION_LOG.md`
+- VS Code will open automatically with template
+- Takes ~2 minutes (quick bullets: what/why/next)
+- **This is intentional** - closes 93% documentation gap
+
+**To bypass** (emergency only):
+```bash
+git push --no-verify
+```
+
+**Learn more:** `memory-bank/protocols/PROTOCOL_1_pre-push-reflection.md`
+
+---
+
 ## ✅ After Reading - Summarize to User (Hebrew)
 
 Before doing ANY work, tell the user in Hebrew:

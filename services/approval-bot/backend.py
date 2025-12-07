@@ -155,13 +155,13 @@ async def send_approval_request(cr_file: Path):
         else:
             proposal_summary = json.dumps(proposal_list, indent=2)[:300]
         
-        message = f"""🔔 **Change Request Approval**
+        message = f"""🔔 <b>Change Request Approval</b>
 
-**ID:** `{cr_id}`
-**Type:** {cr_data.get('type', 'UNKNOWN')}
-**Risk:** {cr_data.get('risk', 'medium')}
+<b>ID:</b> <code>{cr_id}</code>
+<b>Type:</b> {cr_data.get('type', 'UNKNOWN')}
+<b>Risk:</b> {cr_data.get('risk', 'medium')}
 
-**Proposal:**
+<b>Proposal:</b>
 {proposal_summary}
 """
         
@@ -181,7 +181,7 @@ async def send_approval_request(cr_file: Path):
             chat_id=CHAT_ID,
             text=message,
             reply_markup=reply_markup,
-            parse_mode='Markdown'
+            parse_mode='HTML'
         )
         
         # Save message ID

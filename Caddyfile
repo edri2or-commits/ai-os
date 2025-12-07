@@ -1,0 +1,75 @@
+# ============================================
+# Caddyfile - AI Life OS Reverse Proxy
+# ============================================
+# Auto-HTTPS via Let's Encrypt
+# Update {$DOMAIN} in vps.env
+# ============================================
+
+{
+	# Global options
+	email {$ACME_EMAIL}
+	admin off
+}
+
+# ==========================================
+# n8n - Workflow Automation
+# ==========================================
+n8n.{$DOMAIN} {
+	reverse_proxy n8n:5678
+	
+	# Security headers
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "strict-origin-when-cross-origin"
+	}
+}
+
+# ==========================================
+# LiteLLM - Multi-Model Gateway
+# ==========================================
+api.{$DOMAIN} {
+	reverse_proxy litellm:4000
+	
+	# Security headers
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+	}
+}
+
+# ==========================================
+# Qdrant - Vector Database (Optional - usually internal only)
+# ==========================================
+# Uncomment if you want external access to Qdrant
+# qdrant.{$DOMAIN} {
+#	reverse_proxy qdrant:6333
+#	header {
+#		Strict-Transport-Security "max-age=31536000"
+#	}
+# }
+
+# ==========================================
+# Health Check Endpoint (Public)
+# ==========================================
+health.{$DOMAIN} {
+	respond /health 200 {
+		body "AI Life OS - Healthy"
+	}
+}
+
+# ==========================================
+# Root Domain - Redirect to n8n
+# ==========================================
+{$DOMAIN} {
+	redir https://n8n.{$DOMAIN} permanent
+}
+
+# ==========================================
+# Notes:
+# - Auto-HTTPS for all subdomains
+# - n8n protected by Basic Auth (set in N8N_BASIC_AUTH_*)
+# - LiteLLM protected by LITELLM_MASTER_KEY
+# - Qdrant API key: QDRANT__SERVICE__API_KEY
+# ==========================================

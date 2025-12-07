@@ -18,9 +18,47 @@
 
 ---
 
-## Protocol 1: Post-Slice Reflection (AUTOMATIC)
+## Protocol 1: Post-Work Reflection (TWO LEVELS)
 
-After EVERY completed or interrupted slice, you MUST automatically update:
+**✅ NEW (2025-12-07):** Protocol 1 now operates on TWO distinct levels to close the 93% documentation gap.
+
+### Overview: Micro vs Macro
+
+**LEVEL 1: Micro Reflection (AUTOMATIC - Git Hook)**
+- **Trigger:** Every `git push`
+- **Output:** `REFLECTION_LOG.md` (root directory)
+- **Effort:** ~2 minutes, mandatory
+- **Frequency:** 10-20x per day
+- **Purpose:** Close cognitive loop after each push
+- **Enforced by:** `.git/hooks/pre-push` (blocks push until reflection exists)
+
+**LEVEL 2: Macro Reflection (MANUAL - Milestones)**
+- **Trigger:** Major slice complete (~4-6 hours work, ~1x/week)
+- **Output:** `01-active-context.md` + `02-progress.md`
+- **Effort:** ~10 minutes
+- **Frequency:** ~1x per week
+- **Purpose:** Deep synthesis and phase tracking
+- **Enforced by:** Your discipline (aim: weekly)
+
+**No Duplication:**
+- REFLECTION_LOG = raw micro data (every push)
+- 02-progress = synthesized insight (weekly milestone)
+
+**See:** `memory-bank/protocols/PROTOCOL_1_pre-push-reflection.md` for full details.
+
+---
+
+### LEVEL 1: Micro Reflection (Every Push) - AUTOMATIC
+
+**Happens automatically via Git hook - you just fill the template when prompted.**
+
+No manual file updates needed. The hook handles everything.
+
+---
+
+### LEVEL 2: Macro Reflection (Milestones) - MANUAL
+
+After completing a MAJOR slice or weekly milestone, you MUST manually update:
 
 ### 1. `memory-bank/01-active-context.md`
 

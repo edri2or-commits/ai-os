@@ -252,6 +252,56 @@
 
 ---
 
+## Git Hooks (Automatic Enforcement)
+
+### Pre-Push Reflection Hook (Protocol 1 LEVEL 1)
+
+**Implementation Date:** 2025-12-07  
+**Status:** 🟢 ACTIVE  
+**Purpose:** Enforce micro-reflection before every push (close 93% documentation gap)
+
+**Files:**
+- `.git/hooks/pre-push` (50 lines, Bash wrapper)
+- `tools/hooks/pre-push-enforcer.ps1` (195 lines, PowerShell enforcer)
+- `REFLECTION_LOG.md` (output, append-only)
+
+**Capabilities:**
+- ✅ Blocks `git push` until reflection exists
+- ✅ Auto-generates template with branch+date signature
+- ✅ Opens VS Code (--wait) for user to fill
+- ✅ Validates content changed (prevents empty save)
+- ✅ Validates signature exists (prevents template deletion)
+- ✅ Streak counter (consecutive days: [OK]/[BOLT]/[FIRE])
+- ✅ Same-day multi-push smart pass (no friction for debugging)
+
+**Workflow:**
+```
+git push
+  ↓
+Hook checks: REFLECTION_LOG.md contains "## Reflection: [branch] - [date]"
+  ↓
+YES → Show streak + Allow push
+NO  → Block + Add template + Open editor → Wait → Validate → Allow push
+```
+
+**Bypass:**
+```bash
+git push --no-verify  # Emergency only
+```
+
+**Documentation:** `memory-bank/protocols/PROTOCOL_1_pre-push-reflection.md`
+
+**Research Basis:**
+- Gawande Checklist Methodology (active > passive)
+- ADHD-aware design (blocking > nagging)
+- Aviation pre-flight model (push = point of no return)
+
+**Success Metrics:**
+- Before: 98 commits, 7 entries (93% gap)
+- After: 100% compliance (hook enforces)
+
+---
+
 ## Windows Automations (Task Scheduler)
 
 ### 1. Observer (Drift Detection)

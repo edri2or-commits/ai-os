@@ -1,0 +1,80 @@
+# ============================================
+# Caddyfile - AI Life OS Reverse Proxy (nip.io)
+# ============================================
+# Auto-HTTPS via Let's Encrypt with nip.io
+# ============================================
+
+{
+	# Global options
+	email edri2or@gmail.com
+	admin off
+}
+
+# ==========================================
+# n8n - Workflow Automation
+# ==========================================
+n8n.35.223.68.23.nip.io {
+	reverse_proxy n8n:5678
+	
+	# Security headers
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "strict-origin-when-cross-origin"
+	}
+}
+
+# ==========================================
+# LiteLLM - Multi-Model Gateway
+# ==========================================
+api.35.223.68.23.nip.io {
+	reverse_proxy litellm:4000
+	
+	# Security headers
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+	}
+}
+
+# ==========================================
+# Qdrant - Vector Database
+# ==========================================
+qdrant.35.223.68.23.nip.io {
+	reverse_proxy qdrant:6333
+	header {
+		Strict-Transport-Security "max-age=31536000"
+	}
+}
+
+# ==========================================
+# Health Check Endpoint (Public)
+# ==========================================
+health.35.223.68.23.nip.io {
+	respond /health 200 {
+		body "AI Life OS - Healthy"
+	}
+}
+
+# ==========================================
+# Root Domain - Status Page
+# ==========================================
+35.223.68.23.nip.io {
+	respond / 200 {
+		body "AI Life OS - Running
+		
+n8n: https://n8n.35.223.68.23.nip.io
+LiteLLM: https://api.35.223.68.23.nip.io
+Qdrant: https://qdrant.35.223.68.23.nip.io
+Health: https://health.35.223.68.23.nip.io/health"
+	}
+}
+
+# ==========================================
+# Notes:
+# - Using nip.io for automatic DNS resolution
+# - Auto-HTTPS via Let's Encrypt
+# - No domain purchase required
+# - Can switch to real domain later
+# ==========================================

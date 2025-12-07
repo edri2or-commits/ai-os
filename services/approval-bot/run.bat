@@ -37,6 +37,6 @@ echo Press CTRL+C to stop
 echo ========================================
 echo.
 
-python backend.py
+venv-py311-clean\Scripts\python.exe backend.py
 
 pause
