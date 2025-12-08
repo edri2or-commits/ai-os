@@ -21,6 +21,7 @@ The following credentials are available in `vps.env`:
 |---------|---------------------|--------|
 | OpenAI | `OPENAI_API_KEY` | ✅ Active |
 | Anthropic (Claude) | `ANTHROPIC_API_KEY` | ✅ Active |
+| Google (Gemini) | `GOOGLE_API_KEY`, `GEMINI_API_KEY` | ✅ Active |
 | GitHub | `GITHUB_PAT` | ✅ Active |
 | Telegram Bot | `TELEGRAM_BOT_TOKEN` | ✅ Active |
 | n8n | `N8N_API_KEY` | ✅ Active |
