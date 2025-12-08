@@ -33,5 +33,5 @@ router_settings:
 
 # ===== General Settings =====
 general_settings:
-  master_key: sk-litellm-ailifeos-2025
-  database_url: "postgresql://postgres:LangfuseSecure2025!@host.docker.internal:5432/litellm"
+  master_key: os.environ/LITELLM_MASTER_KEY
+  database_url: os.environ/DATABASE_URL

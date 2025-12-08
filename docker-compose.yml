@@ -20,6 +20,8 @@ services:
       - n8n_data:/home/node/.n8n
       # Mount workspace for Judge Agent access to truth-layer (read-write for reports)
       - C:\Users\edri2\Desktop\AI\ai-os:/workspace
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     networks:
       - ai-os-network
 
