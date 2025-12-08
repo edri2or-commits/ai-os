@@ -32,7 +32,7 @@ Git Truth Layer (commits)
 
 **Value Proposition:**
 - **Multi-model freedom:** Use best model for each task
-- **Cost optimization:** Gemini = 1/20th of GPT-4 cost
+- **Cost optimization:** Gemini = 1/20th of GPT-5.1 cost
 - **Reliability:** Automatic fallbacks (GPT→Claude→Gemini)
 - **Observability:** All calls logged in Langfuse
 - **State sync:** Event sourcing → Git reconciliation
@@ -51,9 +51,9 @@ Git Truth Layer (commits)
 - ✅ Caddy (reverse proxy + SSL)
 
 ### API Keys (All Available)
-- ✅ `OPENAI_API_KEY` (GPT-4)
-- ✅ `ANTHROPIC_API_KEY` (Claude)
-- ✅ `GOOGLE_API_KEY` (Gemini)
+- ✅ `OPENAI_API_KEY` (GPT-5.1)
+- ✅ `ANTHROPIC_API_KEY` (Claude 4.5)
+- ✅ `GOOGLE_API_KEY` (Gemini 3 Pro)
 - ✅ Location: `C:\Users\edri2\Desktop\AI\ai-os\vps.env`
 
 ### What's Missing
@@ -150,7 +150,7 @@ Git Truth Layer (commits)
 - ✅ LiteLLM container running (docker ps)
 - ✅ Health check passes: `curl http://localhost:4001/health/readiness`
 - ✅ Models endpoint works: `curl http://localhost:4000/v1/models`
-- ✅ Response includes: ["gpt-4", "claude-3", "gemini-2"]
+- ✅ Response includes: ["gpt-5.1", "claude-4.5", "gemini-3-pro"]
 
 **Testing Commands:**
 ```bash
@@ -163,12 +163,12 @@ curl http://localhost:4001/health/readiness
 # List models
 curl http://localhost:4000/v1/models
 
-# Test GPT-4 call
+# Test GPT-5.1 call
 curl http://localhost:4000/v1/chat/completions \
   -H "Authorization: Bearer YOUR_LITELLM_MASTER_KEY" \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "gpt-4",
+    "model": "gpt-5.1",
     "messages": [{"role": "user", "content": "Hello"}]
   }'
 ```
@@ -265,28 +265,28 @@ curl http://localhost:4000/v1/chat/completions \
 **Test Matrix:**
 | Model | Test Query | Expected Behavior | Success Metric |
 |-------|-----------|-------------------|----------------|
-| gpt-4 | "Explain quantum computing in 10 words" | Returns concise answer | Response length < 20 words |
-| claude-3 | "Summarize this 10K char text: [...]" | Handles long context | No truncation error |
-| gemini-2 | "What's 2+2?" | Fast, cheap response | Latency < 500ms, cost < $0.001 |
+| gpt-5.1 | "Explain quantum computing in 10 words" | Returns concise answer | Response length < 20 words |
+| claude-4.5 | "Summarize this 10K char text: [...]" | Handles long context | No truncation error |
+| gemini-3-pro | "What's 2+2?" | Fast, cheap response | Latency < 500ms, cost < $0.001 |
 
 **Steps:**
-1. Test GPT-4:
+1. Test GPT-5.1:
    ```bash
    curl http://localhost:4000/v1/chat/completions \
      -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
-     -d '{"model":"gpt-4","messages":[{"role":"user","content":"Test"}]}'
+     -d '{"model":"gpt-5.1","messages":[{"role":"user","content":"Test"}]}'
    ```
-2. Test Claude:
+2. Test Claude 4.5:
    ```bash
    curl http://localhost:4000/v1/chat/completions \
      -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
-     -d '{"model":"claude-3","messages":[{"role":"user","content":"Test"}]}'
+     -d '{"model":"claude-4.5","messages":[{"role":"user","content":"Test"}]}'
    ```
-3. Test Gemini:
+3. Test Gemini 3 Pro:
    ```bash
    curl http://localhost:4000/v1/chat/completions \
      -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
-     -d '{"model":"gemini-2","messages":[{"role":"user","content":"Test"}]}'
+     -d '{"model":"gemini-3-pro","messages":[{"role":"user","content":"Test"}]}'
    ```
 4. Check Langfuse: 3 traces, different models, different costs
 
@@ -300,7 +300,7 @@ curl http://localhost:4000/v1/chat/completions \
 | Error | Model | Fix |
 |-------|-------|-----|
 | 401 Unauthorized | Any | Check API key in vps.env |
-| 429 Rate Limit | GPT-4 | Add retry logic in config |
+| 429 Rate Limit | GPT-5.1 | Add retry logic in config |
 | 400 Bad Request | Gemini | Add `drop_params: true` to config |
 | Timeout | Claude | Increase request_timeout to 600s |
 
@@ -324,9 +324,9 @@ curl http://localhost:4000/v1/chat/completions \
 Webhook Trigger (receive task)
     ↓
 Function Node: Analyze task
-    ├─ IF contains "reason", "analyze", "complex" → route = "gpt-4"
-    ├─ IF text length > 50,000 chars → route = "claude-3"
-    └─ ELSE → route = "gemini-2"
+    ├─ IF contains "reason", "analyze", "complex" → route = "gpt-5.1"
+    ├─ IF text length > 50,000 chars → route = "claude-4.5"
+    └─ ELSE → route = "gemini-3-pro"
     ↓
 HTTP Request Node: Call LiteLLM
     - URL: http://litellm:4000/v1/chat/completions
@@ -352,11 +352,11 @@ Respond to Webhook
    const keywords = ["reason", "analyze", "explain", "complex"];
    
    if (keywords.some(k => task.toLowerCase().includes(k))) {
-     return { route: "gpt-4", reason: "Complex reasoning" };
+     return { route: "gpt-5.1", reason: "Complex reasoning" };
    } else if (task.length > 50000) {
-     return { route: "claude-3", reason: "Long context" };
+     return { route: "claude-4.5", reason: "Long context" };
    } else {
-     return { route: "gemini-2", reason: "Simple/fast" };
+     return { route: "gemini-3-pro", reason: "Simple/fast" };
    }
    ```
 5. Add HTTP Request Node:
@@ -385,9 +385,9 @@ Respond to Webhook
 **Testing Scenarios:**
 | Input | Expected Model | Reason |
 |-------|---------------|--------|
-| "Explain AI" | gpt-4 | Contains "explain" keyword |
-| "2+2=?" | gemini-2 | Simple query |
-| [60K char text] | claude-3 | Long context |
+| "Explain AI" | gpt-5.1 | Contains "explain" keyword |
+| "2+2=?" | gemini-3-pro | Simple query |
+| [60K char text] | claude-4.5 | Long context |
 
 **Output:**
 - Intelligent routing live in n8n
@@ -403,9 +403,9 @@ Respond to Webhook
 - ✅ Slice 4 complete (routing works)
 
 **Fallback Chains:**
-- GPT-4 → Claude → Gemini → OpenRouter
-- Claude → GPT-4 → Gemini → OpenRouter
-- Gemini → Claude → GPT-4 → OpenRouter
+- GPT-5.1 → Claude 4.5 → Gemini 3 Pro → OpenRouter
+- Claude 4.5 → GPT-5.1 → Gemini 3 Pro → OpenRouter
+- Gemini 3 Pro → Claude 4.5 → GPT-5.1 → OpenRouter
 
 **Implementation Options:**
 
@@ -414,18 +414,18 @@ Respond to Webhook
 # litellm-config.yaml
 router_settings:
   fallbacks:
-    - {"gpt-4": ["claude-3", "gemini-2"]}
-    - {"claude-3": ["gpt-4", "gemini-2"]}
-    - {"gemini-2": ["claude-3", "gpt-4"]}
+    - {"gpt-5.1": ["claude-4.5", "gemini-3-pro"]}
+    - {"claude-4.5": ["gpt-5.1", "gemini-3-pro"]}
+    - {"gemini-3-pro": ["claude-4.5", "gpt-5.1"]}
 ```
 
 **Option B: n8n Workflow**
 ```
-HTTP Request (GPT-4)
+HTTP Request (GPT-5.1)
     ↓
-IF error → HTTP Request (Claude)
+IF error → HTTP Request (Claude 4.5)
     ↓
-IF error → HTTP Request (Gemini)
+IF error → HTTP Request (Gemini 3 Pro)
     ↓
 IF error → Notify user (all failed)
 ```
@@ -439,9 +439,9 @@ IF error → Notify user (all failed)
    ```bash
    # Edit vps.env, set OPENAI_API_KEY=invalid
    docker compose restart litellm
-   # Call gpt-4 model → should automatically use claude-3
+   # Call gpt-5.1 model → should automatically use claude-4.5
    ```
-4. Verify Langfuse shows: attempted gpt-4, fell back to claude-3
+4. Verify Langfuse shows: attempted gpt-5.1, fell back to claude-4.5
 
 **Success Criteria:**
 - ✅ Failed model triggers automatic retry
@@ -473,7 +473,7 @@ POST to n8n webhook
     ↓
 n8n routes to LiteLLM
     ↓
-LiteLLM calls GPT/Claude/Gemini
+LiteLLM calls GPT-5.1/Claude 4.5/Gemini 3 Pro
     ↓
 Response → n8n
     ↓
@@ -817,9 +817,9 @@ Apply change to Git:
    
    class LiteLLMUser(HttpUser):
        @task
-       def call_gpt4(self):
+       def call_gpt51(self):
            self.client.post("/v1/chat/completions", json={
-               "model": "gpt-4",
+               "model": "gpt-5.1",
                "messages": [{"role": "user", "content": "Test"}]
            }, headers={"Authorization": f"Bearer {LITELLM_KEY}"})
    ```
@@ -859,12 +859,19 @@ Apply change to Git:
 ### API Calls (Estimated - Moderate Use)
 | Model | Monthly Tokens | Cost |
 |-------|---------------|------|
-| GPT-4 | 500K in + 100K out | $8.50 |
-| Claude | 500K in + 100K out | $4.50 |
-| Gemini | 1M in + 200K out | $0.30 |
-| **Total** | | **~$13/month** |
+| GPT-5.1 | 500K in + 100K out | $1.63 |
+| Claude 4.5 | 500K in + 100K out | $3.00 |
+| Gemini 3 Pro | 1M in + 200K out | $4.40 |
+| **Total** | | **~$9/month** |
 
-**Total COO: ~$43-45/month**
+**Total COO: ~$39/month**
+
+**Model Pricing Comparison (Dec 2025):**
+| Model | Input $/1M | Output $/1M | Context Window | Best For |
+|-------|-----------|-------------|----------------|----------|
+| GPT-5.1 | $1.25 | $10.00 | 128K | Complex reasoning, coding |
+| Claude 4.5 | $3.00 | $15.00 | 200K+ | Long context, agentic tasks |
+| Gemini 3 Pro | $2.00 | $12.00 | 1M | Multimodal, cost-effective |
 
 **Budget Controls:**
 - LiteLLM max_budget: $50/month
