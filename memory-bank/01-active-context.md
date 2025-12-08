@@ -21,38 +21,47 @@ Quick Status, Current Focus, Recent Changes, Next Steps
 
 **AI Life OS | Phase 2: Architectural Alignment & Governance** 📐
 
-**Progress:** ~90% complete (Protocol 1 ✅, NAES v1.0 ✅, H3 Bot Analysis ✅, H4 VPS Deployment Remaining ⏳)
+**Progress:** ~92% complete (Protocol 1 ✅, NAES v1.0 ✅, H3 Bot Analysis ✅, **Phase 2.6 Slice 1 ✅**, H4 VPS Deployment Next)
 
-**Just Finished (2025-12-08 15:00):**
-- ✅ **Phase 2.6 Slice 1 (Part 1): LiteLLM Configuration** (80% COMPLETE - 45 minutes)
-  - **Context:** Starting Phase 2.6 Multi-Model Orchestration implementation
-  - **Goal:** Create all configuration files needed for LiteLLM setup
-  - **What We Built:**
-    1. ✅ litellm-config.yaml (NEW - 103 lines)
-       - 3 models: GPT-5.1, Claude 4.5 Sonnet, Gemini 3 Pro
-       - Fallback chains configured
-       - Budget limits ($50/month)
-       - Langfuse callbacks enabled
-       - Redis caching configured
-    2. ✅ docker-compose.vps.yml (UPDATED)
-       - Added ports 4000+4001 to LiteLLM service
-       - Added GOOGLE_API_KEY + GEMINI_API_KEY
-       - Added Langfuse env vars (PUBLIC_KEY, SECRET_KEY, HOST)
-       - Fixed health check endpoint (/health/readiness)
-       - Fixed config path (./docker/litellm-config.yaml)
-    3. ✅ vps.env (UPDATED)
-       - Discovered Langfuse keys in services/mcp_github_client/.env
-       - Added real keys: pk-lf-53915858..., sk-lf-041da07c...
-       - All API keys verified present
-  - **Discovery:** User already has Langfuse Cloud account with valid keys!
+**Just Finished (2025-12-08 16:00):**
+- ✅ **Phase 2.6 Slice 1: LiteLLM Local Testing** (100% COMPLETE! 🎉 - 90 minutes total)
+  - **Context:** Testing LiteLLM multi-model setup locally before VPS deployment
+  - **Goal:** Validate all 3 models (GPT-5.1, Claude 4.5, Gemini) working locally
+  - **What We Built/Fixed:**
+    1. ✅ docker-compose.local.yml (local testing setup)
+    2. ✅ litellm database created in Postgres
+    3. ✅ LiteLLM container deployed (localhost:4000)
+    4. ✅ **Problem discovered:** Gemini 3 Pro not available yet (preview only)
+    5. ✅ **Solution:** Switched to Gemini 2.5 Flash (production-ready)
+    6. ✅ Config updated: docker/litellm-config.yaml (gemini-3-pro → gemini-2.5-flash)
+  - **Test Results - ALL 3 MODELS WORKING:**
+    - ✅ GPT-5.1: "שלום!" (11 tokens, $0.0000002)
+    - ✅ Claude 4.5 Sonnet: "שלום! (Shalom!)..." (40 tokens, $0.0000006)
+    - ✅ Gemini 2.5 Flash: "Shalom! (שלום)" (61 tokens, cheapest!)
+  - **Health Check:** 3/3 healthy endpoints ✅
+  - **Infrastructure Discovery:**
+    - User already has GCP VPS: 35.223.68.23 (e2-medium)
+    - Services running: n8n, Postgres, Caddy, Qdrant
+    - SSL configured: nip.io certificates
+    - Google Cloud billing active: 014D0F-ACE0F-5A7EE7
   - **Files Created:**
-    - docker/litellm-config.yaml (103 lines)
-  - **Files Updated:**
-    - docker-compose.vps.yml (+9 env vars, +2 ports, health check fixed)
-    - vps.env (Langfuse keys updated from placeholders)
-  - **Status:** ✅ CONFIGURATION COMPLETE - Ready for local testing
-  - **Next:** Option A (local Docker test) or Option B (VPS deployment)
-  - **Duration:** ~45 min (config 20 min, docker-compose 15 min, keys discovery 10 min)
+    - docker-compose.local.yml (local testing)
+    - test-gpt.json, test-claude.json, test-gemini-25.json (test payloads)
+    - test-health.py, test-gemini-final.py (test scripts)
+  - **Files Modified:**
+    - docker/litellm-config.yaml (gemini-3-pro → gemini-2.5-flash)
+  - **Key Learnings:**
+    1. Gemini 3 Pro not yet in API (preview only)
+    2. Google AI Studio screenshots > explanations (user showed available models)
+    3. LiteLLM needs `down + up` after config changes (not just restart)
+    4. User already has production VPS (not Hetzner - GCP!)
+  - **Cost Analysis (Updated):**
+    - Monthly: ~$35-40/month (Gemini 2.5 Flash cheaper than 3 Pro)
+    - VPS: Already exists ($0 additional)
+  - **Status:** ✅ LOCAL TESTING COMPLETE - Ready for VPS deployment
+  - **Next:** Deploy to GCP VPS (35.223.68.23) or continue with other slices
+  - **Duration:** ~90 min (initial test 45 min, problem-solving 15 min, fix 15 min, validation 15 min)
+  - **Documentation:** memory-bank/slices/SLICE_2.6.1_LOCAL_TESTING.md (complete session log)
 
 **Just Finished (2025-12-08 14:45):**
 - ✅ **Model Pricing Verification + Complete Updates** (COMPLETE - 30 minutes)
@@ -2099,68 +2108,38 @@ Email automation working end-to-end:
 
 # NEXT STEPS
 
-**Status:** H2 Complete ✅ | H3 Bot Analyzed ✅ | Multi-Model Plan Ready 🎯
+**Status:** Phase 2.6 Slice 1 Complete ✅ | Local Testing Done ✅ | 3/3 Models Working 🎯
 
 **Choose one:**
 
-**Option A: H2 Phase 2.6 - Multi-Model Orchestration** 🤖🤖🤖 (RECOMMENDED - strategic leap, 7-10 days)
-- **Goal:** Unified gateway for GPT-5.1, Claude 4.5, Gemini 3 Pro via LiteLLM
+**Option A: Phase 2.6 Slice 2 - VPS Deployment** 🚀 (RECOMMENDED - 15-20 min, production-ready)
+- **Goal:** Deploy LiteLLM to existing GCP VPS (35.223.68.23)
 - **Why Now:** 
-  - ✅ H3 bot exists (extend, not rebuild - saves 3-4h)
-  - ✅ All API keys available (vps.env)
-  - ✅ Model versions corrected (Dec 2025)
-  - ✅ Infrastructure ready (n8n, Langfuse, Redis)
-- **What You'll Build:**
-  1. LiteLLM proxy :4000 (unified API endpoint)
-  2. n8n routing workflows (task → optimal model)
-  3. Fallback chains (GPT→Claude→Gemini)
-  4. H3 bot extensions (`/status`, `/costs`, `/switch`, `/logs`)
-  5. Event Sourcing (Redis Streams + Observer)
-  6. Production hardening (backups, monitoring, load testing)
-- **Architecture:**
-  ```
-  User → n8n → LiteLLM :4000
-    ├─ GPT-5.1 (reasoning)
-    ├─ Claude 4.5 (long context)
-    └─ Gemini 3 Pro (speed + cost)
-  → Langfuse → Redis Streams → Observer → Git
-  ```
-- **Value:**
-  - 💰 Cost optimization: Gemini = 1/20th GPT cost
-  - 🔄 Reliability: Auto-fallbacks
-  - 📊 Observability: All calls in Langfuse
-  - 🎯 Best model for each task
-- **Slices:** 12 slices (10.5h → 11h with H3 extensions)
-- **Cost:** ~$43-45/month (GCP $30 + API calls $13)
-- **Duration:** ~7-10 days (1-1.5h per day)
-- **Status:** ✅ PLANNING COMPLETE - Ready to start Slice 1
-- **Prerequisite:** Complete model version updates in plan
-- **Next After:** H4 (VPS 24/7) or Voice Integration
+  - ✅ Local testing complete (all 3 models verified)
+  - ✅ Config validated (gemini-2.5-flash working)
+  - ✅ VPS already exists (GCP e2-medium)
+  - ✅ SSL ready (nip.io certificates)
+  - ✅ Database ready (Postgres on VPS)
+- **What You'll Do:**
+  1. Copy docker/litellm-config.yaml to VPS
+  2. Update docker-compose.vps.yml (ports 4000+4001)
+  3. `docker-compose up -d` on VPS
+  4. Test public endpoint: https://api.35.223.68.23.nip.io/health
+  5. Verify all 3 models via public API
+- **Result:** LiteLLM running 24/7, accessible from anywhere
+- **Duration:** ~15-20 min (file transfer 2 min, deployment 5 min, testing 8-10 min)
+- **Cost:** $0 (VPS already running)
+- **Next After:** Slice 3 (n8n routing workflows) or Slice 6 (Telegram bot extensions)
 
-**Option B: H3 - Telegram Approval Bot** 🤖 (alternative, 3-4h, $0)
-- **Goal:** Async HITL via Telegram (no chat UI dependency)
-- **Status:** ❓ ALREADY EXISTS - H3 bot is production-ready
-- **New Approach:** Just add multi-model commands (Slice 6 of Phase 2.6)
-- **Why Skip as Standalone:** Already built, will be extended during Phase 2.6
-- **Recommendation:** Integrate with Phase 2.6 instead of standalone build
+**Option B: Continue with Other Slices** 🎯 (Phase 2.6 breadth)
+- Slice 3: n8n Routing Workflows (45 min)
+- Slice 4: Fallback Chains (30 min)
+- Slice 5: Cost Tracking (45 min)
+- Slice 6: Telegram Bot Extensions (60 min)
+- **Why Skip VPS:** Test everything locally first, deploy once
+- **Tradeoff:** No 24/7 uptime yet, but more features tested
 
 **Option C: Judge V2 + Langfuse Integration** 👨‍⚖️ (depth over breadth, 60 min)
-- **Goal:** Async HITL via Telegram (no chat UI dependency)
-- **Why Critical:** 
-  - Eliminate desktop dependency for approvals
-  - ADHD-friendly: Approve from phone, anytime, anywhere
-  - Foundation for 24/7 autonomous operation (VPS-ready)
-- **What You'll Build:**
-  1. Telegram Bot API integration
-  2. Approval queue system (pending/approved/rejected)
-  3. n8n workflow: System action → Telegram message → wait for approval
-  4. Security: Chat ID whitelist (only you can approve)
-- **Test Scenario:** "Delete old log files" → Telegram notification → you approve → executed
-- **Duration:** ~3-4 hours (bot setup 60 min, n8n integration 90 min, testing 30 min)
-- **Next After:** H4 (VPS Deployment) or Judge V2 integration
-- **Cost:** $0 (Telegram Bot API is free)
-
-**Option B: Judge V2 + Langfuse Integration** 👨‍⚖️ (depth over breadth, 60 min)
 - **Goal:** Connect Judge to Langfuse (see conversation context)
 - **Why Important:** Judge currently analyzes events, not conversations
 - **What Changes:**
@@ -2171,23 +2150,21 @@ Email automation working end-to-end:
 - **Duration:** ~60 min (workflow update 30 min, testing 20 min, documentation 10 min)
 - **Next After:** Teacher Agent (converts errors to learning objects)
 
-**Option D: H4 - VPS Deployment** 🌐 (big leap, 4-6h, $16/mo)
-- **Goal:** Deploy headless core to VPS (24/7 uptime)
-- **Why Ambitious:** True autonomy - Observer runs even when PC is off
-- **What You'll Deploy:**
-  - n8n + Qdrant + Context API + Telegram Bot
-  - SSL/domain setup (api.ai-life-os.com)
-  - Secrets management (HashiCorp Vault or similar)
-- **Benefit:** PC shutdown ≠ system shutdown
-- **Duration:** ~4-6 hours (VPS setup 90 min, migration 120 min, testing 90 min)
-- **Cost:** ~$16/mo (Hetzner CPX31 VPS)
-- **Prerequisite:** H3 recommended (async approvals reduce VPS complexity)
+**Option D: Document & Rest** ☕
+- Phase 2.6 Slice 1 = major milestone (3/3 models working locally!)
+- Multi-model architecture validated (LiteLLM + health checks + individual tests)
+- Model versions corrected (Gemini 2.5 Flash instead of 3 Pro)
+- Come back fresh: Ready for VPS deployment or next slices
 
-**Option E: Take a Victory Lap** 🏆
-- H2 = major milestone (multi-model freedom proven + H3 bot analyzed)
-- Multi-model architecture validated (LiteLLM + n8n + Event Sourcing)
-- Model versions corrected for Dec 2025
-- Come back fresh for Phase 2.6 or Judge V2
+---
+
+**Recommendation:** **Option A** (VPS Deployment)  
+**Rationale:** 
+- Local testing complete and successful
+- VPS infrastructure already exists
+- Quick win (15-20 min to production)
+- Unlocks 24/7 multi-model access
+- Can continue with other slices after deployment
 
 ---
 

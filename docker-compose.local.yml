@@ -1,0 +1,38 @@
+version: '3.8'
+
+# Local testing only - minimal LiteLLM setup
+services:
+  litellm:
+    image: ghcr.io/berriai/litellm:main-stable
+    container_name: litellm-local-test
+    ports:
+      - "4000:4000"  # API
+      - "4001:4001"  # Health/Admin
+    environment:
+      # API Keys
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      
+      # Langfuse (optional for local test)
+      - LANGFUSE_PUBLIC_KEY=${LANGFUSE_PUBLIC_KEY}
+      - LANGFUSE_SECRET_KEY=${LANGFUSE_SECRET_KEY}
+      - LANGFUSE_HOST=${LANGFUSE_HOST}
+      
+      # LiteLLM settings
+      - LITELLM_MASTER_KEY=${LITELLM_MASTER_KEY}
+      - LITELLM_LOG_LEVEL=INFO
+      
+      # Database (using existing Postgres)
+      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@host.docker.internal:5432/litellm
+    volumes:
+      - ./docker/litellm-config.yaml:/app/config.yaml:ro
+    command: --config /app/config.yaml
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:4001/health/readiness || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3

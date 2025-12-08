@@ -1,0 +1,10 @@
+{
+  "model": "anthropic/claude-sonnet-4-5-20250929",
+  "messages": [
+    {
+      "role": "user",
+      "content": "Say hello in Hebrew!"
+    }
+  ],
+  "max_tokens": 50
+}
