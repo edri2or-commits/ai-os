@@ -21,32 +21,42 @@ Quick Status, Current Focus, Recent Changes, Next Steps
 
 **AI Life OS | Phase 2: Architectural Alignment & Governance** 📐
 
-**Progress:** ~90% complete (Protocol 1 ✅, NAES v1.0 ✅, H4 VPS Deployment Remaining ⏳)
+**Progress:** ~90% complete (Protocol 1 ✅, NAES v1.0 ✅, H3 Bot Analysis ✅, H4 VPS Deployment Remaining ⏳)
 
-**Just Finished (2025-12-07):**
-- ✅ **Language Layer - Jargon-Free Implementation** (COMPLETE - 1.5 hours)
-  - **Purpose:** Embedded prompt-level language policy for professional Hebrew + technical English
-  - **Problem:** Dual conflicting policies (CANONICAL_TERMINOLOGY vs ADHD "clear language")
-  - **Solution:** Unified Language Layer embedded in prompts (VPS-portable, no external tooling)
-  - **Research Basis:**
-    - Plain Language Act principles (BLUF, action-oriented, scannable)
-    - Heblish/Diglossia patterns (technical Hebrew = hybrid, not pure translation)
-    - ADHD cognitive load reduction (max 3 sentences/paragraph, visual markers)
-    - Markdown Table efficiency (30-50% fewer tokens vs JSON)
+**Just Finished (2025-12-08):**
+- ✅ **H3 Telegram Bot Analysis + Model Version Updates** (COMPLETE - 60 minutes)
+  - **Purpose:** Review existing H3 bot before Phase 2.6, correct model versions for end-2025
+  - **Findings:** 
+    - ✅ H3 bot exists and is high-quality (`services/approval-bot/`, 356 lines, production-tested)
+    - ✅ Architecture fits multi-model perfectly (file-based workflow, async, SQLite)
+    - ✅ Token + Chat ID already in vps.env
+  - **Decision:** 🎯 **EXTEND H3 bot, not rebuild** (saves 3-4 hours)
+  - **Model Version Corrections:**
+    - ❌ Old: Claude 3.5 Sonnet, GPT-4 Turbo, Gemini 2.0 Flash
+    - ✅ New: **Claude 4.5 Sonnet**, **GPT-5.1**, **Gemini 3 Pro** (Dec 2025)
   - **Components Created:**
-    - ✅ `memory-bank/docs/LANGUAGE_LAYER.md` (249 lines)
-    - ✅ Glossary: 15 core terms (Git, n8n, DevOps, Code)
-    - ✅ 3 Jargon Detection Rules (Hard Nouns, Translatable Concepts, Complex Terms)
-    - ✅ 3 Before/After Examples (Git detached HEAD, n8n errors, DevOps)
-    - ✅ 4 ADHD Mode Integration (CRISIS/PARALYSIS/BODY_DOUBLE/FLOW)
-    - ✅ Response Structure (BLUF + Bullets + 3-sentence paragraphs)
-  - **Decision Rules:**
-    1. Command names → Keep English (`git status`, not "סטטוס גיט")
-    2. Concepts → Translate + explain (`race condition` → "מרוץ תהליכים")
-    3. Complex terms → Translate + 1-sentence explanation
-  - **Expected Impact:** Reduced jargon friction, consistent cross-model language, ADHD-friendly clarity
-  - **Status:** ✅ OPERATIONAL - tested on "detached HEAD" explanation, working as designed
-  - **Next:** Optional expansion to 50 terms, A/B testing on different models (Claude/GPT/Gemini)
+    - ✅ `memory-bank/analysis/H3_BOT_ANALYSIS_2025_12_08.md` (186 lines)
+    - ✅ `memory-bank/analysis/MODEL_VERSION_UPDATES_2025_12_08.md` (128 lines)
+    - ✅ Session log: `2025-12-08-telegram-bot-analysis.md` (175 lines)
+  - **Files Updated:**
+    - ✅ `H2_PHASE_2.6_MULTI_MODEL_PLAN.md` (header, vision, Slice 1 - partial)
+    - ⏳ Remaining: Complete search/replace for all model references
+  - **H3 Bot Extensions Planned (Slice 6):**
+    - `/status` - Multi-model health check
+    - `/costs` - Daily/monthly API spending per model
+    - `/switch` - Manual model priority change
+    - `/logs` - Recent LLM calls from Langfuse
+  - **Git Commit:** 862b9c5
+  - **Status:** ✅ ANALYZED - Ready to start Slice 1 (LiteLLM Setup)
+  - **Next:** Complete model version updates, verify API pricing, start Phase 2.6
+
+**2025-12-07 | Language Layer - Jargon-Free Implementation** ✅
+- ✅ Embedded prompt-level language policy (professional Hebrew + technical English)
+- ✅ Unified Language Layer (VPS-portable, no external tooling)
+- ✅ `memory-bank/docs/LANGUAGE_LAYER.md` (249 lines)
+- ✅ Glossary: 15 core terms, 3 jargon detection rules
+- ✅ ADHD Mode Integration (CRISIS/PARALYSIS/BODY_DOUBLE/FLOW)
+- Duration: 1.5 hours
 
 - ✅ **NAES v1.0: ADHD State Management Layer** (COMPLETE - 5 hours)
   - **Purpose:** Neuro-Adaptive Executive Scaffold - state-aware ADHD support
@@ -1446,8 +1456,8 @@ After EVERY slice, Claude MUST automatically:
 
 ---
 
-**Last Updated:** 2025-12-05 05:30  
-**Next Update:** After Slice 2.5.5 (Enhanced Judge)
+**Last Updated:** 2025-12-08 14:00  
+**Next Update:** After Slice 2.6.1 (LiteLLM Setup) or Phase decision
  + hashed.hex()
         UPDATE user SET password = password_field WHERE email = 'edri2or@gmail.com'
         ```
@@ -2062,11 +2072,52 @@ Email automation working end-to-end:
 
 # NEXT STEPS
 
-**Status:** H2 Complete ✅ (Multi-model freedom operational, headless migration progressing)
+**Status:** H2 Complete ✅ | H3 Bot Analyzed ✅ | Multi-Model Plan Ready 🎯
 
 **Choose one:**
 
-**Option A: H3 - Telegram Approval Bot** 🤖 (RECOMMENDED - next in Headless Roadmap, 3-4h)
+**Option A: H2 Phase 2.6 - Multi-Model Orchestration** 🤖🤖🤖 (RECOMMENDED - strategic leap, 7-10 days)
+- **Goal:** Unified gateway for GPT-5.1, Claude 4.5, Gemini 3 Pro via LiteLLM
+- **Why Now:** 
+  - ✅ H3 bot exists (extend, not rebuild - saves 3-4h)
+  - ✅ All API keys available (vps.env)
+  - ✅ Model versions corrected (Dec 2025)
+  - ✅ Infrastructure ready (n8n, Langfuse, Redis)
+- **What You'll Build:**
+  1. LiteLLM proxy :4000 (unified API endpoint)
+  2. n8n routing workflows (task → optimal model)
+  3. Fallback chains (GPT→Claude→Gemini)
+  4. H3 bot extensions (`/status`, `/costs`, `/switch`, `/logs`)
+  5. Event Sourcing (Redis Streams + Observer)
+  6. Production hardening (backups, monitoring, load testing)
+- **Architecture:**
+  ```
+  User → n8n → LiteLLM :4000
+    ├─ GPT-5.1 (reasoning)
+    ├─ Claude 4.5 (long context)
+    └─ Gemini 3 Pro (speed + cost)
+  → Langfuse → Redis Streams → Observer → Git
+  ```
+- **Value:**
+  - 💰 Cost optimization: Gemini = 1/20th GPT cost
+  - 🔄 Reliability: Auto-fallbacks
+  - 📊 Observability: All calls in Langfuse
+  - 🎯 Best model for each task
+- **Slices:** 12 slices (10.5h → 11h with H3 extensions)
+- **Cost:** ~$43-45/month (GCP $30 + API calls $13)
+- **Duration:** ~7-10 days (1-1.5h per day)
+- **Status:** ✅ PLANNING COMPLETE - Ready to start Slice 1
+- **Prerequisite:** Complete model version updates in plan
+- **Next After:** H4 (VPS 24/7) or Voice Integration
+
+**Option B: H3 - Telegram Approval Bot** 🤖 (alternative, 3-4h, $0)
+- **Goal:** Async HITL via Telegram (no chat UI dependency)
+- **Status:** ❓ ALREADY EXISTS - H3 bot is production-ready
+- **New Approach:** Just add multi-model commands (Slice 6 of Phase 2.6)
+- **Why Skip as Standalone:** Already built, will be extended during Phase 2.6
+- **Recommendation:** Integrate with Phase 2.6 instead of standalone build
+
+**Option C: Judge V2 + Langfuse Integration** 👨‍⚖️ (depth over breadth, 60 min)
 - **Goal:** Async HITL via Telegram (no chat UI dependency)
 - **Why Critical:** 
   - Eliminate desktop dependency for approvals
@@ -2093,7 +2144,7 @@ Email automation working end-to-end:
 - **Duration:** ~60 min (workflow update 30 min, testing 20 min, documentation 10 min)
 - **Next After:** Teacher Agent (converts errors to learning objects)
 
-**Option C: H4 - VPS Deployment** 🌐 (big leap, 4-6h, $16/mo)
+**Option D: H4 - VPS Deployment** 🌐 (big leap, 4-6h, $16/mo)
 - **Goal:** Deploy headless core to VPS (24/7 uptime)
 - **Why Ambitious:** True autonomy - Observer runs even when PC is off
 - **What You'll Deploy:**
@@ -2105,15 +2156,21 @@ Email automation working end-to-end:
 - **Cost:** ~$16/mo (Hetzner CPX31 VPS)
 - **Prerequisite:** H3 recommended (async approvals reduce VPS complexity)
 
-**Option D: Take a Victory Lap** 🏆
-- H2 = major milestone (multi-model freedom proven)
-- GPT test passed < 30 seconds = architecture validated
-- Come back fresh for H3 or Judge V2
+**Option E: Take a Victory Lap** 🏆
+- H2 = major milestone (multi-model freedom proven + H3 bot analyzed)
+- Multi-model architecture validated (LiteLLM + n8n + Event Sourcing)
+- Model versions corrected for Dec 2025
+- Come back fresh for Phase 2.6 or Judge V2
 
 ---
 
-**Recommendation:** **Option A** (H3 Telegram Bot)  
-**Rationale:** Natural next step in Headless Roadmap, ADHD-friendly async approvals, foundation for H4
+**Recommendation:** **Option A** (H2 Phase 2.6 - Multi-Model Orchestration)  
+**Rationale:** 
+- Strategic leap: 3 models > 1 model
+- H3 bot already exists (extend in Slice 6)
+- All prerequisites met (API keys, infrastructure)
+- Natural evolution: H2 → Multi-Model → H4 (24/7)
+- Cost-effective: Gemini saves 95% on simple tasks
 
 ---
 
@@ -2153,5 +2210,5 @@ After EVERY slice, Claude MUST automatically:
 
 ---
 
-**Last Updated:** 2025-12-05 05:30  
-**Next Update:** After Slice 2.5.5 (Enhanced Judge)
+**Last Updated:** 2025-12-08 14:00  
+**Next Update:** After Slice 2.6.1 (LiteLLM Setup) or Phase decision
