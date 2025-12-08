@@ -48,6 +48,20 @@ Follow these 4 steps IN ORDER:
 1. Read state at session start
 2. Select mode based on signals (see Protocol AEP-002)
 3. Load mode prompt: `memory-bank/20_Areas/adhd-support/mode_prompts/{mode}.md`
+
+---
+
+### Step 2.6: Get API Keys Location (< 30 seconds) 🔐 CRITICAL!
+🔑 **File:** `memory-bank/docs/CREDENTIALS_REFERENCE.md`
+
+**What you'll learn:**
+- WHERE all API keys are stored (vps.env)
+- NEVER ASK USER about API keys
+- Always read credentials from documented location
+
+**CRITICAL RULE:**
+- ❌ DO NOT ask "Do you have OpenAI API key?"
+- ✅ DO read from `C:\Users\edri2\Desktop\AI\ai-os\vps.env`
 4. Follow mode rules for this interaction
 
 **Example:**
