@@ -3,7 +3,8 @@
 **Created:** 2025-12-08  
 **Status:** PLANNING (Not Started)  
 **Research Basis:** Multi-model orchestration research (2025-12-08)  
-**Expected Duration:** 7-10 days (broken into slices)
+**Expected Duration:** 7-10 days (broken into slices)  
+**Models:** GPT-5.1, Claude 4.5 Sonnet, Gemini 3 Pro (End of 2025 versions)
 
 ---
 
@@ -16,9 +17,9 @@ User (Telegram/Claude Desktop/Web)
 n8n (routing logic)
     ↓
 LiteLLM Proxy :4000 (unified gateway)
-    ├─ GPT-4 (reasoning)
-    ├─ Claude (long context)
-    └─ Gemini (speed + cost)
+    ├─ GPT-5.1 (complex reasoning)
+    ├─ Claude 4.5 (long context >100K tokens)
+    └─ Gemini 3 Pro (speed + cost optimization)
     ↓
 Langfuse V3 (auto-logging)
     ↓
@@ -124,9 +125,9 @@ Git Truth Layer (commits)
 **Steps:**
 1. Read vps.env to get API keys ✅ (already done)
 2. Create litellm-config.yaml with model_list:
-   - gpt-4: openai/gpt-4-turbo
-   - claude-3: anthropic/claude-3-5-sonnet-20241022
-   - gemini-2: gemini/gemini-2.0-flash-exp
+   - gpt-5.1: openai/gpt-5.1
+   - claude-4.5: anthropic/claude-sonnet-4-5-20250929
+   - gemini-3-pro: gemini/gemini-3-pro
 3. Add LiteLLM service to docker-compose.vps.yml:
    - Image: ghcr.io/berriai/litellm:main-stable
    - Ports: 4000:4000, 4001:4001
