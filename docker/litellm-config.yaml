@@ -1,0 +1,95 @@
+# LiteLLM Configuration for AI Life OS
+# Phase 2.6: Multi-Model Orchestration
+# Created: 2025-12-08
+
+model_list:
+  # ===== GPT-5.1 (OpenAI) =====
+  # Best for: Complex reasoning, coding tasks
+  # Cost: $1.25 input / $10 output per 1M tokens
+  - model_name: gpt-5.1
+    litellm_params:
+      model: openai/gpt-5.1
+      api_key: os.environ/OPENAI_API_KEY
+      max_tokens: 4096
+      temperature: 0.7
+    model_info:
+      mode: chat
+      supports_function_calling: true
+      supports_vision: false
+      context_window: 128000
+
+  # ===== Claude 4.5 Sonnet (Anthropic) =====
+  # Best for: Long context (>100K tokens), agentic workflows
+  # Cost: $3 input / $15 output per 1M tokens
+  - model_name: claude-4.5
+    litellm_params:
+      model: anthropic/claude-sonnet-4-5-20250929
+      api_key: os.environ/ANTHROPIC_API_KEY
+      max_tokens: 4096
+      temperature: 0.7
+    model_info:
+      mode: chat
+      supports_function_calling: true
+      supports_vision: true
+      context_window: 200000
+
+  # ===== Gemini 3 Pro (Google) =====
+  # Best for: Speed, cost optimization, multimodal
+  # Cost: $2 input / $12 output per 1M tokens
+  - model_name: gemini-3-pro
+    litellm_params:
+      model: gemini/gemini-3-pro
+      api_key: os.environ/GOOGLE_API_KEY
+      max_tokens: 4096
+      temperature: 0.7
+    model_info:
+      mode: chat
+      supports_function_calling: true
+      supports_vision: true
+      context_window: 1000000
+
+# ===== Router Settings =====
+router_settings:
+  # Automatic fallback chains
+  fallbacks:
+    - gpt-5.1: ["claude-4.5", "gemini-3-pro"]
+    - claude-4.5: ["gpt-5.1", "gemini-3-pro"]
+    - gemini-3-pro: ["claude-4.5", "gpt-5.1"]
+  
+  # Routing strategy
+  routing_strategy: simple-shuffle
+  
+  # Retry settings
+  num_retries: 2
+  timeout: 600
+  
+  # Redis caching
+  redis_host: redis
+  redis_port: 6379
+  cache_responses: true
+  cache_kwargs:
+    ttl: 3600
+
+# ===== LiteLLM Settings =====
+litellm_settings:
+  # Langfuse integration
+  success_callback: ["langfuse"]
+  failure_callback: ["langfuse"]
+  
+  # Drop unsupported params
+  drop_params: true
+  
+  # Cost tracking
+  max_budget: 50
+  budget_duration: 30d
+  
+  # Logging
+  set_verbose: false
+
+# ===== General Settings =====
+general_settings:
+  master_key: "sk-litellm-ailifeos-2025"
+  database_url: "postgresql://postgres:ailifeos2025@postgres:5432/litellm"
+  disable_spend_logs: false
+  disable_master_key_return: true
+  health_endpoint: /health/readiness

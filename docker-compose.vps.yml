@@ -123,24 +123,32 @@ services:
   # 5. LiteLLM - Multi-Model Gateway
   # ==========================================
   litellm:
-    image: ghcr.io/berriai/litellm:main-latest
+    image: ghcr.io/berriai/litellm:main-stable
     container_name: ai-os-litellm
     restart: unless-stopped
+    ports:
+      - "4000:4000"  # API endpoint
+      - "4001:4001"  # Admin/health endpoint
     environment:
       - LITELLM_MASTER_KEY=${LITELLM_MASTER_KEY}
       - LITELLM_LOG_LEVEL=${LITELLM_LOG_LEVEL}
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
       - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      - LANGFUSE_PUBLIC_KEY=${LANGFUSE_PUBLIC_KEY}
+      - LANGFUSE_SECRET_KEY=${LANGFUSE_SECRET_KEY}
+      - LANGFUSE_HOST=${LANGFUSE_HOST}
     volumes:
-      - ./litellm-config.yaml:/app/config.yaml:ro
+      - ./docker/litellm-config.yaml:/app/config.yaml:ro
     networks:
       - ai-os-network
     depends_on:
       postgres:
         condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:4000/health || exit 1"]
+      test: ["CMD-SHELL", "curl -f http://localhost:4001/health/readiness || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
