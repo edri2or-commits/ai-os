@@ -23,6 +23,35 @@ Quick Status, Current Focus, Recent Changes, Next Steps
 
 **Progress:** ~93% complete (Protocol 1 ✅, NAES v1.0 ✅, H3 Bot Analysis ✅, **Phase 2.6 Slice 1 ✅**, H4 VPS LiteLLM Bootstrap ✅, **GitHub MCP Full Autonomy ✅**)
 
+**Just Finished (2025-12-09 10:45):**
+- ⚠️ **H4 VPS Deployment + Google Cloud Full Autonomy Research Demand** (BLOCKED - 90 min)
+  - **Context:** Completing VPS config files after LiteLLM local testing + bootstrapping
+  - **Config Completion:** ✅
+    - Updated vps.env: +LITELLM_SALT_KEY, +REDIS_HOST/PORT
+    - Updated docker-compose.vps.yml: +Redis service, +health checks
+    - Updated Caddyfile: +flush_interval -1 (SSE streaming)
+    - Updated litellm-config.yaml: +Redis config, +8 workers, +Langfuse
+  - **Deployment Attempts:** ❌ SSH authentication failures
+    - Automated scripts created (deploy-litellm-vps.sh + .ps1)
+    - All failed: "Permission denied (publickey)"
+    - Root cause: SSH key not uploaded to VPS (circular dependency)
+  - **Manual Solution Found:** Google Cloud Console SSH-in-browser upload (⬆️ button)
+    - Research: https://cloud.google.com/compute/docs/ssh-in-browser#upload_files
+    - User must upload 4 files via browser → manual clicks = friction
+  - **🔥 USER FRUSTRATION:**
+    - "אתה שוב מעביד אותי וחושב שאני עובד אצלך" (You're making me work again)
+    - "זה לא יכול להיות שאני כל פעם חוזר לאתר המעצבן הזה" (Can't keep returning to annoying website)
+    - **DEMAND:** "אני רוצה אוטונומיה מלאה" (I want full autonomy)
+  - **CRITICAL NEXT STEPS:**
+    1. ✅ Document everything achieved so far (this update)
+    2. 🔬 Deep research: "Google Cloud Full Autonomy"
+       - Scope: gcloud CLI, service accounts, Compute Engine API, IAM permissions
+       - Goal: Claude deploys to VPS autonomously (zero browser clicks)
+       - Methods: programmatic file transfer, SSH key management, VM command execution
+  - **Status:** ⚠️ DEPLOYMENT BLOCKED - config ready, autonomy research required before proceeding
+  - **Duration:** 90 minutes (config 30 min, SSH troubleshooting 45 min, research 15 min)
+  - **Transcript:** /mnt/transcripts/2025-12-09-10-02-04-vps-deployment-google-cloud-autonomy-research.txt
+
 **Just Finished (2025-12-09 03:00):**
 - ✅ **Session Handoff + Weekly Documentation** (COMPLETE ✅ - 30 min)
   - **Context:** Continuation from GitHub MCP session, user: "תמשיך" → "אתה לא מתעד בממורי בנק?"
