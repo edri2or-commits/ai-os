@@ -1,0 +1,129 @@
+classified_count: 10
+classified_emails:
+- action_needed: false
+  category: personal
+  date: Wed, 3 Dec 2025 01:39:27 +0000
+  from: '"Anthropic, PBC" <invoice+statements@mail.anthropic.com>'
+  id: 19ae1dd4e8f33dff
+  priority: low
+  snippet: 'Your receipt from Anthropic, PBC #2263-5299-5079 ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏
+    ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏
+    ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏'
+  subject: 'Your receipt from Anthropic, PBC #2263-5299-5079'
+  suggested_action: ''
+  to: edri2or@gmail.com
+- action_needed: true
+  category: personal
+  date: Wed, 3 Dec 2025 01:39:05 +0000
+  from: Link <notifications@link.com>
+  id: 19ae1dcf7de86b9c
+  priority: medium
+  snippet: Pay faster at Anthropic, PBC and everywhere Link is accepted ͏ ͏ ͏ ͏ ͏
+    ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏
+    ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏
+  subject: Verify your email
+  suggested_action: Verify email address for Link payment service
+  to: edri2or@gmail.com
+- action_needed: true
+  category: work
+  date: Tue, 02 Dec 2025 23:48:21 +0000
+  from: '"n8n.io" <hello@info.n8n.io>'
+  id: 19ae1779254be6f9
+  priority: medium
+  snippet: Hi there, Please find your license key below to unlock selected paid features
+    on your community edition of n8n. Your license key 64c0b724-ddef-439d-ad9d-6ace31a647e1
+    Activate License Key Getting
+  subject: Your free n8n license key to unlock selected paid features
+  suggested_action: Activate n8n license key to unlock paid features
+  to: edri2or@gmail.com
+- action_needed: true
+  category: bureaucracy
+  date: Tue, 02 Dec 2025 13:14:38 -0800
+  from: Google Play <googleplay-noreply@google.com>
+  id: 19ae0eada2a85b5d
+  priority: medium
+  snippet: 'Google Play תודה המינוי שלך ל-Google Commerce Limited ב-Google Play ממשיך
+    וחשבונך חויב. ניהול המינויים שלך צריך להוסיף אמצעי תשלום לגיבוי כדי שהמינוי ימשיך
+    להיות פעיל. להוספת גיבוי מספר הזמנה: SOP.3396'
+  subject: הקבלה שלך על הזמנה ב-Google Play מ-2 בדצמ׳ 2025
+  suggested_action: Add payment method to Google Play account to continue subscription
+  to: edri2or@gmail.com
+- action_needed: true
+  category: work
+  date: Tue, 02 Dec 2025 19:12:43 +0000 (UTC)
+  from: Base44 App <no-reply@notifications.base44.com>
+  id: 19ae07b3a6c1c13c
+  priority: medium
+  snippet: Join your team and start building. You&#39;re invited to a Base44 Team
+    Hi Edri2or, office@avnederech.co.il has invited you to join אבני דרך. We&#39;re
+    excited to have you on board! About אבני דרך מערכת
+  subject: Invitation to join אבני דרך App
+  suggested_action: Accept invitation to join Base44 team
+  to: Edri2or@gmail.com
+- action_needed: true
+  category: bureaucracy
+  date: Tue, 02 Dec 2025 11:01:22 -0800
+  from: Google <google-noreply@google.com>
+  id: 19ae070d68c9093e
+  priority: high
+  snippet: חשבון האימייל שלך יפסיק לפעול בעוד 28 ימים ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏
+    ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏
+    ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏ ͏
+  subject: ⚠️ נפח האחסון שלך ב-Gmail מלא
+  suggested_action: Gmail storage full - need to free up space within 28 days
+  to: edri2or@gmail.com
+- action_needed: false
+  category: personal
+  date: Tue, 02 Dec 2025 15:50:10 +0000
+  from: '"‏יומן Google" <calendar-notification@google.com>'
+  id: 19adfc1ca2627c87
+  priority: low
+  snippet: סקירת סוף יום הוזמנת על ידי Or Edri להשתתף באירוע בשם &quot;סקירת סוף יום&quot;
+    ב-יום שלישי 2 בדצמ׳ 2025 ⋅ 18:00 – 18:10 (שעון ישראל). יש אירוע שעומד להתרחש סקירת
+    סוף יום יום שלישי 2 בדצמ׳ 2025 ⋅ 18:00
+  subject: 'התראה: סקירת סוף יום, יום ג׳ 2 בדצמ׳ 2025, 18:00 - 18:10 (GMT‎+2‎) (edri2or@gmail.com)'
+  suggested_action: ''
+  to: Or Edri <edri2or@gmail.com>
+- action_needed: false
+  category: personal
+  date: Tue, 02 Dec 2025 14:20:05 +0000
+  from: '"‏יומן Google" <calendar-notification@google.com>'
+  id: 19adf6f5291b6789
+  priority: low
+  snippet: חלון הודעות (אחה&quot;צ) הוזמנת על ידי Or Edri להשתתף באירוע בשם &quot;חלון
+    הודעות (אחה&quot;צ)&quot; ב-יום שלישי 2 בדצמ׳ 2025 ⋅ 16:30 – 16:45 (שעון ישראל).
+    יש אירוע שעומד להתרחש חלון הודעות (אחה&quot;
+  subject: 'התראה: חלון הודעות (אחה"צ), יום ג׳ 2 בדצמ׳ 2025, 16:30 - 16:45 (GMT‎+2‎)
+    (edri2or@gmail.com)'
+  suggested_action: ''
+  to: Or Edri <edri2or@gmail.com>
+- action_needed: false
+  category: work
+  date: Tue, 02 Dec 2025 13:58:03 +0000
+  from: '"אבני דרך שרית ברנס" <office@avnederech.co.il>'
+  id: 19adf5b26f933976
+  priority: medium
+  snippet: חזרות על נסים בקדומים פיס צפון ‏הצטרפות באמצעות Google Meet – הוזמנת על
+    ידי אבני דרך שרית ברנס להשתתף באירוע בשם &quot;חזרות על נסים בקדומים פיס צפון&quot;
+    ב-יום ראשון 7 בדצמ׳ 2025 ⋅ 09:00 – 13:00 (
+  subject: 'ההזמנה עודכנה: חזרות על נסים בקדומים פיס צפון, יום א׳ 7 בדצמ׳ 2025, 09:00
+    - 13:00 (GMT‎+2‎) (edri2or@gmail.com)'
+  suggested_action: ''
+  to: edri2or@gmail.com, assaf.mor2@gmail.com, theorizeira@gmail.com, galisraeli80@gmail.com,
+    "יוגב חברון ברנס" <yogevsarit@gmail.com>
+- action_needed: false
+  category: personal
+  date: Tue, 02 Dec 2025 13:50:08 +0000
+  from: '"‏יומן Google" <calendar-notification@google.com>'
+  id: 19adf53e720d0577
+  priority: low
+  snippet: מפגש קורס הדרכת הורים אדפטיבית הוזמנת על ידי Or Edri להשתתף באירוע בשם
+    &quot;מפגש קורס הדרכת הורים אדפטיבית&quot; ב-יום שלישי 2 בדצמ׳ 2025 ⋅ 16:00 –
+    20:00 (שעון ישראל). יש אירוע שעומד להתרחש מפגש קורס
+  subject: 'התראה: מפגש קורס הדרכת הורים אדפטיבית, יום ג׳ 2 בדצמ׳ 2025, 16:00 - 20:00
+    (GMT‎+2‎) (edri2or@gmail.com)'
+  suggested_action: ''
+  to: Or Edri <edri2or@gmail.com>
+timestamp: '2025-12-03T02:12:50.123342+00:00'
+type: email_drift
+unread_count: 10

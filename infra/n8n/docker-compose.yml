@@ -16,6 +16,9 @@ services:
       - N8N_LOG_LEVEL=${N8N_LOG_LEVEL:-info}
       # Database: Default SQLite (embedded)
       - DB_TYPE=sqlite
+      # External API Keys (for workflows)
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
       # Security: Set these in actual .env file
       - N8N_BASIC_AUTH_ACTIVE=${N8N_BASIC_AUTH_ACTIVE:-true}
       - N8N_BASIC_AUTH_USER=${N8N_BASIC_AUTH_USER:-admin}

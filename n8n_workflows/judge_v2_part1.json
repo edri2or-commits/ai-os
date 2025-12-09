@@ -1,0 +1,40 @@
+{
+  "name": "Judge Agent - Faux Pas Detection (v2)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 6
+            }
+          ]
+        }
+      },
+      "name": "Every 6 Hours",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [240, 300],
+      "id": "1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const fs = require('fs');\nconst timelineFile = 'C:\\\\Users\\\\edri2\\\\Desktop\\\\AI\\\\ai-os\\\\truth-layer\\\\timeline\\\\EVENT_TIMELINE.jsonl';\nconst sixHoursAgo = new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString();\nlet events = [];\nif (fs.existsSync(timelineFile)) {\n  const lines = fs.readFileSync(timelineFile, 'utf-8').split('\\n').filter(l => l.trim());\n  for (const line of lines) {\n    try {\n      const event = JSON.parse(line);\n      if (event.ts_utc >= sixHoursAgo) events.push(event);\n    } catch (e) {}\n  }\n}\nreturn {json: {events, count: events.length}};"
+      },
+      "name": "Read Events",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 300],
+      "id": "2"
+    },
+    {
+      "parameters": {
+        "jsCode": "const fs = require('fs');\nconst promptFile = 'C:\\\\Users\\\\edri2\\\\Desktop\\\\AI\\\\ai-os\\\\prompts\\\\judge_agent_prompt.md';\nconst judgePrompt = fs.readFileSync(promptFile, 'utf-8');\nconst events = $input.first().json.events;\nconst fullPrompt = judgePrompt + '\\n\\n## Events:\\n```json\\n' + JSON.stringify(events, null, 2) + '\\n```\\nAnalyze and return JSON.';\nreturn {json: {prompt: fullPrompt, count: events.length}};"
+      },
+      "name": "Build Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [640, 300],
+      "id": "3"
+    },

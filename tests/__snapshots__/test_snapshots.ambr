@@ -1,0 +1,96 @@
+# serializer version: 1
+# name: TestObserverSnapshots.test_drift_report_structure
+  dict({
+    'drift_count': 1,
+    'drift_types': list([
+      'modified',
+    ]),
+    'files_scanned': 1,
+    'has_diff': list([
+      True,
+    ]),
+  })
+# ---
+# name: TestObserverSnapshots.test_empty_drift_report
+  dict({
+    'drift_count': 0,
+    'drift_list': list([
+    ]),
+    'files_scanned': 1,
+  })
+# ---
+# name: TestObserverSnapshots.test_multiple_files_drift
+  dict({
+    'all_have_diffs': True,
+    'files_scanned': 3,
+    'modified_count': 3,
+  })
+# ---
+# name: TestValidationSnapshots.test_cr_id_validation_messages
+  dict({
+    'empty': False,
+    'missing_prefix': False,
+    'too_short': False,
+    'uppercase_suffix': False,
+    'valid': True,
+    'wrong_date_length': False,
+  })
+# ---
+# name: TestValidationSnapshots.test_entity_status_validation_matrix
+  dict({
+    'area': dict({
+      'active': True,
+      'archived': True,
+      'completed': False,
+      'done': False,
+      'dormant': True,
+      'paused': False,
+      'todo': False,
+    }),
+    'context': dict({
+      'active': True,
+      'archived': True,
+      'completed': False,
+      'done': False,
+      'dormant': True,
+      'paused': False,
+      'todo': False,
+    }),
+    'identity': dict({
+      'active': True,
+      'archived': False,
+      'completed': False,
+      'done': False,
+      'dormant': True,
+      'paused': False,
+      'todo': False,
+    }),
+    'log': dict({
+      'active': False,
+      'archived': False,
+      'completed': False,
+      'done': False,
+      'dormant': False,
+      'paused': False,
+      'todo': False,
+    }),
+    'project': dict({
+      'active': True,
+      'archived': True,
+      'completed': True,
+      'done': False,
+      'dormant': False,
+      'paused': True,
+      'todo': False,
+    }),
+    'task': dict({
+      'active': False,
+      'archived': False,
+      'completed': False,
+      'done': True,
+      'dormant': False,
+      'paused': False,
+      'todo': True,
+    }),
+  })
+# ---

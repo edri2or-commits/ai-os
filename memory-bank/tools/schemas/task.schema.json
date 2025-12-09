@@ -1,0 +1,93 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Task Entity",
+  "description": "Schema for validating Task YAML frontmatter in the Life Graph",
+  "type": "object",
+  "properties": {
+    "type": {
+      "const": "task",
+      "description": "Entity type identifier"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^task-[a-z0-9-]+$",
+      "description": "Unique identifier (format: task-{slug})"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Task title (verb-first action)"
+    },
+    "status": {
+      "enum": ["inbox", "next", "waiting", "scheduled", "completed"],
+      "description": "Task lifecycle state"
+    },
+    "project": {
+      "oneOf": [
+        { "type": "string", "pattern": "^proj-[0-9]{4}-[a-z0-9-]+$" },
+        { "type": "null" }
+      ],
+      "description": "Parent project ID (if part of a project)"
+    },
+    "area": {
+      "oneOf": [
+        { "type": "string", "pattern": "^area-[a-z0-9-]+$" },
+        { "type": "null" }
+      ],
+      "description": "Parent area ID (if not part of a project)"
+    },
+    "created": {
+      "type": "string",
+      "format": "date",
+      "description": "Date when task was created (ISO 8601)"
+    },
+    "do_date": {
+      "oneOf": [
+        { "type": "string", "format": "date" },
+        { "type": "null" }
+      ],
+      "description": "When to START this task (ISO 8601)"
+    },
+    "duration_minutes": {
+      "type": "integer",
+      "minimum": 5,
+      "maximum": 480,
+      "description": "Estimated time to complete (5-480 minutes)"
+    },
+    "energy_profile": {
+      "type": "array",
+      "items": {
+        "enum": ["high_focus", "creative", "admin", "low_energy"]
+      },
+      "minItems": 1,
+      "description": "Required energy states for this task"
+    },
+    "contexts": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^@[a-z_]+$"
+      },
+      "minItems": 1,
+      "description": "Where/how this task can be done"
+    },
+    "dopamine_level": {
+      "enum": ["high", "medium", "low"],
+      "description": "Subjective reward/fun level"
+    },
+    "is_frog": {
+      "type": "boolean",
+      "description": "Is this the hardest task today?"
+    },
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^task-[a-z0-9-]+$"
+      },
+      "description": "List of task IDs that must complete first"
+    }
+  },
+  "required": ["type", "id", "title", "status", "energy_profile", "contexts"],
+  "additionalProperties": true
+}

@@ -1,0 +1,35 @@
+fix(drift): Reconcile Truth Layer with git HEAD + bootstrap SERVICES_STATUS
+
+Problem:
+- Truth Layer showed last_commit: 43b308a
+- Actual git HEAD: eefc5d3 (3 commits ahead)
+- SERVICES_STATUS.json was empty (blocking reconciler)
+
+Solution:
+1. Ran snapshot generator → updated GOVERNANCE_LATEST.json
+2. Bootstrapped SERVICES_STATUS.json as minimal placeholder
+3. Ran reconciler → updated SYSTEM_STATE_COMPACT.json
+
+Changes:
+- governance/snapshots/GOVERNANCE_LATEST.json - git commit + timestamp updated
+- governance/snapshots/SNAPSHOT_20251129_*.json - new snapshot created
+- docs/system_state/SYSTEM_STATE_COMPACT.json - reconciled (commit, timestamp, version)
+- docs/system_state/registries/SERVICES_STATUS.json - NEW: bootstrap placeholder
+
+Notes:
+- SERVICES_STATUS.json is marked as BOOTSTRAP_PLACEHOLDER
+- Will be replaced by Observer-generated data in Phase 2
+- Minimal structure (total: 0, services: []) - honest about current state
+
+Research Alignment:
+- Dual Truth Architecture (static → derived state flow)
+- Observed State pattern (placeholder until Observer exists)
+- Split-brain prevention (drift detection research)
+
+Tools Used:
+- governance/scripts/generate_snapshot.py (reads actual git)
+- services/os_core_mcp/reconciler.py (propagates to derived state)
+
+Slice: 1.3 (Fix Git HEAD drift) + Sub-Slice 1.3a (SERVICES_STATUS bootstrap)
+Duration: ~35 min (including troubleshooting + SERVICES_STATUS bootstrap)
+Risk: Low (reversible, honest placeholder, tested pipeline)

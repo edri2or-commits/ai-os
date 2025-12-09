@@ -1,1 +1,18 @@
-﻿
+﻿{
+  "_schema": "SERVICES_STATUS_V1",
+  "_description": "Service health registry - tracks observed state of AI-OS services",
+  "_status": "BOOTSTRAP_PLACEHOLDER",
+  "_note": "Created during Slice 1.3 drift fix. Will be replaced by Observer-generated data in Phase 2.",
+  "last_updated": "2025-11-29T23:08:34Z",
+  
+  "summary": {
+    "up": 0,
+    "partial": 0,
+    "planned": 0,
+    "not_configured": 0,
+    "broken": 0,
+    "total": 0
+  },
+  
+  "services": []
+}

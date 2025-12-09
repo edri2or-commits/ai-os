@@ -1,0 +1,47 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Area Entity",
+  "description": "Schema for validating Area YAML frontmatter in the Life Graph",
+  "type": "object",
+  "properties": {
+    "type": {
+      "const": "area",
+      "description": "Entity type identifier"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^area-[a-z0-9-]+$",
+      "description": "Unique identifier (format: area-{slug})"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Area name (human-readable)"
+    },
+    "active": {
+      "type": "boolean",
+      "description": "Is this area currently active?"
+    },
+    "vision": {
+      "oneOf": [
+        { "type": "string" },
+        { "type": "null" }
+      ],
+      "description": "Long-term aspiration for this area"
+    },
+    "contexts": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^@[a-z_]+$"
+      },
+      "description": "Default contexts where this area's work happens"
+    },
+    "review_frequency": {
+      "enum": ["daily", "weekly", "monthly", "quarterly"],
+      "description": "How often to review this area"
+    }
+  },
+  "required": ["type", "id", "name", "active"],
+  "additionalProperties": true
+}

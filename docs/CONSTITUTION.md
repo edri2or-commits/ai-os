@@ -7,7 +7,7 @@
 4. **Security First** — Every connection, key, or token must be explicit, encrypted, and revocable.
 5. **Transparency** — Every change is visible, explainable, and logged.
 6. **Thin Slices** — Each task is done in minimal, testable steps.
-7. **Agents as Family** — Claude, GPT, Chat1, Make, and Google operate as equals — each with defined scope and shared accountability.
+7. **Head/Hands/Truth/Nerves** — Claude Desktop (Head) reasons and orchestrates, n8n/tools (Hands) execute, Git (Truth) maintains state, MCP servers (Nerves) connect them. See `docs/ARCHITECTURE_METAPHOR.md` for full architectural details.
 8. **Documentation Over Code** — Design and governance precede execution.
 9. **Reversibility** — No irreversible automation.
 

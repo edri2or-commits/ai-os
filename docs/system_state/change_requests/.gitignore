@@ -1,0 +1,8 @@
+# Change Requests are derived state (not tracked in git)
+# They are regenerable from Observer findings
+
+# Ignore all CR files
+*.cr.yaml
+
+# But track this .gitignore itself
+!.gitignore

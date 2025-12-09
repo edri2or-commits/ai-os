@@ -1,0 +1,129 @@
+{
+  "name": "Judge Agent - Faux Pas Detection (Fixed)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 6
+            }
+          ]
+        }
+      },
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Read EVENT_TIMELINE.jsonl (last 6 hours)\nconst fs = require('fs');\n\nconst timelineFile = 'C:\\\\Users\\\\edri2\\\\Desktop\\\\AI\\\\ai-os\\\\truth-layer\\\\timeline\\\\EVENT_TIMELINE.jsonl';\nconst sixHoursAgo = new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString();\n\nlet events = [];\n\nif (fs.existsSync(timelineFile)) {\n  const lines = fs.readFileSync(timelineFile, 'utf-8').split('\\n');\n  \n  for (const line of lines) {\n    if (!line.trim()) continue;\n    \n    try {\n      const event = JSON.parse(line);\n      \n      if (event.ts_utc >= sixHoursAgo) {\n        events.push(event);\n      }\n    } catch (e) {\n      console.error('Failed to parse line:', line);\n    }\n  }\n}\n\nreturn {\n  json: {\n    events: events,\n    events_count: events.length,\n    time_window: {\n      start: sixHoursAgo,\n      end: new Date().toISOString()\n    }\n  }\n};"
+      },
+      "name": "Read Timeline Events",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Load Judge prompt\nconst fs = require('fs');\n\nconst promptFile = 'C:\\\\Users\\\\edri2\\\\Desktop\\\\AI\\\\ai-os\\\\prompts\\\\judge_agent_prompt.md';\nconst judgePrompt = fs.readFileSync(promptFile, 'utf-8');\n\nconst events = $input.first().json.events;\nconst timeWindow = $input.first().json.time_window;\n\nconst fullPrompt = judgePrompt + '\\n\\n---\\n\\n## Events to Analyze\\n\\n```json\\n' + JSON.stringify(events, null, 2) + '\\n```\\n\\nPlease analyze these ' + events.length + ' events and return your FauxPas_Report in JSON format.';\n\nreturn {\n  json: {\n    prompt: fullPrompt,\n    events_count: events.length,\n    time_window: timeWindow\n  }\n};"
+      },
+      "name": "Prepare Judge Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "application/json",
+        "bodyParameters": {
+          "parameters": []
+        },
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"gpt-4o\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": {{ $json.prompt }}\n    }\n  ],\n  \"temperature\": 0.2,\n  \"response_format\": {\n    \"type\": \"json_object\"\n  }\n}",
+        "options": {}
+      },
+      "name": "Call GPT-4o Judge",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [850, 300],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "1",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse GPT response and write FauxPas_Report\nconst fs = require('fs');\n\nconst gptResponse = $input.first().json.choices[0].message.content;\nconst report = JSON.parse(gptResponse);\n\nconst now = new Date();\nconst timestamp = now.toISOString().replace(/:/g, '-').split('.')[0];\nconst reportFile = `C:\\\\Users\\\\edri2\\\\Desktop\\\\AI\\\\ai-os\\\\truth-layer\\\\drift\\\\faux_pas\\\\FP-${timestamp}.json`;\n\nconst dir = 'C:\\\\Users\\\\edri2\\\\Desktop\\\\AI\\\\ai-os\\\\truth-layer\\\\drift\\\\faux_pas';\nif (!fs.existsSync(dir)) {\n  fs.mkdirSync(dir, { recursive: true });\n}\n\nfs.writeFileSync(reportFile, JSON.stringify(report, null, 2), 'utf-8');\n\nconsole.log('FauxPas Report:', reportFile);\nconsole.log('Summary:', report.summary);\n\nreturn {\n  json: {\n    report_file: reportFile,\n    report: report,\n    has_errors: report.faux_pas_detected && report.faux_pas_detected.length > 0\n  }\n};"
+      },
+      "name": "Write FauxPas Report",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1050, 300]
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Read Timeline Events",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Timeline Events": {
+      "main": [
+        [
+          {
+            "node": "Prepare Judge Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Judge Prompt": {
+      "main": [
+        [
+          {
+            "node": "Call GPT-4o Judge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call GPT-4o Judge": {
+      "main": [
+        [
+          {
+            "node": "Write FauxPas Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1",
+  "meta": {
+    "instanceId": "ai-os-n8n"
+  },
+  "tags": []
+}

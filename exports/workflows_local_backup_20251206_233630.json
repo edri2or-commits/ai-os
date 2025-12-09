@@ -1,0 +1,1136 @@
+[
+  {
+    "updatedAt": "2025-12-05T13:17:39.000Z",
+    "createdAt": "2025-12-03T01:48:53.222Z",
+    "id": "3CBsD70avEmYwuA3",
+    "name": "Email Watcher - Gmail to Drift Report",
+    "description": null,
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "field": "minutes",
+                "minutesInterval": 15
+              }
+            ]
+          }
+        },
+        "id": "schedule-trigger",
+        "name": "Every 15 Minutes",
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          250,
+          300
+        ]
+      },
+      {
+        "parameters": {
+          "url": "https://gmail.googleapis.com/gmail/v1/users/me/messages",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "googleApi",
+          "qs": {
+            "parameters": [
+              {
+                "name": "q",
+                "value": "is:unread"
+              },
+              {
+                "name": "maxResults",
+                "value": "50"
+              }
+            ]
+          }
+        },
+        "id": "gmail-search",
+        "name": "Search Unread Emails",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          450,
+          300
+        ]
+      },
+      {
+        "parameters": {
+          "url": "https://api.anthropic.com/v1/messages",
+          "method": "POST",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "x-api-key",
+                "value": "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"
+              },
+              {
+                "name": "anthropic-version",
+                "value": "2023-06-01"
+              },
+              {
+                "name": "content-type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "{\"model\": \"claude-sonnet-4-20250514\", \"max_tokens\": 1024, \"messages\": [{\"role\": \"user\", \"content\": \"={{ \\\"Classify emails: \\\" + JSON.stringify($json) }}\"}]}"
+        },
+        "id": "claude-classify",
+        "name": "Claude Classification",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          650,
+          300
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "write",
+          "fileName": "=memory-bank/drift/email-drift-{{ $now.format('YYYY-MM-DD-HHmmss') }}.yaml",
+          "fileContent": "={{ JSON.stringify($json, null, 2) }}"
+        },
+        "id": "write-file",
+        "name": "Save Drift Report",
+        "type": "n8n-nodes-base.writeFile",
+        "typeVersion": 1,
+        "position": [
+          850,
+          300
+        ]
+      }
+    ],
+    "connections": {
+      "Every 15 Minutes": {
+        "main": [
+          [
+            {
+              "node": "Search Unread Emails",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Search Unread Emails": {
+        "main": [
+          [
+            {
+              "node": "Claude Classification",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Claude Classification": {
+        "main": [
+          [
+            {
+              "node": "Save Drift Report",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "callerPolicy": "workflowsFromSameOwner",
+      "availableInMCP": false
+    },
+    "staticData": null,
+    "meta": null,
+    "pinData": null,
+    "versionId": "667a3435-07e7-43dc-a458-862a0fa11660",
+    "activeVersionId": null,
+    "versionCounter": 4,
+    "triggerCount": 0,
+    "shared": [
+      {
+        "updatedAt": "2025-12-03T01:48:53.249Z",
+        "createdAt": "2025-12-03T01:48:53.249Z",
+        "role": "workflow:owner",
+        "workflowId": "3CBsD70avEmYwuA3",
+        "projectId": "CiE0yom8k6ucG3Mq",
+        "project": {
+          "updatedAt": "2025-12-05T12:46:13.320Z",
+          "createdAt": "2025-12-02T23:09:55.033Z",
+          "id": "CiE0yom8k6ucG3Mq",
+          "name": "Oר Edri <edri2or@gmail.com>",
+          "type": "personal",
+          "icon": null,
+          "description": null,
+          "projectRelations": [
+            {
+              "updatedAt": "2025-12-02T23:09:55.034Z",
+              "createdAt": "2025-12-02T23:09:55.034Z",
+              "userId": "3ad049ab-1421-4ecf-a7d8-3dec3002290c",
+              "projectId": "CiE0yom8k6ucG3Mq",
+              "user": {
+                "updatedAt": "2025-12-06T19:03:01.000Z",
+                "createdAt": "2025-12-02T23:09:54.175Z",
+                "id": "3ad049ab-1421-4ecf-a7d8-3dec3002290c",
+                "email": "edri2or@gmail.com",
+                "firstName": "Oר",
+                "lastName": "Edri",
+                "personalizationAnswers": {
+                  "version": "v4",
+                  "personalization_survey_submitted_at": "2025-12-02T23:47:53.638Z",
+                  "personalization_survey_n8n_version": "1.122.4",
+                  "companyIndustryExtended": [
+                    "other"
+                  ],
+                  "companyType": "other"
+                },
+                "settings": {
+                  "userActivated": false
+                },
+                "disabled": false,
+                "mfaEnabled": false,
+                "lastActiveAt": "2025-12-06",
+                "isPending": false
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "tags": [],
+    "activeVersion": null
+  },
+  {
+    "updatedAt": "2025-12-05T13:38:47.521Z",
+    "createdAt": "2025-12-05T13:38:47.521Z",
+    "id": "3fSuFI0leuwWKe1K",
+    "name": "TEST - Env Vars Check",
+    "description": null,
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "position": [
+          240,
+          300
+        ],
+        "type": "n8n-nodes-base.manualTrigger",
+        "parameters": {},
+        "typeVersion": 1,
+        "name": "When clicking Test workflow",
+        "id": "3e6f9abf-df14-4fb2-882c-f421421f7a89"
+      },
+      {
+        "position": [
+          460,
+          300
+        ],
+        "type": "n8n-nodes-base.code",
+        "parameters": {
+          "jsCode": "const langfuseKey = $env.LANGFUSE_SECRET_KEY;\nconst openaiKey = $env.OPENAI_API_KEY;\nreturn [{ json: {\n    langfuse_exists: !!langfuseKey,\n    langfuse_prefix: langfuseKey ? langfuseKey.substring(0, 10) + '...' : 'MISSING',\n    openai_exists: !!openaiKey,\n    all_env_keys: Object.keys($env)\n}}];"
+        },
+        "typeVersion": 2,
+        "name": "Check Env Vars",
+        "id": "809d9262-e00b-4638-9e99-7a5ba7131bbe"
+      }
+    ],
+    "connections": {
+      "When clicking Test workflow": {
+        "main": [
+          {
+            "node": "Check Env Vars",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1",
+      "callerPolicy": "workflowsFromSameOwner",
+      "availableInMCP": false
+    },
+    "staticData": null,
+    "meta": null,
+    "pinData": null,
+    "versionId": "05a06c39-4043-41de-8911-9cdc155ff625",
+    "activeVersionId": null,
+    "versionCounter": 1,
+    "triggerCount": 0,
+    "shared": [
+      {
+        "updatedAt": "2025-12-05T13:38:47.577Z",
+        "createdAt": "2025-12-05T13:38:47.577Z",
+        "role": "workflow:owner",
+        "workflowId": "3fSuFI0leuwWKe1K",
+        "projectId": "CiE0yom8k6ucG3Mq",
+        "project": {
+          "updatedAt": "2025-12-05T12:46:13.320Z",
+          "createdAt": "2025-12-02T23:09:55.033Z",
+          "id": "CiE0yom8k6ucG3Mq",
+          "name": "Oר Edri <edri2or@gmail.com>",
+          "type": "personal",
+          "icon": null,
+          "description": null,
+          "projectRelations": [
+            {
+              "updatedAt": "2025-12-02T23:09:55.034Z",
+              "createdAt": "2025-12-02T23:09:55.034Z",
+              "userId": "3ad049ab-1421-4ecf-a7d8-3dec3002290c",
+              "projectId": "CiE0yom8k6ucG3Mq",
+              "user": {
+                "updatedAt": "2025-12-06T19:03:01.000Z",
+                "createdAt": "2025-12-02T23:09:54.175Z",
+                "id": "3ad049ab-1421-4ecf-a7d8-3dec3002290c",
+                "email": "edri2or@gmail.com",
+                "firstName": "Oר",
+                "lastName": "Edri",
+                "personalizationAnswers": {
+                  "version": "v4",
+                  "personalization_survey_submitted_at": "2025-12-02T23:47:53.638Z",
+                  "personalization_survey_n8n_version": "1.122.4",
+                  "companyIndustryExtended": [
+                    "other"
+                  ],
+                  "companyType": "other"
+                },
+                "settings": {
+                  "userActivated": false
+                },
+                "disabled": false,
+                "mfaEnabled": false,
+                "lastActiveAt": "2025-12-06",
+                "isPending": false
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "tags": [],
+    "activeVersion": null
+  },
+  {
+    "updatedAt": "2025-12-05T21:34:56.000Z",
+    "createdAt": "2025-12-05T21:32:44.052Z",
+    "id": "Au6xiDyk8Zjn8Px7",
+    "name": "Judge Agent V2 - Working",
+    "description": null,
+    "active": true,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "field": "hours",
+                "hoursInterval": 6
+              }
+            ]
+          }
+        },
+        "name": "Schedule Trigger",
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1,
+        "position": [
+          250,
+          300
+        ],
+        "id": "1"
+      },
+      {
+        "parameters": {
+          "method": "GET",
+          "url": "http://host.docker.internal:3000/api/public/traces",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBasicAuth",
+          "sendQuery": true,
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "page",
+                "value": "1"
+              },
+              {
+                "name": "limit",
+                "value": "100"
+              },
+              {
+                "name": "fromTimestamp",
+                "value": "={{new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString()}}"
+              }
+            ]
+          }
+        },
+        "name": "Fetch Traces",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4,
+        "position": [
+          450,
+          300
+        ],
+        "id": "2",
+        "credentials": {
+          "httpBasicAuth": {
+            "id": "fU6FaM95YBa9i71s",
+            "name": "Langfuse Basic Auth"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "jsCode": "\nconst traces = $input.first().json.data || [];\nconst promptText = \"# Judge Agent System Prompt\\n\\nYou are the **Judge Agent** in a Continuous Learning Protocol (CLP-001) for a Personal AI Life Operating System.\\n\\n## Your Role\\nAnalyze event logs from the Fast Loop (Observer/Reconciler/Executor) and identify \\\"Faux Pas\\\" - errors that indicate the system should learn a new rule.\\n\\n## Input Format\\nYou will receive a JSON array of events from EVENT_TIMELINE.jsonl, each with:\\n- `ts_utc`: Timestamp (ISO 8601)\\n- `type`: Event type (e.g., DRIFT_DETECTED, CR_APPROVED, CR_EXECUTED, ERROR)\\n- `payload`: Details of the event\\n\\n## Task\\nScan the events for the following 4 types of Faux Pas:\\n\\n### Type I: Capability Amnesia (The \\\"Old Habits\\\" Error)\\n**Definition:** The system used a generic/old method that previously failed, ignoring a specialized tool that previously succeeded.\\n\\n**Indicators:**\\n- Repeated use of same failing approach across sessions\\n- Availability of better tool/method that was used successfully before\\n- User correction: \\\"Use X tool, not Y approach\\\"\\n\\n**Example:** Used regex for CSV parsing despite Python CSV tool being available and previously successful.\\n\\n### Type II: Constraint Blindness (The \\\"Inattention\\\" Error)\\n**Definition:** The system ignored a negative constraint or mandatory side-effect action.\\n\\n**Indicators:**\\n- Violated explicit rule (e.g., \\\"Never modify files in legacy/\\\")\\n- Skipped required step (e.g., forgot to update documentation)\\n- Attention collapse: focused on immediate task, ignored global system integrity\\n\\n**Example:** Refactored code without updating associated documentation file.\\n\\n### Type III: Loop Paralysis (The \\\"Panic\\\" Error)\\n**Definition:** The system got stuck in a recursive loop of attempting the same ineffective fix.\\n\\n**Indicators:**\\n- Same action repeated 3+ times with no variation\\n- No meta-cognitive pause to evaluate strategy\\n- Error message repeated without strategy change\\n\\n**Example:** Tried to import missing library 5 times with slightly different syntax, without installing it.\\n\\n### Type IV: Hallucinated Affordances (The \\\"Confabulation\\\" Error)\\n**Definition:** The system invented capabilities or parameters that don't exist in the available toolset.\\n\\n**Indicators:**\\n- Called MCP tool with non-existent parameter\\n- Assumed capability based on \\\"should exist\\\" rather than actual schema\\n- Tool rejected call with \\\"unknown parameter\\\" error\\n\\n**Example:** Called search_memory with start_date parameter that doesn't exist in tool definition.\\n\\n## Output Format\\nReturn a JSON object with this exact structure:\\n\\n```json\\n{\\n  \\\"report_id\\\": \\\"FP-YYYY-MM-DD-HH\\\",\\n  \\\"analyzed_at_utc\\\": \\\"2025-12-04T13:30:00Z\\\",\\n  \\\"time_window\\\": {\\n    \\\"start\\\": \\\"2025-12-04T07:30:00Z\\\",\\n    \\\"end\\\": \\\"2025-12-04T13:30:00Z\\\"\\n  },\\n  \\\"events_analyzed\\\": 42,\\n  \\\"faux_pas_detected\\\": [\\n    {\\n      \\\"fp_id\\\": \\\"FP-2025-12-04-001\\\",\\n      \\\"type\\\": \\\"capability_amnesia\\\",\\n      \\\"severity\\\": \\\"high\\\",\\n      \\\"timestamp\\\": \\\"2025-12-04T10:15:23Z\\\",\\n      \\\"description\\\": \\\"Observer used regex to parse CSV file despite Python CSV tool being available\\\",\\n      \\\"evidence\\\": {\\n        \\\"event_ids\\\": [\\\"evt_123\\\", \\\"evt_124\\\"],\\n        \\\"repeated_pattern\\\": \\\"Regex parsing failed 3 times across 2 sessions\\\",\\n        \\\"better_alternative\\\": \\\"Python CSV MCP tool (used successfully in previous session)\\\"\\n      },\\n      \\\"root_cause\\\": \\\"LHO for 'Always use Python for CSV' not present in context\\\",\\n      \\\"recommended_lho\\\": {\\n        \\\"trigger_pattern\\\": \\\"task contains 'CSV' OR file_extension == '.csv'\\\",\\n        \\\"correction_strategy\\\": \\\"Use python_csv MCP tool. Handles edge cases (quoted commas, newlines, encoding).\\\",\\n        \\\"priority\\\": \\\"high\\\"\\n      }\\n    }\\n  ],\\n  \\\"summary\\\": {\\n    \\\"capability_amnesia\\\": 1,\\n    \\\"constraint_blindness\\\": 0,\\n    \\\"loop_paralysis\\\": 0,\\n    \\\"hallucinated_affordances\\\": 0\\n  },\\n  \\\"notes\\\": \\\"One significant error detected. System repeatedly failed CSV parsing despite better tool availability.\\\"\\n}\\n```\\n\\n## Critical Instructions\\n1. **Be Precise:** Only flag errors that clearly match the 4 Faux Pas types\\n2. **Be Specific:** Provide exact event_ids, timestamps, and evidence\\n3. **Be Actionable:** Include `recommended_lho` for each detected Faux Pas\\n4. **If No Errors:** Return `\\\"faux_pas_detected\\\": []` with summary counts at zero\\n5. **Severity Levels:**\\n   - `critical`: System completely failed to execute user intent\\n   - `high`: Significant inefficiency or repeated error\\n   - `medium`: Minor oversight, quickly recovered\\n   - `low`: Suboptimal choice, but task completed\\n\\n## Meta-Guidelines\\n- You are NOT looking for hallucinations of fact (those are handled elsewhere)\\n- You ARE looking for procedural errors that indicate missing learned rules\\n- Focus on patterns that could be prevented by adding an LHO to the system\\n- Ignore one-off errors that are unlikely to recur\\n- Be conservative: false positives waste Teacher Agent's time\\n\\n## Example Analysis\\n\\n**Input Events (simplified):**\\n```json\\n[\\n  {\\\"ts_utc\\\": \\\"2025-12-04T10:15:00Z\\\", \\\"type\\\": \\\"TASK_START\\\", \\\"payload\\\": {\\\"task\\\": \\\"Parse Q3_sales.csv\\\"}},\\n  {\\\"ts_utc\\\": \\\"2025-12-04T10:15:10Z\\\", \\\"type\\\": \\\"TOOL_CALL\\\", \\\"payload\\\": {\\\"tool\\\": \\\"regex_parse\\\", \\\"result\\\": \\\"error\\\"}},\\n  {\\\"ts_utc\\\": \\\"2025-12-04T10:15:30Z\\\", \\\"type\\\": \\\"TOOL_CALL\\\", \\\"payload\\\": {\\\"tool\\\": \\\"regex_parse\\\", \\\"result\\\": \\\"error\\\"}},\\n  {\\\"ts_utc\\\": \\\"2025-12-04T10:16:00Z\\\", \\\"type\\\": \\\"USER_CORRECTION\\\", \\\"payload\\\": {\\\"message\\\": \\\"Use Python CSV tool instead\\\"}},\\n  {\\\"ts_utc\\\": \\\"2025-12-04T10:16:15Z\\\", \\\"type\\\": \\\"TOOL_CALL\\\", \\\"payload\\\": {\\\"tool\\\": \\\"python_csv\\\", \\\"result\\\": \\\"success\\\"}}\\n]\\n```\\n\\n**Output:**\\n```json\\n{\\n  \\\"faux_pas_detected\\\": [\\n    {\\n      \\\"type\\\": \\\"capability_amnesia\\\",\\n      \\\"severity\\\": \\\"high\\\",\\n      \\\"description\\\": \\\"Repeated regex approach despite Python CSV tool availability\\\",\\n      \\\"recommended_lho\\\": {\\n        \\\"trigger_pattern\\\": \\\"file_extension == '.csv'\\\",\\n        \\\"correction_strategy\\\": \\\"Always use python_csv MCP tool for CSV files\\\",\\n        \\\"priority\\\": \\\"high\\\"\\n      }\\n    }\\n  ]\\n}\\n```\\n\\n---\\n\\n**Remember:** Your goal is to detect patterns worth learning, not to criticize every imperfection. Be the system's conscience, not its critic.\\n\";\n\nconst events = traces.map(t => ({\n  trace_id: t.id,\n  name: t.name,\n  timestamp: t.timestamp,\n  status: t.status,\n  input: t.input,\n  output: t.output\n}));\n\nconst fullPrompt = promptText + '\\n\\n## Events:\\n\\n```json\\n' + JSON.stringify(events, null, 2) + '\\n```';\n\nreturn [{json: {prompt: fullPrompt, events_count: events.length}}];\n"
+        },
+        "name": "Prepare Prompt",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          650,
+          300
+        ],
+        "id": "3"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.openai.com/v1/chat/completions",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Authorization",
+                "value": "=Bearer {{$env.OPENAI_API_KEY}}"
+              },
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "model",
+                "value": "gpt-4o"
+              },
+              {
+                "name": "messages",
+                "value": "=[{\"role\": \"user\", \"content\": $json.prompt}]"
+              },
+              {
+                "name": "temperature",
+                "value": "0.2"
+              }
+            ]
+          }
+        },
+        "name": "Call GPT",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4,
+        "position": [
+          850,
+          300
+        ],
+        "id": "4"
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "jsCode": "\nconst response = $input.first().json.choices[0].message.content;\nconsole.log('Judge Report:', response);\nreturn [{json: {report: response, timestamp: new Date().toISOString()}}];\n"
+        },
+        "name": "Log Report",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1050,
+          300
+        ],
+        "id": "5"
+      }
+    ],
+    "connections": {
+      "Schedule Trigger": {
+        "main": [
+          [
+            {
+              "node": "Fetch Traces",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch Traces": {
+        "main": [
+          [
+            {
+              "node": "Prepare Prompt",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Prepare Prompt": {
+        "main": [
+          [
+            {
+              "node": "Call GPT",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Call GPT": {
+        "main": [
+          [
+            {
+              "node": "Log Report",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1",
+      "callerPolicy": "workflowsFromSameOwner",
+      "availableInMCP": false
+    },
+    "staticData": {
+      "node:Schedule Trigger": {
+        "recurrenceRules": [
+          18
+        ]
+      }
+    },
+    "meta": null,
+    "pinData": null,
+    "versionId": "eab11581-864c-4f8a-ad8c-01263570d076",
+    "activeVersionId": "eab11581-864c-4f8a-ad8c-01263570d076",
+    "versionCounter": 8,
+    "triggerCount": 1,
+    "shared": [
+      {
+        "updatedAt": "2025-12-05T21:32:44.073Z",
+        "createdAt": "2025-12-05T21:32:44.073Z",
+        "role": "workflow:owner",
+        "workflowId": "Au6xiDyk8Zjn8Px7",
+        "projectId": "CiE0yom8k6ucG3Mq",
+        "project": {
+          "updatedAt": "2025-12-05T12:46:13.320Z",
+          "createdAt": "2025-12-02T23:09:55.033Z",
+          "id": "CiE0yom8k6ucG3Mq",
+          "name": "Oר Edri <edri2or@gmail.com>",
+          "type": "personal",
+          "icon": null,
+          "description": null,
+          "projectRelations": [
+            {
+              "updatedAt": "2025-12-02T23:09:55.034Z",
+              "createdAt": "2025-12-02T23:09:55.034Z",
+              "userId": "3ad049ab-1421-4ecf-a7d8-3dec3002290c",
+              "projectId": "CiE0yom8k6ucG3Mq",
+              "user": {
+                "updatedAt": "2025-12-06T19:03:01.000Z",
+                "createdAt": "2025-12-02T23:09:54.175Z",
+                "id": "3ad049ab-1421-4ecf-a7d8-3dec3002290c",
+                "email": "edri2or@gmail.com",
+                "firstName": "Oר",
+                "lastName": "Edri",
+                "personalizationAnswers": {
+                  "version": "v4",
+                  "personalization_survey_submitted_at": "2025-12-02T23:47:53.638Z",
+                  "personalization_survey_n8n_version": "1.122.4",
+                  "companyIndustryExtended": [
+                    "other"
+                  ],
+                  "companyType": "other"
+                },
+                "settings": {
+                  "userActivated": false
+                },
+                "disabled": false,
+                "mfaEnabled": false,
+                "lastActiveAt": "2025-12-06",
+                "isPending": false
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "tags": [],
+    "activeVersion": {
+      "updatedAt": "2025-12-05T21:32:44.098Z",
+      "createdAt": "2025-12-05T21:32:44.098Z",
+      "versionId": "eab11581-864c-4f8a-ad8c-01263570d076",
+      "workflowId": "Au6xiDyk8Zjn8Px7",
+      "nodes": [
+        {
+          "parameters": {
+            "rule": {
+              "interval": [
+                {
+                  "field": "hours",
+                  "hoursInterval": 6
+                }
+              ]
+            }
+          },
+          "name": "Schedule Trigger",
+          "type": "n8n-nodes-base.scheduleTrigger",
+          "typeVersion": 1,
+          "position": [
+            250,
+            300
+          ],
+          "id": "1"
+        },
+        {
+          "parameters": {
+            "method": "GET",
+            "url": "http://host.docker.internal:3000/api/public/traces",
+            "authentication": "genericCredentialType",
+            "genericAuthType": "httpBasicAuth",
+            "sendQuery": true,
+            "queryParameters": {
+              "parameters": [
+                {
+                  "name": "page",
+                  "value": "1"
+                },
+                {
+                  "name": "limit",
+                  "value": "100"
+                },
+                {
+                  "name": "fromTimestamp",
+                  "value": "={{new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString()}}"
+                }
+              ]
+            }
+          },
+          "name": "Fetch Traces",
+          "type": "n8n-nodes-base.httpRequest",
+          "typeVersion": 4,
+          "position": [
+            450,
+            300
+          ],
+          "id": "2",
+          "credentials": {
+            "httpBasicAuth": {
+              "id": "fU6FaM95YBa9i71s",
+              "name": "Langfuse Basic Auth"
+            }
+          }
+        },
+        {
+          "parameters": {
+            "mode": "runOnceForAllItems",
+            "jsCode": "\nconst traces = $input.first().json.data || [];\nconst promptText = \"# Judge Agent System Prompt\\n\\nYou are the **Judge Agent** in a Continuous Learning Protocol (CLP-001) for a Personal AI Life Operating System.\\n\\n## Your Role\\nAnalyze event logs from the Fast Loop (Observer/Reconciler/Executor) and identify \\\"Faux Pas\\\" - errors that indicate the system should learn a new rule.\\n\\n## Input Format\\nYou will receive a JSON array of events from EVENT_TIMELINE.jsonl, each with:\\n- `ts_utc`: Timestamp (ISO 8601)\\n- `type`: Event type (e.g., DRIFT_DETECTED, CR_APPROVED, CR_EXECUTED, ERROR)\\n- `payload`: Details of the event\\n\\n## Task\\nScan the events for the following 4 types of Faux Pas:\\n\\n### Type I: Capability Amnesia (The \\\"Old Habits\\\" Error)\\n**Definition:** The system used a generic/old method that previously failed, ignoring a specialized tool that previously succeeded.\\n\\n**Indicators:**\\n- Repeated use of same failing approach across sessions\\n- Availability of better tool/method that was used successfully before\\n- User correction: \\\"Use X tool, not Y approach\\\"\\n\\n**Example:** Used regex for CSV parsing despite Python CSV tool being available and previously successful.\\n\\n### Type II: Constraint Blindness (The \\\"Inattention\\\" Error)\\n**Definition:** The system ignored a negative constraint or mandatory side-effect action.\\n\\n**Indicators:**\\n- Violated explicit rule (e.g., \\\"Never modify files in legacy/\\\")\\n- Skipped required step (e.g., forgot to update documentation)\\n- Attention collapse: focused on immediate task, ignored global system integrity\\n\\n**Example:** Refactored code without updating associated documentation file.\\n\\n### Type III: Loop Paralysis (The \\\"Panic\\\" Error)\\n**Definition:** The system got stuck in a recursive loop of attempting the same ineffective fix.\\n\\n**Indicators:**\\n- Same action repeated 3+ times with no variation\\n- No meta-cognitive pause to evaluate strategy\\n- Error message repeated without strategy change\\n\\n**Example:** Tried to import missing library 5 times with slightly different syntax, without installing it.\\n\\n### Type IV: Hallucinated Affordances (The \\\"Confabulation\\\" Error)\\n**Definition:** The system invented capabilities or parameters that don't exist in the available toolset.\\n\\n**Indicators:**\\n- Called MCP tool with non-existent parameter\\n- Assumed capability based on \\\"should exist\\\" rather than actual schema\\n- Tool rejected call with \\\"unknown parameter\\\" error\\n\\n**Example:** Called search_memory with start_date parameter that doesn't exist in tool definition.\\n\\n## Output Format\\nReturn a JSON object with this exact structure:\\n\\n```json\\n{\\n  \\\"report_id\\\": \\\"FP-YYYY-MM-DD-HH\\\",\\n  \\\"analyzed_at_utc\\\": \\\"2025-12-04T13:30:00Z\\\",\\n  \\\"time_window\\\": {\\n    \\\"start\\\": \\\"2025-12-04T07:30:00Z\\\",\\n    \\\"end\\\": \\\"2025-12-04T13:30:00Z\\\"\\n  },\\n  \\\"events_analyzed\\\": 42,\\n  \\\"faux_pas_detected\\\": [\\n    {\\n      \\\"fp_id\\\": \\\"FP-2025-12-04-001\\\",\\n      \\\"type\\\": \\\"capability_amnesia\\\",\\n      \\\"severity\\\": \\\"high\\\",\\n      \\\"timestamp\\\": \\\"2025-12-04T10:15:23Z\\\",\\n      \\\"description\\\": \\\"Observer used regex to parse CSV file despite Python CSV tool being available\\\",\\n      \\\"evidence\\\": {\\n        \\\"event_ids\\\": [\\\"evt_123\\\", \\\"evt_124\\\"],\\n        \\\"repeated_pattern\\\": \\\"Regex parsing failed 3 times across 2 sessions\\\",\\n        \\\"better_alternative\\\": \\\"Python CSV MCP tool (used successfully in previous session)\\\"\\n      },\\n      \\\"root_cause\\\": \\\"LHO for 'Always use Python for CSV' not present in context\\\",\\n      \\\"recommended_lho\\\": {\\n        \\\"trigger_pattern\\\": \\\"task contains 'CSV' OR file_extension == '.csv'\\\",\\n        \\\"correction_strategy\\\": \\\"Use python_csv MCP tool. Handles edge cases (quoted commas, newlines, encoding).\\\",\\n        \\\"priority\\\": \\\"high\\\"\\n      }\\n    }\\n  ],\\n  \\\"summary\\\": {\\n    \\\"capability_amnesia\\\": 1,\\n    \\\"constraint_blindness\\\": 0,\\n    \\\"loop_paralysis\\\": 0,\\n    \\\"hallucinated_affordances\\\": 0\\n  },\\n  \\\"notes\\\": \\\"One significant error detected. System repeatedly failed CSV parsing despite better tool availability.\\\"\\n}\\n```\\n\\n## Critical Instructions\\n1. **Be Precise:** Only flag errors that clearly match the 4 Faux Pas types\\n2. **Be Specific:** Provide exact event_ids, timestamps, and evidence\\n3. **Be Actionable:** Include `recommended_lho` for each detected Faux Pas\\n4. **If No Errors:** Return `\\\"faux_pas_detected\\\": []` with summary counts at zero\\n5. **Severity Levels:**\\n   - `critical`: System completely failed to execute user intent\\n   - `high`: Significant inefficiency or repeated error\\n   - `medium`: Minor oversight, quickly recovered\\n   - `low`: Suboptimal choice, but task completed\\n\\n## Meta-Guidelines\\n- You are NOT looking for hallucinations of fact (those are handled elsewhere)\\n- You ARE looking for procedural errors that indicate missing learned rules\\n- Focus on patterns that could be prevented by adding an LHO to the system\\n- Ignore one-off errors that are unlikely to recur\\n- Be conservative: false positives waste Teacher Agent's time\\n\\n## Example Analysis\\n\\n**Input Events (simplified):**\\n```json\\n[\\n  {\\\"ts_utc\\\": \\\"2025-12-04T10:15:00Z\\\", \\\"type\\\": \\\"TASK_START\\\", \\\"payload\\\": {\\\"task\\\": \\\"Parse Q3_sales.csv\\\"}},\\n  {\\\"ts_utc\\\": \\\"2025-12-04T10:15:10Z\\\", \\\"type\\\": \\\"TOOL_CALL\\\", \\\"payload\\\": {\\\"tool\\\": \\\"regex_parse\\\", \\\"result\\\": \\\"error\\\"}},\\n  {\\\"ts_utc\\\": \\\"2025-12-04T10:15:30Z\\\", \\\"type\\\": \\\"TOOL_CALL\\\", \\\"payload\\\": {\\\"tool\\\": \\\"regex_parse\\\", \\\"result\\\": \\\"error\\\"}},\\n  {\\\"ts_utc\\\": \\\"2025-12-04T10:16:00Z\\\", \\\"type\\\": \\\"USER_CORRECTION\\\", \\\"payload\\\": {\\\"message\\\": \\\"Use Python CSV tool instead\\\"}},\\n  {\\\"ts_utc\\\": \\\"2025-12-04T10:16:15Z\\\", \\\"type\\\": \\\"TOOL_CALL\\\", \\\"payload\\\": {\\\"tool\\\": \\\"python_csv\\\", \\\"result\\\": \\\"success\\\"}}\\n]\\n```\\n\\n**Output:**\\n```json\\n{\\n  \\\"faux_pas_detected\\\": [\\n    {\\n      \\\"type\\\": \\\"capability_amnesia\\\",\\n      \\\"severity\\\": \\\"high\\\",\\n      \\\"description\\\": \\\"Repeated regex approach despite Python CSV tool availability\\\",\\n      \\\"recommended_lho\\\": {\\n        \\\"trigger_pattern\\\": \\\"file_extension == '.csv'\\\",\\n        \\\"correction_strategy\\\": \\\"Always use python_csv MCP tool for CSV files\\\",\\n        \\\"priority\\\": \\\"high\\\"\\n      }\\n    }\\n  ]\\n}\\n```\\n\\n---\\n\\n**Remember:** Your goal is to detect patterns worth learning, not to criticize every imperfection. Be the system's conscience, not its critic.\\n\";\n\nconst events = traces.map(t => ({\n  trace_id: t.id,\n  name: t.name,\n  timestamp: t.timestamp,\n  status: t.status,\n  input: t.input,\n  output: t.output\n}));\n\nconst fullPrompt = promptText + '\\n\\n## Events:\\n\\n```json\\n' + JSON.stringify(events, null, 2) + '\\n```';\n\nreturn [{json: {prompt: fullPrompt, events_count: events.length}}];\n"
+          },
+          "name": "Prepare Prompt",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [
+            650,
+            300
+          ],
+          "id": "3"
+        },
+        {
+          "parameters": {
+            "method": "POST",
+            "url": "https://api.openai.com/v1/chat/completions",
+            "sendHeaders": true,
+            "headerParameters": {
+              "parameters": [
+                {
+                  "name": "Authorization",
+                  "value": "=Bearer {{$env.OPENAI_API_KEY}}"
+                },
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ]
+            },
+            "sendBody": true,
+            "bodyParameters": {
+              "parameters": [
+                {
+                  "name": "model",
+                  "value": "gpt-4o"
+                },
+                {
+                  "name": "messages",
+                  "value": "=[{\"role\": \"user\", \"content\": $json.prompt}]"
+                },
+                {
+                  "name": "temperature",
+                  "value": "0.2"
+                }
+              ]
+            }
+          },
+          "name": "Call GPT",
+          "type": "n8n-nodes-base.httpRequest",
+          "typeVersion": 4,
+          "position": [
+            850,
+            300
+          ],
+          "id": "4"
+        },
+        {
+          "parameters": {
+            "mode": "runOnceForAllItems",
+            "jsCode": "\nconst response = $input.first().json.choices[0].message.content;\nconsole.log('Judge Report:', response);\nreturn [{json: {report: response, timestamp: new Date().toISOString()}}];\n"
+          },
+          "name": "Log Report",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [
+            1050,
+            300
+          ],
+          "id": "5"
+        }
+      ],
+      "connections": {
+        "Schedule Trigger": {
+          "main": [
+            [
+              {
+                "node": "Fetch Traces",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Fetch Traces": {
+          "main": [
+            [
+              {
+                "node": "Prepare Prompt",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Prepare Prompt": {
+          "main": [
+            [
+              {
+                "node": "Call GPT",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Call GPT": {
+          "main": [
+            [
+              {
+                "node": "Log Report",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        }
+      },
+      "authors": "Oר Edri",
+      "name": null,
+      "description": null
+    }
+  },
+  {
+    "updatedAt": "2025-12-05T21:37:34.000Z",
+    "createdAt": "2025-12-05T21:33:05.040Z",
+    "id": "CVKOvnKGaa4cQMvo",
+    "name": "Judge Agent V2 - Working",
+    "description": null,
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "field": "hours",
+                "hoursInterval": 6
+              }
+            ]
+          }
+        },
+        "name": "Schedule Trigger",
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1,
+        "position": [
+          250,
+          300
+        ],
+        "id": "1"
+      },
+      {
+        "parameters": {
+          "method": "GET",
+          "url": "http://host.docker.internal:3000/api/public/traces",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBasicAuth",
+          "sendQuery": true,
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "page",
+                "value": "1"
+              },
+              {
+                "name": "limit",
+                "value": "100"
+              },
+              {
+                "name": "fromTimestamp",
+                "value": "={{new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString()}}"
+              }
+            ]
+          }
+        },
+        "name": "Fetch Traces",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4,
+        "position": [
+          450,
+          300
+        ],
+        "id": "2",
+        "credentials": {
+          "httpBasicAuth": {
+            "id": "fU6FaM95YBa9i71s",
+            "name": "Langfuse Basic Auth"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "jsCode": "\nconst traces = $input.first().json.data || [];\nconst promptText = \"# Judge Agent System Prompt\\n\\nYou are the **Judge Agent** in a Continuous Learning Protocol (CLP-001) for a Personal AI Life Operating System.\\n\\n## Your Role\\nAnalyze event logs from the Fast Loop (Observer/Reconciler/Executor) and identify \\\"Faux Pas\\\" - errors that indicate the system should learn a new rule.\\n\\n## Input Format\\nYou will receive a JSON array of events from EVENT_TIMELINE.jsonl, each with:\\n- `ts_utc`: Timestamp (ISO 8601)\\n- `type`: Event type (e.g., DRIFT_DETECTED, CR_APPROVED, CR_EXECUTED, ERROR)\\n- `payload`: Details of the event\\n\\n## Task\\nScan the events for the following 4 types of Faux Pas:\\n\\n### Type I: Capability Amnesia (The \\\"Old Habits\\\" Error)\\n**Definition:** The system used a generic/old method that previously failed, ignoring a specialized tool that previously succeeded.\\n\\n**Indicators:**\\n- Repeated use of same failing approach across sessions\\n- Availability of better tool/method that was used successfully before\\n- User correction: \\\"Use X tool, not Y approach\\\"\\n\\n**Example:** Used regex for CSV parsing despite Python CSV tool being available and previously successful.\\n\\n### Type II: Constraint Blindness (The \\\"Inattention\\\" Error)\\n**Definition:** The system ignored a negative constraint or mandatory side-effect action.\\n\\n**Indicators:**\\n- Violated explicit rule (e.g., \\\"Never modify files in legacy/\\\")\\n- Skipped required step (e.g., forgot to update documentation)\\n- Attention collapse: focused on immediate task, ignored global system integrity\\n\\n**Example:** Refactored code without updating associated documentation file.\\n\\n### Type III: Loop Paralysis (The \\\"Panic\\\" Error)\\n**Definition:** The system got stuck in a recursive loop of attempting the same ineffective fix.\\n\\n**Indicators:**\\n- Same action repeated 3+ times with no variation\\n- No meta-cognitive pause to evaluate strategy\\n- Error message repeated without strategy change\\n\\n**Example:** Tried to import missing library 5 times with slightly different syntax, without installing it.\\n\\n### Type IV: Hallucinated Affordances (The \\\"Confabulation\\\" Error)\\n**Definition:** The system invented capabilities or parameters that don't exist in the available toolset.\\n\\n**Indicators:**\\n- Called MCP tool with non-existent parameter\\n- Assumed capability based on \\\"should exist\\\" rather than actual schema\\n- Tool rejected call with \\\"unknown parameter\\\" error\\n\\n**Example:** Called search_memory with start_date parameter that doesn't exist in tool definition.\\n\\n## Output Format\\nReturn a JSON object with this exact structure:\\n\\n```json\\n{\\n  \\\"report_id\\\": \\\"FP-YYYY-MM-DD-HH\\\",\\n  \\\"analyzed_at_utc\\\": \\\"2025-12-04T13:30:00Z\\\",\\n  \\\"time_window\\\": {\\n    \\\"start\\\": \\\"2025-12-04T07:30:00Z\\\",\\n    \\\"end\\\": \\\"2025-12-04T13:30:00Z\\\"\\n  },\\n  \\\"events_analyzed\\\": 42,\\n  \\\"faux_pas_detected\\\": [\\n    {\\n      \\\"fp_id\\\": \\\"FP-2025-12-04-001\\\",\\n      \\\"type\\\": \\\"capability_amnesia\\\",\\n      \\\"severity\\\": \\\"high\\\",\\n      \\\"timestamp\\\": \\\"2025-12-04T10:15:23Z\\\",\\n      \\\"description\\\": \\\"Observer used regex to parse CSV file despite Python CSV tool being available\\\",\\n      \\\"evidence\\\": {\\n        \\\"event_ids\\\": [\\\"evt_123\\\", \\\"evt_124\\\"],\\n        \\\"repeated_pattern\\\": \\\"Regex parsing failed 3 times across 2 sessions\\\",\\n        \\\"better_alternative\\\": \\\"Python CSV MCP tool (used successfully in previous session)\\\"\\n      },\\n      \\\"root_cause\\\": \\\"LHO for 'Always use Python for CSV' not present in context\\\",\\n      \\\"recommended_lho\\\": {\\n        \\\"trigger_pattern\\\": \\\"task contains 'CSV' OR file_extension == '.csv'\\\",\\n        \\\"correction_strategy\\\": \\\"Use python_csv MCP tool. Handles edge cases (quoted commas, newlines, encoding).\\\",\\n        \\\"priority\\\": \\\"high\\\"\\n      }\\n    }\\n  ],\\n  \\\"summary\\\": {\\n    \\\"capability_amnesia\\\": 1,\\n    \\\"constraint_blindness\\\": 0,\\n    \\\"loop_paralysis\\\": 0,\\n    \\\"hallucinated_affordances\\\": 0\\n  },\\n  \\\"notes\\\": \\\"One significant error detected. System repeatedly failed CSV parsing despite better tool availability.\\\"\\n}\\n```\\n\\n## Critical Instructions\\n1. **Be Precise:** Only flag errors that clearly match the 4 Faux Pas types\\n2. **Be Specific:** Provide exact event_ids, timestamps, and evidence\\n3. **Be Actionable:** Include `recommended_lho` for each detected Faux Pas\\n4. **If No Errors:** Return `\\\"faux_pas_detected\\\": []` with summary counts at zero\\n5. **Severity Levels:**\\n   - `critical`: System completely failed to execute user intent\\n   - `high`: Significant inefficiency or repeated error\\n   - `medium`: Minor oversight, quickly recovered\\n   - `low`: Suboptimal choice, but task completed\\n\\n## Meta-Guidelines\\n- You are NOT looking for hallucinations of fact (those are handled elsewhere)\\n- You ARE looking for procedural errors that indicate missing learned rules\\n- Focus on patterns that could be prevented by adding an LHO to the system\\n- Ignore one-off errors that are unlikely to recur\\n- Be conservative: false positives waste Teacher Agent's time\\n\\n## Example Analysis\\n\\n**Input Events (simplified):**\\n```json\\n[\\n  {\\\"ts_utc\\\": \\\"2025-12-04T10:15:00Z\\\", \\\"type\\\": \\\"TASK_START\\\", \\\"payload\\\": {\\\"task\\\": \\\"Parse Q3_sales.csv\\\"}},\\n  {\\\"ts_utc\\\": \\\"2025-12-04T10:15:10Z\\\", \\\"type\\\": \\\"TOOL_CALL\\\", \\\"payload\\\": {\\\"tool\\\": \\\"regex_parse\\\", \\\"result\\\": \\\"error\\\"}},\\n  {\\\"ts_utc\\\": \\\"2025-12-04T10:15:30Z\\\", \\\"type\\\": \\\"TOOL_CALL\\\", \\\"payload\\\": {\\\"tool\\\": \\\"regex_parse\\\", \\\"result\\\": \\\"error\\\"}},\\n  {\\\"ts_utc\\\": \\\"2025-12-04T10:16:00Z\\\", \\\"type\\\": \\\"USER_CORRECTION\\\", \\\"payload\\\": {\\\"message\\\": \\\"Use Python CSV tool instead\\\"}},\\n  {\\\"ts_utc\\\": \\\"2025-12-04T10:16:15Z\\\", \\\"type\\\": \\\"TOOL_CALL\\\", \\\"payload\\\": {\\\"tool\\\": \\\"python_csv\\\", \\\"result\\\": \\\"success\\\"}}\\n]\\n```\\n\\n**Output:**\\n```json\\n{\\n  \\\"faux_pas_detected\\\": [\\n    {\\n      \\\"type\\\": \\\"capability_amnesia\\\",\\n      \\\"severity\\\": \\\"high\\\",\\n      \\\"description\\\": \\\"Repeated regex approach despite Python CSV tool availability\\\",\\n      \\\"recommended_lho\\\": {\\n        \\\"trigger_pattern\\\": \\\"file_extension == '.csv'\\\",\\n        \\\"correction_strategy\\\": \\\"Always use python_csv MCP tool for CSV files\\\",\\n        \\\"priority\\\": \\\"high\\\"\\n      }\\n    }\\n  ]\\n}\\n```\\n\\n---\\n\\n**Remember:** Your goal is to detect patterns worth learning, not to criticize every imperfection. Be the system's conscience, not its critic.\\n\";\n\nconst events = traces.map(t => ({\n  trace_id: t.id,\n  name: t.name,\n  timestamp: t.timestamp,\n  status: t.status,\n  input: t.input,\n  output: t.output\n}));\n\nconst fullPrompt = promptText + '\\n\\n## Events:\\n\\n```json\\n' + JSON.stringify(events, null, 2) + '\\n```';\n\nreturn [{json: {prompt: fullPrompt, events_count: events.length}}];\n"
+        },
+        "name": "Prepare Prompt",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          650,
+          300
+        ],
+        "id": "3"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.openai.com/v1/chat/completions",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Authorization",
+                "value": "=Bearer {{$env.OPENAI_API_KEY}}"
+              },
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "model",
+                "value": "gpt-4o"
+              },
+              {
+                "name": "messages",
+                "value": "=[{\"role\": \"user\", \"content\": $json.prompt}]"
+              },
+              {
+                "name": "temperature",
+                "value": "0.2"
+              }
+            ]
+          }
+        },
+        "name": "Call GPT",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4,
+        "position": [
+          850,
+          300
+        ],
+        "id": "4"
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "jsCode": "\nconst response = $input.first().json.choices[0].message.content;\nconsole.log('Judge Report:', response);\nreturn [{json: {report: response, timestamp: new Date().toISOString()}}];\n"
+        },
+        "name": "Log Report",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1050,
+          300
+        ],
+        "id": "5"
+      }
+    ],
+    "connections": {
+      "Schedule Trigger": {
+        "main": [
+          [
+            {
+              "node": "Fetch Traces",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch Traces": {
+        "main": [
+          [
+            {
+              "node": "Prepare Prompt",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Prepare Prompt": {
+        "main": [
+          [
+            {
+              "node": "Call GPT",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Call GPT": {
+        "main": [
+          [
+            {
+              "node": "Log Report",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1",
+      "callerPolicy": "workflowsFromSameOwner",
+      "availableInMCP": false
+    },
+    "staticData": {
+      "node:Schedule Trigger": {
+        "recurrenceRules": []
+      }
+    },
+    "meta": null,
+    "pinData": null,
+    "versionId": "93865c42-ec40-43dd-90bb-8cc78d574f31",
+    "activeVersionId": null,
+    "versionCounter": 5,
+    "triggerCount": 1,
+    "shared": [
+      {
+        "updatedAt": "2025-12-05T21:33:05.054Z",
+        "createdAt": "2025-12-05T21:33:05.054Z",
+        "role": "workflow:owner",
+        "workflowId": "CVKOvnKGaa4cQMvo",
+        "projectId": "CiE0yom8k6ucG3Mq",
+        "project": {
+          "updatedAt": "2025-12-05T12:46:13.320Z",
+          "createdAt": "2025-12-02T23:09:55.033Z",
+          "id": "CiE0yom8k6ucG3Mq",
+          "name": "Oר Edri <edri2or@gmail.com>",
+          "type": "personal",
+          "icon": null,
+          "description": null,
+          "projectRelations": [
+            {
+              "updatedAt": "2025-12-02T23:09:55.034Z",
+              "createdAt": "2025-12-02T23:09:55.034Z",
+              "userId": "3ad049ab-1421-4ecf-a7d8-3dec3002290c",
+              "projectId": "CiE0yom8k6ucG3Mq",
+              "user": {
+                "updatedAt": "2025-12-06T19:03:01.000Z",
+                "createdAt": "2025-12-02T23:09:54.175Z",
+                "id": "3ad049ab-1421-4ecf-a7d8-3dec3002290c",
+                "email": "edri2or@gmail.com",
+                "firstName": "Oר",
+                "lastName": "Edri",
+                "personalizationAnswers": {
+                  "version": "v4",
+                  "personalization_survey_submitted_at": "2025-12-02T23:47:53.638Z",
+                  "personalization_survey_n8n_version": "1.122.4",
+                  "companyIndustryExtended": [
+                    "other"
+                  ],
+                  "companyType": "other"
+                },
+                "settings": {
+                  "userActivated": false
+                },
+                "disabled": false,
+                "mfaEnabled": false,
+                "lastActiveAt": "2025-12-06",
+                "isPending": false
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "tags": [],
+    "activeVersion": null
+  },
+  {
+    "updatedAt": "2025-12-02T23:52:10.492Z",
+    "createdAt": "2025-12-02T23:52:10.492Z",
+    "id": "wYIM8Rd0o0O02BEc",
+    "name": "Observer - Drift Detection (Every 15 min)",
+    "description": null,
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "field": "minutes",
+                "minutesInterval": 15
+              }
+            ]
+          }
+        },
+        "name": "Schedule Trigger",
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          250,
+          300
+        ],
+        "id": "5ebc2543-48be-4f1b-9e39-2bb51c6b0720"
+      },
+      {
+        "parameters": {
+          "command": "C:\\Program Files\\Python314\\python.exe C:\\Users\\edri2\\Desktop\\AI\\ai-os\\tools\\observer.py",
+          "cwd": "C:\\Users\\edri2\\Desktop\\AI\\ai-os"
+        },
+        "name": "Run Observer",
+        "type": "n8n-nodes-base.executeCommand",
+        "typeVersion": 1,
+        "position": [
+          450,
+          300
+        ],
+        "id": "305fc71b-d70a-49ac-a7c5-25b4392c2681"
+      }
+    ],
+    "connections": {
+      "Schedule Trigger": {
+        "main": [
+          [
+            {
+              "node": "Run Observer",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {},
+    "staticData": null,
+    "meta": null,
+    "pinData": null,
+    "versionId": "1",
+    "activeVersionId": null,
+    "versionCounter": 2,
+    "triggerCount": 0,
+    "shared": [
+      {
+        "updatedAt": "2025-12-02T23:52:10.499Z",
+        "createdAt": "2025-12-02T23:52:10.499Z",
+        "role": "workflow:owner",
+        "workflowId": "wYIM8Rd0o0O02BEc",
+        "projectId": "CiE0yom8k6ucG3Mq",
+        "project": {
+          "updatedAt": "2025-12-05T12:46:13.320Z",
+          "createdAt": "2025-12-02T23:09:55.033Z",
+          "id": "CiE0yom8k6ucG3Mq",
+          "name": "Oר Edri <edri2or@gmail.com>",
+          "type": "personal",
+          "icon": null,
+          "description": null,
+          "projectRelations": [
+            {
+              "updatedAt": "2025-12-02T23:09:55.034Z",
+              "createdAt": "2025-12-02T23:09:55.034Z",
+              "userId": "3ad049ab-1421-4ecf-a7d8-3dec3002290c",
+              "projectId": "CiE0yom8k6ucG3Mq",
+              "user": {
+                "updatedAt": "2025-12-06T19:03:01.000Z",
+                "createdAt": "2025-12-02T23:09:54.175Z",
+                "id": "3ad049ab-1421-4ecf-a7d8-3dec3002290c",
+                "email": "edri2or@gmail.com",
+                "firstName": "Oר",
+                "lastName": "Edri",
+                "personalizationAnswers": {
+                  "version": "v4",
+                  "personalization_survey_submitted_at": "2025-12-02T23:47:53.638Z",
+                  "personalization_survey_n8n_version": "1.122.4",
+                  "companyIndustryExtended": [
+                    "other"
+                  ],
+                  "companyType": "other"
+                },
+                "settings": {
+                  "userActivated": false
+                },
+                "disabled": false,
+                "mfaEnabled": false,
+                "lastActiveAt": "2025-12-06",
+                "isPending": false
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "tags": [],
+    "activeVersion": null
+  }
+]

@@ -1,0 +1,5 @@
+# Python dependencies for Memory Bank tools
+# Used by: validate_entity.py
+
+jsonschema>=4.0.0
+pyyaml>=6.0

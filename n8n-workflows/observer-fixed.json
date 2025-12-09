@@ -1,0 +1,50 @@
+{
+  "name": "Observer - Drift Detection (Every 15 min)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 15
+            }
+          ]
+        }
+      },
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [250, 300],
+      "id": "5ebc2543-48be-4f1b-9e39-2bb51c6b0720"
+    },
+    {
+      "parameters": {
+        "command": "C:\\Program Files\\Python314\\python.exe C:\\Users\\edri2\\Desktop\\AI\\ai-os\\tools\\observer.py",
+        "cwd": "C:\\Users\\edri2\\Desktop\\AI\\ai-os"
+      },
+      "name": "Run Observer",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [450, 300],
+      "id": "305fc71b-d70a-49ac-a7c5-25b4392c2681"
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Run Observer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "versionId": "1",
+  "id": "wYIM8Rd0o0O02BEc"
+}

@@ -1,0 +1,2 @@
+# Drift reports are transient (not committed to git)
+drift/*.yaml

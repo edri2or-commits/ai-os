@@ -1,0 +1,17 @@
+{
+  "report_id": "FP-2025-12-05-01",
+  "analyzed_at_utc": "2025-12-05T01:10:00Z",
+  "time_window": {
+    "start": "2025-12-05T00:00:00Z",
+    "end": "2025-12-05T01:10:00Z"
+  },
+  "events_analyzed": 1,
+  "faux_pas_detected": [],
+  "summary": {
+    "capability_amnesia": 0,
+    "constraint_blindness": 0,
+    "loop_paralysis": 0,
+    "hallucinated_affordances": 0
+  },
+  "notes": "No errors detected. The event was a manual test for validation purposes and did not indicate any procedural errors."
+}
