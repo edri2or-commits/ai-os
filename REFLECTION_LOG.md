@@ -60,3 +60,32 @@ See: memory-bank/protocols/PROTOCOL_1_pre-push-reflection.md
 - After this, hook will work automatically for all future pushes
 - User won't need to manually fill this again
 
+
+---
+
+## Reflection: feature/h2-memory-bank-api - 2025-12-09
+
+**Branch:** feature/h2-memory-bank-api  
+**Date:** 2025-12-09
+
+**What was done:**
+- Completed LiteLLM n8n integration testing (end-to-end verified)
+- Fixed workflow model name: gpt-5.1 → gpt-4o-mini (non-existent model)
+- Verified extra_hosts: host-gateway working correctly
+- Test passed: "say hello in hebrew" → "שלום" response from gpt-4o-mini
+
+**Why:**
+- n8n workflow was failing with 500 errors (4 failed executions)
+- Network suspected but root cause was invalid model name
+- Needed to verify LiteLLM integration operational before VPS deployment
+
+**Next:**
+- Phase 2.6 Slice 2: VPS Deployment (15-20 min)
+- Or Judge V2 + Langfuse Integration (60 min)
+
+**Context/Notes:**
+- extra_hosts solution from n8n Community Thread #151998
+- 401 on /health endpoint is normal LiteLLM security (not failure)
+- Always verify model names against /v1/models endpoint
+- Duration: 45 min total
+
