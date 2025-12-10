@@ -1,5 +1,61 @@
 # PROGRESS LOG
 
+## 🎉 2025-12-10: V1 CONNECTIVITY MILESTONE - Telegram to VPS (75 min)
+**Phase:** 2 - Core Infrastructure (~95%)  
+**Status:** ✅ OPERATIONAL  
+**Duration:** 75 minutes (08:00 - 09:15)  
+**Achievement:** H3 (Human Interface) fully deployed and operational
+
+### Problem Chain Resolved
+1. **Initial Failure:** Workflow created but wouldn't activate (active=false)
+2. **Root Cause 1:** Missing/incorrect `WEBHOOK_URL` in `/root/.env`
+   - Had: `https://n8n.35.223.68.23.nip.io/` (trailing slash)
+   - Fixed: `https://n8n.35.223.68.23.nip.io` (removed slash)
+3. **Root Cause 2:** Node name with space ("Telegram Trigger")
+   - Telegram sent to: `.../telegram%20trigger/webhook`
+   - n8n expected: `.../telegramtrigger/webhook`
+   - Result: HTTP 404 Not Found
+
+### Solutions Implemented
+1. ✅ Fixed `WEBHOOK_URL` in `/root/.env` (surgical sed edit)
+2. ✅ Restarted n8n container (`docker compose restart n8n`)
+3. ✅ Cleaned up 5 broken workflows (duplicate testing attempts)
+4. ✅ Created new credential: `SALAMTUKBOT_FIXED` (ID: `dix5dw0FF8qukJ00`)
+5. ✅ Created final workflow: `Telegram Bot - FINAL FIX` (ID: `Q3YsexsUupZFBuL8`)
+   - Node names: `TelegramTrigger`, `SendMessage` (no spaces!)
+6. ✅ Activated via API (`POST /workflows/{id}/activate`)
+
+### Verification
+Telegram API (`/getWebhookInfo`) confirmed:
+```json
+{
+  "url": "https://n8n.35.223.68.23.nip.io/webhook/Q3YsexsUupZFBuL8/telegramtrigger/webhook",
+  "pending_update_count": 0,
+  "last_error_message": null ✅
+}
+```
+
+### Technical Learnings
+- **BP-XXX:** Trailing slashes in WEBHOOK_URL break Telegram registration
+- **BP-XXX:** Node names MUST NOT contain spaces (URL encoding fails)
+- **BP-XXX:** Always verify via Telegram API: `getWebhookInfo`
+- **BP-XXX:** n8n activation: Use `POST /workflows/{id}/activate` (not PATCH/PUT)
+
+### Git Commits
+- (pending) `feat(h3): Deploy Telegram bot - webhook fix + operational`
+
+### Meta-Learning
+- **Pattern:** URL encoding sensitivity in webhook URLs
+- **Pattern:** n8n API quirks (active field is read-only, needs special endpoint)
+- **Pattern:** Telegram provides excellent diagnostics (`pending_update_count`, `last_error_message`)
+
+### Next
+- Option A: H3 extensions (HITL approval workflows)
+- Option B: LiteLLM ↔ n8n integration (multi-model routing)
+- Option C: VPS full stack verification
+
+---
+
 ## 2025-12-09: QUICK_START.md Creation - Minimal Onboarding (15 min)
 **Phase:** 2 - Core Infrastructure (~93%)  
 **Status:** ✅ COMPLETE  
