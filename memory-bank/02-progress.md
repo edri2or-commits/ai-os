@@ -1,5 +1,115 @@
 # PROGRESS LOG
 
+## 🧹 2025-12-10: STRATEGIC PIVOT - Local to VPS Architecture (30 min)
+**Phase:** 2.3 - Agentic Kernel (~95%)  
+**Status:** ✅ COMPLETE  
+**Duration:** 30 minutes (19:45 - 20:15)  
+**Achievement:** Clean migration from local Docker to VPS-centric architecture
+
+### Context
+After successful H3 bot deployment, user directed strategic shift:
+- **Problem:** Local Docker consuming resources unnecessarily
+- **Decision:** Decommission local environment, focus 100% on VPS (35.223.68.23)
+- **Rationale:** VPS is production target, local redundant
+
+### Actions Performed
+
+**1. Full Backup Created**
+- Command: `docker exec n8n-production n8n export:workflow --all --output=/tmp/backup_20251210.json`
+- Result: 11 workflows exported successfully
+- Extracted: `docker cp n8n-production:/tmp/backup_20251210.json ./n8n_full_backup_20251210.json`
+- Size: 38,876 bytes (~38 KB)
+- Location: `C:\Users\edri2\Desktop\AI\ai-os\n8n_full_backup_20251210.json` ✅
+
+**2. Local Docker Cleanup**
+- **n8n + Qdrant removed:**
+  ```
+  cd C:\Users\edri2\Desktop\AI\ai-os
+  docker compose down --volumes
+  ```
+  - Deleted: n8n-production, qdrant-production
+  - Deleted: n8n_data, qdrant_storage volumes
+  
+- **Langfuse stack removed:**
+  ```
+  cd C:\Users\edri2\Desktop\AI\ai-os\infra\langfuse
+  docker compose down --volumes
+  ```
+  - Deleted: 6 containers (web, worker, postgres, redis, clickhouse, minio)
+  - Deleted: 4 volumes (postgres, clickhouse, minio, redis)
+
+- **Orphaned containers cleaned:**
+  ```
+  docker rm litellm-local-test
+  ```
+
+- **Deep cleanup:**
+  ```
+  docker system prune -a --volumes -f
+  ```
+  - Deleted: 10+ images (n8n, qdrant, postgres, redis, clickhouse, langfuse, litellm, minio)
+  - Deleted: 2 anonymous volumes
+  - Deleted: orphaned networks
+  - **Space Freed: 2.908 GB** 🎉
+
+**3. Final Verification**
+- Containers remaining: 1 (github-mcp-server - unrelated to project)
+- Volumes remaining: 0 (all project volumes deleted)
+- Architecture: PC = Client only (Claude Desktop + MCP)
+
+### Strategic Impact
+
+**Before:**
+- Local Docker: n8n, Qdrant, Langfuse, Redis, PostgreSQL, ClickHouse (9 containers)
+- Resources: ~2.9GB disk, ~500MB RAM, CPU cycles
+- Complexity: Local + VPS dual environments
+
+**After:**
+- Local Docker: 0 containers (clean slate)
+- VPS: Single source of truth (35.223.68.23)
+- PC Role: Client only (MCP, Claude Desktop)
+
+### Architecture Change
+
+**New Model:**
+```
+PC (Windows 11)
+  ├─ Claude Desktop (reasoning)
+  ├─ MCP Servers (tools)
+  └─ Network → VPS (35.223.68.23)
+                 ├─ n8n (workflows)
+                 ├─ Qdrant (vectors)
+                 ├─ LiteLLM (models)
+                 ├─ PostgreSQL (data)
+                 ├─ Caddy (proxy)
+                 └─ Langfuse (telemetry)
+```
+
+### Files Changed
+- None (cleanup only)
+
+### Backup Artifacts
+- `n8n_full_backup_20251210.json` (11 workflows, 38KB) ✅
+- Safe location: User's Desktop in project directory
+
+### Meta-Learning
+- **BP-XXX:** "Backup Before Destroy" - always create artifacts before cleanup
+- **BP-XXX:** "Systematic Cleanup" - compose down → rm orphans → prune (3 phases)
+- **BP-XXX:** "Space Reclaim" - `docker system prune -a --volumes` recovers GBs
+- **Pattern:** VPS-centric architecture = simpler, no dual maintenance
+
+### Git Commits
+- (pending) `refactor(architecture): Migrate to VPS-only deployment`
+
+### Next Steps
+1. Upload `n8n_full_backup_20251210.json` to VPS
+2. Import workflows to VPS n8n (35.223.68.23:5678)
+3. Recreate credentials (Telegram token, API keys)
+4. Test H3 bot on VPS
+5. Verify all 11 workflows operational
+
+---
+
 ## 🎉 2025-12-10: V1 CONNECTIVITY MILESTONE - Telegram to VPS (75 min)
 **Phase:** 2 - Core Infrastructure (~95%)  
 **Status:** ✅ OPERATIONAL  

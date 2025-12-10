@@ -23,6 +23,64 @@ Quick Status, Current Focus, Recent Changes, Next Steps
 
 **Progress:** ~95% complete (Protocol 1 ✅, NAES v1.0 ✅, H3 Bot Analysis ✅, **Phase 2.6 Slice 1 ✅**, H4 VPS LiteLLM Bootstrap ✅, **GitHub MCP Full Autonomy ✅**, **QUICK_START.md Created ✅**, **H3 Telegram Bot DEPLOYED ✅**)
 
+**Just Finished (2025-12-10 20:15):**
+- 🧹 **Strategic Pivot: Local to VPS Architecture** (MIGRATION COMPLETE ✅ - 30 min)
+  - **Context:** After H3 bot deployment, user directed full migration to VPS-only model
+  - **Problem:** Local Docker consuming resources (2.9GB disk, RAM, CPU) unnecessarily
+  - **Decision:** Decommission all local services, 100% focus on VPS (35.223.68.23)
+  - **Actions Performed:**
+    1. ✅ Full backup created via n8n CLI
+       - Command: `docker exec n8n-production n8n export:workflow --all --output=/tmp/backup_20251210.json`
+       - Result: 11 workflows exported (38,876 bytes)
+       - Location: `C:\Users\edri2\Desktop\AI\ai-os\n8n_full_backup_20251210.json`
+    2. ✅ Local Docker cleanup (systematic)
+       - Phase 1: `docker compose down --volumes` (n8n + Qdrant)
+       - Phase 2: `cd infra/langfuse; docker compose down --volumes` (6 services)
+       - Phase 3: `docker rm litellm-local-test` (orphaned container)
+       - Phase 4: `docker system prune -a --volumes -f` (deep cleanup)
+    3. ✅ Verification complete
+       - Containers remaining: 1 (github-mcp-server, unrelated)
+       - Project containers: 0 (clean slate)
+       - Space freed: 2.908 GB 🎉
+  - **Architecture Change:**
+    - **Before:** Local Docker (9 containers) + VPS (dual maintenance)
+    - **After:** PC = Client only (Claude Desktop + MCP), VPS = Production (single source of truth)
+  - **Strategic Impact:**
+    - ✅ Zero local resource consumption (disk, RAM, CPU)
+    - ✅ Single deployment target (VPS only, no confusion)
+    - ✅ Simpler architecture (no dual environment sync)
+    - ✅ PC independence (shutdown doesn't affect services)
+  - **Backup Artifacts:**
+    - `n8n_full_backup_20251210.json` (11 workflows, safe) ✅
+    - Previous backup: `exports/workflows_local_backup_20251206_233630.json` (outdated, 6/12 only)
+  - **Services Removed (Local):**
+    - n8n-production, qdrant-production (ai-os stack)
+    - langfuse-web, langfuse-worker, postgres, redis, clickhouse, minio (Langfuse stack)
+    - litellm-local-test (orphaned)
+  - **Services Preserved (VPS - 35.223.68.23):**
+    - n8n, Qdrant, LiteLLM, PostgreSQL, Caddy, Langfuse (all operational)
+  - **Meta-Learning:**
+    - **BP-XXX:** "Backup Before Destroy" - create artifacts before cleanup (prevented data loss)
+    - **BP-XXX:** "Systematic Cleanup Protocol" - compose down → rm orphans → prune (3-phase approach)
+    - **BP-XXX:** "VPS-Centric Architecture" - single deployment target = less complexity
+    - **Pattern:** Docker volume cleanup requires `--volumes` flag (not default)
+  - **Current State:**
+    - ✅ Local environment: Clean (0 containers, 2.9GB freed)
+    - ✅ VPS environment: Operational (all services running)
+    - ✅ Backup created: n8n workflows safe
+    - ⏳ Next: Import backup to VPS, recreate credentials
+  - **Next Steps:**
+    1. Upload `n8n_full_backup_20251210.json` to VPS via scp/gcloud
+    2. Import workflows: `docker exec n8n n8n import:workflow --input=/path/backup.json`
+    3. Recreate Telegram credentials (SALAMTUKBOT token)
+    4. Recreate LiteLLM/Langfuse credentials
+    5. Test H3 bot webhook on VPS
+    6. Verify all 11 workflows operational
+  - **Cost Impact:** $0/month savings (was already VPS-focused, local was redundant)
+  - **Duration:** ~30 min (backup 5 min, cleanup 15 min, verification 5 min, documentation 5 min)
+  - **Status:** ✅ MIGRATION COMPLETE - Ready for VPS workflow restoration
+  - **Git:** (pending) `refactor(architecture): Migrate to VPS-only deployment`
+
 **Just Finished (2025-12-10 09:15):**
 - 🤖 **H3 Telegram Bot - Full Deployment & Webhook Fix** (OPERATIONAL ✅ - 75 min)
   - **Context:** Completing H3 (Human Interface) deployment after VPS infrastructure ready
@@ -1882,8 +1940,8 @@ After EVERY slice, Claude MUST automatically:
 
 ---
 
-**Last Updated:** 2025-12-08 14:45  
-**Next Update:** After Slice 2.6.1 (LiteLLM Setup) or Phase decision
+**Last Updated:** 2025-12-10 20:15  
+**Next Update:** After VPS workflow restoration completes
  + hashed.hex()
         UPDATE user SET password = password_field WHERE email = 'edri2or@gmail.com'
         ```
@@ -2603,5 +2661,5 @@ After EVERY slice, Claude MUST automatically:
 
 ---
 
-**Last Updated:** 2025-12-08 14:45  
-**Next Update:** After Slice 2.6.1 (LiteLLM Setup) or Phase decision
+**Last Updated:** 2025-12-10 20:15  
+**Next Update:** After VPS workflow restoration completes
