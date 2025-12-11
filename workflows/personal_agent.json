@@ -1,0 +1,256 @@
+{
+  "name": "Personal Agent v1 - ADHD Task Decomposer",
+  "description": "Receives user requests via webhook, decomposes them into logical steps using ADHD-aware protocols, and returns next action + status",
+  "nodes": [
+    {
+      "id": "webhook_trigger",
+      "name": "User Request (Webhook)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        240,
+        300
+      ],
+      "webhookId": "personal-agent-v1",
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "personal-agent",
+        "responseMode": "responseNode",
+        "options": {}
+      }
+    },
+    {
+      "id": "read_manifesto",
+      "name": "Load SYSTEM_MANIFESTO",
+      "type": "n8n-nodes-base.readBinaryFile",
+      "typeVersion": 1,
+      "position": [
+        460,
+        300
+      ],
+      "parameters": {
+        "filePath": "={{ $env.AI_OS_PATH }}/SYSTEM_MANIFESTO.md"
+      }
+    },
+    {
+      "id": "prepare_context",
+      "name": "Prepare Agent Context",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [
+        680,
+        300
+      ],
+      "parameters": {
+        "mode": "manual",
+        "duplicateItem": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "user_request",
+              "name": "user_request",
+              "type": "string",
+              "value": "={{ $json.body.request || $json.body.message || $json.body.task }}"
+            },
+            {
+              "id": "user_state",
+              "name": "user_state",
+              "type": "object",
+              "value": "={{ $json.body.state || {} }}"
+            },
+            {
+              "id": "manifesto_content",
+              "name": "manifesto_content",
+              "type": "string",
+              "value": "={{ $('Load SYSTEM_MANIFESTO').item.binary.data.toString() }}"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "claude_agent",
+      "name": "Claude Personal Agent",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        900,
+        300
+      ],
+      "parameters": {
+        "url": "https://api.anthropic.com/v1/messages",
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "={{ $env.ANTHROPIC_API_KEY }}"
+            },
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "claude-sonnet-4-20250514"
+            },
+            {
+              "name": "max_tokens",
+              "value": "4096"
+            },
+            {
+              "name": "system",
+              "value": "={{ \"You are the Personal Agent for AI Life OS - an ADHD-aware task decomposition system.\\n\\n# YOUR CONSTITUTION\\n\\n\" + $json.manifesto_content + \"\\n\\n# YOUR MISSION\\n\\n1. **Understand the user request** fully\\n2. **Assess ADHD state signals** from user_state (if provided)\\n3. **Select appropriate NAES mode** (CRISIS/PARALYSIS/BODY_DOUBLE/FLOW)\\n4. **Decompose the request** into logical micro-steps\\n5. **Return the NEXT SINGLE ACTION** (not the entire plan)\\n6. **Follow AEP-001**: Never delegate manual work - always propose programmatic solutions\\n\\n# RESPONSE FORMAT (JSON only)\\n\\n{\\n  \\\"mode\\\": \\\"FLOW_SUPPORT | PARALYSIS_BREAKER | BODY_DOUBLE | CRISIS_RECOVERY\\\",\\n  \\\"next_action\\\": \\\"The single next step to take (ultra-specific)\\\",\\n  \\\"rationale\\\": \\\"Why this is the right next step\\\",\\n  \\\"execution_method\\\": \\\"api | cli | mcp_automation | requires_credentials\\\",\\n  \\\"estimated_time\\\": \\\"2m | 5m | 15m | 30m+\\\",\\n  \\\"energy_required\\\": \\\"low | medium | high\\\",\\n  \\\"status\\\": {\\n    \\\"current_step\\\": 1,\\n    \\\"total_steps\\\": 3,\\n    \\\"completion_percentage\\\": 33,\\n    \\\"blockers\\\": []\\n  },\\n  \\\"adhd_considerations\\\": \\\"Any specific ADHD accommodations for this step\\\"\\n}\\n\\n# RULES\\n\\n- If mode is CRISIS_RECOVERY: next_action MUST be rest/recovery related\\n- If mode is PARALYSIS_BREAKER: next_action MUST be <5 minute micro-step\\n- If mode is BODY_DOUBLE: validate emotion before suggesting action\\n- Always check: Can I automate this instead of asking user to do it?\\n- Use the Tool Strategy Priority from AEP-001\\n- Never use phrases like \\\"Do X\\\", \\\"Open Y\\\", \\\"Click Z\\\"\" }}"
+            },
+            {
+              "name": "messages",
+              "value": "={{ [{\"role\": \"user\", \"content\": \"User Request: \" + $json.user_request + \"\\n\\nUser State: \" + JSON.stringify($json.user_state) + \"\\n\\nDecompose this request and return the next action.\"}] }}"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "parse_response",
+      "name": "Parse Agent Response",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [
+        1120,
+        300
+      ],
+      "parameters": {
+        "mode": "manual",
+        "duplicateItem": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "agent_response",
+              "name": "agent_response",
+              "type": "object",
+              "value": "={{ JSON.parse($json.content[0].text) }}"
+            },
+            {
+              "id": "timestamp",
+              "name": "timestamp",
+              "type": "string",
+              "value": "={{ $now.toISO() }}"
+            },
+            {
+              "id": "original_request",
+              "name": "original_request",
+              "type": "string",
+              "value": "={{ $('Prepare Agent Context').item.json.user_request }}"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "webhook_response",
+      "name": "Return to User",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1340,
+        300
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { success: true, agent_response: $json.agent_response, meta: { timestamp: $json.timestamp, original_request: $json.original_request, system_version: \"v1.0\" } } }}"
+      }
+    }
+  ],
+  "connections": {
+    "User Request (Webhook)": {
+      "main": [
+        [
+          {
+            "node": "Load SYSTEM_MANIFESTO",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load SYSTEM_MANIFESTO": {
+      "main": [
+        [
+          {
+            "node": "Prepare Agent Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Agent Context": {
+      "main": [
+        [
+          {
+            "node": "Claude Personal Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claude Personal Agent": {
+      "main": [
+        [
+          {
+            "node": "Parse Agent Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Agent Response": {
+      "main": [
+        [
+          {
+            "node": "Return to User",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "saveExecutionProgress": true,
+    "saveManualExecutions": true,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "executionTimeout": 300,
+    "timezone": "Asia/Jerusalem",
+    "callerPolicy": "any",
+    "availableInMCP": true
+  },
+  "staticData": {},
+  "tags": [
+    {
+      "id": "adhd-core",
+      "name": "ADHD Core"
+    },
+    {
+      "id": "agent",
+      "name": "Agent"
+    }
+  ]
+}
