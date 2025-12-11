@@ -148,3 +148,60 @@ See: memory-bank/protocols/PROTOCOL_1_pre-push-reflection.md
 - **Duration:** 180 min (diagnosis 60 min, sanitization 45 min, testing 45 min, resolution 30 min)
 - **Status:** ✅ PRODUCTION OPERATIONAL - Judge Agent V2 scheduled, LiteLLM + Langfuse integrated
 
+
+---
+
+## Incident Report: GitOps Activation & VPS Hardening - 11/12/2025
+
+**Branch:** feature/h2-memory-bank-api  
+**Date:** 2025-12-11  
+**Type:** Infrastructure Incident & Resolution
+
+### Initial Problem
+Git repository was missing on VPS (`fatal: not a git repository`). The `/root/ai-os` directory existed but was not a proper Git clone, preventing GitOps workflows from syncing with the canonical GitHub source.
+
+### Root Cause
+The `/root/ai-os` directory was manually created during initial VPS setup and not properly cloned from GitHub. This left the system in a "manual deployment" state rather than a GitOps-controlled state, breaking the principle of "code defines infrastructure."
+
+### Action Taken
+1. **Backup:** Renamed existing directory to `ai-os_OLD_BACKUP` to preserve any manual changes
+2. **Clean Clone:** Executed fresh clone from GitHub:
+   ```bash
+   git clone https://github.com/edri2or-commits/ai-os.git
+   ```
+3. **Workflow Sync:** Used n8n CLI to import workflows directly from Git-controlled source:
+   ```bash
+   docker exec -u node ai-os-n8n n8n import:workflow --separate --input=/home/node/workflows/observer_v2.json
+   docker exec -u node ai-os-n8n n8n import:workflow --separate --input=/home/node/workflows/judge_agent_v2.json
+   ```
+4. **Activation:** Enabled all workflows via CLI:
+   ```bash
+   docker exec -u node ai-os-n8n n8n update:workflow --all --active=true
+   ```
+
+### Final Result
+✅ **System Operational Under GitOps Rules:**
+- Workflows successfully loaded and activated via CLI (not UI)
+- Observer V2 - Cloud Native (VPS): Active, monitoring every 15 minutes
+- Judge Agent V2 - Cloud Native (VPS): Active, analyzing traces every 6 hours
+- Telegram Bot: Responding to commands
+- Git repository synchronized with commit `5af4c69`
+
+### Open Issues
+⚠️ **Qdrant Container Conflict:**
+The Qdrant vector database container is in a `Conflict` state and needs manual restart/repair. This does not affect current n8n operations but will impact future memory/embedding features.
+
+**Action Required:** `docker restart ai-os-qdrant` or investigate collection conflicts
+
+### Lessons Learned
+1. **GitOps First:** Never manually create deployment directories - always clone from source
+2. **CLI Over UI:** Workflow imports via CLI (`n8n import:workflow`) are more reliable than UI imports for automation
+3. **Foreign Key Resilience:** FK constraint errors during import are non-fatal if workflows are properly sanitized
+4. **Triple Gap Analysis:** Pre-deployment audits (Local vs GitHub vs VPS) prevent data loss during cleanups
+
+### Documentation Updated
+- REFLECTION_LOG.md (this entry)
+- DEPLOYMENT_MANUAL.md (created during incident)
+
+**Duration:** 90 minutes (diagnosis 30 min, resolution 45 min, validation 15 min)  
+**Status:** ✅ RESOLVED - System operating under GitOps control
