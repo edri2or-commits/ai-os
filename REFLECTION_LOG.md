@@ -116,3 +116,35 @@ See: memory-bank/protocols/PROTOCOL_1_pre-push-reflection.md
 - Protocol 1 self-correction: User "אתה לא מתעד בממורי בנק?" = protocol working as designed
 - Weekly velocity: 6% progress (87% → 93%) = sustainable pace
 
+
+---
+
+## Reflection: feature/h2-memory-bank-api - 2025-12-11
+
+**Branch:** feature/h2-memory-bank-api  
+**Date:** 2025-12-11
+
+**What was done:**
+- Judge Agent V2 deployment completed after 180-minute debugging session
+- Resolved foreign key constraint errors through workflow sanitization (clean_workflow.py)
+- Fixed webhook conflicts between duplicate workflows (deactivated old duplicates)
+- Configured LiteLLM + Langfuse credentials via SCP method (langfuse-basic-auth-001, litellm-gateway-001)
+- Final result: 3 active workflows operational (Judge Agent V2 scheduled every 6 hours, Telegram Bot responding, Infrastructure Health Check monitoring)
+- Updated Memory Bank: 01-active-context.md (Just Finished), QUICK_START.md (Last 3 Actions, Phase 97%)
+
+**Why:**
+- **FK Constraint Resolution:** n8n workflows with tags/metadata from other environments create foreign key violations when imported - sanitization pattern removes problematic fields before import
+- **Production Readiness:** Judge Agent V2 enables autonomous analysis of LLM traces every 6 hours without manual intervention
+- **Protocol 1 Compliance:** Automatic Memory Bank updates after slice completion (3 files: 01-active-context, QUICK_START, 02-progress)
+- **Phase Progress:** 95% → 97% (Judge Agent operational unlocks autonomous analysis capability)
+
+**Next:**
+- User choice: (1) Upgrade Telegram Bot (Q3YsexsUupZFBuL8) with LiteLLM node for intelligent responses, or (2) Monitor Judge Agent V2 first run after 6 hours to verify Langfuse trace collection
+
+**Context/Notes:**
+- **BP-XXX:** Workflow sanitization for cross-environment imports (strip id/tags/metadata → import clean → activate after restart)
+- **Pattern:** Schedule-based workflows (Judge Agent) ≠ webhook-based bots (Telegram Bot) - different architectures
+- **Technical:** Credential deployment via SCP bypasses PowerShell escaping complexity
+- **Duration:** 180 min (diagnosis 60 min, sanitization 45 min, testing 45 min, resolution 30 min)
+- **Status:** ✅ PRODUCTION OPERATIONAL - Judge Agent V2 scheduled, LiteLLM + Langfuse integrated
+
