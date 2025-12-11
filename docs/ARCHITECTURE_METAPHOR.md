@@ -155,11 +155,15 @@ The architecture enforces this pattern:
 **Deprecated terms (DO NOT USE):**
 - ❌ "Agentic Kernel" (too abstract)
 - ❌ "Semantic Microkernel" (too technical)
-- ❌ "Core/Ports/Adapters" (Hexagonal Architecture - too technical)
 - ❌ "Control Plane" (too infrastructure-focused)
 - ❌ "Agents as Family" (confusing with Head/Hands)
 
-**If you find these terms in documentation, replace them with Head/Hands/Truth/Nerves.**
+**For Technical Implementation:**
+- ✅ Use **Hexagonal Architecture** (Ports & Adapters) as defined in `SYSTEM_MANIFESTO.md`
+- ✅ Core/Ports/Adapters terminology is CORRECT for technical docs
+- ✅ Head/Hands/Truth/Nerves is for USER-FACING explanations
+
+**If you find deprecated terms in documentation, replace them with Head/Hands/Truth/Nerves for user docs, or Hexagonal Architecture terms for technical docs.**
 
 ---
 

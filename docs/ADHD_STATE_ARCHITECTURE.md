@@ -176,8 +176,10 @@ Storage Layer:
 **Maps to:** Plan/Organize domains
 
 **Implementation:**
-- Influences urgency of mode transitions
-- **critical + low energy:** System may suggest deferring task
+- **low:** More than 1 week
+- **medium:** 2-7 days  
+- **high:** Less than 24 hours (CANONICAL: "urgent" = <24h)
+- **critical:** Immediate action required
 
 **Why this matters:**
 - ADHD time blindness requires external urgency tracking
@@ -188,7 +190,7 @@ Storage Layer:
 **Maps to:** Self-Monitor + Shifting domains
 
 **Implementation:**
-- **>90 minutes:** Hyperfocus risk detected
+- **>90 minutes:** Hyperfocus risk detected (CANONICAL: "hyperfocus risk" = >90 min)
 - System sets `hyperfocus_risk: true`
 - Nudges break: "Crash risk. Permission to stop?"
 
