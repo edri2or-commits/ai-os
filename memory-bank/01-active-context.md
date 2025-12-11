@@ -23,7 +23,55 @@ Quick Status, Current Focus, Recent Changes, Next Steps
 
 **Progress:** ~95% complete (Protocol 1 ✅, NAES v1.0 ✅, H3 Bot Analysis ✅, **Phase 2.6 Slice 1 ✅**, H4 VPS LiteLLM Bootstrap ✅, **GitHub MCP Full Autonomy ✅**, **QUICK_START.md Created ✅**, **H3 Telegram Bot DEPLOYED ✅**)
 
-**Just Finished (2025-12-10 22:55):**
+**Just Finished (2025-12-11 11:12):**
+- ✅ **Judge Agent V2 Deployment - Complete Resolution** (PRODUCTION OPERATIONAL! 🎉 - 180 min)
+  - **Context:** Full debugging session from credential mapping to final activation
+  - **Problem Chain:**
+    1. Initial activation failed (foreign key constraint errors)
+    2. Credential mapping issues (local vs VPS environment differences)
+    3. Multiple workflow duplicates causing webhook conflicts
+    4. Bot not responding after cleanup
+  - **Discovery Process:**
+    - Created FULL_SYSTEM_SNAPSHOT.txt (46.4 MB) for Gemini audit
+    - Gemini diagnosed: Tags/Metadata from old environment causing FK violations
+    - Workflow sanitization required (remove id, tags, metadata)
+  - **Solution - Workflow Sanitization:**
+    - Created clean_workflow.py (removes problematic fields)
+    - Deleted old workflow from database
+    - Imported sanitized workflow (new ID: iuXepCTpBvYiJml3)
+    - Activated successfully ✅
+  - **Webhook Conflict Resolution:**
+    - Discovered duplicate workflows stealing webhooks
+    - Deactivated old duplicates (Q3YsexsUupZFBuL8, gUeoqtUcWSwXNLUa)
+    - Architectural clarification: Judge Agent V2 = scheduled (not webhook bot)
+    - Re-activated Telegram Bot for interactive responses
+  - **Final Configuration:**
+    - Judge Agent V2 (iuXepCTpBvYiJml3): Schedule-based, runs every 6 hours ✅
+    - Telegram Bot - FINAL FIX (Q3YsexsUupZFBuL8): Interactive webhook responses ✅
+    - Infrastructure Health Check (8etDCsdHt1ofCEYA): System monitoring ✅
+  - **Credentials Configured:**
+    - langfuse-basic-auth-001: Langfuse API access (httpBasicAuth) ✅
+    - litellm-gateway-001: LiteLLM gateway access (openAiApi) ✅
+  - **Key Files:**
+    - /home/node/clean_judge.json: Sanitized workflow
+    - C:\Users\edri2\Desktop\AI\ai-os\clean_workflow.py: Sanitization script
+    - C:\Users\edri2\Desktop\AI\ai-os\FULL_SYSTEM_SNAPSHOT.txt: Complete codebase snapshot
+  - **Technical Insights:**
+    - n8n workflows with tags create FK constraints in new environments
+    - Sanitization pattern: Strip metadata, delete ID, keep versionId
+    - Schedule workflows ≠ webhook bots (different architectures)
+    - Workflow activation requires restart to take effect
+  - **Meta-Learning:**
+    - **BP-XXX:** Workflow sanitization for cross-environment imports
+    - **Pattern:** Delete problematic metadata before import, not after
+  - **Status:** ✅ PRODUCTION OPERATIONAL
+    - Judge Agent V2: Active, scheduled every 6 hours
+    - Telegram Bot: Active, responding to messages
+    - LiteLLM + Langfuse: Integrated and functional
+  - **Duration:** ~180 min (diagnosis 60 min, sanitization 45 min, testing 45 min, resolution 30 min)
+  - **Transcript:** /mnt/transcripts/2025-12-11-11-12-23-judge-agent-v2-deployment-fix.txt
+
+**Previous Session (2025-12-10 22:55):**
 - ✅ **Judge Agent V2 + LiteLLM Integration via SCP Method** (CREDENTIALS DEPLOYED! 🎉 - 90 min)
   - **Context:** Integrating Judge Agent V2 with LiteLLM proxy on VPS (following Gemini research)
   - **Goal:** Deploy Judge workflow with proper LiteLLM + Langfuse credentials
