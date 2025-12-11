@@ -44,6 +44,10 @@ auth.*
 token.*
 *token*
 
+# Google Cloud Service Accounts
+gcp-service-account.json
+*-service-account.json
+
 # ============================================================================
 # LOCAL CONFIGURATION
 # ============================================================================

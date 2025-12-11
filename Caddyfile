@@ -30,7 +30,11 @@ n8n.{$DOMAIN} {
 # LiteLLM - Multi-Model Gateway
 # ==========================================
 api.{$DOMAIN} {
-	reverse_proxy litellm:4000
+	reverse_proxy litellm:4000 {
+		flush_interval -1
+		health_uri /health/liveliness
+		health_interval 30s
+	}
 	
 	# Security headers
 	header {

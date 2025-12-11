@@ -1,0 +1,170 @@
+{
+  "name": "Judge Agent V2 - Cloud Native (VPS)",
+  "description": null,
+  "nodes": [
+    {
+      "id": "schedule_judge",
+      "name": "Every 6 Hours",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        300
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 6
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "get_traces",
+      "name": "Get Langfuse Traces",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        460,
+        300
+      ],
+      "parameters": {
+        "url": "http://localhost:3000/api/public/traces",
+        "method": "GET",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "limit",
+              "value": "50"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "analyze_gpt",
+      "name": "Analyze with GPT",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        680,
+        300
+      ],
+      "parameters": {
+        "url": "http://localhost:4000/v1/chat/completions",
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer sk-1234"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "gpt-4o-mini"
+            },
+            {
+              "name": "messages",
+              "value": "={{ [{\"role\": \"system\", \"content\": \"You are Judge Agent. Analyze traces for errors.\"}, {\"role\": \"user\", \"content\": JSON.stringify($json)}] }}"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "send_telegram",
+      "name": "Send Telegram Alert",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        900,
+        300
+      ],
+      "parameters": {
+        "url": "=https://api.telegram.org/bot{{ $env.TELEGRAM_BOT_TOKEN }}/sendMessage",
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "chat_id",
+              "value": "={{ $env.TELEGRAM_CHAT_ID }}"
+            },
+            {
+              "name": "text",
+              "value": "={{ \"🔍 Judge Report:\\n\" + $json.choices[0].message.content }}"
+            }
+          ]
+        },
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Every 6 Hours": {
+      "main": [
+        [
+          {
+            "node": "Get Langfuse Traces",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Langfuse Traces": {
+      "main": [
+        [
+          {
+            "node": "Analyze with GPT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze with GPT": {
+      "main": [
+        [
+          {
+            "node": "Send Telegram Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "saveExecutionProgress": true,
+    "saveManualExecutions": true,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "executionTimeout": 3600,
+    "timezone": "UTC",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": {
+    "node:Every 6 Hours": {
+      "recurrenceRules": [
+        0
+      ]
+    }
+  },
+  "tags": []
+}

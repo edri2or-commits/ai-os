@@ -1,0 +1,164 @@
+{
+  "name": "Observer V2 - Cloud Native (VPS)",
+  "description": null,
+  "nodes": [
+    {
+      "id": "schedule",
+      "name": "Every 15 Minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        300
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 15
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "check_langfuse",
+      "name": "Check Langfuse Health",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        460,
+        200
+      ],
+      "parameters": {
+        "url": "http://localhost:3000/api/health",
+        "method": "GET",
+        "options": {}
+      }
+    },
+    {
+      "id": "check_qdrant",
+      "name": "Check Qdrant Collections",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        460,
+        400
+      ],
+      "parameters": {
+        "url": "http://localhost:6333/collections",
+        "method": "GET",
+        "options": {}
+      }
+    },
+    {
+      "id": "check_litellm",
+      "name": "Check LiteLLM Health",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        680,
+        300
+      ],
+      "parameters": {
+        "url": "http://localhost:4000/health",
+        "method": "GET",
+        "options": {}
+      }
+    },
+    {
+      "id": "log_to_langfuse",
+      "name": "Log to Langfuse",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        900,
+        300
+      ],
+      "parameters": {
+        "url": "http://localhost:3000/api/public/ingestion",
+        "method": "POST",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "batch",
+              "value": "={{ [{\"id\": $now, \"type\": \"event\", \"body\": {\"name\": \"observer_check\", \"metadata\": {\"langfuse_healthy\": $json.langfuse_status, \"qdrant_healthy\": $json.qdrant_status, \"litellm_healthy\": $json.litellm_status}}}] }}"
+            }
+          ]
+        },
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Every 15 Minutes": {
+      "main": [
+        [
+          {
+            "node": "Check Langfuse Health",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Check Qdrant Collections",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Langfuse Health": {
+      "main": [
+        [
+          {
+            "node": "Check LiteLLM Health",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Qdrant Collections": {
+      "main": [
+        [
+          {
+            "node": "Check LiteLLM Health",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check LiteLLM Health": {
+      "main": [
+        [
+          {
+            "node": "Log to Langfuse",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "saveExecutionProgress": true,
+    "saveManualExecutions": true,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "executionTimeout": 3600,
+    "timezone": "UTC",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": {
+    "node:Every 15 Minutes": {
+      "recurrenceRules": []
+    }
+  },
+  "tags": []
+}
