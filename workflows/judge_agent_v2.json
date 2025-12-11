@@ -23,13 +23,26 @@
       }
     },
     {
+      "id": "read_manifesto",
+      "name": "Read SYSTEM_MANIFESTO",
+      "type": "n8n-nodes-base.readBinaryFile",
+      "typeVersion": 1,
+      "position": [
+        460,
+        300
+      ],
+      "parameters": {
+        "filePath": "={{ $env.AI_OS_PATH }}/SYSTEM_MANIFESTO.md"
+      }
+    },
+    {
       "id": "get_traces",
       "name": "Get Langfuse Traces",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
         460,
-        300
+        460
       ],
       "parameters": {
         "url": "http://localhost:3000/api/public/traces",
@@ -55,7 +68,7 @@
       "typeVersion": 4.2,
       "position": [
         680,
-        300
+        380
       ],
       "parameters": {
         "url": "http://localhost:4000/v1/chat/completions",
@@ -78,7 +91,7 @@
             },
             {
               "name": "messages",
-              "value": "={{ [{\"role\": \"system\", \"content\": \"You are Judge Agent. Analyze traces for errors.\"}, {\"role\": \"user\", \"content\": JSON.stringify($json)}] }}"
+              "value": "={{ [{\"role\": \"system\", \"content\": $('Read SYSTEM_MANIFESTO').item.binary.data.toString()}, {\"role\": \"user\", \"content\": \"Analyze these Langfuse traces for errors, patterns, and improvements. Traces: \" + JSON.stringify($('Get Langfuse Traces').item.json)}] }}"
             }
           ]
         },
@@ -92,7 +105,7 @@
       "typeVersion": 4.2,
       "position": [
         900,
-        300
+        380
       ],
       "parameters": {
         "url": "=https://api.telegram.org/bot{{ $env.TELEGRAM_BOT_TOKEN }}/sendMessage",
@@ -119,7 +132,23 @@
       "main": [
         [
           {
+            "node": "Read SYSTEM_MANIFESTO",
+            "type": "main",
+            "index": 0
+          },
+          {
             "node": "Get Langfuse Traces",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read SYSTEM_MANIFESTO": {
+      "main": [
+        [
+          {
+            "node": "Analyze with GPT",
             "type": "main",
             "index": 0
           }
@@ -132,7 +161,7 @@
           {
             "node": "Analyze with GPT",
             "type": "main",
-            "index": 0
+            "index": 1
           }
         ]
       ]
