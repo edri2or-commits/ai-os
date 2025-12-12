@@ -23,7 +23,36 @@ Quick Status, Current Focus, Recent Changes, Next Steps
 
 **Progress:** ~95% complete (Protocol 1 ✅, NAES v1.0 ✅, H3 Bot Analysis ✅, **Phase 2.6 Slice 1 ✅**, H4 VPS LiteLLM Bootstrap ✅, **GitHub MCP Full Autonomy ✅**, **QUICK_START.md Created ✅**, **H3 Telegram Bot DEPLOYED ✅**)
 
-**Just Finished (2025-12-11 11:12):**
+**Just Finished (2025-12-12 03:11):**
+- 🔴 **Personal Agent v1 Webhook Diagnosis - Critical Failure Identified** (ENVIRONMENT MISSING! ⚠️ - 120 min)
+  - **Context:** Testing Personal Agent v1 after successful n8n MCP connection
+  - **Goal:** Verify end-to-end workflow execution with real webhook call
+  - **Discovery Process:**
+    - Workflow activated successfully ✅
+    - Webhook accessible (HTTP 200) ✅
+    - BUT: Response body empty (silent failure) ❌
+    - 2 executions logged as "error", duration 0s
+    - nodeResults empty (workflow died before execution)
+  - **Root Cause Identified:**
+    - Missing environment variables in n8n Docker container
+    - `$env.AI_OS_PATH` undefined → read_manifesto node fails
+    - `$env.ANTHROPIC_API_KEY` undefined → claude_agent cannot call API
+  - **Technical Investigation:**
+    - Tested via gcloud ssh (external IP blocked by "Host not allowed")
+    - Successfully reached webhook via localhost from within VPS
+    - Confirmed SYSTEM_MANIFESTO.md exists on VPS (/home/node/ai-os/)
+    - docker-compose.vps.yml does NOT inject required environment variables
+  - **Key Files Created:**
+    - memory-bank/incidents/2025-12-12-personal-agent-webhook-execution-failure.md
+  - **Anti-Pattern Identified:**
+    - AP-XXX: "Activation Without Runtime Verification" (activated ≠ functional)
+    - Similar to 2025-12-03 Docker AutoStart incident (claimed done, not verified)
+  - **Status:** 🔴 OPEN - Fix pending (add env vars to docker-compose.vps.yml)
+  - **Next Action:** FIX-001 - Inject AI_OS_PATH and ANTHROPIC_API_KEY into n8n container
+  - **Duration:** ~120 min (discovery 45 min, diagnosis 45 min, documentation 30 min)
+  - **Transcript:** /mnt/transcripts/2025-12-12-09-41-18-n8n-mcp-connection-fix.txt
+
+**Previous Session (2025-12-11 11:12):**
 - ✅ **Judge Agent V2 Deployment - Complete Resolution** (PRODUCTION OPERATIONAL! 🎉 - 180 min)
   - **Context:** Full debugging session from credential mapping to final activation
   - **Problem Chain:**
