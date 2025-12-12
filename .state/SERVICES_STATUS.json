@@ -1,0 +1,63 @@
+{
+  "last_updated": "2025-12-12T13:05:30+02:00",
+  "services": {
+    "n8n": {
+      "status": "active",
+      "container_name": "ai-os-n8n",
+      "port": 5678,
+      "health": "healthy",
+      "uptime_seconds": 60,
+      "location": "infra/n8n",
+      "docker_compose_file": "infra/n8n/docker-compose.yml",
+      "workflows_created": 1,
+      "workflows": [
+        {
+          "name": "Daily Context Sync Trigger",
+          "file": "infra/n8n/workflows/daily_sync_trigger.json",
+          "trigger_type": "cron",
+          "schedule": "0 7 * * *",
+          "target_endpoint": "http://host.docker.internal:8084/daily-context-sync/run",
+          "status": "ready_for_import"
+        }
+      ]
+    },
+    "agent_kernel": {
+      "status": "active",
+      "port": 8084,
+      "pid": 8368,
+      "startup_time": "2025-12-12T13:02:17+02:00",
+      "health_endpoint": "http://localhost:8084/health",
+      "version": "0.1.0",
+      "location": "src/kernel",
+      "main_file": "src/kernel/main.py",
+      "endpoints": {
+        "health": "/health",
+        "daily_sync": "/daily-context-sync/run",
+        "task_submit": "/task/submit"
+      },
+      "integration_test": {
+        "status": "passed",
+        "tested_at": "2025-12-12T13:04:59+02:00",
+        "last_execution_id": "sync_20251212_130459"
+      }
+    },
+    "os_core": {
+      "status": "not_started",
+      "location": "src/os_core",
+      "note": "Will be integrated in Slice 2D+"
+    }
+  },
+  "integrations": {
+    "n8n_to_kernel": {
+      "status": "active",
+      "connection_type": "http",
+      "endpoint": "http://host.docker.internal:8084/daily-context-sync/run",
+      "method": "POST",
+      "tested": true,
+      "last_test_time": "2025-12-12T13:04:59+02:00",
+      "last_test_result": "success",
+      "last_execution_id": "sync_20251212_130459",
+      "note": "Integration test passed successfully"
+    }
+  }
+}

@@ -1,15 +1,17 @@
-# AI-OS Python Dependencies
+# AI-OS Agent Kernel Dependencies
+# ================================
 
-# Core
-openai>=1.0.0
+# FastAPI Framework
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+
+# HTTP & API
+httpx>=0.28.0
+requests>=2.32.0
+
+# Utilities
 python-dotenv>=1.0.0
+python-multipart>=0.0.12
 
-# HTTP API Server
-fastapi>=0.100.0
-uvicorn[standard]>=0.23.0
-
-# Chat1 (Telegram Bot)
-python-telegram-bot>=20.0
-
-# Optional: Better performance
-pydantic>=2.0.0
+# Logging & Monitoring
+python-json-logger>=2.0.7
