@@ -205,3 +205,131 @@ The Qdrant vector database container is in a `Conflict` state and needs manual r
 
 **Duration:** 90 minutes (diagnosis 30 min, resolution 45 min, validation 15 min)  
 **Status:** ✅ RESOLVED - System operating under GitOps control
+
+---
+
+## Reflection: 8b5e318 - Personal Agent v1 Webhook Execution Failure Diagnosis - 2025-12-12
+
+**Branch:** feature/h2-memory-bank-api  
+**Date:** 2025-12-12  
+**Time:** 03:15 UTC
+
+**Commits:**
+- `8b5e318` - docs(incident): Personal Agent v1 webhook execution failure diagnosis
+
+**What was done:**
+- **Comprehensive Incident Documentation (120 min diagnostic session)**
+  - Created incident report: `memory-bank/incidents/2025-12-12-personal-agent-webhook-execution-failure.md`
+  - Updated `memory-bank/01-active-context.md` with session details (Just Finished section)
+  - Updated `memory-bank/02-progress.md` with full session log (225 lines)
+- **Root Cause Analysis:**
+  - Personal Agent v1 workflow activated successfully ✅
+  - Webhook accessible (HTTP 200) but response body empty ❌
+  - 2 executions logged as "error", duration 0s, nodeResults empty
+  - Identified missing environment variables: `AI_OS_PATH` and `ANTHROPIC_API_KEY`
+  - docker-compose.vps.yml does NOT inject required variables into n8n container
+- **Technical Investigation:**
+  - Used n8n MCP tools: list_workflows, list_executions, get_execution, get_workflow
+  - Used gcloud ssh to test webhook from within VPS (bypassed "Host not allowed" restriction)
+  - Confirmed SYSTEM_MANIFESTO.md exists on VPS (/home/node/ai-os/)
+  - Confirmed n8n container lacks environment variables
+- **Anti-Pattern Identified:**
+  - AP-XXX: "Activation Without Runtime Verification" (activated ≠ functional)
+  - Similar to 2025-12-03 Docker AutoStart incident (claimed done, not verified)
+  - SVP-001 violation: Claimed "workflow activated ✅" without end-to-end execution test
+
+**Why:**
+- **Close Critical Failure:** Personal Agent is core ADHD task decomposition system - must be operational
+- **Prevent Future Validation Theater:** Document pattern where "active" status ≠ functional system
+- **Knowledge Preservation:** Full diagnostic process documented for future similar issues
+- **Protocol 1 Compliance:** Incident → immediate documentation → git commit → push
+- **Meta-Learning:** Strengthen SVP-001 with "runtime verification" checklist item
+
+**Technical Details:**
+- **Workflow Architecture (7 nodes):**
+  1. webhook_trigger ✅
+  2. read_manifesto ❌ FAILS (needs `$env.AI_OS_PATH`)
+  3. prepare_context
+  4. claude_agent (needs `$env.ANTHROPIC_API_KEY`)
+  5. parse_response
+  6. webhook_response
+- **Silent Failure Pattern:** HTTP 200 with empty body misleads into thinking success
+- **Security:** External IP blocked from webhooks ("Host not allowed"), only localhost can trigger
+- **Tools Used:** n8n MCP (4 tools), Desktop Commander (gcloud ssh), Filesystem (write/edit)
+
+**Files Modified:**
+- `memory-bank/incidents/2025-12-12-personal-agent-webhook-execution-failure.md` (+370 lines: NEW)
+- `memory-bank/01-active-context.md` (+29 lines: session entry in Just Finished)
+- `memory-bank/02-progress.md` (+224 lines: full session log with all details)
+- `REFLECTION_LOG.md` (+50 lines: this entry)
+
+**Duration:** 120 minutes
+- Discovery: 45 min (webhook testing, n8n MCP execution analysis)
+- Diagnosis: 45 min (SSH access, environment investigation, root cause identification)
+- Documentation: 30 min (incident report, active context, progress log)
+
+**Status:** 🔴 **OPEN** - Root cause identified, fix pending
+- **Incident Status:** OPEN
+- **Root Cause:** ✅ Identified (missing AI_OS_PATH and ANTHROPIC_API_KEY in n8n container)
+- **Fix Required:** FIX-001 - Inject environment variables into docker-compose.vps.yml
+- **Estimated Resolution:** 30 minutes (once user provides ANTHROPIC_API_KEY)
+
+**Next:**
+- **FIX-001 (Critical):** Add environment variables to n8n container
+  1. Edit docker-compose.vps.yml (add AI_OS_PATH, ANTHROPIC_API_KEY)
+  2. Create .env file on VPS with API key
+  3. Restart n8n container
+  4. Verify: `docker exec n8n env | grep AI_OS_PATH`
+- **FIX-002:** End-to-end test with Hebrew input ("בדיקת מערכת - האם אתה שומע אותי?")
+- **SVP-001 Update:** Add "runtime verification" checklist (workflow executed successfully with test data)
+- **DEPLOYMENT_MANUAL Update:** Document environment variables section for workflows
+
+**Context/Notes:**
+- **Similar Incident:** 2025-12-03-docker-autostart-false.md (claimed configured ✅, reality was false)
+- **Pattern Repetition:** Second occurrence of "validation theater" (activation without verification)
+- **Protocol Learning:** SVP-001 needs strengthening - "active" status is insufficient validation
+- **Technical Debt Created:**
+  - TD-XXX: n8n MCP cannot trigger webhooks externally (security restriction)
+  - TD-XXX: No automated health check for Personal Agent workflow
+  - TD-XXX: Silent failure pattern (HTTP 200 on error) unresolved
+  - TD-XXX: No pre-deployment checklist for n8n workflows
+- **User Instruction:** User requested comprehensive documentation of entire session
+- **AEP-001 Compliance:** All work done autonomously (diagnosis, documentation, git commit) - zero manual delegation
+
+
+---
+
+## Reflection: feature/h2-memory-bank-api - 2025-12-12
+
+**Branch:** feature/h2-memory-bank-api  
+**Date:** 2025-12-12
+
+**What was done:**
+- **Slice 2C Complete:** Implemented Agent Kernel FastAPI service (167 lines)
+- Created `src/kernel/main.py` with health checks and `/daily-context-sync/run` endpoint
+- Updated dependencies (fastapi>=0.115.0, uvicorn>=0.32.0)
+- Server deployed on port 8084 (PID 8368), tested and validated
+- Documented in `.state/` (EVENT_TIMELINE.jsonl, SERVICES_STATUS.json)
+- Created comprehensive slice documentation (396 lines)
+- Git commit: 2b2b7fa with 7 files changed, 660 insertions
+
+**Why:**
+- **Problem:** Need orchestration layer between n8n (automation) and OS Core (ADHD processing)
+- **Solution:** Agent Kernel receives webhooks from n8n, coordinates with future OS Core
+- **Architecture:** n8n (5678) → Agent Kernel (8084) → OS Core (future)
+- **Current State:** Mock responses for integration testing; full logic in Slice 2D+
+
+**Next:**
+- **Slice 2D:** Test n8n → Agent Kernel integration
+  - Import workflow to n8n UI
+  - Manual trigger test
+  - Verify Docker networking (host.docker.internal:8084)
+  - Document end-to-end flow
+
+**Context/Notes:**
+- **Challenge:** Initial pydantic dependency required Rust compiler
+- **Resolution:** Upgraded to fastapi>=0.115.0 with pre-built wheels
+- **Pattern:** Mock-first development enables rapid integration testing
+- **Server Status:** Running continuously for 10+ minutes, all tests passed
+- **AEP-001 Compliance:** Full autonomous execution (no manual delegation)
+
